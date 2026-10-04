@@ -173,48 +173,51 @@ That means the main problem is access and falsification design, not implementati
 ### Backlog Items
 
 1. **Repo-depth audit**
-   - Status: pending.
+   - Status: complete enough for next backlog item.
    - Goal: read each repo enough to separate reusable ideas from broken/demo code.
-   - Output: repo-by-repo evidence table, not another broad summary.
+   - Output: [[2026-10-04-arbitrage-bot-repo-depth-audit]].
    - Scope: `chain-logger`, Mantle scripts, liquidity watcher scanner/extractor, MEV bot scraper/pairwatcher/rotator/sim/bundler boundaries.
 
 2. **Zela replacement / infra access map**
-   - Status: pending.
+   - Status: complete enough for chain/venue triage.
    - Goal: replace Zela as a live option with accessible current infrastructure.
-   - Output: no-key/free/paid-later access map for RPC, WebSocket, archive RPC, simulation/fork, and low-latency quote collection.
+   - Output: [[2026-10-04-zela-replacement-infra-access-map]].
    - Rule: classify unavailable/paid/keyed options as watch or needs-approval, not active.
 
 3. **Chain and venue triage**
-   - Status: pending.
+   - Status: complete enough for pair-first overlap map.
    - Goal: update the stale February 2026 chain list with current DEX volume, DEX overlap, AMM diversity, and RPC availability.
-   - Output: a small ranked list of 1-2 chains for a kill test, or a decision to skip.
+   - Output: [[2026-10-04-chain-venue-triage-volume-velocity-dex]].
    - Candidate shape from current snapshot: Avalanche and Base for measurement/control; Mantle for a cheap repo-specific niche check; do not prioritize thin chains without a concrete pair pocket.
 
 4. **Pair-first overlap map**
-   - Status: pending.
+   - Status: complete enough for full-cost model spec.
    - Goal: find pairs that trade on at least two meaningful DEX venues on the same chain.
-   - Output: pair/DEX/notional config candidate list.
+   - Output: [[2026-10-04-pair-first-overlap-map-dex-discrepancy]].
    - Reason: chain-level volume is too blunt; edge, if any, lives at pair/venue level.
 
 5. **Full-cost model spec**
-   - Status: pending.
+   - Status: complete enough for e2e latency harness design.
    - Goal: define a strict cost stack before any result can be called positive.
    - Include: DEX fees, price impact/slippage, gas/base fee, priority tip/bribe/bundle proxy, flashloan fee if modeled, failed simulation/revert budget, stale quote drift, and MEV/searcher competition.
+   - Output: [[2026-10-04-full-cost-model-spec-dex-discrepancy]].
 
 6. **E2E latency and stale-state harness**
-   - Status: pending.
+   - Status: design complete enough for backtest/live timing spec.
    - Goal: benchmark whether accessible infrastructure can observe, quote, simulate, and hypothetically submit before the edge decays.
    - Output: p50/p95/p99 timing for each step: event/read, DEX quote A, DEX quote B, route computation, simulation/fork call, and hypothetical submit path.
    - Also log: block number, block timestamp, local receive timestamp, quote start/end timestamps per venue, RPC/provider identity, stale block lag, quote error rate, and route drift after delay buckets.
    - This is the real Zela-successor measurement discipline: if Zela is unavailable, RALPH must measure its own read/quote/simulate/submit latency budget.
+   - Output note: [[2026-10-04-e2e-latency-stale-state-harness-design]].
 
 7. **Backtest persistence versus live execution timing**
-   - Status: pending.
+   - Status: specified enough to gate executable-spread kill test.
    - Goal: separate historical opportunity survival from real-time observability.
    - Backtest can answer: did an executable block-boundary discrepancy exist for 1 block, 2 blocks, N seconds/blocks, and after approximate costs?
    - Backtest cannot fully answer: would RALPH have read, quoted, simulated, submitted, and landed before the discrepancy disappeared?
    - Needed method: reconstruct block-level quotes from archive/indexed state, then pair with live latency measurements to test delay buckets like 0.5s, 1s, 2s, 5s, next block, and next 2 blocks.
    - Private node is not required for the first research stage, but public RPC, paid RPC, archive RPC, and possible self-hosted/private-node paths must be benchmarked before any execution-grade conclusion.
+   - Output note: [[2026-10-04-backtest-persistence-vs-live-timing-spec]].
 
 8. **Executable-spread kill test**
    - Status: blocked until items 2-7 produce a candidate.
