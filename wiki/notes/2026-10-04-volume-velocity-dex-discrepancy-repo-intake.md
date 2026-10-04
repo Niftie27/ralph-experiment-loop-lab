@@ -120,6 +120,40 @@ Build `volume_velocity_dex_discrepancy_event_study` as a measurement-only RALPH 
   - no private keys;
   - no bundle submission.
 
+## Reassessment Before Building
+
+After a second pass, the experiment should not be treated as the automatic next build. The plan is viable only as a narrow feasibility probe, not as "build the RALPH arb lane."
+
+Reasons:
+
+- The best repo asset, `arbitrage_bot/chain-logger`, is a useful executable-quote logger, but its playbook is a February 2026 hypothesis. Chain selection must be re-triaged with current DEX volume, DEX overlap, AMM diversity, and RPC access before using its chain priority list.
+- The logger's current persistence logic is polling-based and approximates persistence by repeated observations, not by event-triggered same-block or sub-block state change. It is adequate for eliminating dead chains, not for proving execution-grade opportunity survival.
+- The existing logger counts gas as a fixed USD haircut. Tomas's lane needs a fuller cost model: DEX fees, price impact, gas/base fee, priority tip or bribe, flashloan fee if modeled, failed simulation/revert budget, stale quote/state drift, and MEV/searcher competition.
+- `Liquidity_watcher` finds fresh pools and high volume/liquidity ratios through GeckoTerminal, but it polls every 5 minutes and uses 24h volume. It cannot answer seconds-level discrepancy questions by itself.
+- The MEV bot zip provides useful plumbing patterns, but its scraper uses pending-block polling and its pair watcher has a placeholder PairCreated loop. It is not a trustworthy edge engine. Keep its RPC rotator, schema, NATS shape, and Prometheus alerts as design references only.
+- Zela contributes measurement discipline, not direct market scope.
+
+Live no-key DefiLlama DEX snapshot checked on 2026-10-04 showed the old low-competition list is uneven:
+
+- Avalanche: about `$101M` 24h DEX volume, enough for triage; multiple DEXes and AMM models still make it a reasonable first non-ETH/non-SOL candidate.
+- Base: about `$671M` 24h DEX volume, clearly liquid but likely more competitive; useful as a high-activity measurement/control chain, not automatically a survival lane.
+- Mantle: about `$15M` 24h DEX volume and existing repo-specific Agni/Merchant Moe code; worth a cheap niche check, but venue overlap and actual liquidity depth must be verified.
+- Sonic, Linea, Scroll, and ZKsync Era were below the original playbook's `$5M/day` chain threshold in this snapshot, so they should not be first-pass targets unless a specific pair/venue pocket is found.
+
+Better immediate plan:
+
+1. Run a current chain/venue triage first, not the full event study.
+2. Pick 1-2 candidate chains only if they pass: 24h DEX volume, at least two meaningful DEXes, overlapping pairs, different AMM models, accessible RPC/WebSocket, and realistic no-key/low-cost data access.
+3. Start with a 24h executable-quote logger at conservative cadence as a kill test.
+4. Only if that finds positive executable spreads, add volume-velocity triggers, finer timestamps, event/block subscriptions, and full stale-drift/cost modeling.
+
+Alternative approaches that may dominate:
+
+- Pair-first rather than chain-first: use live DEX volume data to find overlapping high-turnover pairs, then test only those pairs.
+- Discovery-first: use GeckoTerminal/Birdeye-style pool discovery to identify sudden pump/new-pool windows, then measure cross-DEX quotes only when a token appears on multiple venues.
+- Infrastructure-first: build a reusable latency/quote harness and benchmark RPC/provider speed before strategy research; this may reveal that public/no-key infra is too slow before any market edge is tested.
+- Non-arb pivot: if executable quote tests are dead after a few chains, move back to slower RALPH lanes such as wallet/source discovery, orderflow alerts, or liquidation/funding-basis research.
+
 ## Keep Out
 
 - Flashloan execution contracts from `arbitrage_bot`.
