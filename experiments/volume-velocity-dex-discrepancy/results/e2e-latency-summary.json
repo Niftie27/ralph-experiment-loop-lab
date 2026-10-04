@@ -1,0 +1,332 @@
+{
+  "generatedAt": "2026-10-04T20:36:57.386Z",
+  "status": "research-only-no-live-execution",
+  "purpose": "read-only Avalanche WAVAX/USDC e2e quote-latency and stale-state baseline",
+  "config": {
+    "chain": "avalanche",
+    "chainId": 43114,
+    "pair": "WAVAX/USDC",
+    "providers": [
+      {
+        "id": "avalanche_official_http",
+        "rpcUrlClass": "official_public"
+      },
+      {
+        "id": "avalanche_publicnode_http",
+        "rpcUrlClass": "publicnode"
+      }
+    ],
+    "venues": [
+      {
+        "id": "uniswap_v3_500",
+        "type": "v3"
+      },
+      {
+        "id": "traderjoe_lb_v22",
+        "type": "lb"
+      }
+    ],
+    "notionalsUsd": [
+      100,
+      300,
+      1000
+    ],
+    "delayBucketsMs": [
+      500,
+      1000
+    ],
+    "costModelVersion": "v0_proxy"
+  },
+  "factorContext": {
+    "btc_gate": "BTC_TRANSITION",
+    "btc_gate_reason": "BTCUSDT 30m change 0.002241, highDist 0, lowDist 0.002385",
+    "btc_last_price": 85600.01,
+    "eth_major_state": "ETH_MIXED",
+    "factor_class": "none"
+  },
+  "totals": {
+    "samples": 72,
+    "quoteErrors": 0,
+    "postCostPositive": 0,
+    "latencySurvived": 0,
+    "providers": 2,
+    "routes": 2
+  },
+  "groups": [
+    {
+      "key": "avalanche_official_http|uniswap_v3_500|traderjoe_lb_v22|100",
+      "provider_id": "avalanche_official_http",
+      "route": "uniswap_v3_500->traderjoe_lb_v22",
+      "notional_usd": 100,
+      "samples": 6,
+      "quote_success_rate": 1,
+      "p50_cycle_latency_ms": 400.5,
+      "p95_cycle_latency_ms": 514.5,
+      "p99_cycle_latency_ms": 541.3,
+      "median_block_lag_ms": 4996,
+      "p95_block_lag_ms": 7481.25,
+      "post_cost_positive_count": 0,
+      "latency_survived_count": 0,
+      "median_net_after_costs_usd": -0.358443,
+      "best_net_after_costs_usd": -0.34949212,
+      "kill_reasons": {
+        "not_positive_after_v0_proxy_costs": 2,
+        "positive_did_not_survive_delay_or_never_positive": 4
+      },
+      "data_quality_flags": {}
+    },
+    {
+      "key": "avalanche_official_http|traderjoe_lb_v22|uniswap_v3_500|100",
+      "provider_id": "avalanche_official_http",
+      "route": "traderjoe_lb_v22->uniswap_v3_500",
+      "notional_usd": 100,
+      "samples": 6,
+      "quote_success_rate": 1,
+      "p50_cycle_latency_ms": 385,
+      "p95_cycle_latency_ms": 408.75,
+      "p99_cycle_latency_ms": 412.95,
+      "median_block_lag_ms": 4320,
+      "p95_block_lag_ms": 7956.25,
+      "post_cost_positive_count": 0,
+      "latency_survived_count": 0,
+      "median_net_after_costs_usd": -0.299912,
+      "best_net_after_costs_usd": -0.28647029,
+      "kill_reasons": {
+        "not_positive_after_v0_proxy_costs": 2,
+        "positive_did_not_survive_delay_or_never_positive": 4
+      },
+      "data_quality_flags": {
+        "block_lag_gt_8s": 1
+      }
+    },
+    {
+      "key": "avalanche_official_http|uniswap_v3_500|traderjoe_lb_v22|300",
+      "provider_id": "avalanche_official_http",
+      "route": "uniswap_v3_500->traderjoe_lb_v22",
+      "notional_usd": 300,
+      "samples": 6,
+      "quote_success_rate": 1,
+      "p50_cycle_latency_ms": 378,
+      "p95_cycle_latency_ms": 399,
+      "p99_cycle_latency_ms": 400.6,
+      "median_block_lag_ms": 4461.5,
+      "p95_block_lag_ms": 5822.5,
+      "post_cost_positive_count": 0,
+      "latency_survived_count": 0,
+      "median_net_after_costs_usd": -1.10689,
+      "best_net_after_costs_usd": -1.06752312,
+      "kill_reasons": {
+        "not_positive_after_v0_proxy_costs": 2,
+        "positive_did_not_survive_delay_or_never_positive": 4
+      },
+      "data_quality_flags": {
+        "provider_head_moved_gt_2_blocks_during_cycle": 1
+      }
+    },
+    {
+      "key": "avalanche_official_http|traderjoe_lb_v22|uniswap_v3_500|300",
+      "provider_id": "avalanche_official_http",
+      "route": "traderjoe_lb_v22->uniswap_v3_500",
+      "notional_usd": 300,
+      "samples": 6,
+      "quote_success_rate": 1,
+      "p50_cycle_latency_ms": 386,
+      "p95_cycle_latency_ms": 396.75,
+      "p99_cycle_latency_ms": 398.55,
+      "median_block_lag_ms": 3948.5,
+      "p95_block_lag_ms": 5539,
+      "post_cost_positive_count": 0,
+      "latency_survived_count": 0,
+      "median_net_after_costs_usd": -0.762151,
+      "best_net_after_costs_usd": -0.72190429,
+      "kill_reasons": {
+        "not_positive_after_v0_proxy_costs": 2,
+        "positive_did_not_survive_delay_or_never_positive": 4
+      },
+      "data_quality_flags": {}
+    },
+    {
+      "key": "avalanche_official_http|uniswap_v3_500|traderjoe_lb_v22|1000",
+      "provider_id": "avalanche_official_http",
+      "route": "uniswap_v3_500->traderjoe_lb_v22",
+      "notional_usd": 1000,
+      "samples": 6,
+      "quote_success_rate": 1,
+      "p50_cycle_latency_ms": 387,
+      "p95_cycle_latency_ms": 397.25,
+      "p99_cycle_latency_ms": 397.85,
+      "median_block_lag_ms": 5127.5,
+      "p95_block_lag_ms": 6344.75,
+      "post_cost_positive_count": 0,
+      "latency_survived_count": 0,
+      "median_net_after_costs_usd": -3.267018,
+      "best_net_after_costs_usd": -2.93432229,
+      "kill_reasons": {
+        "not_positive_after_v0_proxy_costs": 2,
+        "positive_did_not_survive_delay_or_never_positive": 4
+      },
+      "data_quality_flags": {
+        "provider_head_moved_gt_2_blocks_during_cycle": 2
+      }
+    },
+    {
+      "key": "avalanche_official_http|traderjoe_lb_v22|uniswap_v3_500|1000",
+      "provider_id": "avalanche_official_http",
+      "route": "traderjoe_lb_v22->uniswap_v3_500",
+      "notional_usd": 1000,
+      "samples": 6,
+      "quote_success_rate": 1,
+      "p50_cycle_latency_ms": 391,
+      "p95_cycle_latency_ms": 409.5,
+      "p99_cycle_latency_ms": 411.5,
+      "median_block_lag_ms": 3804,
+      "p95_block_lag_ms": 5138.25,
+      "post_cost_positive_count": 0,
+      "latency_survived_count": 0,
+      "median_net_after_costs_usd": -2.815004,
+      "best_net_after_costs_usd": -2.35901876,
+      "kill_reasons": {
+        "not_positive_after_v0_proxy_costs": 2,
+        "positive_did_not_survive_delay_or_never_positive": 4
+      },
+      "data_quality_flags": {}
+    },
+    {
+      "key": "avalanche_publicnode_http|uniswap_v3_500|traderjoe_lb_v22|100",
+      "provider_id": "avalanche_publicnode_http",
+      "route": "uniswap_v3_500->traderjoe_lb_v22",
+      "notional_usd": 100,
+      "samples": 6,
+      "quote_success_rate": 1,
+      "p50_cycle_latency_ms": 397.5,
+      "p95_cycle_latency_ms": 440.75,
+      "p99_cycle_latency_ms": 449.75,
+      "median_block_lag_ms": 2619,
+      "p95_block_lag_ms": 2838.25,
+      "post_cost_positive_count": 0,
+      "latency_survived_count": 0,
+      "median_net_after_costs_usd": -0.35314,
+      "best_net_after_costs_usd": -0.35314029,
+      "kill_reasons": {
+        "not_positive_after_v0_proxy_costs": 2,
+        "positive_did_not_survive_delay_or_never_positive": 4
+      },
+      "data_quality_flags": {}
+    },
+    {
+      "key": "avalanche_publicnode_http|traderjoe_lb_v22|uniswap_v3_500|100",
+      "provider_id": "avalanche_publicnode_http",
+      "route": "traderjoe_lb_v22->uniswap_v3_500",
+      "notional_usd": 100,
+      "samples": 6,
+      "quote_success_rate": 1,
+      "p50_cycle_latency_ms": 390.5,
+      "p95_cycle_latency_ms": 414.75,
+      "p99_cycle_latency_ms": 416.55,
+      "median_block_lag_ms": 2306,
+      "p95_block_lag_ms": 3353.5,
+      "post_cost_positive_count": 0,
+      "latency_survived_count": 0,
+      "median_net_after_costs_usd": -0.386832,
+      "best_net_after_costs_usd": -0.38683229,
+      "kill_reasons": {
+        "not_positive_after_v0_proxy_costs": 2,
+        "positive_did_not_survive_delay_or_never_positive": 4
+      },
+      "data_quality_flags": {}
+    },
+    {
+      "key": "avalanche_publicnode_http|uniswap_v3_500|traderjoe_lb_v22|300",
+      "provider_id": "avalanche_publicnode_http",
+      "route": "uniswap_v3_500->traderjoe_lb_v22",
+      "notional_usd": 300,
+      "samples": 6,
+      "quote_success_rate": 1,
+      "p50_cycle_latency_ms": 392,
+      "p95_cycle_latency_ms": 684,
+      "p99_cycle_latency_ms": 757.6,
+      "median_block_lag_ms": 2216.5,
+      "p95_block_lag_ms": 3210,
+      "post_cost_positive_count": 0,
+      "latency_survived_count": 0,
+      "median_net_after_costs_usd": -0.922494,
+      "best_net_after_costs_usd": -0.92249429,
+      "kill_reasons": {
+        "not_positive_after_v0_proxy_costs": 2,
+        "positive_did_not_survive_delay_or_never_positive": 4
+      },
+      "data_quality_flags": {}
+    },
+    {
+      "key": "avalanche_publicnode_http|traderjoe_lb_v22|uniswap_v3_500|300",
+      "provider_id": "avalanche_publicnode_http",
+      "route": "traderjoe_lb_v22->uniswap_v3_500",
+      "notional_usd": 300,
+      "samples": 6,
+      "quote_success_rate": 1,
+      "p50_cycle_latency_ms": 388,
+      "p95_cycle_latency_ms": 424.75,
+      "p99_cycle_latency_ms": 430.55,
+      "median_block_lag_ms": 3786.5,
+      "p95_block_lag_ms": 5065.25,
+      "post_cost_positive_count": 0,
+      "latency_survived_count": 0,
+      "median_net_after_costs_usd": -1.023519,
+      "best_net_after_costs_usd": -1.02179629,
+      "kill_reasons": {
+        "not_positive_after_v0_proxy_costs": 2,
+        "positive_did_not_survive_delay_or_never_positive": 4
+      },
+      "data_quality_flags": {}
+    },
+    {
+      "key": "avalanche_publicnode_http|uniswap_v3_500|traderjoe_lb_v22|1000",
+      "provider_id": "avalanche_publicnode_http",
+      "route": "uniswap_v3_500->traderjoe_lb_v22",
+      "notional_usd": 1000,
+      "samples": 6,
+      "quote_success_rate": 1,
+      "p50_cycle_latency_ms": 388,
+      "p95_cycle_latency_ms": 409.25,
+      "p99_cycle_latency_ms": 413.85,
+      "median_block_lag_ms": 2783.5,
+      "p95_block_lag_ms": 4973.75,
+      "post_cost_positive_count": 0,
+      "latency_survived_count": 0,
+      "median_net_after_costs_usd": -2.939416,
+      "best_net_after_costs_usd": -2.93432229,
+      "kill_reasons": {
+        "not_positive_after_v0_proxy_costs": 2,
+        "positive_did_not_survive_delay_or_never_positive": 4
+      },
+      "data_quality_flags": {}
+    },
+    {
+      "key": "avalanche_publicnode_http|traderjoe_lb_v22|uniswap_v3_500|1000",
+      "provider_id": "avalanche_publicnode_http",
+      "route": "traderjoe_lb_v22->uniswap_v3_500",
+      "notional_usd": 1000,
+      "samples": 6,
+      "quote_success_rate": 1,
+      "p50_cycle_latency_ms": 390.5,
+      "p95_cycle_latency_ms": 404.75,
+      "p99_cycle_latency_ms": 405.75,
+      "median_block_lag_ms": 3128.5,
+      "p95_block_lag_ms": 5033.5,
+      "post_cost_positive_count": 0,
+      "latency_survived_count": 0,
+      "median_net_after_costs_usd": -3.268448,
+      "best_net_after_costs_usd": -3.26590827,
+      "kill_reasons": {
+        "not_positive_after_v0_proxy_costs": 2,
+        "positive_did_not_survive_delay_or_never_positive": 4
+      },
+      "data_quality_flags": {}
+    }
+  ],
+  "decision": {
+    "verdict": "no_positive_after_v0_costs_in_tiny_baseline",
+    "rationale": "This tiny baseline found no post-cost-positive route after conservative v0 proxy costs. It is not a final kill, but it blocks promotion.",
+    "noLiveChange": true
+  }
+}

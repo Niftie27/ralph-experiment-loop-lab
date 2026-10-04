@@ -220,9 +220,11 @@ That means the main problem is access and falsification design, not implementati
    - Output note: [[2026-10-04-backtest-persistence-vs-live-timing-spec]].
 
 8. **Executable-spread kill test**
-   - Status: blocked until items 2-7 produce a candidate.
+   - Status: tiny read-only Avalanche baseline complete; not promoted.
    - Goal: run a conservative 24h executable quote logger on one chain/pair set.
-   - Output: kill/extend/promote decision.
+   - First output: [[2026-10-04-avalanche-wavax-usdc-e2e-baseline]].
+   - Result: initial public/no-key `WAVAX/USDC` Uniswap V3 vs Trader Joe LB run collected 72 successful quote samples after correcting a stale Uniswap quoter address, with 0 post-cost positives and 0 latency-survived positives under `v0_proxy` costs.
+   - Output still needed before a real kill/extend/promote decision: longer run or additional verified high-volume venue adapters.
    - Rule: no private keys, no execution, no bundle submission.
 
 9. **Volume-velocity trigger layer**

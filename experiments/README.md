@@ -16,6 +16,7 @@ Use templates from `experiments/templates/`.
 
 - `strategy-destruction-filter`: research-only strategy survival filter. Turns explicit strategy specs into backtests, realistic-cost statistics, failure slices, deflated-Sharpe-proxy scoring, rejected idea logs, and survivor artifacts. No live execution.
 - `btc-eth-alert-edge`: paper-only liquid-crypto alert edge backtest and forward-paper support.
+- `volume-velocity-dex-discrepancy`: read-only DEX quote latency/stale-state measurement for same-chain discrepancy survival. No keys, orders, paid infra, or execution.
 
 ## Read Order
 
@@ -33,5 +34,6 @@ See `../wiki/notes/2026-09-01-experiment-output-read-path-map.md` for the curren
 
 - `btc-eth-alert-edge`: use `results/edge-summary.md`, `results/paper-dashboard.md`, and `results/live-ta-execution-journal.md` before raw `paper/signals.json`.
 - `strategy-destruction-filter`: use `results/filter-report.md`, `results/shadow-pnl-ledger.md`, and `results/feature-study.md` before raw JSON/JSONL.
+- `volume-velocity-dex-discrepancy`: use `results/e2e-latency-summary.md` before raw `results/e2e-latency-samples.jsonl`.
 - `copytrading-address-intake`: use the Markdown result ledgers first; current wallet-shadow work is Watch/named-trigger only.
 - `liquidation-q1-baseline-kill-switch`: current Q1 branch is discarded; reuse only as a validation pattern unless Tomas explicitly reopens it.

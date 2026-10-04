@@ -1,0 +1,14 @@
+{
+  "name": "volume-velocity-dex-discrepancy",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "baseline:avax": "node src/run-e2e-latency-baseline.mjs",
+    "verify": "node src/verify-e2e-latency-baseline.mjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "ethers": "^6.16.0"
+  }
+}

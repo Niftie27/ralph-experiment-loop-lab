@@ -1,0 +1,57 @@
+{
+  "chain": "avalanche",
+  "chainId": 43114,
+  "pair": "WAVAX/USDC",
+  "costModelVersion": "v0_proxy",
+  "tokens": {
+    "WAVAX": {
+      "address": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+      "decimals": 18
+    },
+    "USDC": {
+      "address": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+      "decimals": 6
+    }
+  },
+  "providers": [
+    {
+      "id": "avalanche_official_http",
+      "rpcUrl": "https://api.avax.network/ext/bc/C/rpc",
+      "rpcUrlClass": "official_public"
+    },
+    {
+      "id": "avalanche_publicnode_http",
+      "rpcUrl": "https://avalanche-c-chain-rpc.publicnode.com",
+      "rpcUrlClass": "publicnode"
+    }
+  ],
+  "venues": [
+    {
+      "id": "uniswap_v3_500",
+      "name": "Uniswap V3 0.05%",
+      "type": "v3",
+      "quoter": "0xbe0F5544EC67e9B3b2D979aaA43f18Fd87E6257F",
+      "fee": 500,
+      "poolHint": "0xfae3f424a0a47706811521e3ee268f00cfb5c45e"
+    },
+    {
+      "id": "traderjoe_lb_v22",
+      "name": "Trader Joe LB V2.2",
+      "type": "lb",
+      "quoter": "0x9A550a522BBaDFB69019b0432800Ed17855A51C3",
+      "router": "0x18556DA13313f3532c54711497A8FedAC273220E",
+      "poolHint": "0x864d4e5ee7318e97483db7eb0912e09f161516ea"
+    }
+  ],
+  "notionalsUsd": [100, 300, 1000],
+  "delayBucketsMs": [500, 1000],
+  "estimatedGasUnits": 350000,
+  "costProxy": {
+    "simulationFailurePct": 0.0002,
+    "revertFailurePct": 0.0003,
+    "staleDriftPct": 0.0005,
+    "mevCompetitionHaircutPct": 0.0005,
+    "minimumPriorityOrBribeUsd": 0.05,
+    "priorityOrBribeGasMultiplier": 0.5
+  }
+}
