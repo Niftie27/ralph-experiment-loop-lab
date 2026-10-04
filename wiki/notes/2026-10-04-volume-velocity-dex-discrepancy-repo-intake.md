@@ -201,29 +201,38 @@ That means the main problem is access and falsification design, not implementati
    - Goal: define a strict cost stack before any result can be called positive.
    - Include: DEX fees, price impact/slippage, gas/base fee, priority tip/bribe/bundle proxy, flashloan fee if modeled, failed simulation/revert budget, stale quote drift, and MEV/searcher competition.
 
-6. **Quote-latency harness**
+6. **E2E latency and stale-state harness**
    - Status: pending.
-   - Goal: benchmark whether accessible RPC/quote paths can collect synchronized quotes fast enough.
-   - Output: p50/p95/p99 quote latency, RPC error/stale rate, block lag, and per-venue timing.
-   - This is the real Zela-successor measurement discipline.
+   - Goal: benchmark whether accessible infrastructure can observe, quote, simulate, and hypothetically submit before the edge decays.
+   - Output: p50/p95/p99 timing for each step: event/read, DEX quote A, DEX quote B, route computation, simulation/fork call, and hypothetical submit path.
+   - Also log: block number, block timestamp, local receive timestamp, quote start/end timestamps per venue, RPC/provider identity, stale block lag, quote error rate, and route drift after delay buckets.
+   - This is the real Zela-successor measurement discipline: if Zela is unavailable, RALPH must measure its own read/quote/simulate/submit latency budget.
 
-7. **Executable-spread kill test**
-   - Status: blocked until items 2-6 produce a candidate.
+7. **Backtest persistence versus live execution timing**
+   - Status: pending.
+   - Goal: separate historical opportunity survival from real-time observability.
+   - Backtest can answer: did an executable block-boundary discrepancy exist for 1 block, 2 blocks, N seconds/blocks, and after approximate costs?
+   - Backtest cannot fully answer: would RALPH have read, quoted, simulated, submitted, and landed before the discrepancy disappeared?
+   - Needed method: reconstruct block-level quotes from archive/indexed state, then pair with live latency measurements to test delay buckets like 0.5s, 1s, 2s, 5s, next block, and next 2 blocks.
+   - Private node is not required for the first research stage, but public RPC, paid RPC, archive RPC, and possible self-hosted/private-node paths must be benchmarked before any execution-grade conclusion.
+
+8. **Executable-spread kill test**
+   - Status: blocked until items 2-7 produce a candidate.
    - Goal: run a conservative 24h executable quote logger on one chain/pair set.
    - Output: kill/extend/promote decision.
    - Rule: no private keys, no execution, no bundle submission.
 
-8. **Volume-velocity trigger layer**
+9. **Volume-velocity trigger layer**
    - Status: later.
    - Goal: add BTC/market/token-local volume velocity only after raw quote viability exists.
    - Reason: triggers do not matter if the route never survives normal executable costs.
 
-9. **Discovery-first pump lane**
+10. **Discovery-first pump lane**
    - Status: watch.
    - Goal: use GeckoTerminal-style new-pool/pump discovery to trigger quote checks only when a token has multiple venues.
    - Risk: may be too noisy and too late because GeckoTerminal data is coarse.
 
-10. **Pivot backlog**
+11. **Pivot backlog**
     - Status: always available.
     - Options: wallet/source discovery, orderflow alerts, liquidation map, funding-basis research, slower patient-retail lanes.
     - Trigger: executable DEX-discrepancy kill tests fail across a few credible chain/pair candidates.
