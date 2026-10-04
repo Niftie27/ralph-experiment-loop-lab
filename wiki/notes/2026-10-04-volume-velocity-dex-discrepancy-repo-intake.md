@@ -154,6 +154,80 @@ Alternative approaches that may dominate:
 - Infrastructure-first: build a reusable latency/quote harness and benchmark RPC/provider speed before strategy research; this may reveal that public/no-key infra is too slow before any market edge is tested.
 - Non-arb pivot: if executable quote tests are dead after a few chains, move back to slower RALPH lanes such as wallet/source discovery, orderflow alerts, or liquidation/funding-basis research.
 
+## Backlog After Reassessment
+
+Do not jump straight into an event-study build. Backlog each lane and work through them slowly.
+
+### Current Main Problem
+
+RALPH does not yet know whether this opportunity class fails because:
+
+- no executable same-chain DEX discrepancy survives costs;
+- public/no-key infrastructure is too slow or too stale to observe it;
+- the current chain/pair universe is wrong;
+- the cost model is missing a hidden killer;
+- or the repo material is too incomplete to reuse safely.
+
+That means the main problem is access and falsification design, not implementation.
+
+### Backlog Items
+
+1. **Repo-depth audit**
+   - Status: pending.
+   - Goal: read each repo enough to separate reusable ideas from broken/demo code.
+   - Output: repo-by-repo evidence table, not another broad summary.
+   - Scope: `chain-logger`, Mantle scripts, liquidity watcher scanner/extractor, MEV bot scraper/pairwatcher/rotator/sim/bundler boundaries.
+
+2. **Zela replacement / infra access map**
+   - Status: pending.
+   - Goal: replace Zela as a live option with accessible current infrastructure.
+   - Output: no-key/free/paid-later access map for RPC, WebSocket, archive RPC, simulation/fork, and low-latency quote collection.
+   - Rule: classify unavailable/paid/keyed options as watch or needs-approval, not active.
+
+3. **Chain and venue triage**
+   - Status: pending.
+   - Goal: update the stale February 2026 chain list with current DEX volume, DEX overlap, AMM diversity, and RPC availability.
+   - Output: a small ranked list of 1-2 chains for a kill test, or a decision to skip.
+   - Candidate shape from current snapshot: Avalanche and Base for measurement/control; Mantle for a cheap repo-specific niche check; do not prioritize thin chains without a concrete pair pocket.
+
+4. **Pair-first overlap map**
+   - Status: pending.
+   - Goal: find pairs that trade on at least two meaningful DEX venues on the same chain.
+   - Output: pair/DEX/notional config candidate list.
+   - Reason: chain-level volume is too blunt; edge, if any, lives at pair/venue level.
+
+5. **Full-cost model spec**
+   - Status: pending.
+   - Goal: define a strict cost stack before any result can be called positive.
+   - Include: DEX fees, price impact/slippage, gas/base fee, priority tip/bribe/bundle proxy, flashloan fee if modeled, failed simulation/revert budget, stale quote drift, and MEV/searcher competition.
+
+6. **Quote-latency harness**
+   - Status: pending.
+   - Goal: benchmark whether accessible RPC/quote paths can collect synchronized quotes fast enough.
+   - Output: p50/p95/p99 quote latency, RPC error/stale rate, block lag, and per-venue timing.
+   - This is the real Zela-successor measurement discipline.
+
+7. **Executable-spread kill test**
+   - Status: blocked until items 2-6 produce a candidate.
+   - Goal: run a conservative 24h executable quote logger on one chain/pair set.
+   - Output: kill/extend/promote decision.
+   - Rule: no private keys, no execution, no bundle submission.
+
+8. **Volume-velocity trigger layer**
+   - Status: later.
+   - Goal: add BTC/market/token-local volume velocity only after raw quote viability exists.
+   - Reason: triggers do not matter if the route never survives normal executable costs.
+
+9. **Discovery-first pump lane**
+   - Status: watch.
+   - Goal: use GeckoTerminal-style new-pool/pump discovery to trigger quote checks only when a token has multiple venues.
+   - Risk: may be too noisy and too late because GeckoTerminal data is coarse.
+
+10. **Pivot backlog**
+    - Status: always available.
+    - Options: wallet/source discovery, orderflow alerts, liquidation map, funding-basis research, slower patient-retail lanes.
+    - Trigger: executable DEX-discrepancy kill tests fail across a few credible chain/pair candidates.
+
 ## Keep Out
 
 - Flashloan execution contracts from `arbitrage_bot`.
