@@ -224,7 +224,7 @@ That means the main problem is access and falsification design, not implementati
 
 9. **Volume-velocity trigger layer**
    - Status: later.
-   - Goal: add BTC/market/token-local volume velocity only after raw quote viability exists.
+   - Goal: add market/leader/token-local volume velocity only after raw quote viability exists.
    - Reason: triggers do not matter if the route never survives normal executable costs.
 
 10. **Discovery-first pump lane**
@@ -243,14 +243,40 @@ Tomas's budget constraint is central: ideal infra might cost around `$1000/month
 
 Current working thesis:
 
-- BTC impulse or volume-velocity events may temporarily move mid/small caps and create same-chain DEX discrepancies.
-- Because BTC dominates market beta, BTC is the trigger/regime gate, but the target opportunity is lower-competition alt/pair DEX dislocation.
-- Trading only during strong BTC-triggered windows lowers infra volume requirements, but it does not remove the need for fast reads, fast quotes, strict stale-state control, and full cost accounting.
+- Market/leader impulse or volume-velocity events may temporarily move mid/small caps and create same-chain DEX discrepancies.
+- BTC dominates global market beta and remains the primary regime gate, but it is not the only trigger.
+- Ecosystem leaders can drive related tokens: SOL can move Solana ecosystem tokens, BNB can move BSC ecosystem tokens, AVAX can move Avalanche ecosystem tokens, MNT can move Mantle ecosystem tokens, and sector/theme leaders can move baskets.
+- The target opportunity is lower-competition follower-token DEX dislocation after a leader/factor asset moves quickly.
+- Trading only during strong factor-triggered windows lowers infra volume requirements, but it does not remove the need for fast reads, fast quotes, strict stale-state control, and full cost accounting.
+
+## Factor Trigger Frame
+
+Do not hardcode BTC as the only trigger. Treat BTC as the dominant global factor and define a configurable trigger/follower map:
+
+```text
+trigger_asset -> follower_universe -> DEX quote survival
+```
+
+Trigger classes:
+
+- **Global beta:** BTC, ETH.
+- **Ecosystem leader:** SOL for Solana ecosystem, BNB for BSC, AVAX for Avalanche, MNT for Mantle, ARB/OP for their ecosystems when relevant.
+- **Sector/theme leader:** AI, meme, perp DEX, LST/restaking, gaming, or other baskets where one leading asset moves and related tokens reprice with lag.
+
+What RALPH must measure:
+
+- leader/factor impulse timestamp;
+- follower-token response lag at 1s, 5s, 15s, 1m, next block, and next 2 blocks;
+- whether DEX venues for the follower token disagree after the impulse;
+- whether the discrepancy survives the e2e latency and full cost stack;
+- whether the leader/follower relationship is repeatable or only anecdotal.
+
+This reframes the harness as **factor-triggered e2e latency and stale-state measurement**, not BTC-only monitoring.
 
 Budget ladder:
 
 1. **`$0-$50/month`: research and backtest only**
-   - Use free/no-key CEX WebSockets for BTC impulse detection, DefiLlama/GeckoTerminal-style public data for discovery, and free/low-tier RPC where possible.
+   - Use free/no-key CEX WebSockets for leader/factor impulse detection, DefiLlama/GeckoTerminal-style public data for discovery, and free/low-tier RPC where possible.
    - Good for historical persistence checks and rough live latency sampling.
    - Not enough for execution confidence.
 
@@ -272,7 +298,7 @@ Profitability framing:
 
 - If infra is `$300/month` and the system only trades 10 times/month, each trade must net more than `$30` after all gas, slippage, failures, and risk just to pay infra.
 - If it trades 30 times/month, infra hurdle is `$10/trade`.
-- If it trades only during rare BTC impulse events and average post-cost edge is small, expensive infra destroys the strategy before market risk does.
+- If it trades only during rare factor impulse events and average post-cost edge is small, expensive infra destroys the strategy before market risk does.
 - Therefore the first real question is not "what is the fastest infra?" but "what is the cheapest infra tier at which the measured opportunity still survives?"
 
 Private-node stance:
