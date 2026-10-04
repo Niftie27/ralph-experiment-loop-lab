@@ -237,6 +237,50 @@ That means the main problem is access and falsification design, not implementati
     - Options: wallet/source discovery, orderflow alerts, liquidation map, funding-basis research, slower patient-retail lanes.
     - Trigger: executable DEX-discrepancy kill tests fail across a few credible chain/pair candidates.
 
+## Infra Budget Frame
+
+Tomas's budget constraint is central: ideal infra might cost around `$1000/month`, but the practical ceiling is closer to `$300/month`, possibly less. The lane must therefore be evaluated as an event-driven, rare-window system, not a continuous high-frequency arbitrage stack.
+
+Current working thesis:
+
+- BTC impulse or volume-velocity events may temporarily move mid/small caps and create same-chain DEX discrepancies.
+- Because BTC dominates market beta, BTC is the trigger/regime gate, but the target opportunity is lower-competition alt/pair DEX dislocation.
+- Trading only during strong BTC-triggered windows lowers infra volume requirements, but it does not remove the need for fast reads, fast quotes, strict stale-state control, and full cost accounting.
+
+Budget ladder:
+
+1. **`$0-$50/month`: research and backtest only**
+   - Use free/no-key CEX WebSockets for BTC impulse detection, DefiLlama/GeckoTerminal-style public data for discovery, and free/low-tier RPC where possible.
+   - Good for historical persistence checks and rough live latency sampling.
+   - Not enough for execution confidence.
+
+2. **`$50-$150/month`: serious measurement**
+   - One paid RPC plan plus a cheap VPS/local collector can run an e2e latency and stale-state harness on one or two chains.
+   - Goal is to prove whether public/cheap infra can observe quotes fast enough.
+   - Still read-only; no execution expectation.
+
+3. **`$150-$300/month`: best realistic Tomas budget**
+   - A stronger paid RPC plan plus possibly a second cheap provider for comparison/fallback.
+   - Enough to run focused event-triggered measurement, block-level backtests, live quote timing, and maybe simulation timing.
+   - Potentially enough for rare-window strategies only if discrepancies persist for at least one or two blocks and net profit per trade clears infra, gas, failures, and capital risk.
+
+4. **`$1000+/month`: execution-grade / low-latency infra**
+   - Dedicated endpoints, higher flat RPS, private/dedicated nodes, or specialized provider add-ons.
+   - Do not buy unless the lower-budget harness has already found repeatable post-cost opportunities.
+
+Profitability framing:
+
+- If infra is `$300/month` and the system only trades 10 times/month, each trade must net more than `$30` after all gas, slippage, failures, and risk just to pay infra.
+- If it trades 30 times/month, infra hurdle is `$10/trade`.
+- If it trades only during rare BTC impulse events and average post-cost edge is small, expensive infra destroys the strategy before market risk does.
+- Therefore the first real question is not "what is the fastest infra?" but "what is the cheapest infra tier at which the measured opportunity still survives?"
+
+Private-node stance:
+
+- A private node is not needed for the first measurement stage.
+- Public/cheap RPC plus archive or indexed state can test persistence and latency enough to decide whether to continue.
+- Private/dedicated infra becomes relevant only if opportunities survive long enough historically but cheap live reads are too stale/slow.
+
 ## Keep Out
 
 - Flashloan execution contracts from `arbitrage_bot`.
