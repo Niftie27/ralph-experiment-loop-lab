@@ -1,0 +1,21 @@
+# Rules
+
+- No live trading.
+- No wallet keys.
+- No exchange accounts.
+- No autonomous paid infrastructure.
+- No public publishing.
+- No large codebase changes without approval.
+- Evidence before prototype.
+- Prior-art before data collection, backtest expansion, prototype, or build. First prove the work is not already solved by an existing dataset, framework, public repo, paper, dashboard, or API.
+- Prototype before execution.
+- Every candidate must name its unknowns and evidence threshold.
+- Every decision must cite source pages, case files, or experiment outputs.
+- Automation may collect public/free data and draft research; it may not execute trades or spend money.
+- Prefer reuse, adapters, and benchmark harnesses over custom collection/builds. Custom work needs a written exception: missing data, wrong granularity, bad license/cost, unreliable source, or a Tomas-specific validation gap.
+- Before adding a tool/data source/API/platform to an active plan, verify access in this workspace. Check endpoint/tool availability, auth/account/key/subscription requirements, limits/license, data coverage/freshness/granularity, and safe credential path. If access is unverified, classify it as watch/proposed/needs-approval, not active.
+- Before changing the user-visible crypto alert surface, get Tomas's explicit approval. This includes new assets, setup/event taxonomy, evidence lines, thresholds/cadence, delivery gates, and any wording that adds or removes trading implications.
+- Run your own statistics in the background for alert/strategy claims; never rely only on vibes or chart commentary.
+- Every loop should include Verify/Reassess: check data quality, assumptions, outputs, and confidence after each run.
+- If the direct path fails, find another way: MCP/tool discovery, official/public APIs, existing repos, local cache, smaller proxy tests, or a clear blocked note.
+- When uncertain, dig briefly before answering or promoting a conclusion.

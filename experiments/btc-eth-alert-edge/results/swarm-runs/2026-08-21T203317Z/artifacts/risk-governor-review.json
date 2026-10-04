@@ -1,0 +1,48 @@
+{
+  "job_id": "risk_governor_review",
+  "agent_id": "risk_governor",
+  "generated": "2026-08-21T20:33:17.519Z",
+  "run_id": "2026-08-21T203317Z",
+  "status": "research-only-no-live-execution",
+  "source_files_used": [
+    "results/agent-scoreboard.json",
+    "results/agent-scoreboard-slices.json"
+  ],
+  "forbidden_actions": [
+    "place_live_orders",
+    "modify_live_alert_runtime",
+    "modify_alert_wording",
+    "modify_alert_thresholds",
+    "modify_risk_or_sizing",
+    "read_exchange_account_or_wallet_credentials",
+    "use_exchange_account_or_wallet_access",
+    "use_paid_apis",
+    "claim_live_promotion",
+    "approve_live_execution",
+    "set_trade_size",
+    "open_executor"
+  ],
+  "promotion_decision": "blocked",
+  "risk_blockers": [
+    "clean_rows 6 < 30 minimum",
+    "top agent has fewer than 20 evaluated rows",
+    "top agent accuracy 50.0% < 58.0% watch threshold",
+    "quality flags remain present in the research dataset",
+    "no out-of-sample promotion test has been run",
+    "executor remains explicitly closed"
+  ],
+  "top_findings": [
+    "Best current scout is book_pressure_scout at 50.0% accuracy on 12 evaluated rows.",
+    "Only 6 clean rows are available.",
+    "Research artifacts can be regenerated locally, but no live gate is approved."
+  ],
+  "blocked": [
+    "clean_rows 6 < 30 minimum",
+    "top agent has fewer than 20 evaluated rows",
+    "top agent accuracy 50.0% < 58.0% watch threshold",
+    "quality flags remain present in the research dataset",
+    "no out-of-sample promotion test has been run",
+    "executor remains explicitly closed"
+  ],
+  "promotable": false
+}

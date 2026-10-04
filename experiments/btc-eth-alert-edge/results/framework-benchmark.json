@@ -1,0 +1,262 @@
+{
+  "generated": "2026-08-30T06:33:26.990930+00:00",
+  "framework": {
+    "name": "vectorbt",
+    "version": "1.1.0",
+    "runner": "uv run --with 'vectorbt>=0.26.0' --with 'plotly<6' --with pandas --with numpy"
+  },
+  "scope": {
+    "setup": "momentum_reversal_long",
+    "symbols": [
+      "BTCUSDT",
+      "ETHUSDT"
+    ],
+    "timeframe": "4h"
+  },
+  "symbols": {
+    "BTCUSDT": {
+      "candles": 2160,
+      "signals": 49,
+      "eventStudy": {
+        "sample": 47,
+        "winrate": 0.3617,
+        "expectancyR": -0.1714,
+        "profitFactor": 0.7334
+      },
+      "vectorbtPortfolio": {
+        "totalTrades": 34,
+        "winRatePct": 39.3939,
+        "totalReturnPct": -6.917,
+        "note": "Portfolio engine models position overlap/capital, so this is a sanity benchmark rather than one-to-one parity with independent event-study trades."
+      },
+      "rowLevelParity": {
+        "status": "explainable_portfolio_tail_difference",
+        "customEventRows": 47,
+        "vectorbtRows": 34,
+        "sharedEntryRows": 33,
+        "customOnlyRows": 14,
+        "vectorbtOnlyRows": 1,
+        "latestMatureCustomEntry": "2026-08-11T20:00:00+00:00",
+        "customOnlySample": [
+          "2025-09-21T04:00:00+00:00",
+          "2025-12-06T08:00:00+00:00",
+          "2025-12-07T00:00:00+00:00",
+          "2025-12-07T12:00:00+00:00",
+          "2026-01-09T12:00:00+00:00",
+          "2026-01-19T16:00:00+00:00",
+          "2026-02-17T16:00:00+00:00",
+          "2026-03-07T20:00:00+00:00",
+          "2026-03-08T04:00:00+00:00",
+          "2026-03-20T00:00:00+00:00"
+        ],
+        "vectorbtOnlySample": [
+          "2026-08-29T04:00:00+00:00"
+        ],
+        "interpretation": "Custom-only rows are expected when vectorbt suppresses overlapping entries under one-position portfolio mechanics. Vectorbt-only tail rows are expected when vectorbt opens a recent signal before the custom event-study has a full max-bars outcome window."
+      },
+      "customEventRowsSample": [
+        {
+          "entry_time": "2025-09-15T00:00:00+00:00",
+          "exit_time": "2025-09-15T04:00:00+00:00",
+          "entry_price": 115445.45,
+          "net_r": 1.596022477156848,
+          "exit_reason": "target"
+        },
+        {
+          "entry_time": "2025-09-20T12:00:00+00:00",
+          "exit_time": "2025-09-21T16:00:00+00:00",
+          "entry_price": 115986.69,
+          "net_r": -1.1798675495661748,
+          "exit_reason": "stop"
+        },
+        {
+          "entry_time": "2025-09-21T04:00:00+00:00",
+          "exit_time": "2025-09-22T00:00:00+00:00",
+          "entry_price": 115815.97,
+          "net_r": -1.220526238622948,
+          "exit_reason": "stop"
+        },
+        {
+          "entry_time": "2025-10-30T00:00:00+00:00",
+          "exit_time": "2025-10-30T04:00:00+00:00",
+          "entry_price": 110751.47,
+          "net_r": -1.0764394423273171,
+          "exit_reason": "stop"
+        },
+        {
+          "entry_time": "2025-10-30T20:00:00+00:00",
+          "exit_time": "2025-11-01T20:00:00+00:00",
+          "entry_price": 108322.88,
+          "net_r": 0.7209205425614154,
+          "exit_reason": "horizon"
+        }
+      ],
+      "vectorbtRowsSample": [
+        {
+          "entry_time": "2025-09-15T00:00:00+00:00",
+          "exit_time": "2025-09-15T04:00:00+00:00",
+          "entry_price": 115468.5391,
+          "exit_price": 116667.9483,
+          "return": 0.0096,
+          "status": "Closed"
+        },
+        {
+          "entry_time": "2025-09-20T12:00:00+00:00",
+          "exit_time": "2025-09-21T16:00:00+00:00",
+          "entry_price": 116009.8873,
+          "exit_price": 115212.876,
+          "return": -0.0077,
+          "status": "Closed"
+        },
+        {
+          "entry_time": "2025-10-30T00:00:00+00:00",
+          "exit_time": "2025-10-30T04:00:00+00:00",
+          "entry_price": 110773.6203,
+          "exit_price": 109012.8157,
+          "return": -0.0167,
+          "status": "Closed"
+        },
+        {
+          "entry_time": "2025-10-30T20:00:00+00:00",
+          "exit_time": "2025-11-01T00:00:00+00:00",
+          "entry_price": 108344.5446,
+          "exit_price": 110204.3247,
+          "return": 0.0164,
+          "status": "Closed"
+        },
+        {
+          "entry_time": "2025-11-12T20:00:00+00:00",
+          "exit_time": "2025-11-13T16:00:00+00:00",
+          "entry_price": 101674.7009,
+          "exit_price": 98682.14,
+          "return": -0.0302,
+          "status": "Closed"
+        }
+      ]
+    },
+    "ETHUSDT": {
+      "candles": 2160,
+      "signals": 58,
+      "eventStudy": {
+        "sample": 55,
+        "winrate": 0.4,
+        "expectancyR": -0.1442,
+        "profitFactor": 0.7464
+      },
+      "vectorbtPortfolio": {
+        "totalTrades": 35,
+        "winRatePct": 38.2353,
+        "totalReturnPct": -23.5246,
+        "note": "Portfolio engine models position overlap/capital, so this is a sanity benchmark rather than one-to-one parity with independent event-study trades."
+      },
+      "rowLevelParity": {
+        "status": "explainable_portfolio_tail_difference",
+        "customEventRows": 55,
+        "vectorbtRows": 35,
+        "sharedEntryRows": 34,
+        "customOnlyRows": 21,
+        "vectorbtOnlyRows": 1,
+        "latestMatureCustomEntry": "2026-08-11T00:00:00+00:00",
+        "customOnlySample": [
+          "2025-12-06T20:00:00+00:00",
+          "2026-01-09T00:00:00+00:00",
+          "2026-01-09T12:00:00+00:00",
+          "2026-01-09T20:00:00+00:00",
+          "2026-01-19T16:00:00+00:00",
+          "2026-02-16T16:00:00+00:00",
+          "2026-02-17T04:00:00+00:00",
+          "2026-02-17T12:00:00+00:00",
+          "2026-03-07T20:00:00+00:00",
+          "2026-03-08T04:00:00+00:00"
+        ],
+        "vectorbtOnlySample": [
+          "2026-08-29T04:00:00+00:00"
+        ],
+        "interpretation": "Custom-only rows are expected when vectorbt suppresses overlapping entries under one-position portfolio mechanics. Vectorbt-only tail rows are expected when vectorbt opens a recent signal before the custom event-study has a full max-bars outcome window."
+      },
+      "customEventRowsSample": [
+        {
+          "entry_time": "2025-09-15T20:00:00+00:00",
+          "exit_time": "2025-09-16T12:00:00+00:00",
+          "entry_price": 4523.74,
+          "net_r": -1.0797566461395092,
+          "exit_reason": "stop"
+        },
+        {
+          "entry_time": "2025-09-16T16:00:00+00:00",
+          "exit_time": "2025-09-17T16:00:00+00:00",
+          "entry_price": 4491.21,
+          "net_r": -1.075536021912279,
+          "exit_reason": "stop"
+        },
+        {
+          "entry_time": "2025-10-09T16:00:00+00:00",
+          "exit_time": "2025-10-10T12:00:00+00:00",
+          "entry_price": 4338.0,
+          "net_r": -1.0451676719297331,
+          "exit_reason": "stop"
+        },
+        {
+          "entry_time": "2025-10-22T12:00:00+00:00",
+          "exit_time": "2025-10-22T20:00:00+00:00",
+          "entry_price": 3841.76,
+          "net_r": -1.043146797160162,
+          "exit_reason": "stop"
+        },
+        {
+          "entry_time": "2025-10-30T00:00:00+00:00",
+          "exit_time": "2025-10-30T12:00:00+00:00",
+          "entry_price": 3934.58,
+          "net_r": -1.0477547248326802,
+          "exit_reason": "stop"
+        }
+      ],
+      "vectorbtRowsSample": [
+        {
+          "entry_time": "2025-09-15T20:00:00+00:00",
+          "exit_time": "2025-09-16T12:00:00+00:00",
+          "entry_price": 4524.6447,
+          "exit_price": 4455.6769,
+          "return": -0.016,
+          "status": "Closed"
+        },
+        {
+          "entry_time": "2025-09-16T16:00:00+00:00",
+          "exit_time": "2025-09-17T16:00:00+00:00",
+          "entry_price": 4492.1082,
+          "exit_price": 4419.8606,
+          "return": -0.0169,
+          "status": "Closed"
+        },
+        {
+          "entry_time": "2025-10-09T16:00:00+00:00",
+          "exit_time": "2025-10-10T12:00:00+00:00",
+          "entry_price": 4338.8676,
+          "exit_price": 4103.11,
+          "return": -0.0551,
+          "status": "Closed"
+        },
+        {
+          "entry_time": "2025-10-22T12:00:00+00:00",
+          "exit_time": "2025-10-22T20:00:00+00:00",
+          "entry_price": 3842.5284,
+          "exit_price": 3734.9129,
+          "return": -0.0288,
+          "status": "Closed"
+        },
+        {
+          "entry_time": "2025-10-30T00:00:00+00:00",
+          "exit_time": "2025-10-30T12:00:00+00:00",
+          "entry_price": 3935.3669,
+          "exit_price": 3773.69,
+          "return": -0.0419,
+          "status": "Closed"
+        }
+      ]
+    }
+  },
+  "reassessment": [
+    "Use vectorbt as a portfolio sanity check, not as the only source of truth yet, because RALPH currently scores independent setup events and vectorbt models position overlap/capital constraints.",
+    "Row-level parity is now reported explicitly. Custom-only entries are expected when vectorbt suppresses overlapping portfolio positions; vectorbt-only tail entries are expected before the custom event-study has a full max-bars outcome window."
+  ]
+}

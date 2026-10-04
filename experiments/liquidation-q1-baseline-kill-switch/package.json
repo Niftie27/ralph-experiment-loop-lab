@@ -1,0 +1,8 @@
+{
+  "name": "liquidation-q1-baseline-kill-switch",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

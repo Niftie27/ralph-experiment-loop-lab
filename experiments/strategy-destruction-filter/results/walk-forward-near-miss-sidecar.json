@@ -1,0 +1,360 @@
+{
+  "generatedAt": "2026-09-28T15:14:20.120Z",
+  "status": "research-only-walk-forward-near-miss-sidecar",
+  "source": {
+    "path": "results/filter-report.json",
+    "generatedAt": "2026-09-28T14:55:22.006Z",
+    "split": {
+      "method": "purged_embargo_entry_time",
+      "inSampleRatio": 0.7
+    },
+    "walkForward": {
+      "method": "equal_trade_count_chronological_folds",
+      "foldCount": 5
+    }
+  },
+  "gates": {
+    "minOutOfSampleExpectancyR": 0.01,
+    "requiredPositiveFoldShare": 0.6,
+    "diagnosticOosFoldWindow": "last 30 percent of valid chronological folds"
+  },
+  "summary": {
+    "count": 6,
+    "byFamily": {
+      "alert_edge_breakdown": 6
+    },
+    "bySymbol": {
+      "AVAX": 6
+    },
+    "weakestFoldExpectancyR": -0.1912,
+    "bestOutOfSampleExpectancyR": 0.0761
+  },
+  "nearMisses": [
+    {
+      "variantId": "alert-edge-avax-range-breakdown-short-v0#1",
+      "candidateId": "alert-edge-avax-range-breakdown-short-v0",
+      "family": "alert_edge_breakdown",
+      "symbol": "AVAX",
+      "timeframe": "1h",
+      "sideContext": "down/low-vol",
+      "rule": "breakout",
+      "failures": [
+        "weak_walk_forward_out_of_sample"
+      ],
+      "stats": {
+        "sample": 217,
+        "expectancyR": 0.1815,
+        "profitFactor": 1.3052,
+        "deflatedSharpe": 1.5665,
+        "maxDrawdownR": 10.1373
+      },
+      "outOfSample": {
+        "sample": 78,
+        "expectancyR": 0.0761,
+        "profitFactor": 1.1181,
+        "deflatedSharpe": 0.1059,
+        "maxDrawdownR": 10.1373
+      },
+      "baseline": {
+        "expectancyLiftR": 0.196,
+        "outOfSampleExpectancyLiftR": 0.0875
+      },
+      "walkForward": {
+        "validFoldCount": 5,
+        "positiveFolds": 4,
+        "requiredPositiveFolds": 3,
+        "positiveBaselineLiftFolds": 4,
+        "positiveOutOfSampleFolds": 1,
+        "requiredDiagnosticOosFolds": 2,
+        "minFoldExpectancyR": -0.0043
+      },
+      "weakDiagnosticOosFolds": [
+        {
+          "fold": 5,
+          "sample": 44,
+          "firstEntryIso": "2026-03-21T23:00:00.000Z",
+          "lastEntryIso": "2026-09-13T08:00:00.000Z",
+          "expectancyR": -0.0043,
+          "baselineExpectancyR": -0.0322,
+          "expectancyLiftR": 0.0279,
+          "profitFactor": 0.9936,
+          "maxDrawdownR": 7.8252
+        }
+      ]
+    },
+    {
+      "variantId": "alert-edge-avax-range-breakdown-short-v0#2",
+      "candidateId": "alert-edge-avax-range-breakdown-short-v0",
+      "family": "alert_edge_breakdown",
+      "symbol": "AVAX",
+      "timeframe": "1h",
+      "sideContext": "down/low-vol",
+      "rule": "breakout",
+      "failures": [
+        "weak_walk_forward_out_of_sample"
+      ],
+      "stats": {
+        "sample": 217,
+        "expectancyR": 0.1815,
+        "profitFactor": 1.3052,
+        "deflatedSharpe": 1.5665,
+        "maxDrawdownR": 10.1373
+      },
+      "outOfSample": {
+        "sample": 78,
+        "expectancyR": 0.0761,
+        "profitFactor": 1.1181,
+        "deflatedSharpe": 0.1059,
+        "maxDrawdownR": 10.1373
+      },
+      "baseline": {
+        "expectancyLiftR": 0.196,
+        "outOfSampleExpectancyLiftR": 0.0875
+      },
+      "walkForward": {
+        "validFoldCount": 5,
+        "positiveFolds": 4,
+        "requiredPositiveFolds": 3,
+        "positiveBaselineLiftFolds": 4,
+        "positiveOutOfSampleFolds": 1,
+        "requiredDiagnosticOosFolds": 2,
+        "minFoldExpectancyR": -0.0043
+      },
+      "weakDiagnosticOosFolds": [
+        {
+          "fold": 5,
+          "sample": 44,
+          "firstEntryIso": "2026-03-21T23:00:00.000Z",
+          "lastEntryIso": "2026-09-13T08:00:00.000Z",
+          "expectancyR": -0.0043,
+          "baselineExpectancyR": -0.0322,
+          "expectancyLiftR": 0.0279,
+          "profitFactor": 0.9936,
+          "maxDrawdownR": 7.8252
+        }
+      ]
+    },
+    {
+      "variantId": "alert-edge-avax-range-breakdown-short-v0#3",
+      "candidateId": "alert-edge-avax-range-breakdown-short-v0",
+      "family": "alert_edge_breakdown",
+      "symbol": "AVAX",
+      "timeframe": "1h",
+      "sideContext": "down/low-vol",
+      "rule": "breakout",
+      "failures": [
+        "weak_walk_forward_out_of_sample"
+      ],
+      "stats": {
+        "sample": 188,
+        "expectancyR": 0.1483,
+        "profitFactor": 1.2438,
+        "deflatedSharpe": 1.1369,
+        "maxDrawdownR": 9.4761
+      },
+      "outOfSample": {
+        "sample": 69,
+        "expectancyR": 0.0719,
+        "profitFactor": 1.1113,
+        "deflatedSharpe": 0.0323,
+        "maxDrawdownR": 9.4761
+      },
+      "baseline": {
+        "expectancyLiftR": 0.2981,
+        "outOfSampleExpectancyLiftR": 0.4869
+      },
+      "walkForward": {
+        "validFoldCount": 5,
+        "positiveFolds": 3,
+        "requiredPositiveFolds": 3,
+        "positiveBaselineLiftFolds": 4,
+        "positiveOutOfSampleFolds": 1,
+        "requiredDiagnosticOosFolds": 2,
+        "minFoldExpectancyR": -0.1912
+      },
+      "weakDiagnosticOosFolds": [
+        {
+          "fold": 5,
+          "sample": 38,
+          "firstEntryIso": "2026-03-26T17:00:00.000Z",
+          "lastEntryIso": "2026-09-13T08:00:00.000Z",
+          "expectancyR": -0.1912,
+          "baselineExpectancyR": -0.5596,
+          "expectancyLiftR": 0.3684,
+          "profitFactor": 0.7459,
+          "maxDrawdownR": 9.4761
+        }
+      ]
+    },
+    {
+      "variantId": "alert-edge-avax-range-breakdown-short-v0#4",
+      "candidateId": "alert-edge-avax-range-breakdown-short-v0",
+      "family": "alert_edge_breakdown",
+      "symbol": "AVAX",
+      "timeframe": "1h",
+      "sideContext": "down/low-vol",
+      "rule": "breakout",
+      "failures": [
+        "weak_walk_forward_out_of_sample"
+      ],
+      "stats": {
+        "sample": 188,
+        "expectancyR": 0.1483,
+        "profitFactor": 1.2438,
+        "deflatedSharpe": 1.1369,
+        "maxDrawdownR": 9.4761
+      },
+      "outOfSample": {
+        "sample": 69,
+        "expectancyR": 0.0719,
+        "profitFactor": 1.1113,
+        "deflatedSharpe": 0.0323,
+        "maxDrawdownR": 9.4761
+      },
+      "baseline": {
+        "expectancyLiftR": 0.2981,
+        "outOfSampleExpectancyLiftR": 0.4869
+      },
+      "walkForward": {
+        "validFoldCount": 5,
+        "positiveFolds": 3,
+        "requiredPositiveFolds": 3,
+        "positiveBaselineLiftFolds": 4,
+        "positiveOutOfSampleFolds": 1,
+        "requiredDiagnosticOosFolds": 2,
+        "minFoldExpectancyR": -0.1912
+      },
+      "weakDiagnosticOosFolds": [
+        {
+          "fold": 5,
+          "sample": 38,
+          "firstEntryIso": "2026-03-26T17:00:00.000Z",
+          "lastEntryIso": "2026-09-13T08:00:00.000Z",
+          "expectancyR": -0.1912,
+          "baselineExpectancyR": -0.5596,
+          "expectancyLiftR": 0.3684,
+          "profitFactor": 0.7459,
+          "maxDrawdownR": 9.4761
+        }
+      ]
+    },
+    {
+      "variantId": "alert-edge-avax-range-breakdown-short-v0#5",
+      "candidateId": "alert-edge-avax-range-breakdown-short-v0",
+      "family": "alert_edge_breakdown",
+      "symbol": "AVAX",
+      "timeframe": "1h",
+      "sideContext": "down/low-vol",
+      "rule": "breakout",
+      "failures": [
+        "weak_walk_forward_out_of_sample"
+      ],
+      "stats": {
+        "sample": 186,
+        "expectancyR": 0.1322,
+        "profitFactor": 1.2134,
+        "deflatedSharpe": 0.9831,
+        "maxDrawdownR": 10.1841
+      },
+      "outOfSample": {
+        "sample": 70,
+        "expectancyR": 0.0556,
+        "profitFactor": 1.0852,
+        "deflatedSharpe": -0.0523,
+        "maxDrawdownR": 9.92
+      },
+      "baseline": {
+        "expectancyLiftR": 0.264,
+        "outOfSampleExpectancyLiftR": 0.2
+      },
+      "walkForward": {
+        "validFoldCount": 5,
+        "positiveFolds": 3,
+        "requiredPositiveFolds": 3,
+        "positiveBaselineLiftFolds": 5,
+        "positiveOutOfSampleFolds": 1,
+        "requiredDiagnosticOosFolds": 2,
+        "minFoldExpectancyR": -0.1157
+      },
+      "weakDiagnosticOosFolds": [
+        {
+          "fold": 5,
+          "sample": 38,
+          "firstEntryIso": "2026-03-26T10:00:00.000Z",
+          "lastEntryIso": "2026-09-13T08:00:00.000Z",
+          "expectancyR": -0.1157,
+          "baselineExpectancyR": -0.4104,
+          "expectancyLiftR": 0.2947,
+          "profitFactor": 0.8399,
+          "maxDrawdownR": 9.92
+        }
+      ]
+    },
+    {
+      "variantId": "alert-edge-avax-range-breakdown-short-v0#6",
+      "candidateId": "alert-edge-avax-range-breakdown-short-v0",
+      "family": "alert_edge_breakdown",
+      "symbol": "AVAX",
+      "timeframe": "1h",
+      "sideContext": "down/low-vol",
+      "rule": "breakout",
+      "failures": [
+        "weak_walk_forward_out_of_sample"
+      ],
+      "stats": {
+        "sample": 186,
+        "expectancyR": 0.1322,
+        "profitFactor": 1.2134,
+        "deflatedSharpe": 0.9831,
+        "maxDrawdownR": 10.1841
+      },
+      "outOfSample": {
+        "sample": 70,
+        "expectancyR": 0.0556,
+        "profitFactor": 1.0852,
+        "deflatedSharpe": -0.0523,
+        "maxDrawdownR": 9.92
+      },
+      "baseline": {
+        "expectancyLiftR": 0.264,
+        "outOfSampleExpectancyLiftR": 0.2
+      },
+      "walkForward": {
+        "validFoldCount": 5,
+        "positiveFolds": 3,
+        "requiredPositiveFolds": 3,
+        "positiveBaselineLiftFolds": 5,
+        "positiveOutOfSampleFolds": 1,
+        "requiredDiagnosticOosFolds": 2,
+        "minFoldExpectancyR": -0.1157
+      },
+      "weakDiagnosticOosFolds": [
+        {
+          "fold": 5,
+          "sample": 38,
+          "firstEntryIso": "2026-03-26T10:00:00.000Z",
+          "lastEntryIso": "2026-09-13T08:00:00.000Z",
+          "expectancyR": -0.1157,
+          "baselineExpectancyR": -0.4104,
+          "expectancyLiftR": 0.2947,
+          "profitFactor": 0.8399,
+          "maxDrawdownR": 9.92
+        }
+      ]
+    }
+  ],
+  "decision": {
+    "verdict": "near_misses_visible_no_threshold_change",
+    "noThresholdChange": true,
+    "noPromotion": true,
+    "rationale": "Variants clear the other current gates but still fail the late-fold OOS diagnostic, so the right action is visibility, not gate relaxation."
+  },
+  "boundaries": {
+    "liveTrading": false,
+    "orderPlacement": false,
+    "alertWordingChanges": false,
+    "thresholdsChanged": false,
+    "sizingTpSlChanged": false,
+    "strategyPromotion": false
+  }
+}

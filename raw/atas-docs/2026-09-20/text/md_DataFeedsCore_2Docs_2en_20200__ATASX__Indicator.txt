@@ -1,0 +1,181 @@
+ATAS: Developing indicators for ATAS X 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Developing indicators for ATAS X 
+
+Overview 
+
+ATAS X is a cross-platform version of the ATAS trading platform that runs natively on both Windows and macOS. Unlike the classic ATAS, which is built on WPF (Windows Presentation Foundation) and runs only on Windows, ATAS X uses cross-platform technologies, which imposes certain additional requirements on custom indicator assemblies. 
+
+Automatic type conversion 
+
+To make the transition to ATAS X as seamless as possible, we have implemented automatic conversion of Windows-specific types to their cross-platform equivalents. This means that most indicators originally developed for the classic ATAS will work on ATAS X without any code modifications. 
+
+For example, the Color type from the System.Windows.Media namespace, keyboard types from System.Windows.Input (such as Key ), and GDI+ drawing primitives ( System.Drawing.SolidBrush , Pen , Font ) are automatically mapped to cross-platform counterparts at runtime. You do not need to change your existing code or add conditional compilation — the platform handles this transparently. 
+
+Note that the conversion is not universal — WPF types that have no cross-platform equivalent are not converted: 
+
+WPF brushes such as System.Windows.Media.SolidColorBrush are not translated. Instead, use System.Windows.Media.Color together with the platform drawing API — the RenderContext methods accept a Color directly (see the «Drawing» article). 
+
+WPF UI types (controls, windows, XAML) are not converted; an indicator that references them will be rejected when loaded on ATAS X (see the «Custom editors» section below). 
+
+Custom editors 
+
+Despite the automatic conversion of most types, custom WPF editors are not converted . 
+
+If your indicator assembly contains custom property editors built using WPF controls (e.g., custom UserControl elements used in the indicator settings window), these cannot be automatically converted to cross-platform equivalents. WPF is a Windows-only UI framework, and there is no way to automatically translate arbitrary WPF visual components into a cross-platform representation. 
+
+If your assembly includes custom WPF editors, it will not work on ATAS X automatically. 
+
+Custom editors are still available on ATAS X — they are written as Avalonia controls and declared with the same System.ComponentModel.EditorAttribute that the classic ATAS uses for WPF editors: 
+
+on a property (or on the property's value type) — the control replaces that row's editor in the settings grid; the control's DataContext is the property value; 
+
+on the indicator class — the control replaces the whole auto-generated settings page; the DataContext is the indicator instance. 
+
+Since WPF and Avalonia editors cannot coexist in a single build, an indicator with custom editors is built per platform: the classic (WPF) build includes the WPF editors, and the Cross build includes their Avalonia counterparts, while the indicator code itself stays shared. A complete working sample project can be found in the official indicators repository — AtasPlatform/Indicators/Samples : 
+
+the editors live in two folders sharing one namespace — Editors/Wpf ( *.xaml , compiled into the classic build) and Editors/Avalonia ( *.axaml , compiled into the Cross build) — so the [Editor] attributes in the indicator code are platform-independent; 
+
+SampleCustomEditorsIndicator — per-property editors: AboutEditor (a read-only multiline description block) and RangeEditor (a From/To pair editing one value object); 
+
+SampleCustomViewIndicator — a whole custom settings view ( CustomView ) replacing the auto-generated grid; 
+
+Indicators.Samples.csproj — the build wiring that picks the matching editors folder per platform ( dotnet build for the classic ATAS , dotnet build /p:Platform=Cross for ATAS X). 
+
+Building for %ATAS X 
+
+A separate build for ATAS X is not required. Build the indicator as usual — for the classic ATAS (WPF, the AnyCPU platform; for the target framework, match your platform's runtime, see the «.NET version» section below) — and the same file works on both platforms: 
+
+in the classic ATAS — it loads natively; 
+
+in ATAS X — at load time the platform automatically converts Windows types ( System.Windows.Media.Color , brushes, keys, etc.) to their cross-platform counterparts (see the «Automatic type conversion» section above). 
+
+In practice this means: 
+
+The build platform is the usual AnyCPU ; no special configuration is required. 
+
+In code you use the regular types ( System.Windows.Media.Color , etc.) — exactly as for the classic ATAS . 
+
+A single DLL (in bin\Debug\<framework>\ , e.g. net10.0-windows ) is installed into both the classic ATAS and ATAS X. 
+
+The only constraint: the assembly must not contain custom WPF editors or other WPF UI types ( Window , DataTemplateSelector , XAML / System.Xaml ) — they are not converted, and such an indicator will be rejected with a clear error when loaded on ATAS X. But these elements are not applicable cross-platform anyway. 
+
+‍There is no dedicated project template ( dotnet new or a Visual Studio template) for ATAS X, and none is needed: the project is created the same way as for the classic ATAS (see the «Development of a user indicator» article). For a reference of the recommended configuration, see the official indicators repository on GitHub — it contains examples and an up-to-date project structure. 
+
+Installing the indicator in %ATAS X 
+
+There are two ways to add a locally built indicator: 
+
+Add custom indicator button (recommended). Open the indicators window and use the Add custom indicator button (bottom-left) to select your DLL. It installs and loads the indicator immediately, without a restart, and works on both Windows and macOS without needing to know the folder path. 
+
+Manual copy. Copy the DLL to the ATAS X indicators folder: 
+
+Windows — AppData%\ ATAS X\Indicators (for example, C:\Users\<user>\AppData\Roaming\ ATAS X\Indicators ); 
+
+macOS — ~/Library/Application Support/ATAS/Indicators . 
+
+ATAS X watches the folder and loads the new or updated file automatically — no restart or apply action is required. 
+
+Distribution via the Personal Area 
+
+The same rule applies: upload a single classic (WPF) build — one module registration (one UID / FeatureId ). A module in the Personal Area stores a single file; both the classic ATAS and ATAS X download that same file, and ATAS X adapts the assembly at load time. Separate builds or registrations per platform are neither needed nor supported by the Personal Area model. 
+
+.NET version and switching between platform versions 
+
+The indicator's target framework must match the runtime of the platform it will be loaded into. Depending on the platform version this is .NET 8 or .NET 10 . 
+
+Choosing the framework is a matter of compatibility with the platform runtime, not performance : the .NET version has virtually no effect on the indicator's execution speed. So do not pick a "newer framework for the sake of speed" — target compatibility with your platform (and use multitargeting if you support several versions). 
+
+The platform version number shown in the lower-right corner of the main window does not directly indicate which .NET runtime is used — do not rely on it when choosing the framework. The most reliable approach is to set up multitargeting and build the indicator for both frameworks at once: you get one assembly per runtime and deploy the one that matches your platform. This is especially convenient if you switch between platform versions (updating, rolling back to a previous build, etc.) with different runtimes. 
+
+If you do need to know the exact runtime — for example, when you target a single framework rather than multitargeting — check the *.runtimeconfig.json file next to the platform executable in the installation folder ( OFT.Platform.runtimeconfig.json for the classic ATAS, OFT.PlatformX.runtimeconfig.json for ATAS X). Its tfm value (for example, net10.0 ) is the framework your build should target. 
+
+To do this, list both frameworks in TargetFrameworks (plural). Example .csproj : 
+
+< Project Sdk = "Microsoft.NET.Sdk" > 
+
+< PropertyGroup > 
+
+< TargetFrameworks > net8.0-windows ; net10.0-windows </ TargetFrameworks > 
+
+< UseWPF > true </ UseWPF > 
+
+< LangVersion > latest </ LangVersion > 
+
+</ PropertyGroup > 
+
+<!-- Private=false: don't copy platform DLLs into your output (bin) — the platform 
+
+already provides them at runtime; this keeps only your indicator in the output. --> 
+
+< ItemGroup > 
+
+< Reference Include = "ATAS.Indicators" > 
+
+< HintPath > C: \ Program Files ( x86 )\ ATAS Platform \ ATAS.Indicators.dll </ HintPath > 
+
+< Private > false </ Private > 
+
+</ Reference > 
+
+< Reference Include = "ATAS.DataFeedsCore" > 
+
+< HintPath > C: \ Program Files ( x86 )\ ATAS Platform \ ATAS.DataFeedsCore.dll </ HintPath > 
+
+< Private > false </ Private > 
+
+</ Reference > 
+
+< Reference Include = "Utils.Common" > 
+
+< HintPath > C: \ Program Files ( x86 )\ ATAS Platform \ Utils.Common.dll </ HintPath > 
+
+< Private > false </ Private > 
+
+</ Reference > 
+
+<!-- Add other ATAS libraries you use the same way --> 
+
+</ ItemGroup > 
+
+</ Project > 
+
+The build produces one DLL per framework in separate folders: bin\Debug\net8.0-windows\<Indicator>.dll and bin\Debug\net10.0-windows\<Indicator>.dll . Install into the platform the one that matches its runtime. 
+
+‍References to the ATAS libraries must be compatible with both targets. Take them from the installed platform; if the reference assemblies belong to a newer runtime than the target framework, the build for the lower target may fail — in that case reference the DLLs from the installation of the corresponding platform version. 
+
+Building on macOS. Reference the ATAS libraries from the DLLs shipped inside the ATAS X application bundle. The assemblies ( ATAS.Indicators.dll , ATAS.DataFeedsCore.dll , Utils.Common.dll , etc.) are located in ATAS X.app/Contents/MonoBundle/ — for a default install, /Applications/ATAS X.app/Contents/MonoBundle/ . In Finder, right-click the app and choose Show Package Contents to browse to that folder, and point your HintPath entries there instead of the Windows C:\Program Files (x86)\ ATAS Platform\... paths. 
+
+You do not need to set the C# language version explicitly — specify <LangVersion>latest</LangVersion> and the newest syntax supported by your SDK becomes available (C# 14 for .NET 10). 
+
+Performance 
+
+The general performance recommendations (calculation in OnCalculate , rendering in OnRender , thread safety) are the same for the classic ATAS and ATAS X — see the dedicated «Performance recommendations» article. The only ATAS X specific is the custom editors restriction described in the «Custom editors» section above. 
+
+Related articles 
+
+Development of a user indicator — creating the project, adding references, and installing the library. 
+
+Receiving and processing data — candles, footprint/cluster data, trades, and market depth. 
+
+Working with data series — data series types and how to use them. 
+
+Drawing — custom rendering via OnRender . 
+
+Performance recommendations — OnCalculate / OnRender /threading guidance. 
+
+Troubleshooting 
+
+If your indicator does not contain custom WPF editors but still does not work on ATAS X, please contact our technical support. Send us the DLL file or the source code of your indicator, and we will help resolve the issue. 
+
+Generated by 1.9.7 
+
+Join our developers chat

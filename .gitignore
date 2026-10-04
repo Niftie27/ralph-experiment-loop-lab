@@ -1,0 +1,49 @@
+# RALPH publish hygiene
+#
+# Keep the GitHub repo as source code, Markdown knowledge, schemas, and small
+# generated reports. Large public-data caches and local app/runtime artifacts
+# stay local and can be regenerated.
+
+# Large market/archive data caches
+experiments/**/data/
+experiments/**/cache/
+experiments/**/.cache/
+experiments/**/tmp/
+experiments/**/runtime/
+**/binance-usdm-archive-cache/
+**/market-cache/
+**/aggtrades-cache/
+**/planned-level-aggtrades-cache/
+
+# Dependency/build/runtime folders
+node_modules/
+.venv/
+venv/
+dist/
+build/
+coverage/
+.pytest_cache/
+__pycache__/
+*.pyc
+
+# Local editor/app state
+.obsidian/
+.DS_Store
+
+# Secrets and credentials should never enter the RALPH repo
+.env
+.env.*
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+*secret*
+*credential*
+*cookie*
+*session*
+
+# Local archives and bulky source assets
+raw/assets/**/*.tar
+raw/assets/**/*.tar.gz
+raw/assets/**/*.zip
+raw/assets/**/*.ogg

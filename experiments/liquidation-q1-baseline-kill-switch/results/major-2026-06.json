@@ -1,0 +1,981 @@
+{
+  "generatedAt": "2026-07-02T08:15:00.959Z",
+  "input": {
+    "candleCount": 25905,
+    "liquidationCount": 208486,
+    "firstCandle": "2026-06-01T00:00:00.000Z",
+    "lastCandle": "2026-07-01T00:00:00.000Z",
+    "symbols": [
+      "BTC",
+      "ETH",
+      "SOL"
+    ]
+  },
+  "config": {
+    "cascadeWindowMinutes": 5,
+    "rollingLiquidationLookbackWindows": 288,
+    "minLiquidationNotionalMultiple": 3,
+    "minLiquidationNotionalUsd": 0,
+    "minSameDirectionEvents": 2,
+    "entryDelayCandles": 0,
+    "entryLookaheadCandles": 2,
+    "passiveLimitOffsetPct": 0.0025,
+    "partialFillFullDepthPct": 0.005,
+    "holdCandles": 6,
+    "cooldownCandles": 6,
+    "stopLossPct": 0.025,
+    "takeProfitPct": 0.035,
+    "feeBpsPerSide": 3.5,
+    "slippageBpsPerSide": 6.5,
+    "baselineMovePct": 0.015,
+    "drawdownLookbackCandles": 24,
+    "drawdownPct": 0.03,
+    "minEdgeBps": 10,
+    "minRiskAdjustedEdge": 0,
+    "maxWorstTradePct": -0.05,
+    "maxTail5Pct": -0.035,
+    "topOutlierCount": 1,
+    "minReturnWithoutTopOutliers": 0,
+    "maxWorstClusteredDayReturn": -0.08,
+    "minVolProxyObservations": 5,
+    "maxVolProxyCorrelation": 0.7,
+    "holdoutFraction": 0.3,
+    "minHoldoutTrades": 5
+  },
+  "signalCounts": {
+    "liquidationCascade": 1001,
+    "largeCandleReversal": 17,
+    "drawdownReversal": 241
+  },
+  "strategies": {
+    "liquidationCascade": {
+      "opportunities": 1001,
+      "trades": 483,
+      "fillRate": 0.4825174825174825,
+      "winRate": 0.35610766045548653,
+      "meanReturn": -0.0011484317361505694,
+      "meanFilledReturn": -0.0023800831633265422,
+      "medianReturn": 0,
+      "tail5PctReturn": -0.009576830195298763,
+      "worstReturn": -0.027000000000000107,
+      "totalReturnApprox": -1.14958016788672,
+      "totalReturnWithoutTopOutliers": -1.1649076938376086,
+      "worstClusteredDayReturn": -0.21999832363131502,
+      "sharpeLike": -7.853343794998966,
+      "sortinoLike": -4.42139242957541,
+      "riskAdjustedScore": -4.42139242957541,
+      "exitReasons": {
+        "missed": 518,
+        "time": 465,
+        "stop": 18
+      },
+      "clusteredDaysPreview": [
+        {
+          "day": "2026-06-01",
+          "return": -0.007775413784989696,
+          "opportunities": 44,
+          "fills": 14,
+          "symbols": [
+            "BTC",
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-02",
+          "return": -0.031111879288198502,
+          "opportunities": 51,
+          "fills": 25,
+          "symbols": [
+            "BTC",
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-03",
+          "return": -0.018258214479160737,
+          "opportunities": 45,
+          "fills": 33,
+          "symbols": [
+            "BTC",
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-04",
+          "return": -0.12038928785329059,
+          "opportunities": 67,
+          "fills": 40,
+          "symbols": [
+            "BTC",
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-05",
+          "return": -0.21999832363131502,
+          "opportunities": 84,
+          "fills": 51,
+          "symbols": [
+            "BTC",
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-06",
+          "return": -0.06964074117995443,
+          "opportunities": 35,
+          "fills": 15,
+          "symbols": [
+            "BTC",
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-07",
+          "return": -0.0494579335472017,
+          "opportunities": 44,
+          "fills": 20,
+          "symbols": [
+            "BTC",
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-08",
+          "return": 0.006356538638404666,
+          "opportunities": 40,
+          "fills": 18,
+          "symbols": [
+            "BTC",
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-09",
+          "return": -0.050989860364862145,
+          "opportunities": 42,
+          "fills": 20,
+          "symbols": [
+            "BTC",
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-10",
+          "return": -0.004262725310269183,
+          "opportunities": 45,
+          "fills": 25,
+          "symbols": [
+            "BTC",
+            "ETH",
+            "SOL"
+          ]
+        }
+      ],
+      "tradesPreview": [
+        {
+          "strategy": "liquidationCascade",
+          "symbol": "BTC",
+          "side": "long",
+          "signalTime": "2026-06-01T01:54:27.378Z",
+          "limitPrice": 73144.68000000001,
+          "triggerMovePct": -0.0010906909527185471,
+          "notionalUsd": 1268.17132,
+          "relativeThresholdUsd": 0,
+          "eventCount": 2,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        },
+        {
+          "strategy": "liquidationCascade",
+          "symbol": "BTC",
+          "side": "long",
+          "signalTime": "2026-06-01T03:03:01.986Z",
+          "limitPrice": 73636.44750000001,
+          "triggerMovePct": 0.0001352447930754666,
+          "notionalUsd": 15.502070000067151,
+          "relativeThresholdUsd": 0,
+          "eventCount": 2,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        },
+        {
+          "strategy": "liquidationCascade",
+          "symbol": "BTC",
+          "side": "long",
+          "signalTime": "2026-06-01T05:17:58.506Z",
+          "limitPrice": 73270.365,
+          "triggerMovePct": 0.000013618412093149939,
+          "notionalUsd": 3141.6275800000667,
+          "relativeThresholdUsd": 0,
+          "eventCount": 2,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        },
+        {
+          "strategy": "liquidationCascade",
+          "symbol": "BTC",
+          "side": "long",
+          "signalTime": "2026-06-01T06:13:13.239Z",
+          "limitPrice": 73070.865,
+          "triggerMovePct": -0.00012284341559292423,
+          "notionalUsd": 11503.130860000067,
+          "relativeThresholdUsd": 0,
+          "eventCount": 2,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        },
+        {
+          "strategy": "liquidationCascade",
+          "symbol": "BTC",
+          "side": "long",
+          "signalTime": "2026-06-01T06:41:08.540Z",
+          "limitPrice": 72906.27750000001,
+          "triggerMovePct": 0.0025625916434845763,
+          "notionalUsd": 63943.95513,
+          "relativeThresholdUsd": 0,
+          "eventCount": 43,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        },
+        {
+          "strategy": "liquidationCascade",
+          "symbol": "BTC",
+          "side": "long",
+          "signalTime": "2026-06-01T07:24:36.844Z",
+          "limitPrice": 72764.6325,
+          "triggerMovePct": -0.00001370444983486138,
+          "notionalUsd": 27379.19751000055,
+          "relativeThresholdUsd": 0,
+          "eventCount": 2,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        },
+        {
+          "strategy": "liquidationCascade",
+          "symbol": "BTC",
+          "side": "long",
+          "signalTime": "2026-06-01T08:29:34.348Z",
+          "limitPrice": 72462.39,
+          "triggerMovePct": 0.0012237209366277551,
+          "notionalUsd": 170.7124000004191,
+          "relativeThresholdUsd": 0,
+          "eventCount": 2,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        },
+        {
+          "strategy": "liquidationCascade",
+          "symbol": "BTC",
+          "side": "long",
+          "signalTime": "2026-06-01T10:05:51.728Z",
+          "limitPrice": 72585.0825,
+          "triggerMovePct": -0.0006454448076025159,
+          "notionalUsd": 12370.390000000523,
+          "relativeThresholdUsd": 0,
+          "eventCount": 2,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        },
+        {
+          "strategy": "liquidationCascade",
+          "symbol": "BTC",
+          "side": "long",
+          "signalTime": "2026-06-01T10:38:30.458Z",
+          "limitPrice": 72389.57250000001,
+          "triggerMovePct": 0.000633277347944602,
+          "notionalUsd": 354.3628000005398,
+          "relativeThresholdUsd": 0,
+          "eventCount": 2,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        },
+        {
+          "strategy": "liquidationCascade",
+          "symbol": "BTC",
+          "side": "long",
+          "signalTime": "2026-06-01T11:33:13.687Z",
+          "limitPrice": 72411.5175,
+          "triggerMovePct": 0.00005506759547344365,
+          "notionalUsd": 4679.7354800005405,
+          "relativeThresholdUsd": 0,
+          "eventCount": 2,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        }
+      ]
+    },
+    "largeCandleReversal": {
+      "opportunities": 17,
+      "trades": 12,
+      "fillRate": 0.7058823529411765,
+      "winRate": 0.4166666666666667,
+      "meanReturn": 0.001701812578084694,
+      "meanFilledReturn": 0.00241090115228665,
+      "medianReturn": 0,
+      "tail5PctReturn": -0.009479775637432122,
+      "worstReturn": -0.009632574398111904,
+      "totalReturnApprox": 0.0289308138274398,
+      "totalReturnWithoutTopOutliers": 0.012109724327911343,
+      "worstClusteredDayReturn": -0.017408580293997188,
+      "sharpeLike": 0.9367974976373835,
+      "sortinoLike": 1.2018468002012652,
+      "riskAdjustedScore": 1.2018468002012652,
+      "exitReasons": {
+        "time": 12,
+        "missed": 5
+      },
+      "clusteredDaysPreview": [
+        {
+          "day": "2026-06-04",
+          "return": -0.00011149364508888082,
+          "opportunities": 3,
+          "fills": 1,
+          "symbols": [
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-05",
+          "return": -0.017408580293997188,
+          "opportunities": 4,
+          "fills": 3,
+          "symbols": [
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-06",
+          "return": -0.003502824987518323,
+          "opportunities": 2,
+          "fills": 2,
+          "symbols": [
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-07",
+          "return": 0.041148134762074295,
+          "opportunities": 3,
+          "fills": 3,
+          "symbols": [
+            "BTC",
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-17",
+          "return": 0.018438152390081806,
+          "opportunities": 2,
+          "fills": 2,
+          "symbols": [
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-25",
+          "return": 0,
+          "opportunities": 1,
+          "fills": 0,
+          "symbols": [
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-26",
+          "return": 0,
+          "opportunities": 1,
+          "fills": 0,
+          "symbols": [
+            "ETH"
+          ]
+        },
+        {
+          "day": "2026-06-29",
+          "return": -0.009632574398111904,
+          "opportunities": 1,
+          "fills": 1,
+          "symbols": [
+            "ETH"
+          ]
+        }
+      ],
+      "tradesPreview": [
+        {
+          "strategy": "largeCandleReversal",
+          "symbol": "BTC",
+          "side": "short",
+          "signalTime": "2026-06-07T22:10:00.000Z",
+          "limitPrice": 63916.392499999994,
+          "triggerMovePct": 0.030849326585716826,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": true,
+          "fillFraction": 1,
+          "entryTime": "2026-06-07T22:15:00.000Z",
+          "exitTime": "2026-06-07T22:45:00.000Z",
+          "entry": 63916.392499999994,
+          "exit": 63147,
+          "grossReturn": 0.012037483185553605,
+          "netReturn": 0.010037483185553605,
+          "reason": "time"
+        },
+        {
+          "strategy": "largeCandleReversal",
+          "symbol": "ETH",
+          "side": "long",
+          "signalTime": "2026-06-04T02:00:00.000Z",
+          "limitPrice": 1716.0990000000002,
+          "triggerMovePct": -0.02188868042526579,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        },
+        {
+          "strategy": "largeCandleReversal",
+          "symbol": "ETH",
+          "side": "short",
+          "signalTime": "2026-06-05T16:10:00.000Z",
+          "limitPrice": 1590.1655,
+          "triggerMovePct": 0.01640394719979504,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": true,
+          "fillFraction": 1,
+          "entryTime": "2026-06-05T16:15:00.000Z",
+          "exitTime": "2026-06-05T16:45:00.000Z",
+          "entry": 1590.1655,
+          "exit": 1597.9,
+          "grossReturn": -0.004863959128782523,
+          "netReturn": -0.006863959128782523,
+          "reason": "time"
+        },
+        {
+          "strategy": "largeCandleReversal",
+          "symbol": "ETH",
+          "side": "short",
+          "signalTime": "2026-06-05T20:05:00.000Z",
+          "limitPrice": 1590.2657499999998,
+          "triggerMovePct": 0.016858974358974328,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": true,
+          "fillFraction": 0.6331331728675106,
+          "entryTime": "2026-06-05T20:15:00.000Z",
+          "exitTime": "2026-06-05T21:00:00.000Z",
+          "entry": 1590.2657499999998,
+          "exit": 1610.8,
+          "grossReturn": -0.012912464473312187,
+          "netReturn": -0.009441575947262176,
+          "reason": "time"
+        },
+        {
+          "strategy": "largeCandleReversal",
+          "symbol": "ETH",
+          "side": "short",
+          "signalTime": "2026-06-06T05:20:00.000Z",
+          "limitPrice": 1559.78975,
+          "triggerMovePct": 0.018059281554668676,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": true,
+          "fillFraction": 0.46291495376222064,
+          "entryTime": "2026-06-06T05:25:00.000Z",
+          "exitTime": "2026-06-06T05:55:00.000Z",
+          "entry": 1559.78975,
+          "exit": 1566.1,
+          "grossReturn": -0.004045577296555511,
+          "netReturn": -0.002798588134700925,
+          "reason": "time"
+        },
+        {
+          "strategy": "largeCandleReversal",
+          "symbol": "ETH",
+          "side": "short",
+          "signalTime": "2026-06-07T22:10:00.000Z",
+          "limitPrice": 1710.666,
+          "triggerMovePct": 0.04494794856093086,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": true,
+          "fillFraction": 1,
+          "entryTime": "2026-06-07T22:15:00.000Z",
+          "exitTime": "2026-06-07T22:45:00.000Z",
+          "entry": 1710.666,
+          "exit": 1682.8,
+          "grossReturn": 0.01628956207699223,
+          "netReturn": 0.014289562076992229,
+          "reason": "time"
+        },
+        {
+          "strategy": "largeCandleReversal",
+          "symbol": "ETH",
+          "side": "long",
+          "signalTime": "2026-06-17T18:00:00.000Z",
+          "limitPrice": 1752.5077500000002,
+          "triggerMovePct": -0.017338777336540073,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": true,
+          "fillFraction": 0.7883274695932505,
+          "entryTime": "2026-06-17T18:05:00.000Z",
+          "exitTime": "2026-06-17T18:35:00.000Z",
+          "entry": 1752.5077500000002,
+          "exit": 1772.5,
+          "grossReturn": 0.011407795486210993,
+          "netReturn": 0.007416423610095516,
+          "reason": "time"
+        },
+        {
+          "strategy": "largeCandleReversal",
+          "symbol": "ETH",
+          "side": "long",
+          "signalTime": "2026-06-26T02:10:00.000Z",
+          "limitPrice": 1517.796,
+          "triggerMovePct": -0.02129028108316726,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        },
+        {
+          "strategy": "largeCandleReversal",
+          "symbol": "ETH",
+          "side": "short",
+          "signalTime": "2026-06-29T17:10:00.000Z",
+          "limitPrice": 1619.53875,
+          "triggerMovePct": 0.01514389845419122,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": true,
+          "fillFraction": 1,
+          "entryTime": "2026-06-29T17:15:00.000Z",
+          "exitTime": "2026-06-29T17:45:00.000Z",
+          "entry": 1619.53875,
+          "exit": 1631.9,
+          "grossReturn": -0.007632574398111904,
+          "netReturn": -0.009632574398111904,
+          "reason": "time"
+        },
+        {
+          "strategy": "largeCandleReversal",
+          "symbol": "SOL",
+          "side": "long",
+          "signalTime": "2026-06-04T00:25:00.000Z",
+          "limitPrice": 70.329735,
+          "triggerMovePct": -0.015774191747166166,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": true,
+          "fillFraction": 0.11299630234634948,
+          "entryTime": "2026-06-04T00:35:00.000Z",
+          "exitTime": "2026-06-04T01:05:00.000Z",
+          "entry": 70.329735,
+          "exit": 70.401,
+          "grossReturn": 0.0010132982869905142,
+          "netReturn": -0.00011149364508888082,
+          "reason": "time"
+        }
+      ]
+    },
+    "drawdownReversal": {
+      "opportunities": 241,
+      "trades": 143,
+      "fillRate": 0.5933609958506224,
+      "winRate": 0.4965034965034965,
+      "meanReturn": -0.0007804567185579488,
+      "meanFilledReturn": -0.0013153151690382216,
+      "medianReturn": 0,
+      "tail5PctReturn": -0.012578496624693104,
+      "worstReturn": -0.027000000000000114,
+      "totalReturnApprox": -0.18809006917246568,
+      "totalReturnWithoutTopOutliers": -0.2108125401699037,
+      "worstClusteredDayReturn": -0.08126952195570565,
+      "sharpeLike": -1.892767510585714,
+      "sortinoLike": -1.2245532810489363,
+      "riskAdjustedScore": -1.2245532810489363,
+      "exitReasons": {
+        "missed": 98,
+        "time": 137,
+        "stop": 6
+      },
+      "clusteredDaysPreview": [
+        {
+          "day": "2026-06-02",
+          "return": 0.014040559682785307,
+          "opportunities": 7,
+          "fills": 6,
+          "symbols": [
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-03",
+          "return": 0.0007193434439368453,
+          "opportunities": 11,
+          "fills": 4,
+          "symbols": [
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-04",
+          "return": -0.08126952195570565,
+          "opportunities": 29,
+          "fills": 16,
+          "symbols": [
+            "BTC",
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-05",
+          "return": 0.0035831762957139624,
+          "opportunities": 56,
+          "fills": 37,
+          "symbols": [
+            "BTC",
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-06",
+          "return": -0.012286227017300894,
+          "opportunities": 17,
+          "fills": 14,
+          "symbols": [
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-07",
+          "return": 0.040725674113876356,
+          "opportunities": 10,
+          "fills": 8,
+          "symbols": [
+            "BTC",
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-08",
+          "return": -0.006088392815994574,
+          "opportunities": 1,
+          "fills": 1,
+          "symbols": [
+            "ETH"
+          ]
+        },
+        {
+          "day": "2026-06-09",
+          "return": 0,
+          "opportunities": 3,
+          "fills": 0,
+          "symbols": [
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-10",
+          "return": 0.000302621756144684,
+          "opportunities": 3,
+          "fills": 1,
+          "symbols": [
+            "ETH",
+            "SOL"
+          ]
+        },
+        {
+          "day": "2026-06-11",
+          "return": 0.002013191235269723,
+          "opportunities": 8,
+          "fills": 2,
+          "symbols": [
+            "ETH",
+            "SOL"
+          ]
+        }
+      ],
+      "tradesPreview": [
+        {
+          "strategy": "drawdownReversal",
+          "symbol": "BTC",
+          "side": "long",
+          "signalTime": "2026-06-04T00:35:00.000Z",
+          "limitPrice": 62940.255000000005,
+          "triggerMovePct": -0.03266951815910101,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        },
+        {
+          "strategy": "drawdownReversal",
+          "symbol": "BTC",
+          "side": "long",
+          "signalTime": "2026-06-04T01:20:00.000Z",
+          "limitPrice": 62412.57750000001,
+          "triggerMovePct": -0.03158953722334004,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        },
+        {
+          "strategy": "drawdownReversal",
+          "symbol": "BTC",
+          "side": "long",
+          "signalTime": "2026-06-04T01:50:00.000Z",
+          "limitPrice": 62060.46000000001,
+          "triggerMovePct": -0.03410802167264372,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": true,
+          "fillFraction": 1,
+          "entryTime": "2026-06-04T02:00:00.000Z",
+          "exitTime": "2026-06-04T02:30:00.000Z",
+          "entry": 62060.46000000001,
+          "exit": 63259,
+          "grossReturn": 0.019312457561545524,
+          "netReturn": 0.01731245756154552,
+          "reason": "time"
+        },
+        {
+          "strategy": "drawdownReversal",
+          "symbol": "BTC",
+          "side": "short",
+          "signalTime": "2026-06-04T02:30:00.000Z",
+          "limitPrice": 63417.1475,
+          "triggerMovePct": 0.031183777263391256,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": true,
+          "fillFraction": 0.17614321110863862,
+          "entryTime": "2026-06-04T02:40:00.000Z",
+          "exitTime": "2026-06-04T03:10:00.000Z",
+          "entry": 63417.1475,
+          "exit": 63933,
+          "grossReturn": -0.008134274724355914,
+          "netReturn": -0.0017850836922051643,
+          "reason": "time"
+        },
+        {
+          "strategy": "drawdownReversal",
+          "symbol": "BTC",
+          "side": "short",
+          "signalTime": "2026-06-04T03:00:00.000Z",
+          "limitPrice": 63841.204999999994,
+          "triggerMovePct": 0.03807909236136015,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": true,
+          "fillFraction": 0.4379459942838032,
+          "entryTime": "2026-06-04T03:05:00.000Z",
+          "exitTime": "2026-06-04T03:35:00.000Z",
+          "entry": 63841.204999999994,
+          "exit": 64460,
+          "grossReturn": -0.009692721182189553,
+          "netReturn": -0.005120780404017291,
+          "reason": "time"
+        },
+        {
+          "strategy": "drawdownReversal",
+          "symbol": "BTC",
+          "side": "short",
+          "signalTime": "2026-06-04T03:30:00.000Z",
+          "limitPrice": 64586.0625,
+          "triggerMovePct": 0.050190721481433186,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        },
+        {
+          "strategy": "drawdownReversal",
+          "symbol": "BTC",
+          "side": "short",
+          "signalTime": "2026-06-04T04:00:00.000Z",
+          "limitPrice": 64653.229999999996,
+          "triggerMovePct": 0.05128288722981123,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": true,
+          "fillFraction": 0.1168387101464353,
+          "entryTime": "2026-06-04T04:15:00.000Z",
+          "exitTime": "2026-06-04T04:45:00.000Z",
+          "entry": 64653.229999999996,
+          "exit": 64322,
+          "grossReturn": 0.00512317791392628,
+          "netReturn": 0.00036490807902098105,
+          "reason": "time"
+        },
+        {
+          "strategy": "drawdownReversal",
+          "symbol": "BTC",
+          "side": "short",
+          "signalTime": "2026-06-04T13:35:00.000Z",
+          "limitPrice": 64302.354999999996,
+          "triggerMovePct": 0.03170288398127744,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": false,
+          "fillFraction": 0,
+          "netReturn": 0,
+          "grossReturn": 0,
+          "reason": "missed"
+        },
+        {
+          "strategy": "drawdownReversal",
+          "symbol": "BTC",
+          "side": "short",
+          "signalTime": "2026-06-04T14:05:00.000Z",
+          "limitPrice": 64437.6925,
+          "triggerMovePct": 0.030740859525336756,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": true,
+          "fillFraction": 0.08165252037851176,
+          "entryTime": "2026-06-04T14:10:00.000Z",
+          "exitTime": "2026-06-04T14:40:00.000Z",
+          "entry": 64437.6925,
+          "exit": 63970,
+          "grossReturn": 0.007258057851776697,
+          "netReturn": 0.0004293336758935905,
+          "reason": "time"
+        },
+        {
+          "strategy": "drawdownReversal",
+          "symbol": "BTC",
+          "side": "long",
+          "signalTime": "2026-06-05T06:15:00.000Z",
+          "limitPrice": 61637.520000000004,
+          "triggerMovePct": -0.030059491107727564,
+          "notionalUsd": null,
+          "relativeThresholdUsd": null,
+          "eventCount": null,
+          "filled": true,
+          "fillFraction": 1,
+          "entryTime": "2026-06-05T06:20:00.000Z",
+          "exitTime": "2026-06-05T06:50:00.000Z",
+          "entry": 61637.520000000004,
+          "exit": 61958,
+          "grossReturn": 0.00519943047676149,
+          "netReturn": 0.00319943047676149,
+          "reason": "time"
+        }
+      ]
+    }
+  },
+  "diagnostics": {
+    "volatilityProxyCorrelation": 0.09313498721108861,
+    "crossAssetCascadeClustering": {
+      "evaluated": true,
+      "symbols": [
+        "BTC",
+        "ETH",
+        "SOL"
+      ],
+      "clusteredShare": 0.5604395604395604
+    }
+  },
+  "verdict": {
+    "decision": "do_not_build",
+    "edgeVsBestBaseline": -0.0028502443142352637,
+    "riskAdjustedEdgeVsBestBaseline": -5.623239229776675,
+    "bestBaselineMeanReturn": 0.001701812578084694,
+    "bestBaselineRiskAdjusted": 1.2018468002012652,
+    "blockers": [
+      "liquidation EV is not positive after costs",
+      "liquidation signal does not beat dumb baselines by minEdgeBps",
+      "liquidation signal does not beat dumb baselines risk-adjusted",
+      "PnL depends on top outlier wins",
+      "one clustered-loss day breaches threshold"
+    ]
+  }
+}

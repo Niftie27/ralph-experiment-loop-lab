@@ -1,0 +1,452 @@
+{
+  "generated": "2026-10-04T08:04:29.910Z",
+  "status": "complete",
+  "source": "paper/signals.json",
+  "outputs": {
+    "json": "results/paper-signal-precision-repair.json",
+    "markdown": "results/paper-signal-precision-repair.md"
+  },
+  "summary": {
+    "status": "complete",
+    "repairedAt": "2026-10-04T08:04:29.907Z",
+    "priceDigits": 8,
+    "beforeBadRisk": 0,
+    "afterBadRisk": 0,
+    "repaired": 66,
+    "skipped": 0,
+    "boundaries": [
+      "research_only",
+      "no_live_execution",
+      "no_exchange_keys",
+      "no_paid_apis",
+      "no_tradingview_automation",
+      "no_alert_wording_threshold_watcher_or_sizing_changes"
+    ]
+  },
+  "bySymbolTimeframe": [
+    {
+      "key": "DOGE:4h",
+      "count": 34
+    },
+    {
+      "key": "DOGE:1h",
+      "count": 15
+    },
+    {
+      "key": "ADA:1h",
+      "count": 11
+    },
+    {
+      "key": "ADA:4h",
+      "count": 6
+    }
+  ],
+  "sampleRepairs": [
+    {
+      "id": "DOGE:1h:range_breakout_long:1790020800",
+      "symbol": "DOGE",
+      "timeframe": "1h",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "openedAt": 1790020800,
+      "original": {
+        "entry": 0.10018,
+        "stop": 0.09739343,
+        "target": 0.10519583
+      },
+      "repaired": {
+        "entry": 0.10018,
+        "stop": 0.09739343,
+        "target": 0.10519583
+      },
+      "riskPctBefore": 0.02781563,
+      "riskPctAfter": 0.02781563
+    },
+    {
+      "id": "DOGE:4h:range_breakout_long:1790006400",
+      "symbol": "DOGE",
+      "timeframe": "4h",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "openedAt": 1790006400,
+      "original": {
+        "entry": 0.09854,
+        "stop": 0.095306,
+        "target": 0.1043612
+      },
+      "repaired": {
+        "entry": 0.09854,
+        "stop": 0.095306,
+        "target": 0.1043612
+      },
+      "riskPctBefore": 0.03281916,
+      "riskPctAfter": 0.03281916
+    },
+    {
+      "id": "DOGE:4h:range_breakout_long:1789992000",
+      "symbol": "DOGE",
+      "timeframe": "4h",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "openedAt": 1789992000,
+      "original": {
+        "entry": 0.09733,
+        "stop": 0.09433857,
+        "target": 0.10271457
+      },
+      "repaired": {
+        "entry": 0.09733,
+        "stop": 0.09433857,
+        "target": 0.10271457
+      },
+      "riskPctBefore": 0.03073492,
+      "riskPctAfter": 0.03073492
+    },
+    {
+      "id": "ADA:4h:range_breakout_long:1789992000",
+      "symbol": "ADA",
+      "timeframe": "4h",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "openedAt": 1789992000,
+      "original": {
+        "entry": 0.2448,
+        "stop": 0.23679429,
+        "target": 0.25921029
+      },
+      "repaired": {
+        "entry": 0.2448,
+        "stop": 0.23679429,
+        "target": 0.25921029
+      },
+      "riskPctBefore": 0.03270306,
+      "riskPctAfter": 0.03270306
+    },
+    {
+      "id": "DOGE:4h:range_breakout_long:1789977600",
+      "symbol": "DOGE",
+      "timeframe": "4h",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "openedAt": 1789977600,
+      "original": {
+        "entry": 0.09336,
+        "stop": 0.09071314,
+        "target": 0.09812434
+      },
+      "repaired": {
+        "entry": 0.09336,
+        "stop": 0.09071314,
+        "target": 0.09812434
+      },
+      "riskPctBefore": 0.02835111,
+      "riskPctAfter": 0.02835111
+    },
+    {
+      "id": "DOGE:1h:momentum_reversal_short:1789934400",
+      "symbol": "DOGE",
+      "timeframe": "1h",
+      "setup": "momentum_reversal_short",
+      "direction": "short",
+      "openedAt": 1789934400,
+      "original": {
+        "entry": 0.08735,
+        "stop": 0.08831171,
+        "target": 0.08561891
+      },
+      "repaired": {
+        "entry": 0.08735,
+        "stop": 0.08831171,
+        "target": 0.08561891
+      },
+      "riskPctBefore": 0.01100985,
+      "riskPctAfter": 0.01100985
+    },
+    {
+      "id": "ADA:1h:momentum_reversal_short:1789934400",
+      "symbol": "ADA",
+      "timeframe": "1h",
+      "setup": "momentum_reversal_short",
+      "direction": "short",
+      "openedAt": 1789934400,
+      "original": {
+        "entry": 0.227,
+        "stop": 0.23078,
+        "target": 0.220196
+      },
+      "repaired": {
+        "entry": 0.227,
+        "stop": 0.23078,
+        "target": 0.220196
+      },
+      "riskPctBefore": 0.01665198,
+      "riskPctAfter": 0.01665198
+    },
+    {
+      "id": "DOGE:4h:trend_pullback_reclaim_long:1789920000",
+      "symbol": "DOGE",
+      "timeframe": "4h",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "openedAt": 1789920000,
+      "original": {
+        "entry": 0.08738,
+        "stop": 0.08506914,
+        "target": 0.09153954
+      },
+      "repaired": {
+        "entry": 0.08738,
+        "stop": 0.08506914,
+        "target": 0.09153954
+      },
+      "riskPctBefore": 0.0264461,
+      "riskPctAfter": 0.0264461
+    },
+    {
+      "id": "DOGE:4h:trend_pullback_reclaim_long:1789905600",
+      "symbol": "DOGE",
+      "timeframe": "4h",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "openedAt": 1789905600,
+      "original": {
+        "entry": 0.08582,
+        "stop": 0.083462,
+        "target": 0.0900644
+      },
+      "repaired": {
+        "entry": 0.08582,
+        "stop": 0.083462,
+        "target": 0.0900644
+      },
+      "riskPctBefore": 0.02747611,
+      "riskPctAfter": 0.02747611
+    },
+    {
+      "id": "DOGE:4h:range_breakout_long:1789819200",
+      "symbol": "DOGE",
+      "timeframe": "4h",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "openedAt": 1789819200,
+      "original": {
+        "entry": 0.08894,
+        "stop": 0.08681257,
+        "target": 0.09276937
+      },
+      "repaired": {
+        "entry": 0.08894,
+        "stop": 0.08681257,
+        "target": 0.09276937
+      },
+      "riskPctBefore": 0.02391983,
+      "riskPctAfter": 0.02391983
+    },
+    {
+      "id": "DOGE:4h:momentum_reversal_short:1789790400",
+      "symbol": "DOGE",
+      "timeframe": "4h",
+      "setup": "momentum_reversal_short",
+      "direction": "short",
+      "openedAt": 1789790400,
+      "original": {
+        "entry": 0.0867,
+        "stop": 0.08864229,
+        "target": 0.08320389
+      },
+      "repaired": {
+        "entry": 0.0867,
+        "stop": 0.08864229,
+        "target": 0.08320389
+      },
+      "riskPctBefore": 0.02240242,
+      "riskPctAfter": 0.02240242
+    },
+    {
+      "id": "DOGE:4h:momentum_reversal_short:1789761600",
+      "symbol": "DOGE",
+      "timeframe": "4h",
+      "setup": "momentum_reversal_short",
+      "direction": "short",
+      "openedAt": 1789761600,
+      "original": {
+        "entry": 0.08747,
+        "stop": 0.08939171,
+        "target": 0.08401091
+      },
+      "repaired": {
+        "entry": 0.08747,
+        "stop": 0.08939171,
+        "target": 0.08401091
+      },
+      "riskPctBefore": 0.02196993,
+      "riskPctAfter": 0.02196993
+    },
+    {
+      "id": "DOGE:4h:range_breakout_long:1789732800",
+      "symbol": "DOGE",
+      "timeframe": "4h",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "openedAt": 1789732800,
+      "original": {
+        "entry": 0.08751,
+        "stop": 0.08555229,
+        "target": 0.09103389
+      },
+      "repaired": {
+        "entry": 0.08751,
+        "stop": 0.08555229,
+        "target": 0.09103389
+      },
+      "riskPctBefore": 0.02237127,
+      "riskPctAfter": 0.02237127
+    },
+    {
+      "id": "DOGE:4h:range_breakout_long:1789718400",
+      "symbol": "DOGE",
+      "timeframe": "4h",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "openedAt": 1789718400,
+      "original": {
+        "entry": 0.08535,
+        "stop": 0.08356114,
+        "target": 0.08856994
+      },
+      "repaired": {
+        "entry": 0.08535,
+        "stop": 0.08356114,
+        "target": 0.08856994
+      },
+      "riskPctBefore": 0.02095911,
+      "riskPctAfter": 0.02095911
+    },
+    {
+      "id": "DOGE:4h:momentum_reversal_short:1789704000",
+      "symbol": "DOGE",
+      "timeframe": "4h",
+      "setup": "momentum_reversal_short",
+      "direction": "short",
+      "openedAt": 1789704000,
+      "original": {
+        "entry": 0.08446,
+        "stop": 0.08609286,
+        "target": 0.08152086
+      },
+      "repaired": {
+        "entry": 0.08446,
+        "stop": 0.08609286,
+        "target": 0.08152086
+      },
+      "riskPctBefore": 0.01933294,
+      "riskPctAfter": 0.01933294
+    },
+    {
+      "id": "ADA:1h:trend_pullback_reject_short:1789596000",
+      "symbol": "ADA",
+      "timeframe": "1h",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "openedAt": 1789596000,
+      "original": {
+        "entry": 0.1927,
+        "stop": 0.19569143,
+        "target": 0.18731543
+      },
+      "repaired": {
+        "entry": 0.1927,
+        "stop": 0.19569143,
+        "target": 0.18731543
+      },
+      "riskPctBefore": 0.01552377,
+      "riskPctAfter": 0.01552377
+    },
+    {
+      "id": "DOGE:4h:range_breakdown_short:1789473600",
+      "symbol": "DOGE",
+      "timeframe": "4h",
+      "setup": "range_breakdown_short",
+      "direction": "short",
+      "openedAt": 1789473600,
+      "original": {
+        "entry": 0.08169,
+        "stop": 0.08345571,
+        "target": 0.07851171
+      },
+      "repaired": {
+        "entry": 0.08169,
+        "stop": 0.08345571,
+        "target": 0.07851171
+      },
+      "riskPctBefore": 0.02161476,
+      "riskPctAfter": 0.02161476
+    },
+    {
+      "id": "ADA:4h:trend_pullback_reject_short:1789430400",
+      "symbol": "ADA",
+      "timeframe": "4h",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "openedAt": 1789430400,
+      "original": {
+        "entry": 0.2052,
+        "stop": 0.21049714,
+        "target": 0.19566514
+      },
+      "repaired": {
+        "entry": 0.2052,
+        "stop": 0.21049714,
+        "target": 0.19566514
+      },
+      "riskPctBefore": 0.02581452,
+      "riskPctAfter": 0.02581452
+    },
+    {
+      "id": "DOGE:4h:trend_pullback_reject_short:1789416000",
+      "symbol": "DOGE",
+      "timeframe": "4h",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "openedAt": 1789416000,
+      "original": {
+        "entry": 0.08366,
+        "stop": 0.08518057,
+        "target": 0.08092297
+      },
+      "repaired": {
+        "entry": 0.08366,
+        "stop": 0.08518057,
+        "target": 0.08092297
+      },
+      "riskPctBefore": 0.01817559,
+      "riskPctAfter": 0.01817559
+    },
+    {
+      "id": "DOGE:4h:trend_pullback_reject_short:1789372800",
+      "symbol": "DOGE",
+      "timeframe": "4h",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "openedAt": 1789372800,
+      "original": {
+        "entry": 0.08412,
+        "stop": 0.08533114,
+        "target": 0.08193994
+      },
+      "repaired": {
+        "entry": 0.08412,
+        "stop": 0.08533114,
+        "target": 0.08193994
+      },
+      "riskPctBefore": 0.01439777,
+      "riskPctAfter": 0.01439777
+    }
+  ],
+  "skipped": [],
+  "limitations": [
+    "This reconstructs detector paper-signal prices from cached entry candles and ATR14; it does not fetch new data.",
+    "Existing paper-dashboard resultR fields are not used by DEMO-SIM replay and are not re-scored here.",
+    "This repairs measurement precision only; it does not change live watcher behavior, thresholds, sizing, or execution."
+  ]
+}

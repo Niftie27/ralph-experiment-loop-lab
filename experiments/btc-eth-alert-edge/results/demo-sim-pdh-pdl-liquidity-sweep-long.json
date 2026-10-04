@@ -1,0 +1,516 @@
+{
+  "generated": "2026-09-26T17:19:07.392Z",
+  "status": "survives_first_kill_test",
+  "candidate": "pdh-pdl-btc-gated-liquidity-sweep-long",
+  "sourceData": {
+    "candleDir": "data/candles",
+    "timeframe": "1h",
+    "symbolsLoaded": [
+      {
+        "symbol": "ETH",
+        "rows": 4303
+      },
+      {
+        "symbol": "SOL",
+        "rows": 4303
+      },
+      {
+        "symbol": "BNB",
+        "rows": 4303
+      },
+      {
+        "symbol": "XRP",
+        "rows": 4303
+      },
+      {
+        "symbol": "DOGE",
+        "rows": 4303
+      },
+      {
+        "symbol": "ADA",
+        "rows": 4303
+      },
+      {
+        "symbol": "LINK",
+        "rows": 4303
+      },
+      {
+        "symbol": "AVAX",
+        "rows": 4303
+      }
+    ],
+    "symbolsMissing": [],
+    "btcGate": "BTC_RISK_ON only, using close/MA20/MA50 classifier shared with historical DEMO-SIM replay.",
+    "sessionDefinition": "UTC calendar day; prior day levels require at least 12 hourly candles."
+  },
+  "boundaries": [
+    "research_only",
+    "no_live_alert_changes",
+    "no_scheduler_changes",
+    "no_keys_accounts_or_paid_services",
+    "no_sizing_or_execution_changes",
+    "no_strategy_promotion"
+  ],
+  "assumptions": {
+    "primaryRule": "Long only when an alt 1h candle sweeps below PDL and closes back above PDL, or trades below PDH and closes back above PDH, while BTC gate is BTC_RISK_ON.",
+    "entry": "candidate candle close",
+    "exit": "12 bars later at close",
+    "feesAndSlippage": "4 bps fee plus 2 bps slippage per side, subtracted as fixed round-trip cost.",
+    "fitWindow": "2026-08",
+    "forwardWindow": "2026-09, with first 24h embargoed after fit boundary",
+    "noTradeBaseline": "0 trades, 0 PnL, 0 drawdown",
+    "touchBaseline": "Timestamp-matched long hold after touching PDH/PDL under the same BTC_RISK_ON gate, without reclaim requirement."
+  },
+  "results": {
+    "sweepReclaim": {
+      "overall": {
+        "trades": 1066,
+        "wins": 399,
+        "losses": 667,
+        "winrate": 0.374296,
+        "avgNetReturn": -0.002124,
+        "netPnlPer10kUsd": -22645.05,
+        "profitFactor": 0.7781,
+        "endingEquityUsd": -12645.05,
+        "maxDrawdownUsd": 47352.84,
+        "maxDrawdownPct": 2.394401,
+        "maxDrawdownAt": "2026-08-18T11:00:00.000Z"
+      },
+      "fit": {
+        "trades": 225,
+        "wins": 88,
+        "losses": 137,
+        "winrate": 0.391111,
+        "avgNetReturn": 0.001691,
+        "netPnlPer10kUsd": 3803.81,
+        "profitFactor": 1.1618,
+        "endingEquityUsd": 13803.81,
+        "maxDrawdownUsd": 14954.8,
+        "maxDrawdownPct": 0.520011,
+        "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+      },
+      "forward": {
+        "trades": 99,
+        "wins": 60,
+        "losses": 39,
+        "winrate": 0.606061,
+        "avgNetReturn": 0.007116,
+        "netPnlPer10kUsd": 7044.59,
+        "profitFactor": 1.6579,
+        "endingEquityUsd": 17044.59,
+        "maxDrawdownUsd": 4919.25,
+        "maxDrawdownPct": 0.224808,
+        "maxDrawdownAt": "2026-09-23T18:00:00.000Z"
+      },
+      "embargoedTrades": 6
+    },
+    "touchBaseline": {
+      "overall": {
+        "trades": 2234,
+        "wins": 914,
+        "losses": 1320,
+        "winrate": 0.409132,
+        "avgNetReturn": -0.001313,
+        "netPnlPer10kUsd": -29341.85,
+        "profitFactor": 0.85,
+        "endingEquityUsd": -19341.85,
+        "maxDrawdownUsd": 64046.59,
+        "maxDrawdownPct": 2.22621,
+        "maxDrawdownAt": "2026-08-06T14:00:00.000Z"
+      },
+      "fit": {
+        "trades": 483,
+        "wins": 201,
+        "losses": 282,
+        "winrate": 0.416149,
+        "avgNetReturn": 0.001379,
+        "netPnlPer10kUsd": 6661.45,
+        "profitFactor": 1.155,
+        "endingEquityUsd": 16661.45,
+        "maxDrawdownUsd": 24592.49,
+        "maxDrawdownPct": 0.596125,
+        "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+      },
+      "forward": {
+        "trades": 191,
+        "wins": 106,
+        "losses": 85,
+        "winrate": 0.554974,
+        "avgNetReturn": 0.003278,
+        "netPnlPer10kUsd": 6260.02,
+        "profitFactor": 1.2966,
+        "endingEquityUsd": 16260.02,
+        "maxDrawdownUsd": 8940.7,
+        "maxDrawdownPct": 0.355935,
+        "maxDrawdownAt": "2026-09-25T23:00:00.000Z"
+      },
+      "embargoedTrades": 12
+    },
+    "baselineLift": {
+      "forwardNetPnlPer10kUsd": 784.57,
+      "forwardProfitFactorDelta": 0.3613
+    },
+    "breakdowns": {
+      "sweepForwardBySymbol": [
+        {
+          "key": "ADA",
+          "trades": 24,
+          "wins": 10,
+          "losses": 14,
+          "winrate": 0.416667,
+          "avgNetReturn": -0.010234,
+          "netPnlPer10kUsd": -2456.16,
+          "profitFactor": 0.4755,
+          "endingEquityUsd": 7543.84,
+          "maxDrawdownUsd": 2521.16,
+          "maxDrawdownPct": 0.250488,
+          "maxDrawdownAt": "2026-09-23T18:00:00.000Z"
+        },
+        {
+          "key": "XRP",
+          "trades": 16,
+          "wins": 11,
+          "losses": 5,
+          "winrate": 0.6875,
+          "avgNetReturn": 0.012467,
+          "netPnlPer10kUsd": 1994.69,
+          "profitFactor": 2.2711,
+          "endingEquityUsd": 11994.69,
+          "maxDrawdownUsd": 1517.8,
+          "maxDrawdownPct": 0.112326,
+          "maxDrawdownAt": "2026-09-23T18:00:00.000Z"
+        },
+        {
+          "key": "LINK",
+          "trades": 13,
+          "wins": 8,
+          "losses": 5,
+          "winrate": 0.615385,
+          "avgNetReturn": 0.014526,
+          "netPnlPer10kUsd": 1888.37,
+          "profitFactor": 2.609,
+          "endingEquityUsd": 11888.37,
+          "maxDrawdownUsd": 754.79,
+          "maxDrawdownPct": 0.073195,
+          "maxDrawdownAt": "2026-09-04T22:00:00.000Z"
+        },
+        {
+          "key": "ETH",
+          "trades": 12,
+          "wins": 6,
+          "losses": 6,
+          "winrate": 0.5,
+          "avgNetReturn": 0.000517,
+          "netPnlPer10kUsd": 62.04,
+          "profitFactor": 1.053,
+          "endingEquityUsd": 10062.04,
+          "maxDrawdownUsd": 453.49,
+          "maxDrawdownPct": 0.043743,
+          "maxDrawdownAt": "2026-09-15T05:00:00.000Z"
+        },
+        {
+          "key": "AVAX",
+          "trades": 11,
+          "wins": 10,
+          "losses": 1,
+          "winrate": 0.909091,
+          "avgNetReturn": 0.033934,
+          "netPnlPer10kUsd": 3732.77,
+          "profitFactor": 83.7433,
+          "endingEquityUsd": 13732.77,
+          "maxDrawdownUsd": 45.11,
+          "maxDrawdownPct": 0.004103,
+          "maxDrawdownAt": "2026-09-15T04:00:00.000Z"
+        },
+        {
+          "key": "DOGE",
+          "trades": 9,
+          "wins": 5,
+          "losses": 4,
+          "winrate": 0.555556,
+          "avgNetReturn": -0.0037,
+          "netPnlPer10kUsd": -333.03,
+          "profitFactor": 0.7264,
+          "endingEquityUsd": 9666.97,
+          "maxDrawdownUsd": 1216.99,
+          "maxDrawdownPct": 0.112662,
+          "maxDrawdownAt": "2026-09-20T04:00:00.000Z"
+        },
+        {
+          "key": "BNB",
+          "trades": 8,
+          "wins": 6,
+          "losses": 2,
+          "winrate": 0.75,
+          "avgNetReturn": 0.014355,
+          "netPnlPer10kUsd": 1148.42,
+          "profitFactor": 5.2803,
+          "endingEquityUsd": 11148.42,
+          "maxDrawdownUsd": 268.3,
+          "maxDrawdownPct": 0.024115,
+          "maxDrawdownAt": "2026-09-20T01:00:00.000Z"
+        },
+        {
+          "key": "SOL",
+          "trades": 6,
+          "wins": 4,
+          "losses": 2,
+          "winrate": 0.666667,
+          "avgNetReturn": 0.016792,
+          "netPnlPer10kUsd": 1007.5,
+          "profitFactor": 2.7316,
+          "endingEquityUsd": 11007.5,
+          "maxDrawdownUsd": 441.18,
+          "maxDrawdownPct": 0.038536,
+          "maxDrawdownAt": "2026-09-23T16:00:00.000Z"
+        }
+      ],
+      "sweepForwardByEventType": [
+        {
+          "key": "pdh_reclaim_long",
+          "trades": 97,
+          "wins": 58,
+          "losses": 39,
+          "winrate": 0.597938,
+          "avgNetReturn": 0.006955,
+          "netPnlPer10kUsd": 6746.43,
+          "profitFactor": 1.6301,
+          "endingEquityUsd": 16746.43,
+          "maxDrawdownUsd": 4919.25,
+          "maxDrawdownPct": 0.227913,
+          "maxDrawdownAt": "2026-09-23T18:00:00.000Z"
+        },
+        {
+          "key": "pdl_sweep_reclaim_long",
+          "trades": 2,
+          "wins": 2,
+          "losses": 0,
+          "winrate": 1,
+          "avgNetReturn": 0.014908,
+          "netPnlPer10kUsd": 298.17,
+          "profitFactor": null,
+          "endingEquityUsd": 10298.17,
+          "maxDrawdownUsd": 0,
+          "maxDrawdownPct": 0,
+          "maxDrawdownAt": null
+        }
+      ],
+      "sweepAllByMonth": [
+        {
+          "key": "2026-08",
+          "trades": 225,
+          "wins": 88,
+          "losses": 137,
+          "winrate": 0.391111,
+          "avgNetReturn": 0.001691,
+          "netPnlPer10kUsd": 3803.81,
+          "profitFactor": 1.1618,
+          "endingEquityUsd": 13803.81,
+          "maxDrawdownUsd": 14954.8,
+          "maxDrawdownPct": 0.520011,
+          "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+        },
+        {
+          "key": "2026-05",
+          "trades": 204,
+          "wins": 80,
+          "losses": 124,
+          "winrate": 0.392157,
+          "avgNetReturn": -0.002675,
+          "netPnlPer10kUsd": -5457.52,
+          "profitFactor": 0.5865,
+          "endingEquityUsd": 4542.48,
+          "maxDrawdownUsd": 6008.23,
+          "maxDrawdownPct": 0.569462,
+          "maxDrawdownAt": "2026-05-31T16:00:00.000Z"
+        },
+        {
+          "key": "2026-04",
+          "trades": 202,
+          "wins": 67,
+          "losses": 135,
+          "winrate": 0.331683,
+          "avgNetReturn": -0.004737,
+          "netPnlPer10kUsd": -9567.83,
+          "profitFactor": 0.5786,
+          "endingEquityUsd": 432.17,
+          "maxDrawdownUsd": 19344.31,
+          "maxDrawdownPct": 0.978147,
+          "maxDrawdownAt": "2026-04-27T16:00:00.000Z"
+        },
+        {
+          "key": "2026-07",
+          "trades": 190,
+          "wins": 57,
+          "losses": 133,
+          "winrate": 0.3,
+          "avgNetReturn": -0.006655,
+          "netPnlPer10kUsd": -12644.19,
+          "profitFactor": 0.3408,
+          "endingEquityUsd": -2644.19,
+          "maxDrawdownUsd": 14789.2,
+          "maxDrawdownPct": 1.217718,
+          "maxDrawdownAt": "2026-07-31T10:00:00.000Z"
+        },
+        {
+          "key": "2026-06",
+          "trades": 140,
+          "wins": 46,
+          "losses": 94,
+          "winrate": 0.328571,
+          "avgNetReturn": -0.003737,
+          "netPnlPer10kUsd": -5231.91,
+          "profitFactor": 0.5696,
+          "endingEquityUsd": 4768.09,
+          "maxDrawdownUsd": 6075.29,
+          "maxDrawdownPct": 0.567414,
+          "maxDrawdownAt": "2026-06-28T04:00:00.000Z"
+        },
+        {
+          "key": "2026-09",
+          "trades": 105,
+          "wins": 61,
+          "losses": 44,
+          "winrate": 0.580952,
+          "avgNetReturn": 0.006145,
+          "netPnlPer10kUsd": 6452.59,
+          "profitFactor": 1.5699,
+          "endingEquityUsd": 16452.59,
+          "maxDrawdownUsd": 4919.25,
+          "maxDrawdownPct": 0.231059,
+          "maxDrawdownAt": "2026-09-23T18:00:00.000Z"
+        }
+      ],
+      "touchForwardBySymbol": [
+        {
+          "key": "ADA",
+          "trades": 45,
+          "wins": 19,
+          "losses": 26,
+          "winrate": 0.422222,
+          "avgNetReturn": -0.007104,
+          "netPnlPer10kUsd": -3196.63,
+          "profitFactor": 0.5635,
+          "endingEquityUsd": 6803.37,
+          "maxDrawdownUsd": 3350.92,
+          "maxDrawdownPct": 0.330001,
+          "maxDrawdownAt": "2026-09-23T18:00:00.000Z"
+        },
+        {
+          "key": "XRP",
+          "trades": 31,
+          "wins": 23,
+          "losses": 8,
+          "winrate": 0.741935,
+          "avgNetReturn": 0.012601,
+          "netPnlPer10kUsd": 3906.16,
+          "profitFactor": 2.7133,
+          "endingEquityUsd": 13906.16,
+          "maxDrawdownUsd": 2193.75,
+          "maxDrawdownPct": 0.136259,
+          "maxDrawdownAt": "2026-09-23T18:00:00.000Z"
+        },
+        {
+          "key": "ETH",
+          "trades": 27,
+          "wins": 10,
+          "losses": 17,
+          "winrate": 0.37037,
+          "avgNetReturn": -0.003711,
+          "netPnlPer10kUsd": -1001.95,
+          "profitFactor": 0.7068,
+          "endingEquityUsd": 8998.05,
+          "maxDrawdownUsd": 2009.46,
+          "maxDrawdownPct": 0.182553,
+          "maxDrawdownAt": "2026-09-23T17:00:00.000Z"
+        },
+        {
+          "key": "LINK",
+          "trades": 24,
+          "wins": 14,
+          "losses": 10,
+          "winrate": 0.583333,
+          "avgNetReturn": 0.008689,
+          "netPnlPer10kUsd": 2085.47,
+          "profitFactor": 1.9058,
+          "endingEquityUsd": 12085.47,
+          "maxDrawdownUsd": 1211.4,
+          "maxDrawdownPct": 0.11219,
+          "maxDrawdownAt": "2026-09-04T22:00:00.000Z"
+        },
+        {
+          "key": "AVAX",
+          "trades": 22,
+          "wins": 17,
+          "losses": 5,
+          "winrate": 0.772727,
+          "avgNetReturn": 0.016249,
+          "netPnlPer10kUsd": 3574.74,
+          "profitFactor": 3.4521,
+          "endingEquityUsd": 13574.74,
+          "maxDrawdownUsd": 1114.52,
+          "maxDrawdownPct": 0.075873,
+          "maxDrawdownAt": "2026-09-23T15:00:00.000Z"
+        },
+        {
+          "key": "BNB",
+          "trades": 18,
+          "wins": 9,
+          "losses": 9,
+          "winrate": 0.5,
+          "avgNetReturn": 0.004354,
+          "netPnlPer10kUsd": 783.75,
+          "profitFactor": 1.6865,
+          "endingEquityUsd": 10783.75,
+          "maxDrawdownUsd": 758.09,
+          "maxDrawdownPct": 0.067145,
+          "maxDrawdownAt": "2026-09-20T05:00:00.000Z"
+        },
+        {
+          "key": "DOGE",
+          "trades": 14,
+          "wins": 8,
+          "losses": 6,
+          "winrate": 0.571429,
+          "avgNetReturn": -0.005073,
+          "netPnlPer10kUsd": -710.23,
+          "profitFactor": 0.6081,
+          "endingEquityUsd": 9289.77,
+          "maxDrawdownUsd": 1216.99,
+          "maxDrawdownPct": 0.116739,
+          "maxDrawdownAt": "2026-09-20T04:00:00.000Z"
+        },
+        {
+          "key": "SOL",
+          "trades": 10,
+          "wins": 6,
+          "losses": 4,
+          "winrate": 0.6,
+          "avgNetReturn": 0.008187,
+          "netPnlPer10kUsd": 818.7,
+          "profitFactor": 1.5961,
+          "endingEquityUsd": 10818.7,
+          "maxDrawdownUsd": 1232.71,
+          "maxDrawdownPct": 0.102288,
+          "maxDrawdownAt": "2026-09-23T17:00:00.000Z"
+        }
+      ]
+    }
+  },
+  "decision": {
+    "verdict": "survives_first_kill_test",
+    "interpretation": "The candidate survived the first cheap falsification pass, but remains research-only and requires stronger purged walk-forward, drawdown, and baseline tests before any promotion.",
+    "queueAction": "Close validation item as first kill test complete; do not promote strategy."
+  },
+  "limitations": [
+    "This is a mechanical 1h OHLCV-only test; no order book, trades, delta, liquidation, or volume-profile context is used.",
+    "PDH/PDL uses UTC days only; alternate sessions are a known ambiguity and remain a kill criterion for later work.",
+    "Fixed-hold exits are a cheap falsifier, not an optimized trading plan.",
+    "Rows may overlap and do not reserve margin; this is not executable account simulation.",
+    "BTC gate is a coarse MA20/MA50 proxy inherited from DEMO-SIM research outputs, not a live watcher rule."
+  ],
+  "outputs": {
+    "json": "results/demo-sim-pdh-pdl-liquidity-sweep-long.json",
+    "markdown": "results/demo-sim-pdh-pdl-liquidity-sweep-long.md"
+  }
+}

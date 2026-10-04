@@ -1,0 +1,1978 @@
+{
+  "generatedAt": "2026-10-04T08:05:01.763Z",
+  "status": "research-only-no-live-execution",
+  "sourceReport": "results/binance-aggtrades-velocity-replay.json",
+  "purpose": "low-sample-event-study-gate-before-any-new-volume-velocity-strategy-candidate",
+  "gates": {
+    "minSampleForCandidate": 10,
+    "minDominantShare": 0.75,
+    "sameFailedMechanismBlock": true
+  },
+  "totals": {
+    "replayRows": 54,
+    "replayOk": 54,
+    "usableRows": 29,
+    "buckets": 13,
+    "velocityBandBuckets": 18,
+    "candidateReadyBuckets": 0,
+    "watchLowSampleBuckets": 12
+  },
+  "failedMechanisms": [
+    {
+      "candidateId": "alert-feedback-eth-velocity-fade-v0",
+      "mechanismKey": "ETH|60s|DOWN|fade-useful",
+      "rule": "volume_velocity_fade",
+      "status": "rejected",
+      "rejectedVariants": 36,
+      "representativeFailures": [
+        "weak_expectancy_after_costs",
+        "weak_profit_factor",
+        "deflated_sharpe_fail",
+        "drawdown_too_high",
+        "bad_failure_slice",
+        "weak_out_of_sample_expectancy",
+        "weak_baseline_lift",
+        "weak_out_of_sample_baseline_lift",
+        "weak_walk_forward_expectancy",
+        "weak_walk_forward_baseline_lift",
+        "weak_walk_forward_out_of_sample"
+      ]
+    }
+  ],
+  "buckets": [
+    {
+      "key": "ETH|5m|UP",
+      "sample": 5,
+      "verdictCounts": {
+        "follow-useful": 4,
+        "noisy": 1
+      },
+      "dominantVerdict": "follow-useful",
+      "dominantShare": 0.8,
+      "recordedMove30mPct": {
+        "count": 5,
+        "min": -0.0603,
+        "p25": 0.1435,
+        "median": 0.7191,
+        "avg": 1.3865,
+        "p75": 2.6748,
+        "max": 3.4552
+      },
+      "recordedMove1hPct": {
+        "count": 5,
+        "min": -0.1538,
+        "p25": 0.961,
+        "median": 1.2231,
+        "avg": 2.2869,
+        "p75": 3.3965,
+        "max": 6.0075
+      },
+      "replayTriggerMovePct": {
+        "count": 5,
+        "min": 0.9006,
+        "p25": 0.901,
+        "median": 0.9017,
+        "avg": 0.9142,
+        "p75": 0.9268,
+        "max": 0.9408
+      },
+      "replayVelocityRatio": {
+        "count": 5,
+        "min": 1.6741,
+        "p25": 1.7822,
+        "median": 3.2095,
+        "avg": 2.9411,
+        "p75": 3.2939,
+        "max": 4.7457
+      },
+      "replayAggressiveBuyShare": {
+        "count": 5,
+        "min": 0.6899,
+        "p25": 0.7046,
+        "median": 0.79,
+        "avg": 0.8082,
+        "p75": 0.8853,
+        "max": 0.971
+      },
+      "ids": [
+        "ETH-UP-1787151298775-bhrjsk",
+        "ETH-UP-1787153055182-ymjew4",
+        "ETH-UP-1787213450759-gcxdd2",
+        "ETH-UP-1787238219715-lur5og",
+        "ETH-UP-1787380834476-2j4any"
+      ],
+      "gate": {
+        "decision": "watch_low_sample",
+        "failures": [
+          "low_sample"
+        ],
+        "failedMechanism": null
+      }
+    },
+    {
+      "key": "ETH|60s|DOWN",
+      "sample": 5,
+      "verdictCounts": {
+        "noisy": 1,
+        "fade-useful": 4
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 0.8,
+      "recordedMove30mPct": {
+        "count": 5,
+        "min": -0.7821,
+        "p25": -0.6951,
+        "median": -0.4387,
+        "avg": -0.4112,
+        "p75": -0.1244,
+        "max": -0.0159
+      },
+      "recordedMove1hPct": {
+        "count": 5,
+        "min": -1.1678,
+        "p25": -0.3183,
+        "median": -0.3177,
+        "avg": -0.4324,
+        "p75": -0.2947,
+        "max": -0.0638
+      },
+      "replayTriggerMovePct": {
+        "count": 5,
+        "min": -0.6937,
+        "p25": -0.6521,
+        "median": -0.651,
+        "avg": -0.6524,
+        "p75": -0.6428,
+        "max": -0.6226
+      },
+      "replayVelocityRatio": {
+        "count": 5,
+        "min": 3.5661,
+        "p25": 6.1517,
+        "median": 7.8411,
+        "avg": 7.8514,
+        "p75": 10.1193,
+        "max": 11.5787
+      },
+      "replayAggressiveBuyShare": {
+        "count": 5,
+        "min": 0.0352,
+        "p25": 0.0624,
+        "median": 0.063,
+        "avg": 0.0883,
+        "p75": 0.0866,
+        "max": 0.1942
+      },
+      "ids": [
+        "ETH-DOWN-1787232650136-ns43m6",
+        "ETH-DOWN-1787351462736-f5kvh3",
+        "ETH-DOWN-1787364017274-190mj4",
+        "ETH-DOWN-1787644182524-q4d5qb",
+        "ETH-DOWN-1787692087789-pk6bzs"
+      ],
+      "gate": {
+        "decision": "killed_or_no_bucket",
+        "failures": [
+          "low_sample",
+          "same_mechanism_already_failed_strict_filter_without_new_data"
+        ],
+        "failedMechanism": {
+          "candidateId": "alert-feedback-eth-velocity-fade-v0",
+          "mechanismKey": "ETH|60s|DOWN|fade-useful",
+          "rule": "volume_velocity_fade",
+          "status": "rejected",
+          "rejectedVariants": 36,
+          "representativeFailures": [
+            "weak_expectancy_after_costs",
+            "weak_profit_factor",
+            "deflated_sharpe_fail",
+            "drawdown_too_high",
+            "bad_failure_slice",
+            "weak_out_of_sample_expectancy",
+            "weak_baseline_lift",
+            "weak_out_of_sample_baseline_lift",
+            "weak_walk_forward_expectancy",
+            "weak_walk_forward_baseline_lift",
+            "weak_walk_forward_out_of_sample"
+          ]
+        }
+      }
+    },
+    {
+      "key": "ETH|5m|DOWN",
+      "sample": 3,
+      "verdictCounts": {
+        "noisy": 1,
+        "fade-useful": 2
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 0.6667,
+      "recordedMove30mPct": {
+        "count": 3,
+        "min": -0.6568,
+        "p25": -0.6107,
+        "median": -0.5645,
+        "avg": -0.4606,
+        "p75": -0.3624,
+        "max": -0.1603
+      },
+      "recordedMove1hPct": {
+        "count": 3,
+        "min": -1.101,
+        "p25": -0.934,
+        "median": -0.767,
+        "avg": -0.7355,
+        "p75": -0.5527,
+        "max": -0.3384
+      },
+      "replayTriggerMovePct": {
+        "count": 3,
+        "min": -0.9074,
+        "p25": -0.9046,
+        "median": -0.9018,
+        "avg": -0.9035,
+        "p75": -0.9016,
+        "max": -0.9013
+      },
+      "replayVelocityRatio": {
+        "count": 3,
+        "min": 2.1884,
+        "p25": 2.3853,
+        "median": 2.5821,
+        "avg": 9.2829,
+        "p75": 12.8301,
+        "max": 23.0782
+      },
+      "replayAggressiveBuyShare": {
+        "count": 3,
+        "min": 0.0042,
+        "p25": 0.101,
+        "median": 0.1978,
+        "avg": 0.1433,
+        "p75": 0.2129,
+        "max": 0.228
+      },
+      "ids": [
+        "ETH-DOWN-1786462644866-k89vtm",
+        "ETH-DOWN-1787337935499-ypx996",
+        "ETH-DOWN-1787357205898-w0o15a"
+      ],
+      "gate": {
+        "decision": "watch_low_sample",
+        "failures": [
+          "low_sample",
+          "weak_dominant_verdict_share"
+        ],
+        "failedMechanism": null
+      }
+    },
+    {
+      "key": "SOL|15m|DOWN",
+      "sample": 2,
+      "verdictCounts": {
+        "fade-useful": 2
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 2,
+        "min": -1.7971,
+        "p25": -1.511,
+        "median": -1.225,
+        "avg": -1.225,
+        "p75": -0.9389,
+        "max": -0.6528
+      },
+      "recordedMove1hPct": {
+        "count": 2,
+        "min": -0.8562,
+        "p25": -0.8119,
+        "median": -0.7675,
+        "avg": -0.7675,
+        "p75": -0.7232,
+        "max": -0.6789
+      },
+      "replayTriggerMovePct": {
+        "count": 2,
+        "min": -1.663,
+        "p25": -1.6621,
+        "median": -1.6612,
+        "avg": -1.6612,
+        "p75": -1.6602,
+        "max": -1.6593
+      },
+      "replayVelocityRatio": {
+        "count": 2,
+        "min": 2.3095,
+        "p25": 3.4817,
+        "median": 4.654,
+        "avg": 4.654,
+        "p75": 5.8262,
+        "max": 6.9984
+      },
+      "replayAggressiveBuyShare": {
+        "count": 2,
+        "min": 0.0457,
+        "p25": 0.1357,
+        "median": 0.2257,
+        "avg": 0.2257,
+        "p75": 0.3157,
+        "max": 0.4058
+      },
+      "ids": [
+        "SOL-DOWN-1787387436908-gaekvu",
+        "SOL-DOWN-1787622780137-43xvxn"
+      ],
+      "gate": {
+        "decision": "watch_low_sample",
+        "failures": [
+          "low_sample"
+        ],
+        "failedMechanism": null
+      }
+    },
+    {
+      "key": "SOL|5m|UP",
+      "sample": 2,
+      "verdictCounts": {
+        "fade-useful": 1,
+        "follow-useful": 1
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 0.5,
+      "recordedMove30mPct": {
+        "count": 2,
+        "min": 0.5294,
+        "p25": 0.646,
+        "median": 0.7626,
+        "avg": 0.7626,
+        "p75": 0.8791,
+        "max": 0.9957
+      },
+      "recordedMove1hPct": {
+        "count": 2,
+        "min": -4.8974,
+        "p25": -3.546,
+        "median": -2.1946,
+        "avg": -2.1946,
+        "p75": -0.8432,
+        "max": 0.5082
+      },
+      "replayTriggerMovePct": {
+        "count": 2,
+        "min": 1.2,
+        "p25": 1.2008,
+        "median": 1.2016,
+        "avg": 1.2016,
+        "p75": 1.2023,
+        "max": 1.2031
+      },
+      "replayVelocityRatio": {
+        "count": 2,
+        "min": 2.5594,
+        "p25": 2.9093,
+        "median": 3.2593,
+        "avg": 3.2593,
+        "p75": 3.6093,
+        "max": 3.9592
+      },
+      "replayAggressiveBuyShare": {
+        "count": 2,
+        "min": 0.7408,
+        "p25": 0.7698,
+        "median": 0.7988,
+        "avg": 0.7988,
+        "p75": 0.8278,
+        "max": 0.8568
+      },
+      "ids": [
+        "SOL-UP-1787373085522-14v6kz",
+        "SOL-UP-1787380707958-c9h18r"
+      ],
+      "gate": {
+        "decision": "watch_low_sample",
+        "failures": [
+          "low_sample",
+          "weak_dominant_verdict_share"
+        ],
+        "failedMechanism": null
+      }
+    },
+    {
+      "key": "SOL|15m|UP",
+      "sample": 2,
+      "verdictCounts": {
+        "follow-useful": 1,
+        "noisy": 1
+      },
+      "dominantVerdict": "follow-useful",
+      "dominantShare": 0.5,
+      "recordedMove30mPct": {
+        "count": 2,
+        "min": 0.0108,
+        "p25": 0.3171,
+        "median": 0.6235,
+        "avg": 0.6235,
+        "p75": 0.9299,
+        "max": 1.2363
+      },
+      "recordedMove1hPct": {
+        "count": 2,
+        "min": 0.4732,
+        "p25": 0.87,
+        "median": 1.2668,
+        "avg": 1.2668,
+        "p75": 1.6636,
+        "max": 2.0604
+      },
+      "replayTriggerMovePct": {
+        "count": 2,
+        "min": 1.6502,
+        "p25": 1.6559,
+        "median": 1.6616,
+        "avg": 1.6616,
+        "p75": 1.6673,
+        "max": 1.673
+      },
+      "replayVelocityRatio": {
+        "count": 2,
+        "min": 0.2363,
+        "p25": 0.3181,
+        "median": 0.4,
+        "avg": 0.4,
+        "p75": 0.4818,
+        "max": 0.5636
+      },
+      "replayAggressiveBuyShare": {
+        "count": 2,
+        "min": 0.4075,
+        "p25": 0.5074,
+        "median": 0.6074,
+        "avg": 0.6074,
+        "p75": 0.7073,
+        "max": 0.8073
+      },
+      "ids": [
+        "SOL-UP-1787151268089-364skg",
+        "SOL-UP-1787395094474-0cyc5n"
+      ],
+      "gate": {
+        "decision": "watch_low_sample",
+        "failures": [
+          "low_sample",
+          "weak_dominant_verdict_share"
+        ],
+        "failedMechanism": null
+      }
+    },
+    {
+      "key": "SOL|5m|DOWN",
+      "sample": 2,
+      "verdictCounts": {
+        "follow-useful": 1,
+        "fade-useful": 1
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 0.5,
+      "recordedMove30mPct": {
+        "count": 2,
+        "min": -2.4478,
+        "p25": -1.7847,
+        "median": -1.1215,
+        "avg": -1.1215,
+        "p75": -0.4583,
+        "max": 0.2049
+      },
+      "recordedMove1hPct": {
+        "count": 2,
+        "min": -2.0666,
+        "p25": -1.523,
+        "median": -0.9794,
+        "avg": -0.9794,
+        "p75": -0.4358,
+        "max": 0.1078
+      },
+      "replayTriggerMovePct": {
+        "count": 2,
+        "min": -1.2189,
+        "p25": -1.2098,
+        "median": -1.2007,
+        "avg": -1.2007,
+        "p75": -1.1916,
+        "max": -1.1825
+      },
+      "replayVelocityRatio": {
+        "count": 2,
+        "min": 0.3449,
+        "p25": 3.4821,
+        "median": 6.6193,
+        "avg": 6.6194,
+        "p75": 9.7566,
+        "max": 12.8938
+      },
+      "replayAggressiveBuyShare": {
+        "count": 2,
+        "min": 0.2037,
+        "p25": 0.311,
+        "median": 0.4183,
+        "avg": 0.4183,
+        "p75": 0.5257,
+        "max": 0.633
+      },
+      "ids": [
+        "SOL-DOWN-1787393034069-hgn807",
+        "SOL-DOWN-1787617033673-kiu4zh"
+      ],
+      "gate": {
+        "decision": "watch_low_sample",
+        "failures": [
+          "low_sample",
+          "weak_dominant_verdict_share"
+        ],
+        "failedMechanism": null
+      }
+    },
+    {
+      "key": "SOL|60s|DOWN",
+      "sample": 2,
+      "verdictCounts": {
+        "fade-useful": 1,
+        "follow-useful": 1
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 0.5,
+      "recordedMove30mPct": {
+        "count": 2,
+        "min": -0.6961,
+        "p25": -0.609,
+        "median": -0.522,
+        "avg": -0.522,
+        "p75": -0.4349,
+        "max": -0.3478
+      },
+      "recordedMove1hPct": {
+        "count": 2,
+        "min": -0.846,
+        "p25": -0.6271,
+        "median": -0.4081,
+        "avg": -0.4081,
+        "p75": -0.1891,
+        "max": 0.0298
+      },
+      "replayTriggerMovePct": {
+        "count": 2,
+        "min": -0.9159,
+        "p25": -0.9124,
+        "median": -0.909,
+        "avg": -0.909,
+        "p75": -0.9055,
+        "max": -0.902
+      },
+      "replayVelocityRatio": {
+        "count": 2,
+        "min": 6.4006,
+        "p25": 7.244,
+        "median": 8.0874,
+        "avg": 8.0874,
+        "p75": 8.9308,
+        "max": 9.7742
+      },
+      "replayAggressiveBuyShare": {
+        "count": 2,
+        "min": 0.1834,
+        "p25": 0.2173,
+        "median": 0.2513,
+        "avg": 0.2513,
+        "p75": 0.2852,
+        "max": 0.3191
+      },
+      "ids": [
+        "SOL-DOWN-1787351466713-opibm0",
+        "SOL-DOWN-1787644183415-62on8x"
+      ],
+      "gate": {
+        "decision": "watch_low_sample",
+        "failures": [
+          "low_sample",
+          "weak_dominant_verdict_share"
+        ],
+        "failedMechanism": null
+      }
+    },
+    {
+      "key": "ETH|60s|UP",
+      "sample": 2,
+      "verdictCounts": {
+        "fade-useful": 1,
+        "follow-useful": 1
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 0.5,
+      "recordedMove30mPct": {
+        "count": 2,
+        "min": -0.928,
+        "p25": -0.4217,
+        "median": 0.0845,
+        "avg": 0.0845,
+        "p75": 0.5908,
+        "max": 1.0971
+      },
+      "recordedMove1hPct": {
+        "count": 2,
+        "min": -1.0817,
+        "p25": -0.6259,
+        "median": -0.17,
+        "avg": -0.17,
+        "p75": 0.2859,
+        "max": 0.7418
+      },
+      "replayTriggerMovePct": {
+        "count": 2,
+        "min": 0.6309,
+        "p25": 0.636,
+        "median": 0.6411,
+        "avg": 0.6411,
+        "p75": 0.6461,
+        "max": 0.6512
+      },
+      "replayVelocityRatio": {
+        "count": 2,
+        "min": 33.1865,
+        "p25": 79.1848,
+        "median": 125.1832,
+        "avg": 125.1831,
+        "p75": 171.1815,
+        "max": 217.1798
+      },
+      "replayAggressiveBuyShare": {
+        "count": 2,
+        "min": 0.8632,
+        "p25": 0.8844,
+        "median": 0.9056,
+        "avg": 0.9056,
+        "p75": 0.9268,
+        "max": 0.948
+      },
+      "ids": [
+        "ETH-UP-1787276849407-2ty74i",
+        "ETH-UP-1787349130589-ptephm"
+      ],
+      "gate": {
+        "decision": "watch_low_sample",
+        "failures": [
+          "low_sample",
+          "weak_dominant_verdict_share"
+        ],
+        "failedMechanism": null
+      }
+    },
+    {
+      "key": "BTC|5m|UP",
+      "sample": 1,
+      "verdictCounts": {
+        "follow-useful": 1
+      },
+      "dominantVerdict": "follow-useful",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 1,
+        "min": 1.4178,
+        "p25": 1.4178,
+        "median": 1.4178,
+        "avg": 1.4178,
+        "p75": 1.4178,
+        "max": 1.4178
+      },
+      "recordedMove1hPct": {
+        "count": 1,
+        "min": 1.7681,
+        "p25": 1.7681,
+        "median": 1.7681,
+        "avg": 1.7681,
+        "p75": 1.7681,
+        "max": 1.7681
+      },
+      "replayTriggerMovePct": {
+        "count": 1,
+        "min": 0.9926,
+        "p25": 0.9926,
+        "median": 0.9926,
+        "avg": 0.9926,
+        "p75": 0.9926,
+        "max": 0.9926
+      },
+      "replayVelocityRatio": {
+        "count": 1,
+        "min": 4.721,
+        "p25": 4.721,
+        "median": 4.721,
+        "avg": 4.721,
+        "p75": 4.721,
+        "max": 4.721
+      },
+      "replayAggressiveBuyShare": {
+        "count": 1,
+        "min": 0.9228,
+        "p25": 0.9228,
+        "median": 0.9228,
+        "avg": 0.9228,
+        "p75": 0.9228,
+        "max": 0.9228
+      },
+      "ids": [
+        "BTC-UP-1787213359438-7qays5"
+      ],
+      "gate": {
+        "decision": "watch_low_sample",
+        "failures": [
+          "low_sample"
+        ],
+        "failedMechanism": null
+      }
+    },
+    {
+      "key": "BTC|60s|UP",
+      "sample": 1,
+      "verdictCounts": {
+        "fade-useful": 1
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 1,
+        "min": -0.8312,
+        "p25": -0.8312,
+        "median": -0.8312,
+        "avg": -0.8312,
+        "p75": -0.8312,
+        "max": -0.8312
+      },
+      "recordedMove1hPct": {
+        "count": 1,
+        "min": -0.7061,
+        "p25": -0.7061,
+        "median": -0.7061,
+        "avg": -0.7061,
+        "p75": -0.7061,
+        "max": -0.7061
+      },
+      "replayTriggerMovePct": {
+        "count": 1,
+        "min": 0.6091,
+        "p25": 0.6091,
+        "median": 0.6091,
+        "avg": 0.6091,
+        "p75": 0.6091,
+        "max": 0.6091
+      },
+      "replayVelocityRatio": {
+        "count": 1,
+        "min": 5.492,
+        "p25": 5.492,
+        "median": 5.492,
+        "avg": 5.492,
+        "p75": 5.492,
+        "max": 5.492
+      },
+      "replayAggressiveBuyShare": {
+        "count": 1,
+        "min": 0.8358,
+        "p25": 0.8358,
+        "median": 0.8358,
+        "avg": 0.8358,
+        "p75": 0.8358,
+        "max": 0.8358
+      },
+      "ids": [
+        "BTC-UP-1787220936327-ke83bj"
+      ],
+      "gate": {
+        "decision": "watch_low_sample",
+        "failures": [
+          "low_sample"
+        ],
+        "failedMechanism": null
+      }
+    },
+    {
+      "key": "BTC|15m|UP",
+      "sample": 1,
+      "verdictCounts": {
+        "noisy": 1
+      },
+      "dominantVerdict": "noisy",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 1,
+        "min": 0.0975,
+        "p25": 0.0975,
+        "median": 0.0975,
+        "avg": 0.0975,
+        "p75": 0.0975,
+        "max": 0.0975
+      },
+      "recordedMove1hPct": {
+        "count": 1,
+        "min": 0.0707,
+        "p25": 0.0707,
+        "median": 0.0707,
+        "avg": 0.0707,
+        "p75": 0.0707,
+        "max": 0.0707
+      },
+      "replayTriggerMovePct": {
+        "count": 1,
+        "min": 1.2508,
+        "p25": 1.2508,
+        "median": 1.2508,
+        "avg": 1.2508,
+        "p75": 1.2508,
+        "max": 1.2508
+      },
+      "replayVelocityRatio": {
+        "count": 1,
+        "min": 4.5975,
+        "p25": 4.5975,
+        "median": 4.5975,
+        "avg": 4.5975,
+        "p75": 4.5975,
+        "max": 4.5975
+      },
+      "replayAggressiveBuyShare": {
+        "count": 1,
+        "min": 0.5097,
+        "p25": 0.5097,
+        "median": 0.5097,
+        "avg": 0.5097,
+        "p75": 0.5097,
+        "max": 0.5097
+      },
+      "ids": [
+        "BTC-UP-1787238242568-s2y5k6"
+      ],
+      "gate": {
+        "decision": "watch_low_sample",
+        "failures": [
+          "low_sample"
+        ],
+        "failedMechanism": null
+      }
+    },
+    {
+      "key": "BTC|60s|DOWN",
+      "sample": 1,
+      "verdictCounts": {
+        "follow-useful": 1
+      },
+      "dominantVerdict": "follow-useful",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 1,
+        "min": 0.2033,
+        "p25": 0.2033,
+        "median": 0.2033,
+        "avg": 0.2033,
+        "p75": 0.2033,
+        "max": 0.2033
+      },
+      "recordedMove1hPct": {
+        "count": 1,
+        "min": -0.0478,
+        "p25": -0.0478,
+        "median": -0.0478,
+        "avg": -0.0478,
+        "p75": -0.0478,
+        "max": -0.0478
+      },
+      "replayTriggerMovePct": {
+        "count": 1,
+        "min": -0.601,
+        "p25": -0.601,
+        "median": -0.601,
+        "avg": -0.601,
+        "p75": -0.601,
+        "max": -0.601
+      },
+      "replayVelocityRatio": {
+        "count": 1,
+        "min": 1.0773,
+        "p25": 1.0773,
+        "median": 1.0773,
+        "avg": 1.0773,
+        "p75": 1.0773,
+        "max": 1.0773
+      },
+      "replayAggressiveBuyShare": {
+        "count": 1,
+        "min": 0.2549,
+        "p25": 0.2549,
+        "median": 0.2549,
+        "avg": 0.2549,
+        "p75": 0.2549,
+        "max": 0.2549
+      },
+      "ids": [
+        "BTC-DOWN-1787279617750-809y4g"
+      ],
+      "gate": {
+        "decision": "watch_low_sample",
+        "failures": [
+          "low_sample"
+        ],
+        "failedMechanism": null
+      }
+    }
+  ],
+  "velocityBandBuckets": [
+    {
+      "key": "ETH|60s|DOWN|velocity_gte_5",
+      "sample": 4,
+      "verdictCounts": {
+        "noisy": 1,
+        "fade-useful": 3
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 0.75,
+      "recordedMove30mPct": {
+        "count": 4,
+        "min": -0.7821,
+        "p25": -0.7168,
+        "median": -0.4098,
+        "avg": -0.4044,
+        "p75": -0.0973,
+        "max": -0.0159
+      },
+      "recordedMove1hPct": {
+        "count": 4,
+        "min": -1.1678,
+        "p25": -0.5306,
+        "median": -0.318,
+        "avg": -0.4669,
+        "p75": -0.2542,
+        "max": -0.0638
+      },
+      "replayTriggerMovePct": {
+        "count": 4,
+        "min": -0.6937,
+        "p25": -0.6625,
+        "median": -0.6475,
+        "avg": -0.6528,
+        "p75": -0.6378,
+        "max": -0.6226
+      },
+      "replayVelocityRatio": {
+        "count": 4,
+        "min": 6.1517,
+        "p25": 7.4188,
+        "median": 8.9802,
+        "avg": 8.9227,
+        "p75": 10.4841,
+        "max": 11.5787
+      },
+      "replayAggressiveBuyShare": {
+        "count": 4,
+        "min": 0.0352,
+        "p25": 0.0556,
+        "median": 0.0627,
+        "avg": 0.0887,
+        "p75": 0.0958,
+        "max": 0.1942
+      },
+      "ids": [
+        "ETH-DOWN-1787232650136-ns43m6",
+        "ETH-DOWN-1787351462736-f5kvh3",
+        "ETH-DOWN-1787644182524-q4d5qb",
+        "ETH-DOWN-1787692087789-pk6bzs"
+      ]
+    },
+    {
+      "key": "ETH|5m|UP|velocity_2_to_5",
+      "sample": 3,
+      "verdictCounts": {
+        "follow-useful": 2,
+        "noisy": 1
+      },
+      "dominantVerdict": "follow-useful",
+      "dominantShare": 0.6667,
+      "recordedMove30mPct": {
+        "count": 3,
+        "min": -0.0603,
+        "p25": 0.0416,
+        "median": 0.1435,
+        "avg": 0.9194,
+        "p75": 1.4092,
+        "max": 2.6748
+      },
+      "recordedMove1hPct": {
+        "count": 3,
+        "min": -0.1538,
+        "p25": 0.4036,
+        "median": 0.961,
+        "avg": 1.4013,
+        "p75": 2.1788,
+        "max": 3.3965
+      },
+      "replayTriggerMovePct": {
+        "count": 3,
+        "min": 0.9006,
+        "p25": 0.9137,
+        "median": 0.9268,
+        "avg": 0.9227,
+        "p75": 0.9338,
+        "max": 0.9408
+      },
+      "replayVelocityRatio": {
+        "count": 3,
+        "min": 3.2095,
+        "p25": 3.2517,
+        "median": 3.2939,
+        "avg": 3.7497,
+        "p75": 4.0198,
+        "max": 4.7457
+      },
+      "replayAggressiveBuyShare": {
+        "count": 3,
+        "min": 0.7046,
+        "p25": 0.7473,
+        "median": 0.79,
+        "avg": 0.8219,
+        "p75": 0.8805,
+        "max": 0.971
+      },
+      "ids": [
+        "ETH-UP-1787153055182-ymjew4",
+        "ETH-UP-1787213450759-gcxdd2",
+        "ETH-UP-1787380834476-2j4any"
+      ]
+    },
+    {
+      "key": "ETH|5m|UP|velocity_lt_2",
+      "sample": 2,
+      "verdictCounts": {
+        "follow-useful": 2
+      },
+      "dominantVerdict": "follow-useful",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 2,
+        "min": 0.7191,
+        "p25": 1.4031,
+        "median": 2.0872,
+        "avg": 2.0872,
+        "p75": 2.7712,
+        "max": 3.4552
+      },
+      "recordedMove1hPct": {
+        "count": 2,
+        "min": 1.2231,
+        "p25": 2.4192,
+        "median": 3.6153,
+        "avg": 3.6153,
+        "p75": 4.8114,
+        "max": 6.0075
+      },
+      "replayTriggerMovePct": {
+        "count": 2,
+        "min": 0.901,
+        "p25": 0.9012,
+        "median": 0.9013,
+        "avg": 0.9013,
+        "p75": 0.9015,
+        "max": 0.9017
+      },
+      "replayVelocityRatio": {
+        "count": 2,
+        "min": 1.6741,
+        "p25": 1.7011,
+        "median": 1.7281,
+        "avg": 1.7281,
+        "p75": 1.7552,
+        "max": 1.7822
+      },
+      "replayAggressiveBuyShare": {
+        "count": 2,
+        "min": 0.6899,
+        "p25": 0.7387,
+        "median": 0.7876,
+        "avg": 0.7876,
+        "p75": 0.8365,
+        "max": 0.8853
+      },
+      "ids": [
+        "ETH-UP-1787151298775-bhrjsk",
+        "ETH-UP-1787238219715-lur5og"
+      ]
+    },
+    {
+      "key": "ETH|5m|DOWN|velocity_2_to_5",
+      "sample": 2,
+      "verdictCounts": {
+        "fade-useful": 2
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 2,
+        "min": -0.6568,
+        "p25": -0.6338,
+        "median": -0.6107,
+        "avg": -0.6107,
+        "p75": -0.5876,
+        "max": -0.5645
+      },
+      "recordedMove1hPct": {
+        "count": 2,
+        "min": -1.101,
+        "p25": -1.0175,
+        "median": -0.934,
+        "avg": -0.934,
+        "p75": -0.8505,
+        "max": -0.767
+      },
+      "replayTriggerMovePct": {
+        "count": 2,
+        "min": -0.9018,
+        "p25": -0.9017,
+        "median": -0.9016,
+        "avg": -0.9016,
+        "p75": -0.9014,
+        "max": -0.9013
+      },
+      "replayVelocityRatio": {
+        "count": 2,
+        "min": 2.1884,
+        "p25": 2.2868,
+        "median": 2.3853,
+        "avg": 2.3853,
+        "p75": 2.4837,
+        "max": 2.5821
+      },
+      "replayAggressiveBuyShare": {
+        "count": 2,
+        "min": 0.0042,
+        "p25": 0.0601,
+        "median": 0.1161,
+        "avg": 0.1161,
+        "p75": 0.172,
+        "max": 0.228
+      },
+      "ids": [
+        "ETH-DOWN-1787337935499-ypx996",
+        "ETH-DOWN-1787357205898-w0o15a"
+      ]
+    },
+    {
+      "key": "SOL|5m|UP|velocity_2_to_5",
+      "sample": 2,
+      "verdictCounts": {
+        "fade-useful": 1,
+        "follow-useful": 1
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 0.5,
+      "recordedMove30mPct": {
+        "count": 2,
+        "min": 0.5294,
+        "p25": 0.646,
+        "median": 0.7626,
+        "avg": 0.7626,
+        "p75": 0.8791,
+        "max": 0.9957
+      },
+      "recordedMove1hPct": {
+        "count": 2,
+        "min": -4.8974,
+        "p25": -3.546,
+        "median": -2.1946,
+        "avg": -2.1946,
+        "p75": -0.8432,
+        "max": 0.5082
+      },
+      "replayTriggerMovePct": {
+        "count": 2,
+        "min": 1.2,
+        "p25": 1.2008,
+        "median": 1.2016,
+        "avg": 1.2016,
+        "p75": 1.2023,
+        "max": 1.2031
+      },
+      "replayVelocityRatio": {
+        "count": 2,
+        "min": 2.5594,
+        "p25": 2.9093,
+        "median": 3.2593,
+        "avg": 3.2593,
+        "p75": 3.6093,
+        "max": 3.9592
+      },
+      "replayAggressiveBuyShare": {
+        "count": 2,
+        "min": 0.7408,
+        "p25": 0.7698,
+        "median": 0.7988,
+        "avg": 0.7988,
+        "p75": 0.8278,
+        "max": 0.8568
+      },
+      "ids": [
+        "SOL-UP-1787373085522-14v6kz",
+        "SOL-UP-1787380707958-c9h18r"
+      ]
+    },
+    {
+      "key": "SOL|15m|UP|velocity_lt_2",
+      "sample": 2,
+      "verdictCounts": {
+        "follow-useful": 1,
+        "noisy": 1
+      },
+      "dominantVerdict": "follow-useful",
+      "dominantShare": 0.5,
+      "recordedMove30mPct": {
+        "count": 2,
+        "min": 0.0108,
+        "p25": 0.3171,
+        "median": 0.6235,
+        "avg": 0.6235,
+        "p75": 0.9299,
+        "max": 1.2363
+      },
+      "recordedMove1hPct": {
+        "count": 2,
+        "min": 0.4732,
+        "p25": 0.87,
+        "median": 1.2668,
+        "avg": 1.2668,
+        "p75": 1.6636,
+        "max": 2.0604
+      },
+      "replayTriggerMovePct": {
+        "count": 2,
+        "min": 1.6502,
+        "p25": 1.6559,
+        "median": 1.6616,
+        "avg": 1.6616,
+        "p75": 1.6673,
+        "max": 1.673
+      },
+      "replayVelocityRatio": {
+        "count": 2,
+        "min": 0.2363,
+        "p25": 0.3181,
+        "median": 0.4,
+        "avg": 0.4,
+        "p75": 0.4818,
+        "max": 0.5636
+      },
+      "replayAggressiveBuyShare": {
+        "count": 2,
+        "min": 0.4075,
+        "p25": 0.5074,
+        "median": 0.6074,
+        "avg": 0.6074,
+        "p75": 0.7073,
+        "max": 0.8073
+      },
+      "ids": [
+        "SOL-UP-1787151268089-364skg",
+        "SOL-UP-1787395094474-0cyc5n"
+      ]
+    },
+    {
+      "key": "SOL|60s|DOWN|velocity_gte_5",
+      "sample": 2,
+      "verdictCounts": {
+        "fade-useful": 1,
+        "follow-useful": 1
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 0.5,
+      "recordedMove30mPct": {
+        "count": 2,
+        "min": -0.6961,
+        "p25": -0.609,
+        "median": -0.522,
+        "avg": -0.522,
+        "p75": -0.4349,
+        "max": -0.3478
+      },
+      "recordedMove1hPct": {
+        "count": 2,
+        "min": -0.846,
+        "p25": -0.6271,
+        "median": -0.4081,
+        "avg": -0.4081,
+        "p75": -0.1891,
+        "max": 0.0298
+      },
+      "replayTriggerMovePct": {
+        "count": 2,
+        "min": -0.9159,
+        "p25": -0.9124,
+        "median": -0.909,
+        "avg": -0.909,
+        "p75": -0.9055,
+        "max": -0.902
+      },
+      "replayVelocityRatio": {
+        "count": 2,
+        "min": 6.4006,
+        "p25": 7.244,
+        "median": 8.0874,
+        "avg": 8.0874,
+        "p75": 8.9308,
+        "max": 9.7742
+      },
+      "replayAggressiveBuyShare": {
+        "count": 2,
+        "min": 0.1834,
+        "p25": 0.2173,
+        "median": 0.2513,
+        "avg": 0.2513,
+        "p75": 0.2852,
+        "max": 0.3191
+      },
+      "ids": [
+        "SOL-DOWN-1787351466713-opibm0",
+        "SOL-DOWN-1787644183415-62on8x"
+      ]
+    },
+    {
+      "key": "ETH|60s|UP|velocity_gte_5",
+      "sample": 2,
+      "verdictCounts": {
+        "fade-useful": 1,
+        "follow-useful": 1
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 0.5,
+      "recordedMove30mPct": {
+        "count": 2,
+        "min": -0.928,
+        "p25": -0.4217,
+        "median": 0.0845,
+        "avg": 0.0845,
+        "p75": 0.5908,
+        "max": 1.0971
+      },
+      "recordedMove1hPct": {
+        "count": 2,
+        "min": -1.0817,
+        "p25": -0.6259,
+        "median": -0.17,
+        "avg": -0.17,
+        "p75": 0.2859,
+        "max": 0.7418
+      },
+      "replayTriggerMovePct": {
+        "count": 2,
+        "min": 0.6309,
+        "p25": 0.636,
+        "median": 0.6411,
+        "avg": 0.6411,
+        "p75": 0.6461,
+        "max": 0.6512
+      },
+      "replayVelocityRatio": {
+        "count": 2,
+        "min": 33.1865,
+        "p25": 79.1848,
+        "median": 125.1832,
+        "avg": 125.1831,
+        "p75": 171.1815,
+        "max": 217.1798
+      },
+      "replayAggressiveBuyShare": {
+        "count": 2,
+        "min": 0.8632,
+        "p25": 0.8844,
+        "median": 0.9056,
+        "avg": 0.9056,
+        "p75": 0.9268,
+        "max": 0.948
+      },
+      "ids": [
+        "ETH-UP-1787276849407-2ty74i",
+        "ETH-UP-1787349130589-ptephm"
+      ]
+    },
+    {
+      "key": "SOL|5m|DOWN|velocity_lt_2",
+      "sample": 1,
+      "verdictCounts": {
+        "fade-useful": 1
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 1,
+        "min": -2.4478,
+        "p25": -2.4478,
+        "median": -2.4478,
+        "avg": -2.4478,
+        "p75": -2.4478,
+        "max": -2.4478
+      },
+      "recordedMove1hPct": {
+        "count": 1,
+        "min": -2.0666,
+        "p25": -2.0666,
+        "median": -2.0666,
+        "avg": -2.0666,
+        "p75": -2.0666,
+        "max": -2.0666
+      },
+      "replayTriggerMovePct": {
+        "count": 1,
+        "min": -1.2189,
+        "p25": -1.2189,
+        "median": -1.2189,
+        "avg": -1.2189,
+        "p75": -1.2189,
+        "max": -1.2189
+      },
+      "replayVelocityRatio": {
+        "count": 1,
+        "min": 0.3449,
+        "p25": 0.3449,
+        "median": 0.3449,
+        "avg": 0.3449,
+        "p75": 0.3449,
+        "max": 0.3449
+      },
+      "replayAggressiveBuyShare": {
+        "count": 1,
+        "min": 0.633,
+        "p25": 0.633,
+        "median": 0.633,
+        "avg": 0.633,
+        "p75": 0.633,
+        "max": 0.633
+      },
+      "ids": [
+        "SOL-DOWN-1787617033673-kiu4zh"
+      ]
+    },
+    {
+      "key": "BTC|5m|UP|velocity_2_to_5",
+      "sample": 1,
+      "verdictCounts": {
+        "follow-useful": 1
+      },
+      "dominantVerdict": "follow-useful",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 1,
+        "min": 1.4178,
+        "p25": 1.4178,
+        "median": 1.4178,
+        "avg": 1.4178,
+        "p75": 1.4178,
+        "max": 1.4178
+      },
+      "recordedMove1hPct": {
+        "count": 1,
+        "min": 1.7681,
+        "p25": 1.7681,
+        "median": 1.7681,
+        "avg": 1.7681,
+        "p75": 1.7681,
+        "max": 1.7681
+      },
+      "replayTriggerMovePct": {
+        "count": 1,
+        "min": 0.9926,
+        "p25": 0.9926,
+        "median": 0.9926,
+        "avg": 0.9926,
+        "p75": 0.9926,
+        "max": 0.9926
+      },
+      "replayVelocityRatio": {
+        "count": 1,
+        "min": 4.721,
+        "p25": 4.721,
+        "median": 4.721,
+        "avg": 4.721,
+        "p75": 4.721,
+        "max": 4.721
+      },
+      "replayAggressiveBuyShare": {
+        "count": 1,
+        "min": 0.9228,
+        "p25": 0.9228,
+        "median": 0.9228,
+        "avg": 0.9228,
+        "p75": 0.9228,
+        "max": 0.9228
+      },
+      "ids": [
+        "BTC-UP-1787213359438-7qays5"
+      ]
+    },
+    {
+      "key": "SOL|15m|DOWN|velocity_gte_5",
+      "sample": 1,
+      "verdictCounts": {
+        "fade-useful": 1
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 1,
+        "min": -0.6528,
+        "p25": -0.6528,
+        "median": -0.6528,
+        "avg": -0.6528,
+        "p75": -0.6528,
+        "max": -0.6528
+      },
+      "recordedMove1hPct": {
+        "count": 1,
+        "min": -0.8562,
+        "p25": -0.8562,
+        "median": -0.8562,
+        "avg": -0.8562,
+        "p75": -0.8562,
+        "max": -0.8562
+      },
+      "replayTriggerMovePct": {
+        "count": 1,
+        "min": -1.663,
+        "p25": -1.663,
+        "median": -1.663,
+        "avg": -1.663,
+        "p75": -1.663,
+        "max": -1.663
+      },
+      "replayVelocityRatio": {
+        "count": 1,
+        "min": 6.9984,
+        "p25": 6.9984,
+        "median": 6.9984,
+        "avg": 6.9984,
+        "p75": 6.9984,
+        "max": 6.9984
+      },
+      "replayAggressiveBuyShare": {
+        "count": 1,
+        "min": 0.0457,
+        "p25": 0.0457,
+        "median": 0.0457,
+        "avg": 0.0457,
+        "p75": 0.0457,
+        "max": 0.0457
+      },
+      "ids": [
+        "SOL-DOWN-1787387436908-gaekvu"
+      ]
+    },
+    {
+      "key": "BTC|60s|UP|velocity_gte_5",
+      "sample": 1,
+      "verdictCounts": {
+        "fade-useful": 1
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 1,
+        "min": -0.8312,
+        "p25": -0.8312,
+        "median": -0.8312,
+        "avg": -0.8312,
+        "p75": -0.8312,
+        "max": -0.8312
+      },
+      "recordedMove1hPct": {
+        "count": 1,
+        "min": -0.7061,
+        "p25": -0.7061,
+        "median": -0.7061,
+        "avg": -0.7061,
+        "p75": -0.7061,
+        "max": -0.7061
+      },
+      "replayTriggerMovePct": {
+        "count": 1,
+        "min": 0.6091,
+        "p25": 0.6091,
+        "median": 0.6091,
+        "avg": 0.6091,
+        "p75": 0.6091,
+        "max": 0.6091
+      },
+      "replayVelocityRatio": {
+        "count": 1,
+        "min": 5.492,
+        "p25": 5.492,
+        "median": 5.492,
+        "avg": 5.492,
+        "p75": 5.492,
+        "max": 5.492
+      },
+      "replayAggressiveBuyShare": {
+        "count": 1,
+        "min": 0.8358,
+        "p25": 0.8358,
+        "median": 0.8358,
+        "avg": 0.8358,
+        "p75": 0.8358,
+        "max": 0.8358
+      },
+      "ids": [
+        "BTC-UP-1787220936327-ke83bj"
+      ]
+    },
+    {
+      "key": "SOL|15m|DOWN|velocity_2_to_5",
+      "sample": 1,
+      "verdictCounts": {
+        "fade-useful": 1
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 1,
+        "min": -1.7971,
+        "p25": -1.7971,
+        "median": -1.7971,
+        "avg": -1.7971,
+        "p75": -1.7971,
+        "max": -1.7971
+      },
+      "recordedMove1hPct": {
+        "count": 1,
+        "min": -0.6789,
+        "p25": -0.6789,
+        "median": -0.6789,
+        "avg": -0.6789,
+        "p75": -0.6789,
+        "max": -0.6789
+      },
+      "replayTriggerMovePct": {
+        "count": 1,
+        "min": -1.6593,
+        "p25": -1.6593,
+        "median": -1.6593,
+        "avg": -1.6593,
+        "p75": -1.6593,
+        "max": -1.6593
+      },
+      "replayVelocityRatio": {
+        "count": 1,
+        "min": 2.3095,
+        "p25": 2.3095,
+        "median": 2.3095,
+        "avg": 2.3095,
+        "p75": 2.3095,
+        "max": 2.3095
+      },
+      "replayAggressiveBuyShare": {
+        "count": 1,
+        "min": 0.4058,
+        "p25": 0.4058,
+        "median": 0.4058,
+        "avg": 0.4058,
+        "p75": 0.4058,
+        "max": 0.4058
+      },
+      "ids": [
+        "SOL-DOWN-1787622780137-43xvxn"
+      ]
+    },
+    {
+      "key": "ETH|5m|DOWN|velocity_gte_5",
+      "sample": 1,
+      "verdictCounts": {
+        "noisy": 1
+      },
+      "dominantVerdict": "noisy",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 1,
+        "min": -0.1603,
+        "p25": -0.1603,
+        "median": -0.1603,
+        "avg": -0.1603,
+        "p75": -0.1603,
+        "max": -0.1603
+      },
+      "recordedMove1hPct": {
+        "count": 1,
+        "min": -0.3384,
+        "p25": -0.3384,
+        "median": -0.3384,
+        "avg": -0.3384,
+        "p75": -0.3384,
+        "max": -0.3384
+      },
+      "replayTriggerMovePct": {
+        "count": 1,
+        "min": -0.9074,
+        "p25": -0.9074,
+        "median": -0.9074,
+        "avg": -0.9074,
+        "p75": -0.9074,
+        "max": -0.9074
+      },
+      "replayVelocityRatio": {
+        "count": 1,
+        "min": 23.0782,
+        "p25": 23.0782,
+        "median": 23.0782,
+        "avg": 23.0782,
+        "p75": 23.0782,
+        "max": 23.0782
+      },
+      "replayAggressiveBuyShare": {
+        "count": 1,
+        "min": 0.1978,
+        "p25": 0.1978,
+        "median": 0.1978,
+        "avg": 0.1978,
+        "p75": 0.1978,
+        "max": 0.1978
+      },
+      "ids": [
+        "ETH-DOWN-1786462644866-k89vtm"
+      ]
+    },
+    {
+      "key": "ETH|60s|DOWN|velocity_2_to_5",
+      "sample": 1,
+      "verdictCounts": {
+        "fade-useful": 1
+      },
+      "dominantVerdict": "fade-useful",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 1,
+        "min": -0.4387,
+        "p25": -0.4387,
+        "median": -0.4387,
+        "avg": -0.4387,
+        "p75": -0.4387,
+        "max": -0.4387
+      },
+      "recordedMove1hPct": {
+        "count": 1,
+        "min": -0.2947,
+        "p25": -0.2947,
+        "median": -0.2947,
+        "avg": -0.2947,
+        "p75": -0.2947,
+        "max": -0.2947
+      },
+      "replayTriggerMovePct": {
+        "count": 1,
+        "min": -0.651,
+        "p25": -0.651,
+        "median": -0.651,
+        "avg": -0.651,
+        "p75": -0.651,
+        "max": -0.651
+      },
+      "replayVelocityRatio": {
+        "count": 1,
+        "min": 3.5661,
+        "p25": 3.5661,
+        "median": 3.5661,
+        "avg": 3.5661,
+        "p75": 3.5661,
+        "max": 3.5661
+      },
+      "replayAggressiveBuyShare": {
+        "count": 1,
+        "min": 0.0866,
+        "p25": 0.0866,
+        "median": 0.0866,
+        "avg": 0.0866,
+        "p75": 0.0866,
+        "max": 0.0866
+      },
+      "ids": [
+        "ETH-DOWN-1787364017274-190mj4"
+      ]
+    },
+    {
+      "key": "SOL|5m|DOWN|velocity_gte_5",
+      "sample": 1,
+      "verdictCounts": {
+        "follow-useful": 1
+      },
+      "dominantVerdict": "follow-useful",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 1,
+        "min": 0.2049,
+        "p25": 0.2049,
+        "median": 0.2049,
+        "avg": 0.2049,
+        "p75": 0.2049,
+        "max": 0.2049
+      },
+      "recordedMove1hPct": {
+        "count": 1,
+        "min": 0.1078,
+        "p25": 0.1078,
+        "median": 0.1078,
+        "avg": 0.1078,
+        "p75": 0.1078,
+        "max": 0.1078
+      },
+      "replayTriggerMovePct": {
+        "count": 1,
+        "min": -1.1825,
+        "p25": -1.1825,
+        "median": -1.1825,
+        "avg": -1.1825,
+        "p75": -1.1825,
+        "max": -1.1825
+      },
+      "replayVelocityRatio": {
+        "count": 1,
+        "min": 12.8938,
+        "p25": 12.8938,
+        "median": 12.8938,
+        "avg": 12.8938,
+        "p75": 12.8938,
+        "max": 12.8938
+      },
+      "replayAggressiveBuyShare": {
+        "count": 1,
+        "min": 0.2037,
+        "p25": 0.2037,
+        "median": 0.2037,
+        "avg": 0.2037,
+        "p75": 0.2037,
+        "max": 0.2037
+      },
+      "ids": [
+        "SOL-DOWN-1787393034069-hgn807"
+      ]
+    },
+    {
+      "key": "BTC|15m|UP|velocity_2_to_5",
+      "sample": 1,
+      "verdictCounts": {
+        "noisy": 1
+      },
+      "dominantVerdict": "noisy",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 1,
+        "min": 0.0975,
+        "p25": 0.0975,
+        "median": 0.0975,
+        "avg": 0.0975,
+        "p75": 0.0975,
+        "max": 0.0975
+      },
+      "recordedMove1hPct": {
+        "count": 1,
+        "min": 0.0707,
+        "p25": 0.0707,
+        "median": 0.0707,
+        "avg": 0.0707,
+        "p75": 0.0707,
+        "max": 0.0707
+      },
+      "replayTriggerMovePct": {
+        "count": 1,
+        "min": 1.2508,
+        "p25": 1.2508,
+        "median": 1.2508,
+        "avg": 1.2508,
+        "p75": 1.2508,
+        "max": 1.2508
+      },
+      "replayVelocityRatio": {
+        "count": 1,
+        "min": 4.5975,
+        "p25": 4.5975,
+        "median": 4.5975,
+        "avg": 4.5975,
+        "p75": 4.5975,
+        "max": 4.5975
+      },
+      "replayAggressiveBuyShare": {
+        "count": 1,
+        "min": 0.5097,
+        "p25": 0.5097,
+        "median": 0.5097,
+        "avg": 0.5097,
+        "p75": 0.5097,
+        "max": 0.5097
+      },
+      "ids": [
+        "BTC-UP-1787238242568-s2y5k6"
+      ]
+    },
+    {
+      "key": "BTC|60s|DOWN|velocity_lt_2",
+      "sample": 1,
+      "verdictCounts": {
+        "follow-useful": 1
+      },
+      "dominantVerdict": "follow-useful",
+      "dominantShare": 1,
+      "recordedMove30mPct": {
+        "count": 1,
+        "min": 0.2033,
+        "p25": 0.2033,
+        "median": 0.2033,
+        "avg": 0.2033,
+        "p75": 0.2033,
+        "max": 0.2033
+      },
+      "recordedMove1hPct": {
+        "count": 1,
+        "min": -0.0478,
+        "p25": -0.0478,
+        "median": -0.0478,
+        "avg": -0.0478,
+        "p75": -0.0478,
+        "max": -0.0478
+      },
+      "replayTriggerMovePct": {
+        "count": 1,
+        "min": -0.601,
+        "p25": -0.601,
+        "median": -0.601,
+        "avg": -0.601,
+        "p75": -0.601,
+        "max": -0.601
+      },
+      "replayVelocityRatio": {
+        "count": 1,
+        "min": 1.0773,
+        "p25": 1.0773,
+        "median": 1.0773,
+        "avg": 1.0773,
+        "p75": 1.0773,
+        "max": 1.0773
+      },
+      "replayAggressiveBuyShare": {
+        "count": 1,
+        "min": 0.2549,
+        "p25": 0.2549,
+        "median": 0.2549,
+        "avg": 0.2549,
+        "p75": 0.2549,
+        "max": 0.2549
+      },
+      "ids": [
+        "BTC-DOWN-1787279617750-809y4g"
+      ]
+    }
+  ],
+  "decision": {
+    "verdict": "watch_low_sample",
+    "candidateAdded": false,
+    "rationale": "Replay is feasible (29 usable rows), but every bucket is below N=10 or blocked by prior strict-filter failure.",
+    "noLiveChange": true,
+    "nextStep": "Keep collecting replay-clean rows; do not add another broad OHLCV proxy from this evidence."
+  }
+}

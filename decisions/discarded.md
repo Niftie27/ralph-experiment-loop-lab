@@ -1,0 +1,10 @@
+# Discarded
+
+| Date | Item | Reason | Evidence | Revisit trigger |
+| --- | --- | --- | --- | --- |
+| 2026-07-01 | Booting the archived MEV bot as-is | Pre-patch archive has known startup, simulation, and execution-wiring blockers | `wiki/sources/mev-bot-archive.md`, `case-files/mev-bot/review.md` | Only after explicit patch review and approval |
+| 2026-07-02 | Liquidation-map build path from Q1 cascade reversal | June 2026 BTC/ETH/SOL replay produced negative EV after costs, failed dumb baseline and risk-adjusted baseline gates, depended on outlier wins, and had a -22.00% worst clustered day | `experiments/liquidation-q1-baseline-kill-switch/results/major-2026-06.json`, `wiki/sources/liquidation-q1-baseline-killswitch-spec-2026-07-02.md` | Only if Tomas explicitly requests a pre-registered robustness run on a different fixed window with unchanged gate criteria |
+| 2026-08-31 | HYPE event-only velocity follow/fade rule | Local HYPE velocity rows have no fresh L2/signed-flow evidence; broad follow rates stay near baseline and coarse buckets have wide confidence ranges plus material adverse excursion | `wiki/notes/2026-08-31-hype-feedback-event-only-velocity-kill-test.md`, `experiments/strategy-destruction-filter/results/volume-velocity-alert-feedback.md` | Reopen only after approved HYPE L2/orderflow capture, 20+ exact HYPE overlap replay rows, or a more precise Filip hypothesis testable without new approval gates |
+| 2026-09-17 | AVAX 1h `range_breakdown_short` down/low-vol historical survivor shape | Fresh strategy-filter report has 0 survivors; all 8 AVAX variants are rejected, with top duplicate variants failing `weak_walk_forward_out_of_sample`, and the older forward-paper premise was already absent | `wiki/notes/2026-09-17-avax-watch-downgrade-reconciliation.md`, `experiments/strategy-destruction-filter/results/filter-report.json` | Reopen only after a future frozen report creates a fresh AVAX survivor shape that passes current hard gates and matching regime-tagged forward paper reaches the explicit threshold |
+
+Use this file to preserve why something was rejected so RALPH does not rediscover the same dead ends.

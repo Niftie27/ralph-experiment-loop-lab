@@ -1,0 +1,34 @@
+{
+  "dataSource": "binance-public-archive-rest-tail",
+  "symbols": [
+    { "symbol": "BTC", "productId": "BTC-USD", "binanceSpotSymbol": "BTCUSDT" },
+    { "symbol": "ETH", "productId": "ETH-USD", "binanceSpotSymbol": "ETHUSDT" },
+    { "symbol": "SOL", "productId": "SOL-USD", "binanceSpotSymbol": "SOLUSDT" },
+    { "symbol": "BNB", "productId": "BNB-USD", "binanceSpotSymbol": "BNBUSDT" },
+    { "symbol": "XRP", "productId": "XRP-USD", "binanceSpotSymbol": "XRPUSDT" },
+    { "symbol": "DOGE", "productId": "DOGE-USD", "binanceSpotSymbol": "DOGEUSDT" },
+    { "symbol": "ADA", "productId": "ADA-USD", "binanceSpotSymbol": "ADAUSDT" },
+    { "symbol": "LINK", "productId": "LINK-USD", "binanceSpotSymbol": "LINKUSDT" },
+    { "symbol": "AVAX", "productId": "AVAX-USD", "binanceSpotSymbol": "AVAXUSDT" }
+  ],
+  "timeframes": [
+    { "id": "1h", "granularitySec": 3600, "binanceInterval": "1h", "lookbackDays": 180, "maxBars": 24 },
+    { "id": "4h", "granularitySec": 21600, "binanceInterval": "4h", "lookbackDays": 360, "maxBars": 12 }
+  ],
+  "costs": {
+    "feeBpsPerSide": 4,
+    "slippageBpsPerSide": 2
+  },
+  "risk": {
+    "stopAtr": 1.2,
+    "targetR": 1.8
+  },
+  "sampleThresholds": {
+    "low": 40,
+    "good": 100
+  },
+  "paperTrading": {
+    "enabled": true,
+    "dedupeLookbackHours": 72
+  }
+}

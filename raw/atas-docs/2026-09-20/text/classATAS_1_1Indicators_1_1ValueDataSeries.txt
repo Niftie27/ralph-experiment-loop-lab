@@ -1,0 +1,414 @@
+ATAS: ATAS.Indicators.ValueDataSeries Class Reference 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Classes | Public Member Functions | Properties | List of all members 
+
+ATAS.Indicators.ValueDataSeries Class Reference 
+
+Represents a data series of decimal values, each element is a decimal. More... 
+
+Inheritance diagram for ATAS.Indicators.ValueDataSeries: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Collaboration diagram for ATAS.Indicators.ValueDataSeries: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Classes 
+
+class BarColors 
+
+Manages colors per bar for the associated ValueDataSeries. More... 
+
+Public Member Functions 
+
+ValueDataSeries (string id, string name) 
+
+Initializes a new instance of the ValueDataSeries class with the specified unique and constant data series ID for data serialization and unique name. 
+
+ValueDataSeries (string id) 
+
+Initializes a new instance of the ValueDataSeries class with the specified unique and constant data series ID for data serialization. 
+
+void SetPointOfEndLine (int bar) 
+
+Sets the specified bar index as a point of end for a line in the value data series. 
+
+void RemovePointOfEndLine (int bar) 
+
+Removes the specified bar index as a point of end for a line in the value data series. 
+
+bool IsThisPointOfStartBar (int bar) 
+
+Checks if the specified bar index is a point of start for a line in the value data series. 
+
+override void Clear () 
+
+decimal LastNonZeroValue (int bar) 
+
+Gets the last non-zero value in the range from 0 to the specified bar. 
+
+Public Member Functions inherited from ATAS.Indicators.BaseDataSeries< decimal > 
+
+virtual void Clear () 
+
+override string ToString () 
+
+Properties 
+
+decimal ZeroValue [get, set] 
+
+Value of zero line for 'Histogram' mode. 
+
+BarColors Colors [get] 
+
+Allows to change color per bar. Color value will be used for all bars by default. 
+
+System.Drawing.Color RenderColor [get, set] 
+
+int Digits [get, set] 
+
+Gets or sets the number of digits after the decimal point for formatting the value data series. 
+
+string StringFormat [get, set] 
+
+Gets or sets the price string format for formatting the value data series. 
+
+bool ShowOnlyNonZeroLabels [get, set] 
+
+Always draw last non-zero value on price axis. 
+
+VisualMode VisualType [get, set] 
+
+Gets or sets the visual mode for drawing the value data series. 
+
+CrossColor Color [get, set] 
+
+Gets or sets the color for drawing the value data series. 
+
+System.Drawing.Color ValuesColor [get, set] 
+
+Gets or sets the values text color for the value data series. 
+
+int Width [get, set] 
+
+Gets or sets the width for drawing the value data series. 
+
+LineDashStyle LineDashStyle [get, set] 
+
+Gets or sets the line dash style for drawing the value data series. 
+
+bool ShowZeroValue [get, set] 
+
+Gets or sets whether to show zero value on price axis for the value data series. 
+
+bool ShowCurrentValue [get, set] 
+
+Gets or sets whether to show the current value on the price panel for the value data series. 
+
+bool ScaleIt [get, set] 
+
+Gets or sets whether to use scaling for the value data series. 
+
+override int Count [get] 
+
+override bool IsVisible [get] 
+
+override decimal this[int index] [get, set] 
+
+Properties inherited from ATAS.Indicators.BaseDataSeries< decimal > 
+
+bool DrawAbovePrice [get, set] 
+
+bool IgnoredByAlerts [get, set] 
+
+string Id [get, set] 
+
+Gets or sets the unique and constant data series ID for data serialization. 
+
+string RenderId [get] 
+
+Unique series id for all panels and indicators. 
+
+virtual bool IsVisible [get] 
+
+Gets a value is should series drawn. 
+
+DataSeriesType Type [get] 
+
+string Name [get, set] 
+
+string DescriptionKey [get, set] 
+
+abstract int Count [get] 
+
+abstract T this[int index] [get, set] 
+
+Gets or sets the element at the specified index. 
+
+bool IsHidden [get, set] 
+
+bool ShowTooltip [get, set] 
+
+bool UseMinimizedModeIfEnabled [get, set] 
+
+bool ResetAlertsOnNewBar [get, set] 
+
+bool ShowNameOnMouseOver [get, set] 
+
+Additional Inherited Members 
+
+Protected Member Functions inherited from ATAS.Indicators.BaseDataSeries< decimal > 
+
+void RaiseChanged (int bar) 
+
+virtual void RaisePropertyChanged (string propertyName) 
+
+virtual void RaisePanelPropertyChanged (string propertyName) 
+
+BaseDataSeries (string id, DataSeriesType type) 
+
+BaseDataSeries (string id, string name, DataSeriesType type) 
+
+BaseDataSeries ( DataSeriesType type) 
+
+Events inherited from ATAS.Indicators.BaseDataSeries< decimal > 
+
+Action< int >? Changed 
+
+PropertyChangedEventHandler? PropertyChanged 
+
+PropertyChangedEventHandler? PanelPropertyChanged 
+
+Detailed Description 
+
+Represents a data series of decimal values, each element is a decimal. 
+
+Constructor & Destructor Documentation 
+
+◆ ValueDataSeries() [1/2] 
+
+ATAS.Indicators.ValueDataSeries.ValueDataSeries ( string id , 
+
+string name 
+
+) 
+
+Initializes a new instance of the ValueDataSeries class with the specified unique and constant data series ID for data serialization and unique name. 
+Parameters 
+
+id The unique and constant data series ID for data serialization. 
+
+name The unique data series name. 
+
+◆ ValueDataSeries() [2/2] 
+
+ATAS.Indicators.ValueDataSeries.ValueDataSeries ( string id ) 
+
+Initializes a new instance of the ValueDataSeries class with the specified unique and constant data series ID for data serialization. 
+Parameters 
+
+id The unique and constant data series ID for data serialization. 
+
+Member Function Documentation 
+
+◆ Clear() 
+
+override void ATAS.Indicators.ValueDataSeries.Clear ( ) 
+
+virtual 
+
+Reimplemented from ATAS.Indicators.BaseDataSeries< decimal > . 
+
+◆ IsThisPointOfStartBar() 
+
+bool ATAS.Indicators.ValueDataSeries.IsThisPointOfStartBar ( int bar ) 
+
+Checks if the specified bar index is a point of start for a line in the value data series. 
+Parameters 
+
+bar The index of the bar to check. 
+
+Returns True if the specified bar index is a point of start for a line; otherwise, false. 
+
+◆ LastNonZeroValue() 
+
+decimal ATAS.Indicators.ValueDataSeries.LastNonZeroValue ( int bar ) 
+
+Gets the last non-zero value in the range from 0 to the specified bar. 
+Parameters 
+
+bar The index of the last bar of the range. 
+
+Returns The last non-zero value within the specified range of bars. If no non-zero value is found, the value at the starting bar index is returned. 
+
+◆ RemovePointOfEndLine() 
+
+void ATAS.Indicators.ValueDataSeries.RemovePointOfEndLine ( int bar ) 
+
+Removes the specified bar index as a point of end for a line in the value data series. 
+Parameters 
+
+bar The index of the bar to remove as a point of end. 
+
+◆ SetPointOfEndLine() 
+
+void ATAS.Indicators.ValueDataSeries.SetPointOfEndLine ( int bar ) 
+
+Sets the specified bar index as a point of end for a line in the value data series. 
+Parameters 
+
+bar The index of the bar to set as a point of end. 
+
+Property Documentation 
+
+◆ Color 
+
+CrossColor ATAS.Indicators.ValueDataSeries.Color 
+
+get set 
+
+Gets or sets the color for drawing the value data series. 
+
+◆ Colors 
+
+BarColors ATAS.Indicators.ValueDataSeries.Colors 
+
+get 
+
+Allows to change color per bar. Color value will be used for all bars by default. 
+
+◆ Count 
+
+override int ATAS.Indicators.ValueDataSeries.Count 
+
+get 
+
+◆ Digits 
+
+int ATAS.Indicators.ValueDataSeries.Digits 
+
+get set 
+
+Gets or sets the number of digits after the decimal point for formatting the value data series. 
+
+◆ IsVisible 
+
+override bool ATAS.Indicators.ValueDataSeries.IsVisible 
+
+get 
+
+◆ LineDashStyle 
+
+LineDashStyle ATAS.Indicators.ValueDataSeries.LineDashStyle 
+
+get set 
+
+Gets or sets the line dash style for drawing the value data series. 
+
+◆ RenderColor 
+
+System.Drawing.Color ATAS.Indicators.ValueDataSeries.RenderColor 
+
+get set 
+
+◆ ScaleIt 
+
+bool ATAS.Indicators.ValueDataSeries.ScaleIt 
+
+get set 
+
+Gets or sets whether to use scaling for the value data series. 
+
+◆ ShowCurrentValue 
+
+bool ATAS.Indicators.ValueDataSeries.ShowCurrentValue 
+
+get set 
+
+Gets or sets whether to show the current value on the price panel for the value data series. 
+
+◆ ShowOnlyNonZeroLabels 
+
+bool ATAS.Indicators.ValueDataSeries.ShowOnlyNonZeroLabels 
+
+get set 
+
+Always draw last non-zero value on price axis. 
+
+◆ ShowZeroValue 
+
+bool ATAS.Indicators.ValueDataSeries.ShowZeroValue 
+
+get set 
+
+Gets or sets whether to show zero value on price axis for the value data series. 
+
+◆ StringFormat 
+
+string ATAS.Indicators.ValueDataSeries.StringFormat 
+
+get set 
+
+Gets or sets the price string format for formatting the value data series. 
+
+◆ this[int index] 
+
+override decimal ATAS.Indicators.ValueDataSeries.this[int index] 
+
+get set 
+
+◆ ValuesColor 
+
+System.Drawing.Color ATAS.Indicators.ValueDataSeries.ValuesColor 
+
+get set 
+
+Gets or sets the values text color for the value data series. 
+
+◆ VisualType 
+
+VisualMode ATAS.Indicators.ValueDataSeries.VisualType 
+
+get set 
+
+Gets or sets the visual mode for drawing the value data series. 
+
+◆ Width 
+
+int ATAS.Indicators.ValueDataSeries.Width 
+
+get set 
+
+Gets or sets the width for drawing the value data series. 
+
+◆ ZeroValue 
+
+decimal ATAS.Indicators.ValueDataSeries.ZeroValue 
+
+get set 
+
+Value of zero line for 'Histogram' mode. 
+
+The documentation for this class was generated from the following file: 
+ValueDataSeries.cs 
+
+ATAS 
+
+Indicators 
+
+ValueDataSeries 
+
+Generated by 1.9.7 
+
+Join our developers chat

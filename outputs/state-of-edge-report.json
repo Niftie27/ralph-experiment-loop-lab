@@ -1,0 +1,171 @@
+{
+  "generatedAt": "2026-10-04T08:05:09.026Z",
+  "status": "research-paper-autonomy-no-live-execution",
+  "boundaries": {
+    "liveTrading": false,
+    "orderPlacement": false,
+    "walletKeys": false,
+    "paidApis": false,
+    "riskSizingTpSlChanges": false
+  },
+  "freshness": {
+    "paperDashboard": {
+      "status": "fresh",
+      "iso": "2026-10-04T08:04:18.917Z",
+      "ageHours": 0.01
+    },
+    "edgeSnapshot": {
+      "status": "fresh",
+      "iso": "2026-10-04T08:04:18.854Z",
+      "ageHours": 0.01
+    },
+    "shadowPnl": {
+      "status": "fresh",
+      "iso": "2026-10-04T08:04:46.320Z",
+      "ageHours": 0.01
+    },
+    "tradeJournal": {
+      "status": "fresh",
+      "iso": "2026-10-04T08:03:30.467Z",
+      "ageHours": 0.03
+    },
+    "watcherLog": {
+      "status": "stale",
+      "iso": "2026-10-02T19:41:04.985Z",
+      "ageHours": 36.4
+    },
+    "executionLog": {
+      "status": "fresh",
+      "iso": "2026-10-04T08:04:45.400Z",
+      "ageHours": 0.01
+    }
+  },
+  "paper": {
+    "overall": {
+      "key": "all",
+      "total": 500,
+      "open": 11,
+      "closed": 489,
+      "wins": 162,
+      "losses": 323,
+      "scratch": 4,
+      "resultR": -57.3256,
+      "target": 126,
+      "stop": 285,
+      "horizon": 67,
+      "stopFirstCollision": 11,
+      "avgR": -0.1172,
+      "winrate": 0.3313
+    },
+    "qualified": {
+      "key": "A/B/C",
+      "total": 41,
+      "open": 2,
+      "closed": 39,
+      "wins": 14,
+      "losses": 25,
+      "scratch": 0,
+      "resultR": -3.4493,
+      "target": 11,
+      "stop": 23,
+      "horizon": 4,
+      "stopFirstCollision": 1,
+      "avgR": -0.0884,
+      "winrate": 0.359
+    },
+    "learning": {
+      "key": "low-sample/avoid",
+      "total": 459,
+      "open": 9,
+      "closed": 450,
+      "wins": 148,
+      "losses": 298,
+      "scratch": 4,
+      "resultR": -53.8763,
+      "target": 115,
+      "stop": 262,
+      "horizon": 63,
+      "stopFirstCollision": 10,
+      "avgR": -0.1197,
+      "winrate": 0.3289
+    }
+  },
+  "shadow": {
+    "decision": {
+      "verdict": "shadow_negative_or_unproven",
+      "candidateAdded": false,
+      "noLiveChange": true,
+      "rationale": "Filled shadow rows=75, gross PnL=-1430 USD before fees/slippage; target hits=29, stop-like outcomes=46.",
+      "nextStep": "Use this as a ledger input to autoresearch; do not promote alert wording, paper trading, or live execution from shadow PnL alone."
+    },
+    "totals": {
+      "records": 809,
+      "tradablePlans": 92,
+      "filled": 75,
+      "noFillOrSkipped": 17,
+      "targetHits": 29,
+      "stopHits": 25,
+      "ambiguousStopFirst": 21,
+      "timeExits": 0,
+      "grossPnlUsd": -1430,
+      "filledGrossPnlUsd": -1430,
+      "winRateFilled": 0.3867
+    }
+  },
+  "tradeJournal": {
+    "summary": {
+      "total": 52,
+      "closed": 26,
+      "wins": 10,
+      "totalPnl": -318.41645266,
+      "byBucket": {
+        "manual-independent-trades": 49,
+        "modified-alert-setups": 3
+      },
+      "byStrategy": {
+        "unmatched": {
+          "total": 49,
+          "closed": 24,
+          "wins": 10,
+          "pnl": -153.51949180000003
+        },
+        "no-trade": {
+          "total": 2,
+          "closed": 1,
+          "wins": 0,
+          "pnl": -26.32906929
+        },
+        "breakout continuation": {
+          "total": 1,
+          "closed": 1,
+          "wins": 0,
+          "pnl": -138.56789157
+        }
+      }
+    }
+  },
+  "candidates": [
+    {
+      "symbol": "ETH",
+      "timeframe": "4h",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "signalIso": "2026-10-04T04:00:00.000Z",
+      "regime": "up/low-vol",
+      "tier": "low-sample",
+      "stats": {
+        "sample": 3,
+        "winrate": 0.3333,
+        "expectancyR": -0.2012,
+        "profitFactor": 0.7378
+      },
+      "baseline": {
+        "sample": 348,
+        "winrate": 0.431,
+        "expectancyR": -0.005
+      },
+      "action": "kill_or_avoid"
+    }
+  ],
+  "verdict": "needs_attention_data_stale"
+}

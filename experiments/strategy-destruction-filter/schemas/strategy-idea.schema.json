@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openclaw.local/ralph/strategy-idea.schema.json",
+  "title": "RALPH Strategy Idea",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "id",
+    "idea",
+    "family",
+    "rule",
+    "directions",
+    "parameters",
+    "thesis",
+    "dataRequirements",
+    "validation"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*-v[0-9]+$"
+    },
+    "idea": {
+      "type": "string",
+      "minLength": 12
+    },
+    "family": {
+      "type": "string",
+      "minLength": 3
+    },
+    "rule": {
+      "type": "string",
+      "enum": [
+        "breakout",
+        "rsi_reversion",
+        "ma_reclaim",
+        "funding_oi_reversion",
+        "funding_reversion",
+        "funding_reversion_trend",
+        "funding_reversion_trend_timeframe",
+        "volume_velocity_fade"
+      ]
+    },
+    "directions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["long", "short"]
+      }
+    },
+    "parameters": {
+      "type": "object"
+    },
+    "thesis": {
+      "type": "object",
+      "required": ["mechanism", "edgeSpeed", "expectedBehavior", "falsifiableClaim"],
+      "properties": {
+        "mechanism": { "type": "string" },
+        "edgeSpeed": { "type": "string", "enum": ["seconds", "minutes", "hours", "days"] },
+        "expectedBehavior": { "type": "string" },
+        "falsifiableClaim": { "type": "string" }
+      }
+    },
+    "dataRequirements": {
+      "type": "object",
+      "required": ["markets", "requiredFeatures", "minLookbackDays"],
+      "properties": {
+        "markets": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "requiredFeatures": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "minLookbackDays": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "required": ["baseline", "gates", "killCriteria"],
+      "properties": {
+        "baseline": { "type": "string" },
+        "gates": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "killCriteria": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+      }
+    }
+  }
+}

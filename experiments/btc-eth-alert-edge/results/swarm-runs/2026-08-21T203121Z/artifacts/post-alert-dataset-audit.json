@@ -1,0 +1,59 @@
+{
+  "job_id": "post_alert_dataset_audit",
+  "agent_id": "dataset_auditor",
+  "generated": "2026-08-21T20:31:21.424Z",
+  "run_id": "2026-08-21T203121Z",
+  "status": "research-only-no-live-execution",
+  "source_files_used": [
+    "results/agent-swarm-feature-table.json",
+    "results/agent-scoreboard.json"
+  ],
+  "forbidden_actions": [
+    "place_live_orders",
+    "modify_live_alert_runtime",
+    "modify_alert_wording",
+    "modify_alert_thresholds",
+    "modify_risk_or_sizing",
+    "read_exchange_account_or_wallet_credentials",
+    "use_exchange_account_or_wallet_access",
+    "use_paid_apis",
+    "claim_live_promotion",
+    "modify_source_data",
+    "modify_live_watcher_or_alerts"
+  ],
+  "sample_counts": {
+    "finalized_rows": 64,
+    "clean_rows": 6,
+    "tainted_rows": 58,
+    "labels": {
+      "noisy": 11,
+      "fade": 26,
+      "follow": 27
+    },
+    "assets": {
+      "ETH": 32,
+      "SOL": 14,
+      "BTC": 18
+    },
+    "trigger_kinds": {
+      "VELOCITY": 30,
+      "WICK": 34
+    }
+  },
+  "quality_flags": {
+    "book_not_fresh": 52,
+    "negative_book_age": 6,
+    "score_above_max": 1
+  },
+  "top_findings": [
+    "64 finalized alert rows are available for research scoring.",
+    "6 rows are clean; 58 rows are tainted by strict quality flags.",
+    "Labels are split as noisy 11, fade 26, follow 27."
+  ],
+  "blocked": [
+    "Clean sample is far below a promotion threshold.",
+    "Book-quality flags dominate the current dataset.",
+    "No out-of-sample live-gate validation exists in this launcher."
+  ],
+  "promotable": false
+}

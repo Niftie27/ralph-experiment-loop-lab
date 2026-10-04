@@ -1,0 +1,294 @@
+ATAS: ATAS.Indicators.IChartContainer Interface Reference 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Public Member Functions | Properties | List of all members 
+
+ATAS.Indicators.IChartContainer Interface Reference 
+
+Interface for a chart container that holds chart-related information and methods. More... 
+
+Inheritance diagram for ATAS.Indicators.IChartContainer: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Collaboration diagram for ATAS.Indicators.IChartContainer: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Public Member Functions 
+
+int GetYByPrice (decimal price, bool isStartOfPriceLevel) 
+
+Gets the Y-coordinate value corresponding to the specified price within the chart container. 
+
+decimal GetPriceByY (int y) 
+
+Gets the price value corresponding to the specified Y coordinate within the chart container. 
+
+int GetXByBarNumber (int i) 
+
+Gets the X-coordinate value corresponding to the specified bar number within the chart container. 
+
+int GetXByBar (int bar, bool isStartOfBar=true) 
+
+Gets the X-coordinate value corresponding to the specified bar within the chart container. 
+
+void SetCustomBarsSpacing (decimal? value) 
+
+Sets custom spacing between bars. 
+
+void SetCustomBarsWidth (decimal value, bool freezeValue) 
+
+Sets custom bars width. 
+
+Properties 
+
+decimal High [get] 
+
+Gets the highest price value within the chart container. 
+
+decimal Low [get] 
+
+Gets the lowest price value within the chart container. 
+
+decimal Step [get] 
+
+Gets the step value for the price levels within the chart container. 
+
+int PriceLevelsCount [get] 
+
+Gets the number of visible price levels within the chart container. 
+
+decimal PriceRowHeight [get] 
+
+Gets the height of each price row within the chart container. 
+
+decimal BarsWidth [get] 
+
+Gets the width of the bars within the chart container. 
+
+decimal BarSpacing [get] 
+
+Gets the spacing between bars within the chart container. 
+
+int GetVisibleBarsCount [get] 
+
+Gets the number of visible bars within the chart container. 
+
+int FirstVisibleBarNumber [get] 
+
+Gets the bar number of the first visible bar within the chart container. 
+
+int LastVisibleBarNumber [get] 
+
+Gets the bar number of the last visible bar within the chart container. 
+
+int TotalBars [get] 
+
+Gets the total number of bars within the chart container. 
+
+Properties inherited from ATAS.Indicators.IContainer 
+
+Rectangle Region [get] 
+
+Gets the rectangular region defined by the container. 
+
+Detailed Description 
+
+Interface for a chart container that holds chart-related information and methods. 
+
+Member Function Documentation 
+
+◆ GetPriceByY() 
+
+decimal ATAS.Indicators.IChartContainer.GetPriceByY ( int y ) 
+
+Gets the price value corresponding to the specified Y coordinate within the chart container. 
+Parameters 
+
+y The Y-coordinate 
+
+Returns 
+
+◆ GetXByBar() 
+
+int ATAS.Indicators.IChartContainer.GetXByBar ( int bar , 
+
+bool isStartOfBar = true 
+
+) 
+
+Gets the X-coordinate value corresponding to the specified bar within the chart container. 
+Parameters 
+
+bar The bar to get the X-coordinate for. 
+
+isStartOfBar Flag indicating if the X-coordinate corresponds to the start of the bar. 
+
+Returns The X-coordinate value corresponding to the specified bar. 
+
+◆ GetXByBarNumber() 
+
+int ATAS.Indicators.IChartContainer.GetXByBarNumber ( int i ) 
+
+Gets the X-coordinate value corresponding to the specified bar number within the chart container. 
+Parameters 
+
+i The bar number to get the X-coordinate for. 
+
+Returns The X-coordinate value corresponding to the specified bar number. 
+
+◆ GetYByPrice() 
+
+int ATAS.Indicators.IChartContainer.GetYByPrice ( decimal price , 
+
+bool isStartOfPriceLevel 
+
+) 
+
+Gets the Y-coordinate value corresponding to the specified price within the chart container. 
+Parameters 
+
+price The price value to get the Y-coordinate for. 
+
+isStartOfPriceLevel Flag indicating if the price level is the start of a row. 
+
+Returns The Y-coordinate value corresponding to the specified price. 
+
+◆ SetCustomBarsSpacing() 
+
+void ATAS.Indicators.IChartContainer.SetCustomBarsSpacing ( decimal? value ) 
+
+Sets custom spacing between bars. 
+Parameters 
+
+value Spacing between bars. Null enables automatic mode 
+
+◆ SetCustomBarsWidth() 
+
+void ATAS.Indicators.IChartContainer.SetCustomBarsWidth ( decimal value , 
+
+bool freezeValue 
+
+) 
+
+Sets custom bars width. 
+Parameters 
+
+value Bars width. Null enables automatic mode 
+
+freezeValue If true, customer won't be able to change bars' width from the chart 
+
+Property Documentation 
+
+◆ BarSpacing 
+
+decimal ATAS.Indicators.IChartContainer.BarSpacing 
+
+get 
+
+Gets the spacing between bars within the chart container. 
+
+◆ BarsWidth 
+
+decimal ATAS.Indicators.IChartContainer.BarsWidth 
+
+get 
+
+Gets the width of the bars within the chart container. 
+
+◆ FirstVisibleBarNumber 
+
+int ATAS.Indicators.IChartContainer.FirstVisibleBarNumber 
+
+get 
+
+Gets the bar number of the first visible bar within the chart container. 
+
+◆ GetVisibleBarsCount 
+
+int ATAS.Indicators.IChartContainer.GetVisibleBarsCount 
+
+get 
+
+Gets the number of visible bars within the chart container. 
+
+◆ High 
+
+decimal ATAS.Indicators.IChartContainer.High 
+
+get 
+
+Gets the highest price value within the chart container. 
+
+◆ LastVisibleBarNumber 
+
+int ATAS.Indicators.IChartContainer.LastVisibleBarNumber 
+
+get 
+
+Gets the bar number of the last visible bar within the chart container. 
+
+◆ Low 
+
+decimal ATAS.Indicators.IChartContainer.Low 
+
+get 
+
+Gets the lowest price value within the chart container. 
+
+◆ PriceLevelsCount 
+
+int ATAS.Indicators.IChartContainer.PriceLevelsCount 
+
+get 
+
+Gets the number of visible price levels within the chart container. 
+
+◆ PriceRowHeight 
+
+decimal ATAS.Indicators.IChartContainer.PriceRowHeight 
+
+get 
+
+Gets the height of each price row within the chart container. 
+
+◆ Step 
+
+decimal ATAS.Indicators.IChartContainer.Step 
+
+get 
+
+Gets the step value for the price levels within the chart container. 
+
+Step could differ from the TickSize instrument if the Scale is used. 
+
+◆ TotalBars 
+
+int ATAS.Indicators.IChartContainer.TotalBars 
+
+get 
+
+Gets the total number of bars within the chart container. 
+
+The documentation for this interface was generated from the following file: 
+IIndicatorContainer.cs 
+
+ATAS 
+
+Indicators 
+
+IChartContainer 
+
+Generated by 1.9.7 
+
+Join our developers chat

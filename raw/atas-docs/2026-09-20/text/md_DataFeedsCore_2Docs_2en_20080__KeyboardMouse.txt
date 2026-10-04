@@ -1,0 +1,264 @@
+ATAS: Working with the keyboard and mouse 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Working with the keyboard and mouse 
+
+Basics 
+
+Indicators are able to react to the keyboard and mouse events. 
+The following methods, which could be redefined in the indicator, are envisaged for these purposes: 
+
+ProcessMouseClick(RenderControlMouseEventArgs e) - processing mouse clicks. 
+
+ProcessMouseDown(RenderControlMouseEventArgs e) - processing the mouse button pressing. 
+
+ProcessMouseUp(RenderControlMouseEventArgs e) - processing the mouse button release. 
+
+ProcessMouseMove(RenderControlMouseEventArgs e) - processing the mouse movement. 
+
+ProcessMouseDoubleClick(RenderControlMouseEventArgs e) - processing the mouse double click. 
+
+ProcessKeyDown(KeyEventArgs e) - processing the keyboard key pressing. 
+
+ProcessKeyUp(KeyEventArgs e) - processing the keyboard key release. 
+
+Each of these methods should return true or false . 
+If the method returns true , it means that the indicator processed this event and there is no need to call this event in the following indicators. 
+This logic is required for situations when there are a number of indicators in the chart and only one of them (the one that was the first to process the event) should process the event. 
+Also, in some cases, depending on the mouse position, it is necessary to have a possibility to change the cursor. The GetCursor(RenderControlMouseEventArgs e) method is envisaged for this purpose. 
+Having redefined this method, the cursor could be returned depending on the mouse position. 
+
+Example of working with these events: 
+
+using ATAS.Indicators ; 
+
+public class SampleKeyboardAndMouseProcessor : Indicator 
+
+{ 
+
+private bool _selected; 
+
+private Rectangle _rectangle = new Rectangle(30, 30, 150, 50); 
+
+private Point _pressedPoint; 
+
+private Point _lastPoint; 
+
+private bool _pressed; 
+
+public SampleKeyboardAndMouseProcessor() 
+
+: base(true) 
+
+{ 
+
+EnableCustomDrawing = true ; 
+
+DenyToChangePanel = true ; 
+
+DataSeries[0].IsHidden = true ; 
+
+SubscribeToDrawingEvents( DrawingLayouts .Final); 
+
+} 
+
+#region Overrides of BaseIndicator 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+} 
+
+#endregion 
+
+protected override void OnRender(RenderContext context, DrawingLayouts layout) 
+
+{ 
+
+context.FillRectangle(System.Drawing.Color.Coral, _rectangle); 
+
+if (_selected) 
+
+context.DrawRectangle( new RenderPen(System.Drawing.Color.Blue, 3), _rectangle); 
+
+context.DrawString( DateTime .Now.ToString( "T" ), new RenderFont( "Arial" , 20), System.Drawing.Color.AliceBlue, _rectangle, new RenderStringFormat(){ LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center }); 
+
+} 
+
+public override bool ProcessMouseClick(RenderControlMouseEventArgs e) 
+
+{ 
+
+this.LogInfo( "Mouse click" ); 
+
+return false ; 
+
+} 
+
+public override bool ProcessMouseDown(RenderControlMouseEventArgs e) 
+
+{ 
+
+this.LogInfo( "Mouse down" ); 
+
+if (e.Button == RenderControlMouseButtons.Left && IsPointInsideRectangle(_rectangle, e.Location)) 
+
+{ 
+
+_pressedPoint = _lastPoint = e.Location; 
+
+_pressed = true ; 
+
+return true ; 
+
+} 
+
+return false ; 
+
+} 
+
+public override bool ProcessMouseUp(RenderControlMouseEventArgs e) 
+
+{ 
+
+this.LogInfo( "Mouse up" ); 
+
+if (Math.Abs(e.Location.X - _pressedPoint.X) < 4 && Math.Abs(e.Location.Y - _pressedPoint.Y) < 4 && e.Button == RenderControlMouseButtons.Left && IsPointInsideRectangle(_rectangle, e.Location)) 
+
+{ 
+
+_selected = !_selected; 
+
+_pressed = false ; 
+
+return true ; 
+
+} 
+
+if (_pressed) 
+
+{ 
+
+_pressed = false ; 
+
+return true ; 
+
+} 
+
+return false ; 
+
+} 
+
+public override bool ProcessMouseMove(RenderControlMouseEventArgs e) 
+
+{ 
+
+if (_pressed && _selected) 
+
+{ 
+
+var dX = e.Location.X - _lastPoint.X; 
+
+var dY = e.Location.Y - _lastPoint.Y; 
+
+_lastPoint = e.Location; 
+
+_rectangle.X += dX; 
+
+_rectangle.Y += dY; 
+
+return true ; 
+
+} 
+
+return false ; 
+
+} 
+
+public override bool ProcessMouseDoubleClick(RenderControlMouseEventArgs e) 
+
+{ 
+
+this.LogInfo( "Mouse double click" ); 
+
+return false ; 
+
+} 
+
+public override bool ProcessKeyDown(KeyEventArgs e) 
+
+{ 
+
+this.LogInfo( "Key down {0}" , e.Key); 
+
+return false ; 
+
+} 
+
+public override bool ProcessKeyUp(KeyEventArgs e) 
+
+{ 
+
+this.LogInfo( "Key up {0}" , e.Key); 
+
+return false ; 
+
+} 
+
+public override StdCursor GetCursor(RenderControlMouseEventArgs e) 
+
+{ 
+
+if (_selected && IsPointInsideRectangle(_rectangle, e.Location)) 
+
+return StdCursor.Hand; 
+
+return StdCursor.NULL; 
+
+} 
+
+private bool IsPointInsideRectangle(Rectangle rectangle, Point point) 
+
+{ 
+
+return point.X >= rectangle.X && point.X <= rectangle.X + rectangle.Width && point.Y >= rectangle.Y && point.Y <= rectangle.Y + rectangle.Height; 
+
+} 
+
+} 
+
+ATAS.Indicators.Indicator 
+
+Base class for custom indicators. 
+
+Definition Indicator.cs:48 
+
+ATAS.Indicators 
+
+Definition FeatureId.cs:2 
+
+ATAS.Indicators.DrawingLayouts 
+
+DrawingLayouts 
+
+Enumerates the different drawing layouts available for chart drawings. 
+
+Definition DrawingLayouts.cs:14 
+
+OFT.Attributes.Editors.MaskTypes.DateTime 
+
+@ DateTime 
+
+Working with the "GetCursor" method 
+
+Generated by 1.9.7 
+
+Join our developers chat

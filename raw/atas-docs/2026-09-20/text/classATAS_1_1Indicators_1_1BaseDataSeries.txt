@@ -1,0 +1,453 @@
+ATAS: ATAS.Indicators.BaseDataSeries< T > Class Template Reference 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Public Member Functions | Protected Member Functions | Properties | Events | List of all members 
+
+ATAS.Indicators.BaseDataSeries< T > Class Template Reference 
+
+Base generic data series class providing common functionality. More... 
+
+Inheritance diagram for ATAS.Indicators.BaseDataSeries< T >: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Collaboration diagram for ATAS.Indicators.BaseDataSeries< T >: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Public Member Functions 
+
+virtual void Clear () 
+
+Clears all elements from the data series. 
+
+override string ToString () 
+
+void Clear () 
+
+Clears all elements from the data series. 
+
+Protected Member Functions 
+
+void RaiseChanged (int bar) 
+
+virtual void RaisePropertyChanged (string propertyName) 
+
+virtual void RaisePanelPropertyChanged (string propertyName) 
+
+BaseDataSeries (string id, DataSeriesType type) 
+
+BaseDataSeries (string id, string name, DataSeriesType type) 
+
+BaseDataSeries ( DataSeriesType type) 
+
+Properties 
+
+bool DrawAbovePrice [get, set] 
+
+Gets or sets whether the data series should be drawn above candles of chart. 
+
+bool IgnoredByAlerts [get, set] 
+
+Gets or sets a value indicating whether the data series should be ignored by alerts. 
+
+string Id = string.Empty [get, set] 
+
+Gets or sets the unique and constant data series ID for data serialization. 
+
+string RenderId = string.Empty [get] 
+
+Unique series id for all panels and indicators. 
+
+virtual bool IsVisible [get] 
+
+Gets a value is should series drawn. 
+
+DataSeriesType Type [get] 
+
+Gets the type of the data series from the enumeration. 
+
+string Name [get, set] 
+
+Gets or sets the name of the data series. 
+
+string DescriptionKey [get, set] 
+
+Get or sets the description of the data series. 
+
+abstract int Count [get] 
+
+Gets the number of elements in the data series. 
+
+abstract T this[int index] [get, set] 
+
+Gets or sets the element at the specified index. 
+
+bool IsHidden [get, set] 
+
+Gets or sets a value indicating whether the data series properties should be hidden from the settings window. 
+
+bool ShowTooltip = true [get, set] 
+
+Gets or sets a value indicating whether the data series tooltip should be shown. 
+
+bool UseMinimizedModeIfEnabled [get, set] 
+
+Gets or sets a value indicating whether the minimized mode should be used if enabled. 
+
+bool ResetAlertsOnNewBar [get, set] 
+
+Gets or sets a value indicating whether alerts should be reset on a new bar. 
+
+bool ShowNameOnMouseOver = true [get, set] 
+
+Gets or sets a value indicating whether the name of the data series should be shown on mouseover. 
+
+Properties inherited from ATAS.Indicators.IDataSeries< T > 
+
+string Id [get] 
+
+Gets the unique and constant data series ID for data serialization. 
+
+string RenderId [get] 
+
+Unique series id for all panels and indicators. 
+
+DataSeriesType Type [get] 
+
+Gets the type of the data series from the enumeration. 
+
+string Name [get, set] 
+
+Gets or sets the name of the data series. 
+
+string DescriptionKey [get, set] 
+
+Get or sets the description of the data series. 
+
+int Count [get] 
+
+Gets the number of elements in the data series. 
+
+bool IsHidden [get, set] 
+
+Gets or sets a value indicating whether the data series properties should be hidden from the settings window. 
+
+bool IsVisible [get] 
+
+Gets a value is should series drawn. 
+
+bool DrawAbovePrice [get, set] 
+
+Gets or sets whether the data series should be drawn above candles of chart. 
+
+bool UseMinimizedModeIfEnabled [get, set] 
+
+Gets or sets a value indicating whether the minimized mode should be used if enabled. 
+
+bool IgnoredByAlerts [get, set] 
+
+Gets or sets a value indicating whether the data series should be ignored by alerts. 
+
+bool ResetAlertsOnNewBar [get, set] 
+
+Gets or sets a value indicating whether alerts should be reset on a new bar. 
+
+bool ShowTooltip [get, set] 
+
+Gets or sets a value indicating whether the data series tooltip should be shown. 
+
+bool ShowNameOnMouseOver [get, set] 
+
+Gets or sets a value indicating whether the name of the data series should be shown on mouseover. 
+
+object this[int index] [get, set] 
+
+new T this[int index] [get, set] 
+
+Gets or sets the element at the specified index. 
+
+Events 
+
+Action< int >? Changed 
+
+PropertyChangedEventHandler? PropertyChanged 
+
+PropertyChangedEventHandler? PanelPropertyChanged 
+
+Events inherited from ATAS.Indicators.IDataSeries< T > 
+
+Action< int > Changed 
+
+Event raised when the data series is changed at a specific bar. 
+
+Events inherited from ATAS.Indicators.INotifyPanelPropertyChanged 
+
+PropertyChangedEventHandler PanelPropertyChanged 
+
+Occurs when a panel property value changes. 
+
+Detailed Description 
+
+Base generic data series class providing common functionality. 
+Template Parameters 
+
+T Type of the data series. 
+
+Constructor & Destructor Documentation 
+
+◆ BaseDataSeries() [1/3] 
+
+ATAS.Indicators.BaseDataSeries < T >. BaseDataSeries ( string id , 
+
+DataSeriesType type 
+
+) 
+
+protected 
+
+◆ BaseDataSeries() [2/3] 
+
+ATAS.Indicators.BaseDataSeries < T >. BaseDataSeries ( string id , 
+
+string name , 
+
+DataSeriesType type 
+
+) 
+
+protected 
+
+◆ BaseDataSeries() [3/3] 
+
+ATAS.Indicators.BaseDataSeries < T >. BaseDataSeries ( DataSeriesType type ) 
+
+protected 
+
+Member Function Documentation 
+
+◆ Clear() 
+
+virtual void ATAS.Indicators.BaseDataSeries < T >.Clear ( ) 
+
+virtual 
+
+Clears all elements from the data series. 
+
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+Reimplemented in ATAS.Indicators.CandleDataSeries , ATAS.Indicators.CustomValueDataSeries , ATAS.Indicators.ObjectDataSeries , ATAS.Indicators.PaintbarsDataSeries , ATAS.Indicators.PriceSelectionDataSeries , ATAS.Indicators.RangeDataSeries , and ATAS.Indicators.ValueDataSeries . 
+
+◆ RaiseChanged() 
+
+void ATAS.Indicators.BaseDataSeries < T >.RaiseChanged ( int bar ) 
+
+protected 
+
+◆ RaisePanelPropertyChanged() 
+
+virtual void ATAS.Indicators.BaseDataSeries < T >.RaisePanelPropertyChanged ( string propertyName ) 
+
+protected virtual 
+
+◆ RaisePropertyChanged() 
+
+virtual void ATAS.Indicators.BaseDataSeries < T >.RaisePropertyChanged ( string propertyName ) 
+
+protected virtual 
+
+◆ ToString() 
+
+override string ATAS.Indicators.BaseDataSeries < T >.ToString ( ) 
+
+Property Documentation 
+
+◆ Count 
+
+abstract int ATAS.Indicators.BaseDataSeries < T >.Count 
+
+get 
+
+Gets the number of elements in the data series. 
+
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+◆ DescriptionKey 
+
+string ATAS.Indicators.BaseDataSeries < T >.DescriptionKey 
+
+get set 
+
+Get or sets the description of the data series. 
+
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+◆ DrawAbovePrice 
+
+bool ATAS.Indicators.BaseDataSeries < T >.DrawAbovePrice 
+
+get set 
+
+Gets or sets whether the data series should be drawn above candles of chart. 
+
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+◆ Id 
+
+string ATAS.Indicators.BaseDataSeries < T >.Id = string.Empty 
+
+get set 
+
+Gets or sets the unique and constant data series ID for data serialization. 
+
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+◆ IgnoredByAlerts 
+
+bool ATAS.Indicators.BaseDataSeries < T >.IgnoredByAlerts 
+
+get set 
+
+Gets or sets a value indicating whether the data series should be ignored by alerts. 
+
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+◆ IsHidden 
+
+bool ATAS.Indicators.BaseDataSeries < T >.IsHidden 
+
+get set 
+
+Gets or sets a value indicating whether the data series properties should be hidden from the settings window. 
+
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+◆ IsVisible 
+
+virtual bool ATAS.Indicators.BaseDataSeries < T >.IsVisible 
+
+get 
+
+Gets a value is should series drawn. 
+
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+◆ Name 
+
+string ATAS.Indicators.BaseDataSeries < T >.Name 
+
+get set 
+
+Gets or sets the name of the data series. 
+
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+◆ RenderId 
+
+string ATAS.Indicators.BaseDataSeries < T >.RenderId = string.Empty 
+
+get 
+
+Unique series id for all panels and indicators. 
+
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+◆ ResetAlertsOnNewBar 
+
+bool ATAS.Indicators.BaseDataSeries < T >.ResetAlertsOnNewBar 
+
+get set 
+
+Gets or sets a value indicating whether alerts should be reset on a new bar. 
+
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+◆ ShowNameOnMouseOver 
+
+bool ATAS.Indicators.BaseDataSeries < T >.ShowNameOnMouseOver = true 
+
+get set 
+
+Gets or sets a value indicating whether the name of the data series should be shown on mouseover. 
+
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+◆ ShowTooltip 
+
+bool ATAS.Indicators.BaseDataSeries < T >.ShowTooltip = true 
+
+get set 
+
+Gets or sets a value indicating whether the data series tooltip should be shown. 
+
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+◆ this[int index] 
+
+abstract T ATAS.Indicators.BaseDataSeries < T >.this[int index] 
+
+get set 
+
+Gets or sets the element at the specified index. 
+Parameters 
+
+index must be a non-negative integer. 
+
+Returns An element of type T at the specified index. 
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+◆ Type 
+
+DataSeriesType ATAS.Indicators.BaseDataSeries < T >.Type 
+
+get 
+
+Gets the type of the data series from the enumeration. 
+
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+◆ UseMinimizedModeIfEnabled 
+
+bool ATAS.Indicators.BaseDataSeries < T >.UseMinimizedModeIfEnabled 
+
+get set 
+
+Gets or sets a value indicating whether the minimized mode should be used if enabled. 
+
+Implements ATAS.Indicators.IDataSeries< T > . 
+
+Event Documentation 
+
+◆ Changed 
+
+Action<int>? ATAS.Indicators.BaseDataSeries < T >.Changed 
+
+◆ PanelPropertyChanged 
+
+PropertyChangedEventHandler? ATAS.Indicators.BaseDataSeries < T >.PanelPropertyChanged 
+
+◆ PropertyChanged 
+
+PropertyChangedEventHandler? ATAS.Indicators.BaseDataSeries < T >.PropertyChanged 
+
+The documentation for this class was generated from the following file: 
+BaseDataSeries.cs 
+
+ATAS 
+
+Indicators 
+
+BaseDataSeries 
+
+Generated by 1.9.7 
+
+Join our developers chat

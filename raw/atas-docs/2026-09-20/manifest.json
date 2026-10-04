@@ -1,0 +1,329 @@
+{
+  "source": "https://docs.atas.net/en/index.html",
+  "fetched_at": "2026-09-20T13:39:52Z",
+  "html_pages": 46,
+  "files": [
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1DataFeedsCore_1_1HistoryMyTrade.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1DataFeedsCore_1_1HistoryMyTrade.txt",
+      "bytes": 49233,
+      "sha256": "6e3928605ec7978c6d695f19fe381c4674d11ad8c90d355d94306ce4fc8d2725",
+      "chars_text": 7708
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1DataFeedsCore_1_1MarketByOrder.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1DataFeedsCore_1_1MarketByOrder.txt",
+      "bytes": 21878,
+      "sha256": "0630818c321aac696b375e0ef439fc545ccb7582f265c0ecddc682988ddf9adc",
+      "chars_text": 3062
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1DataFeedsCore_1_1MyTrade.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1DataFeedsCore_1_1MyTrade.txt",
+      "bytes": 42216,
+      "sha256": "481a54517b74fa34494afe9893c2683eb2a9b23073cb85eae57d9f750c00c785",
+      "chars_text": 5865
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1DataFeedsCore_1_1Order.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1DataFeedsCore_1_1Order.txt",
+      "bytes": 66052,
+      "sha256": "0a54b9bb449b857128f65c40832d2fa36aaf8b69cabe44a586a9a5cf894e28f2",
+      "chars_text": 11974
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1BaseDataSeries.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1BaseDataSeries.txt",
+      "bytes": 67149,
+      "sha256": "4298053dc559d0234255406822fd8eb29a9ce40e755232f96b40411b5eee6b46",
+      "chars_text": 10085
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1BaseIndicator.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1BaseIndicator.txt",
+      "bytes": 98942,
+      "sha256": "fd04abd262efc1d9a9cb783a9d702a1493cfc100421db87733c4003a532a3c24",
+      "chars_text": 18488
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1Candle.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1Candle.txt",
+      "bytes": 11795,
+      "sha256": "c7e14acc134c15a908d8befb6bcfefa269405ddebd26cd9e87736f09e573f43f",
+      "chars_text": 1386
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1CandleDataSeries.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1CandleDataSeries.txt",
+      "bytes": 54583,
+      "sha256": "8f11a8a5425ef09adccd38f71aa5ffebabddcf9e55c6e65cab2b5176c6837555",
+      "chars_text": 7536
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1CandlePartSeries.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1CandlePartSeries.txt",
+      "bytes": 31672,
+      "sha256": "0b9d1b1d94814693e687972e9e0c166baa349f7c4a79d5de32bd944047b5d434",
+      "chars_text": 3771
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1CumulativeTradesRequest.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1CumulativeTradesRequest.txt",
+      "bytes": 30860,
+      "sha256": "74fbdf6c0d25e26d5cc279ef19c2e2cf932f3aa7c9f3495ccf747fb4b94a45cd",
+      "chars_text": 5746
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1ExtendedIndicator.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1ExtendedIndicator.txt",
+      "bytes": 208669,
+      "sha256": "01d604f509e11c44c03ed5cae1fd9330644010951a1fbfae0a3b8fcba0b4a68a",
+      "chars_text": 38799
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1Filter.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1Filter.txt",
+      "bytes": 81618,
+      "sha256": "0cae43a38d80d63174391e50bcdcfc7e965175aa7fb4db86b7e83d2dcd46a539",
+      "chars_text": 13848
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1FilterColor.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1FilterColor.txt",
+      "bytes": 29563,
+      "sha256": "0ec6076745cc675bc9e312ce8d77f2871cd8c951818ded058074c06fc274f401",
+      "chars_text": 4668
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1Indicator.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1Indicator.txt",
+      "bytes": 207085,
+      "sha256": "45cf46c77d4c7485d6edcf95e1f92d7261cb1d832f4712b465f4a2a235242527",
+      "chars_text": 32768
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1IndicatorCandle.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1IndicatorCandle.txt",
+      "bytes": 75427,
+      "sha256": "52f743b2a10fe3f4e38323a9e07c732331c5269b4463953e551c6d855d0cb0d6",
+      "chars_text": 12009
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1IndicatorDataProvider.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1IndicatorDataProvider.txt",
+      "bytes": 87644,
+      "sha256": "c0c841056bebbee9cbbcb87cbb18b96f4ecd2c5328e4efd6e2d67ae28200dc1e",
+      "chars_text": 16683
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1IndicatorSeries.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1IndicatorSeries.txt",
+      "bytes": 33850,
+      "sha256": "e259862e4a08503a17c36e3a8eace4cd626f2d4a8847f125b2255b9f847736d9",
+      "chars_text": 4430
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1MarketDepthInfoProvider.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1MarketDepthInfoProvider.txt",
+      "bytes": 18807,
+      "sha256": "ed44293491fec08bc5c69575296f37d3f6f8ecd816f7ea5d16734f9aade97e81",
+      "chars_text": 3333
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1ObjectDataSeries.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1ObjectDataSeries.txt",
+      "bytes": 33849,
+      "sha256": "30a93ee3a691e3c1eba4ee6a3382562644fe265765c887a422955461b24c0e31",
+      "chars_text": 4152
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1PaintbarsDataSeries.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1PaintbarsDataSeries.txt",
+      "bytes": 37025,
+      "sha256": "1e16f497cbb934d2b38a3cfafaa7e2520a91b9e43dca5a862d0fa5bb650083c0",
+      "chars_text": 4705
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1PriceSelectionDataSeries.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1PriceSelectionDataSeries.txt",
+      "bytes": 36029,
+      "sha256": "db189044d689be222ebfc68a4b4759e75c66dedbc9544c82f7d7056afa2855f2",
+      "chars_text": 4816
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1PriceSelectionValue.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1PriceSelectionValue.txt",
+      "bytes": 31671,
+      "sha256": "842b180df3c120ac79cce3773a8d4a1aa07d0e58a51b7e8bfd5f2f39b6df0508",
+      "chars_text": 4607
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1PriceVolumeInfo.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1PriceVolumeInfo.txt",
+      "bytes": 15768,
+      "sha256": "627593fde7113831e6722b0f89bbcbe647b867ff282c13b96b332f0f8397e3dd",
+      "chars_text": 1717
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1RangeDataSeries.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1RangeDataSeries.txt",
+      "bytes": 39505,
+      "sha256": "91e285cd1f1253472b51b006a7b2e7c5df75c9f788acb63b40cf552864fe7ec2",
+      "chars_text": 4938
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1RangeValue.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1RangeValue.txt",
+      "bytes": 8903,
+      "sha256": "fabbfc8fa20387068ecaca9a3021770916b4238824dd4e3000cb1494bab60939",
+      "chars_text": 762
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/classATAS_1_1Indicators_1_1ValueDataSeries.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/classATAS_1_1Indicators_1_1ValueDataSeries.txt",
+      "bytes": 61620,
+      "sha256": "82927440338556570e15db1bf30394007fac3920ccb229f366654d1a8b4d137a",
+      "chars_text": 9351
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/index.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/index.txt",
+      "bytes": 7404,
+      "sha256": "d84016829db6755489ff05b13e3f6c27e875b04dbb4cafc94e2af4f569429eb8",
+      "chars_text": 1861
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/interfaceATAS_1_1DataFeedsCore_1_1Statistics_1_1IStatisticsParameterGroup.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/interfaceATAS_1_1DataFeedsCore_1_1Statistics_1_1IStatisticsParameterGroup.txt",
+      "bytes": 18197,
+      "sha256": "0991cadaaae19a7c39a2906f05394d19b0281cd495c3f5a36fa240c9528fa8e5",
+      "chars_text": 2194
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/interfaceATAS_1_1DataFeedsCore_1_1Statistics_1_1ITradingStatistics.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/interfaceATAS_1_1DataFeedsCore_1_1Statistics_1_1ITradingStatistics.txt",
+      "bytes": 16700,
+      "sha256": "dd95a84e41eb0482d3bcd9287f6c6ee18e45212c1ac8c62bc394c487720f8b55",
+      "chars_text": 2079
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/interfaceATAS_1_1DataFeedsCore_1_1Statistics_1_1ITradingStatisticsProvider.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/interfaceATAS_1_1DataFeedsCore_1_1Statistics_1_1ITradingStatisticsProvider.txt",
+      "bytes": 26965,
+      "sha256": "58603fc9a8aa5aef5c6a0e7777c3d64c22a591157d76187c4a68fc7247215c89",
+      "chars_text": 3412
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/interfaceATAS_1_1Indicators_1_1ICandleCreator.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/interfaceATAS_1_1Indicators_1_1ICandleCreator.txt",
+      "bytes": 14187,
+      "sha256": "b143815903309abcbfb41e0542a298af5615a5384d1764b4c15e5915d9ec64c9",
+      "chars_text": 1924
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/interfaceATAS_1_1Indicators_1_1IChartContainer.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/interfaceATAS_1_1Indicators_1_1IChartContainer.txt",
+      "bytes": 35485,
+      "sha256": "74d84777fb1e8dc26c1da4855c4942d5358df23ee5f83f534ec15698d663af9d",
+      "chars_text": 6412
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/interfaceATAS_1_1Indicators_1_1IContainer.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/interfaceATAS_1_1Indicators_1_1IContainer.txt",
+      "bytes": 8705,
+      "sha256": "9ef39349ce7a86eebb8622e70618a400049fdf78fe7106d40e600a841fcf0dab",
+      "chars_text": 999
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/interfaceATAS_1_1Indicators_1_1IDataSeries.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/interfaceATAS_1_1Indicators_1_1IDataSeries.txt",
+      "bytes": 39119,
+      "sha256": "ebc00399258ef7f7deb98bf404914f73abaebcbd6e49af4e1bc270fe6a3bf5b7",
+      "chars_text": 6619
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/md_DataFeedsCore_2Docs_2en_20010__BasicIndicator.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/md_DataFeedsCore_2Docs_2en_20010__BasicIndicator.txt",
+      "bytes": 34308,
+      "sha256": "8e04ff49d53c39bbfd2c7c2ca53ca5d6300f9e67fd7ca54e21d113b07a645472",
+      "chars_text": 21633
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/md_DataFeedsCore_2Docs_2en_20025__ReceivingProcessingData.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/md_DataFeedsCore_2Docs_2en_20025__ReceivingProcessingData.txt",
+      "bytes": 50775,
+      "sha256": "b0f2d43d6775061ab77df30e3c0849355223d8b06d00db031eaf8ecb361719e1",
+      "chars_text": 16781
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/md_DataFeedsCore_2Docs_2en_20050__Dataseries.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/md_DataFeedsCore_2Docs_2en_20050__Dataseries.txt",
+      "bytes": 43925,
+      "sha256": "a998ab6838a692bf228e9e9ce3d63bf2271511f5ba0b3fb7f045c3ba9ebd4700",
+      "chars_text": 12319
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/md_DataFeedsCore_2Docs_2en_20070__Graphics.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/md_DataFeedsCore_2Docs_2en_20070__Graphics.txt",
+      "bytes": 18689,
+      "sha256": "2a841f4dfaeafcdfcd05fea50465c959e393a84afe7d039a320cd7983dcdf1f3",
+      "chars_text": 6471
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/md_DataFeedsCore_2Docs_2en_20080__KeyboardMouse.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/md_DataFeedsCore_2Docs_2en_20080__KeyboardMouse.txt",
+      "bytes": 19795,
+      "sha256": "6ba02ca6896c30ccf66122c78f5034180fcaf6184433d898814a4df29115efea",
+      "chars_text": 5123
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/md_DataFeedsCore_2Docs_2en_20125__Performance.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/md_DataFeedsCore_2Docs_2en_20125__Performance.txt",
+      "bytes": 9676,
+      "sha256": "de801be213d4df5887d2598b5b3ef1c20f63255685bd1192977b80c774d568d1",
+      "chars_text": 3689
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/md_DataFeedsCore_2Docs_2en_20200__ATASX__Indicator.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/md_DataFeedsCore_2Docs_2en_20200__ATASX__Indicator.txt",
+      "bytes": 22380,
+      "sha256": "b4c26d9fbcd883a9d0343f574b3b90f2221fcbd9494a9846f184793ec632d6e7",
+      "chars_text": 11512
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/namespaceATAS.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/namespaceATAS.txt",
+      "bytes": 6362,
+      "sha256": "8b9b6517aa847972c04d330186c39ceb8e1fe5d27f261fff184e97aeda29cbd6",
+      "chars_text": 259
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/namespaceATAS_1_1DataFeedsCore.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/namespaceATAS_1_1DataFeedsCore.txt",
+      "bytes": 230346,
+      "sha256": "d43902aa603af1b16088b6542ff59ff91c8db12605d23ae23d9ab5cf9ca743d1",
+      "chars_text": 27809
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/namespaceATAS_1_1DataFeedsCore_1_1Statistics.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/namespaceATAS_1_1DataFeedsCore_1_1Statistics.txt",
+      "bytes": 25340,
+      "sha256": "9fb1f3c561123aa1a61b97c0961ac1f4daed68d230e456c8365c235e170c039c",
+      "chars_text": 2090
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/namespaceATAS_1_1Indicators.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/namespaceATAS_1_1Indicators.txt",
+      "bytes": 154669,
+      "sha256": "dc3a41fe2960b2ffac77b54e0dc2c1a07d7ea5082ded0921b8b9fbd4f96bb2c5",
+      "chars_text": 27073
+    },
+    {
+      "html": "ralph-research-os/raw/atas-docs/2026-09-20/docs.atas.net/en/namespaceATAS_1_1Strategies.html",
+      "text": "ralph-research-os/raw/atas-docs/2026-09-20/text/namespaceATAS_1_1Strategies.txt",
+      "bytes": 17631,
+      "sha256": "5366393bb9b2e083a4beb69dad481837ca529a3cf252291a16db702ace91276d",
+      "chars_text": 2144
+    }
+  ]
+}

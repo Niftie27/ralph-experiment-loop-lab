@@ -1,0 +1,64 @@
+{
+  "job_id": "synthesis_report",
+  "agent_id": "synthesis_reporter",
+  "generated": "2026-08-21T20:31:21.436Z",
+  "run_id": "2026-08-21T203121Z",
+  "status": "research-only-no-live-execution",
+  "source_files_used": [
+    "results/agent-swarm-feature-table.json",
+    "results/agent-scoreboard.json",
+    "results/agent-scoreboard-slices.json"
+  ],
+  "forbidden_actions": [
+    "place_live_orders",
+    "modify_live_alert_runtime",
+    "modify_alert_wording",
+    "modify_alert_thresholds",
+    "modify_risk_or_sizing",
+    "read_exchange_account_or_wallet_credentials",
+    "use_exchange_account_or_wallet_access",
+    "use_paid_apis",
+    "claim_live_promotion",
+    "claim_deployment",
+    "modify_live_systems"
+  ],
+  "run_summary": {
+    "launcher_mode": "local",
+    "jobs_completed": 6,
+    "finalized_rows": 64,
+    "clean_rows": 6,
+    "tainted_rows": 58,
+    "slice_count": 20,
+    "best_agent": {
+      "agent_id": "book_pressure_scout",
+      "accuracy": 0.5,
+      "evaluated": 12,
+      "coverage": 0.1875
+    },
+    "promotion_decision": "blocked"
+  },
+  "top_findings": [
+    "The launcher now runs explicit file-backed research jobs from a manifest.",
+    "64 finalized rows and 20 slices were fanned into local artifacts.",
+    "The risk governor blocks all promotion; this is not a live swarm deployment."
+  ],
+  "blocked": [
+    "Clean sample is far below a promotion threshold.",
+    "Book-quality flags dominate the current dataset.",
+    "No out-of-sample live-gate validation exists in this launcher.",
+    "No relative-context slice has enough clean, forward-confirmed evidence.",
+    "Relative matrix is scored against the same small finalized alert set.",
+    "Book freshness is too sparse.",
+    "Known negative-age and score-above-max quality flags remain in the historical row set.",
+    "Changing orderflow scoring would touch alert behavior and is outside this task.",
+    "Slice evidence is same-dataset and low-sample.",
+    "No slice has passed risk-governor promotion conditions.",
+    "clean_rows 6 < 30 minimum",
+    "top agent has fewer than 20 evaluated rows",
+    "top agent accuracy 50.0% < 58.0% watch threshold",
+    "quality flags remain present in the research dataset",
+    "no out-of-sample promotion test has been run",
+    "executor remains explicitly closed"
+  ],
+  "promotable": false
+}

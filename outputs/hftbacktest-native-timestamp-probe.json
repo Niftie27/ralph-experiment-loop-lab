@@ -1,0 +1,36 @@
+{
+  "generated_at": "2026-08-22T07:45:49Z",
+  "status": "research-only-no-live-execution",
+  "item": "validation.hftbacktest-native-timestamp-probe",
+  "verdict": "VALIDATED_WITH_SCOPE",
+  "source_run": "2026-08-22T07-41-21-734Z",
+  "capture": {
+    "duration_ms": 30000,
+    "symbols": ["BTC"],
+    "raw_events": 6318,
+    "feature_rows_1s": 70
+  },
+  "timestamp_evidence": {
+    "projected_rows": 12659,
+    "rows_without_native_exchange_timestamp": 10014,
+    "native_rows": {
+      "binance:trade:BTCUSDT": 1952,
+      "hyperliquid:depth:BTC": 560,
+      "hyperliquid:trade:BTC": 133
+    },
+    "fallback_rows": {
+      "binance:depth:BTCUSDT": 2090,
+      "binance:top_of_book:BTCUSDT": 7924
+    }
+  },
+  "hyperliquid_replay": {
+    "selected_events": 195,
+    "replay_rows": 666,
+    "missing_exchange_timestamp_events": 0,
+    "missing_local_receive_timestamp_events": 0,
+    "minimum_feed_latency_ns": 316000000,
+    "no_trade_num_trades": 0,
+    "passive_quote_num_trades": 2
+  },
+  "interpretation": "For latency-sensitive hftbacktest replay, Hyperliquid trade/l2_book rows are the cleaner no-key path than Binance bookTicker/depth rows in this capture. The passive quote result remains a zero-fee/zero-latency smoke test, not edge evidence."
+}

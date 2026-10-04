@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openclaw.local/ralph/pre-ml-feature-row.schema.json",
+  "title": "RALPH Pre-ML Alert Feature Row",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "id",
+    "alertIso",
+    "asset",
+    "direction",
+    "triggerKind",
+    "triggerLabel",
+    "triggerMovePct",
+    "label",
+    "oneHourDirectionalMovePct",
+    "relativeAlignment",
+    "betaBucket",
+    "qualityFlags",
+    "dataQuality",
+    "candle1h",
+    "candle4h",
+    "relative1h",
+    "relative4h"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "alertIso": { "type": "string", "format": "date-time" },
+    "asset": { "type": "string" },
+    "direction": { "type": "string", "enum": ["UP", "DOWN"] },
+    "triggerKind": { "type": "string", "enum": ["VELOCITY", "WICK"] },
+    "triggerLabel": { "type": "string" },
+    "triggerMovePct": { "type": "number" },
+    "label": { "type": "string", "enum": ["follow", "fade", "noisy", "unavailable"] },
+    "oneHourDirectionalMovePct": { "type": ["number", "null"] },
+    "relativeAlignment": { "type": "string", "enum": ["confirmed", "contradicted", "mixed", "unavailable"] },
+    "betaBucket": {
+      "type": "string",
+      "enum": ["market-beta", "idiosyncratic-strength", "idiosyncratic-weakness", "cross-pair-divergence", "unavailable"]
+    },
+    "qualityFlags": { "type": "array", "items": { "type": "string" } },
+    "dataQuality": { "type": "string", "enum": ["clean", "tainted"] },
+    "candle1h": { "$ref": "#/$defs/candleContext" },
+    "candle4h": { "$ref": "#/$defs/candleContext" },
+    "relative1h": { "$ref": "#/$defs/relativeContext" },
+    "relative4h": { "$ref": "#/$defs/relativeContext" }
+  },
+  "$defs": {
+    "candleContext": {
+      "type": "object",
+      "required": ["candleTime", "candleIso", "close", "return_1b_pct", "return_4b_pct", "return_12b_pct", "return_24b_pct"],
+      "properties": {
+        "candleTime": { "type": "number" },
+        "candleIso": { "type": "string", "format": "date-time" },
+        "close": { "type": "number" },
+        "return_1b_pct": { "type": ["number", "null"] },
+        "return_4b_pct": { "type": ["number", "null"] },
+        "return_12b_pct": { "type": ["number", "null"] },
+        "return_24b_pct": { "type": ["number", "null"] }
+      }
+    },
+    "relativeContext": {
+      "type": "object",
+      "required": ["timeframe", "candleAgeSec", "fresh"],
+      "properties": {
+        "timeframe": { "type": "string", "enum": ["1h", "4h"] },
+        "candleAgeSec": { "type": "number" },
+        "fresh": { "type": "boolean" },
+        "usdt_return_1b_pct": { "type": ["number", "null"] },
+        "usdt_return_4b_pct": { "type": ["number", "null"] },
+        "usdt_return_12b_pct": { "type": ["number", "null"] },
+        "usdt_return_24b_pct": { "type": ["number", "null"] },
+        "avg_relative_return_1b_pct": { "type": ["number", "null"] },
+        "avg_relative_return_4b_pct": { "type": ["number", "null"] },
+        "avg_relative_return_12b_pct": { "type": ["number", "null"] },
+        "avg_relative_return_24b_pct": { "type": ["number", "null"] }
+      }
+    }
+  }
+}

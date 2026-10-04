@@ -1,0 +1,352 @@
+ATAS: ATAS.Indicators.CandleDataSeries Class Reference 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Public Member Functions | Properties | List of all members 
+
+ATAS.Indicators.CandleDataSeries Class Reference 
+
+Represents a data series of candles. Each element in the series is a Candle. More... 
+
+Inheritance diagram for ATAS.Indicators.CandleDataSeries: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Collaboration diagram for ATAS.Indicators.CandleDataSeries: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Public Member Functions 
+
+CandleDataSeries (string id, string name) 
+
+Initializes a new instance of the CandleDataSeries class with the specified unique and constant data series ID for data serialization and unique name. 
+
+CandleDataSeries (string id) 
+
+Initializes a new instance of the CandleDataSeries class with the specified unique and constant data series ID for data serialization. 
+
+override void Clear () 
+
+Public Member Functions inherited from ATAS.Indicators.BaseDataSeries< Candle > 
+
+virtual void Clear () 
+
+override string ToString () 
+
+Properties 
+
+int Digits [get, set] 
+
+Gets or sets the number of digits after the decimal point. 
+
+string StringFormat [get, set] 
+
+Gets or sets the price string format used for displaying values. 
+
+bool HideZeroCandles [get, set] 
+
+Gets or sets whether to show current values on the price panel. 
+
+bool HideOpenCloseLabels [get, set] 
+
+Gets or sets which point of the candle is used as the tooltip anchor. 
+
+CandleTooltipAnchor TooltipAnchor [get, set] 
+
+bool ShowCurrentValue [get, set] 
+
+CrossColor UpCandleColor [get, set] 
+
+Gets or sets the color of the data series element on a bullish (up) candle. 
+
+CrossColor DownCandleColor [get, set] 
+
+Gets or sets the color of the data series element on a bearish (down) candle. 
+
+CrossColor BorderColor [get, set] 
+
+Gets or sets the color of the data series element border. 
+
+System.Drawing.Color ValuesColor [get, set] 
+
+Gets or sets the color of the values text. 
+
+bool Visible [get, set] 
+
+Gets or sets whether the data series is visible on the chart. 
+
+bool ScaleIt [get, set] 
+
+Gets or sets whether to scale the data series on the chart. 
+
+CandleVisualMode Mode [get, set] 
+
+Gets or sets the visualization mode of the data series. 
+
+bool DrawCandleBorder [get, set] 
+
+Gets or sets whether to draw candle border. 
+
+override bool IsVisible [get] 
+
+override int Count [get] 
+
+override Candle this[int index] [get, set] 
+
+Properties inherited from ATAS.Indicators.BaseDataSeries< Candle > 
+
+bool DrawAbovePrice [get, set] 
+
+bool IgnoredByAlerts [get, set] 
+
+string Id [get, set] 
+
+Gets or sets the unique and constant data series ID for data serialization. 
+
+string RenderId [get] 
+
+Unique series id for all panels and indicators. 
+
+virtual bool IsVisible [get] 
+
+Gets a value is should series drawn. 
+
+DataSeriesType Type [get] 
+
+string Name [get, set] 
+
+string DescriptionKey [get, set] 
+
+abstract int Count [get] 
+
+abstract T this[int index] [get, set] 
+
+Gets or sets the element at the specified index. 
+
+bool IsHidden [get, set] 
+
+bool ShowTooltip [get, set] 
+
+bool UseMinimizedModeIfEnabled [get, set] 
+
+bool ResetAlertsOnNewBar [get, set] 
+
+bool ShowNameOnMouseOver [get, set] 
+
+Additional Inherited Members 
+
+Protected Member Functions inherited from ATAS.Indicators.BaseDataSeries< Candle > 
+
+void RaiseChanged (int bar) 
+
+virtual void RaisePropertyChanged (string propertyName) 
+
+virtual void RaisePanelPropertyChanged (string propertyName) 
+
+BaseDataSeries (string id, DataSeriesType type) 
+
+BaseDataSeries (string id, string name, DataSeriesType type) 
+
+BaseDataSeries ( DataSeriesType type) 
+
+Events inherited from ATAS.Indicators.BaseDataSeries< Candle > 
+
+Action< int >? Changed 
+
+PropertyChangedEventHandler? PropertyChanged 
+
+PropertyChangedEventHandler? PanelPropertyChanged 
+
+Detailed Description 
+
+Represents a data series of candles. Each element in the series is a Candle. 
+
+Constructor & Destructor Documentation 
+
+◆ CandleDataSeries() [1/2] 
+
+ATAS.Indicators.CandleDataSeries.CandleDataSeries ( string id , 
+
+string name 
+
+) 
+
+Initializes a new instance of the CandleDataSeries class with the specified unique and constant data series ID for data serialization and unique name. 
+Parameters 
+
+id The unique and constant data series ID for data serialization. 
+
+name The unique data series name. 
+
+◆ CandleDataSeries() [2/2] 
+
+ATAS.Indicators.CandleDataSeries.CandleDataSeries ( string id ) 
+
+Initializes a new instance of the CandleDataSeries class with the specified unique and constant data series ID for data serialization. 
+Parameters 
+
+id The unique and constant data series ID for data serialization. 
+
+Member Function Documentation 
+
+◆ Clear() 
+
+override void ATAS.Indicators.CandleDataSeries.Clear ( ) 
+
+virtual 
+
+Reimplemented from ATAS.Indicators.BaseDataSeries< Candle > . 
+
+Property Documentation 
+
+◆ BorderColor 
+
+CrossColor ATAS.Indicators.CandleDataSeries.BorderColor 
+
+get set 
+
+Gets or sets the color of the data series element border. 
+
+◆ Count 
+
+override int ATAS.Indicators.CandleDataSeries.Count 
+
+get 
+
+◆ Digits 
+
+int ATAS.Indicators.CandleDataSeries.Digits 
+
+get set 
+
+Gets or sets the number of digits after the decimal point. 
+
+◆ DownCandleColor 
+
+CrossColor ATAS.Indicators.CandleDataSeries.DownCandleColor 
+
+get set 
+
+Gets or sets the color of the data series element on a bearish (down) candle. 
+
+◆ DrawCandleBorder 
+
+bool ATAS.Indicators.CandleDataSeries.DrawCandleBorder 
+
+get set 
+
+Gets or sets whether to draw candle border. 
+
+◆ HideOpenCloseLabels 
+
+bool ATAS.Indicators.CandleDataSeries.HideOpenCloseLabels 
+
+get set 
+
+Gets or sets which point of the candle is used as the tooltip anchor. 
+
+Gets or sets whether to hide "Open:"/"Close:" labels in tooltips, showing only the value. 
+
+◆ HideZeroCandles 
+
+bool ATAS.Indicators.CandleDataSeries.HideZeroCandles 
+
+get set 
+
+Gets or sets whether to show current values on the price panel. 
+
+Gets or sets whether to skip rendering and tooltips for candles where all OHLC values are zero. 
+
+◆ IsVisible 
+
+override bool ATAS.Indicators.CandleDataSeries.IsVisible 
+
+get 
+
+◆ Mode 
+
+CandleVisualMode ATAS.Indicators.CandleDataSeries.Mode 
+
+get set 
+
+Gets or sets the visualization mode of the data series. 
+
+◆ ScaleIt 
+
+bool ATAS.Indicators.CandleDataSeries.ScaleIt 
+
+get set 
+
+Gets or sets whether to scale the data series on the chart. 
+
+◆ ShowCurrentValue 
+
+bool ATAS.Indicators.CandleDataSeries.ShowCurrentValue 
+
+get set 
+
+◆ StringFormat 
+
+string ATAS.Indicators.CandleDataSeries.StringFormat 
+
+get set 
+
+Gets or sets the price string format used for displaying values. 
+
+◆ this[int index] 
+
+override Candle ATAS.Indicators.CandleDataSeries.this[int index] 
+
+get set 
+
+◆ TooltipAnchor 
+
+CandleTooltipAnchor ATAS.Indicators.CandleDataSeries.TooltipAnchor 
+
+get set 
+
+◆ UpCandleColor 
+
+CrossColor ATAS.Indicators.CandleDataSeries.UpCandleColor 
+
+get set 
+
+Gets or sets the color of the data series element on a bullish (up) candle. 
+
+◆ ValuesColor 
+
+System.Drawing.Color ATAS.Indicators.CandleDataSeries.ValuesColor 
+
+get set 
+
+Gets or sets the color of the values text. 
+
+◆ Visible 
+
+bool ATAS.Indicators.CandleDataSeries.Visible 
+
+get set 
+
+Gets or sets whether the data series is visible on the chart. 
+
+The documentation for this class was generated from the following file: 
+CandleDataSeries.cs 
+
+ATAS 
+
+Indicators 
+
+CandleDataSeries 
+
+Generated by 1.9.7 
+
+Join our developers chat

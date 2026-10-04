@@ -1,0 +1,529 @@
+version: 1
+last_updated: '2026-09-28T22:20:00Z'
+purpose: Compact token-budget router for RALPH workers. Read this before broad vault scans.
+token_policy:
+  index_reads_cost_tokens: true
+  goal: Use small indexes to choose a few relevant files, not to load the whole vault.
+  default_startup_files:
+    - automation/retrieval-router.yaml
+    - index.yaml
+    - automation/work-queues.yaml
+    - automation/loop-state.yaml
+    - automation/ralph-autoresearch-loop.md
+    - wiki/research-map.md
+    - one selected loops/*.md file
+  avoid_by_default:
+    - raw/
+    - raw/assets/
+    - full log.md
+    - broad wiki/notes scans
+  preferred_tools:
+    - rg for path, tag, and heading search
+    - index.yaml summaries
+    - wiki/sources executive summaries
+obsidian:
+  ralph_vault: /home/coder/.openclaw/workspace/ralph-research-os
+  openclaw_wiki_vault: /home/coder/.openclaw/wiki/main
+  render_mode: obsidian
+  cli_status: official Obsidian CLI available at /home/coder/.local/bin/obsidian with headless auto-start wrapper
+  bridge_status: enabled
+  bridge_sync_rule: New or materially updated RALPH wiki/notes or wiki/sources Markdown outputs should be ingested into OpenClaw wiki with `openclaw wiki ingest <path> --title "RALPH <short title>" --json` and verified with `openclaw wiki search`.
+active_contracts:
+  retrieval:
+    - core/profitability-flywheel.md
+    - core/indexing-token-budget.md
+    - core/research-os-contract.md
+    - core/input-output-flow.md
+    - core/loop-output-policy.md
+  automation:
+    - automation/ralph-autoresearch-loop.md
+    - automation/a2-research-engine-runbook.md
+    - automation/loop-state.yaml
+    - automation/work-queues.yaml
+    - core/autonomous-layer-goals.md
+  navigation:
+    - core/navigation.md
+    - wiki/research-map.md
+    - index.yaml
+    - index.md
+hot_topics:
+  research_lanes_tool_pricing:
+    read:
+      - research-lanes/README.md
+      - research-lanes/orderflow/README.md
+      - research-lanes/orderflow/atas-tardis-workflow.md
+      - research-lanes/metrics/README.md
+      - research-lanes/metrics/metric-tool-map.md
+      - research-lanes/vendor-access-pricing/README.md
+      - research-lanes/vendor-access-pricing/pricing-watchlist.md
+      - research-lanes/copytrading/README.md
+      - research-lanes/copytrading/tool-access-map.md
+      - wiki/notes/2026-09-29-derivatives-metrics-vendor-access-scan.md
+      - wiki/notes/2026-09-28-historical-orderflow-data-rails.md
+      - experiments/strategy-destruction-filter/results/usdm-orderflow-demo-sim-batch.md
+    status: >-
+      active navigation layer for RALPH tool/data/source research created on
+      2026-09-28 after Tomas asked for folders for orderflow, other metrics,
+      tool/API pricing, ATAS+Tardis workflow, and copytrading research. Use
+      this route before buying, trialing, or proposing data/tool integrations.
+      Current stance: Binance USD-M public archives are active-free for
+      orderflow plumbing; Tardis is an expensive true-depth benchmark; ATAS is
+      a manual visual/replay labeling tool; CoinGlass, Dune, and Nansen are
+      cheap candidates only after a precise metric/cohort question. The
+      2026-09-29 derivatives metrics scan adds Coinalyze as a free-key
+      derivatives candidate, Velo/CoinGlass as monthly paid derivatives APIs,
+      Laevitas as x402/PAYG derivatives/options watch, Hyblock as an expensive
+      liquidation/positioning benchmark, and TensorCharts as manual visual
+      prior art. Arkham, CoinAPI, Kaiko, Crypto Lake, Hyperliquid historical
+      S3, and paid copytrading/API surfaces need explicit approval. No live copying,
+      scheduler change, account/key setup, paid signup, watcher/paper/demo
+      logic change, sizing/TP/SL, execution, or strategy promotion is allowed
+      from these folders.
+  workspace_evidence_routing:
+    read:
+      - wiki/notes/2026-09-01-workspace-evidence-routing-map.md
+      - wiki/notes/2026-09-01-experiment-output-read-path-map.md
+      - wiki/notes/2026-09-01-legacy-trading-journal-reconciliation.md
+      - wiki/notes/2026-09-01-obsidian-cli-status-refresh.md
+      - wiki/notes/2026-09-01-workspace-owner-index-reconciliation.md
+      - core/navigation.md
+      - core/data-rails.md
+      - experiments/README.md
+      - ../crypto-updates/README.md
+      - ../crypto-updates/wiki/README.md
+      - ../crypto-updates/monitor-index.yaml
+      - ../crypto-updates/digest-index.yaml
+      - ../crypto-updates/orderflow-index.yaml
+      - ../crypto-updates/setup-analysis-index.yaml
+      - ../openclaw-research-os/index.yaml
+      - ../openclaw-research-os/wiki/overview.md
+      - case-files/zela-benchmark/README.md
+      - wiki/notes/2026-08-30-zela-validation-rules-extraction.md
+    status: 'workspace inventory route for Obsidian hygiene and evidence ownership; 2026-09-01 owner-index reconciliation says RALPH owns crypto decisions, Crypto Updates owns generated alert/setup/orderflow evidence and live compact indexes, OpenClaw Research OS owns global workflow/source-routing memory, Zela remains a methodology case file unless explicitly reopened, root trading-journal is legacy August 10-11 sidecar evidence, and daily memory is continuity rather than first-source evidence; 2026-09-01 workspace map says Crypto Updates already has Obsidian-friendly generated pages and compact indexes for monitor feedback, setup analysis, trading journal, and orderflow capture summaries, while raw JSONL/SQLite and large source trees should not be duplicated into RALPH wiki; 2026-09-01 experiment-output map adds the default order from prioritizer/checklist to experiment README to result Markdown before raw JSON/source; 2026-09-01 legacy journal reconciliation found root trading-journal has August 10-11 manual records not fully represented in generated Crypto Updates daily execution counts, so process reviews for those dates must check the legacy note; 2026-09-01 Obsidian status refresh updates U-016: official CLI is active at /home/coder/.local/bin/obsidian, but file/YAML indexes remain the durable worker contract; use this route before broad workspace scans or custom rebuild proposals; U-004/U-038/U-027 should start from compact local indexes and only descend into runtime/source files when the wiki/index layer is insufficient'
+    unknown:
+      - U-004
+      - U-027
+      - U-038
+  strategy_destruction_filter:
+    read:
+      - wiki/concepts/strategy-destruction-filter.md
+      - wiki/notes/2026-08-24-strategy-filter-calibration-audit.md
+      - wiki/notes/2026-08-27-strategy-filter-current-sieve-audit.md
+      - wiki/notes/2026-08-27-strategy-filter-threshold-sensitivity.md
+      - wiki/notes/2026-08-27-strategy-filter-walk-forward-survivor-invariant.md
+      - wiki/notes/2026-08-27-strategy-filter-psr-diagnostic-stress.md
+      - wiki/notes/2026-08-27-strategy-filter-rejection-ledger-quality-audit.md
+      - wiki/notes/2026-08-27-strategy-filter-rejection-ledger-schema-guard.md
+      - wiki/notes/2026-08-27-strategy-filter-semantic-field-implementation-blocker.md
+      - wiki/notes/2026-08-28-strategy-filter-bias-hygiene-checklist.md
+      - raw/trading-system-filter-thesis-2026-08-21.md
+      - experiments/strategy-destruction-filter/README.md
+      - experiments/strategy-destruction-filter/config.default.json
+      - experiments/strategy-destruction-filter/candidates/seed-strategies.json
+      - experiments/strategy-destruction-filter/results/filter-report.md
+      - experiments/strategy-destruction-filter/results/filter-report.json
+      - experiments/strategy-destruction-filter/results/rejected-ideas.jsonl
+      - experiments/strategy-destruction-filter/results/survivors.json
+      - wiki/notes/2026-08-29-avax-range-breakdown-watch.md
+      - wiki/notes/2026-08-29-avax-trend-pullback-rejection.md
+      - wiki/notes/2026-08-29-doge-candidate-destruction-lookback.md
+      - wiki/notes/2026-08-29-sol-b-tier-candidate-destruction.md
+      - wiki/notes/2026-08-29-source-falsification-guide.md
+      - wiki/notes/2026-09-01-open-unknown-route-reconciliation.md
+      - wiki/notes/2026-09-03-strategy-filter-survivor-uniqueness-audit.md
+      - wiki/notes/2026-09-10-strategy-filter-deflated-sharpe-sensitivity-audit.md
+      - wiki/notes/2026-09-12-strategy-filter-oos-baseline-lift-audit.md
+      - wiki/notes/2026-09-12-strategy-filter-oos-baseline-lift-gate-design.md
+      - wiki/notes/2026-09-12-strategy-filter-oos-baseline-lift-gate-implementation.md
+      - wiki/notes/2026-09-13-strategy-filter-post-gate-survivor-concentration-audit.md
+      - wiki/notes/2026-09-13-strategy-filter-survivor-shape-reporting.md
+      - wiki/notes/2026-09-13-strategy-filter-oos-shrinkage-audit.md
+      - wiki/notes/2026-09-14-strategy-filter-deflated-sharpe-source-calibration.md
+      - wiki/notes/2026-09-15-strategy-filter-chronology-gate-overlap-audit.md
+      - wiki/notes/2026-09-16-strategy-filter-psr-diagnostic-overlap-audit.md
+      - wiki/notes/2026-09-17-avax-watch-downgrade-reconciliation.md
+      - wiki/notes/2026-09-18-strategy-filter-near-miss-gate-pressure-audit.md
+      - wiki/notes/2026-09-19-strategy-filter-previous-report-drift-contract.md
+      - wiki/notes/2026-09-20-strategy-filter-purged-embargo-split-design.md
+      - wiki/notes/2026-09-20-strategy-filter-purged-embargo-implementation-scope.md
+      - wiki/notes/2026-09-21-strategy-filter-purged-embargo-verifier-assertion-map.md
+      - wiki/notes/2026-09-22-strategy-filter-purged-embargo-implementation-preflight.md
+      - wiki/notes/2026-09-23-strategy-filter-atas-verifier-drift-blocker.md
+      - wiki/notes/2026-09-24-strategy-filter-atas-verifier-status-reconciliation.md
+      - wiki/notes/2026-09-26-strategy-filter-purged-embargo-split-implementation.md
+    status: >-
+      active research-only strategy survival filter; 2026-09-26 purged/embargo split implementation is complete: report split method is `purged_embargo_entry_time`, candidate and time-matched baseline rows receive identical `purged_boundary` treatment, boundary rows are excluded before metrics/verdicts, and per-verdict `splitMetadata` is verifier-enforced. Current report remains 13 candidates / 131 variants / 0 survivors / 0 effective survivor shapes / 131 rejected, with 379 candidate boundary rows excluded and 25 basic OOS sample/expectancy passers still rejected by other gates. Backtest readiness now passes 11/11 as `ready_for_research_only_validation`; no promotion or threshold change. Use this lane for strict falsification, not go-live decisions.
+  autonomous_layer_goals:
+    read:
+      - core/autonomous-layer-goals.md
+      - rules.md
+      - wiki/notes/2026-08-31-work-queue-state-policy.md
+      - wiki/notes/2026-09-01-a2-operating-safety-brief.md
+      - automation/work-queues.yaml
+      - automation/loop-state.yaml
+      - outputs/evidence-ledger-prioritizer.md
+      - experiments/btc-eth-alert-edge/results/edge-summary.md
+      - experiments/btc-eth-alert-edge/paper/signals.json
+    status: 'active contract for self-set research goals across data rails, setup stats, regime-tagged forward paper, candidate decisions, pre-ML, future ML, source-falsification, evidence-ready queue prioritization, and human-facing Obsidian outputs; 2026-09-01 pending cleanup moved threshold waits, Arkham tiny export, and wallet-shadow independent event-window gates to Watch, so current manual pending work is empty unless a row threshold, named trigger, or explicit approval fires; 2026-09-01 U-011 operating-safety brief says safe A2 loops must stay one-branch, router/index-first, internal-by-default, self-verified, and bounded to minimal durable updates; threshold-watch, access/key/paid, capture/scanner, scheduler, alert, account, demo/testnet, execution, sizing, TP/SL, public posting, and strategy-promotion surfaces remain Watch/blocked/HITL until named triggers or explicit approval exist; 2026-08-31 U-007 queue policy says promotion requires a named trigger, one selected branch, context below the handoff threshold, and wheel gate/access classification/cheapest falsifier first; Tomas explicitly corrected HYPE feedback handling: convert trader feedback into quantified strategy research and testing with precise metrics or ranges, not alert commentary or vague follow/fade/noisy labels; first HYPE event-only velocity branch is now rejected because 93 local velocity reviews lacked L2/signed-flow evidence and broad follow rates stayed near baseline'
+    queue:
+      - validation.recheck-ta-call-candidates-after-20-row-threshold
+      - investigation.community-idea-to-kill-test-template
+  autoresearch_setup:
+    read:
+      - automation/ralph-autoresearch-loop.md
+      - automation/a2-research-engine-runbook.md
+      - wiki/notes/2026-09-01-a2-operating-safety-brief.md
+      - wiki/notes/2026-08-10-agent-skills-trading-bot-scan.md
+      - core/indexing-token-budget.md
+    status: A2 approved and active; U-011 resolved for current no-key phase with explicit active/watch/blocked/HITL loop classifications, notification thresholds, stop conditions, verifier requirements, and anti-slop gates
+  strategy_leg_garden:
+    read:
+      - wiki/notes/2026-07-02-strategy-leg-garden.md
+      - wiki/notes/2026-08-31-strategy-leg-garden-harvest.md
+      - wiki/notes/2026-09-01-patient-retail-strategy-leg-repeat-fit-map.md
+      - wiki/notes/2026-09-01-mid-cap-accumulation-coverage-liquidity-map.md
+      - wiki/notes/2026-08-31-funding-basis-baseline-monitor.md
+      - wiki/notes/2026-08-31-funding-basis-public-snapshot-table.md
+      - wiki/notes/2026-08-31-funding-basis-fixed-window-accounting-design.md
+      - wiki/notes/2026-08-31-funding-basis-wallet-detection-spike.md
+      - wiki/notes/2026-08-31-strategy-family-budget-fit-map.md
+      - wiki/notes/2026-09-01-event-vs-continuous-small-operator-map.md
+      - wiki/notes/2026-08-31-slow-accumulator-copytrading-source-fit.md
+      - wiki/notes/2026-08-31-slow-accumulator-following-exit-risk-scan.md
+      - wiki/notes/2026-08-31-slow-accumulator-tool-fit-map-update.md
+      - outputs/funding-basis-public-snapshot-table.md
+      - wiki/notes/templates/strategy-leg-note.md
+      - loops/strategy-research-loop.md
+      - decisions/candidates.md
+    queue: discovery.strategy-leg-garden
+    status: 2026-09-01 U-037 repeat-fit map ranks patient-retail legs as funding/basis active no-key baseline, smart-money mid-cap accumulation access-gated alpha, range/grid offline falsifier, event radar context/falsifier, token unlock source-first watch, and delegated copy prior art; U-024 coverage/liquidity map says mid-cap accumulation remains high-fit in principle but not currently measurable enough from active no-key data, so it stays Watch/needs-access until frozen 20+ wallet/entity rows include entry, exit/distribution, flow quality, liquidity/impact context, baselines, and outlier controls; 2026-08-31 garden harvest preserved five raw patient-retail legs with kill tests and no promotion; U-010 event-vs-continuous map says event-triggered work is easier for bounded research and harder for execution-grade trading, so events should be used as falsifiers/radar unless frozen rows prove delayed copyability; U-009 budget-fit map says current active `$0` families are market-level funding/basis baseline, local alert-edge/TA strategy destruction, bounded public orderflow research, offline range/grid falsifiers, and tiny Hyperliquid event/fill delay falsifiers, while Nansen/Dune/Arkham smart-money exports, 0xArchive replay, and CoinGlass derivatives context are under-budget only as explicit approval-gated tiny samples; funding-basis-persistence-baseline now has a no-key feasibility/spec note, one-shot public snapshot table, fixed-window accounting design, manual previous-run comparison, and wallet-level detectability closeout; current best path is market-level baseline observation, while wallet-level structural-basis detection stays Watch/weak-public-detectability unless Tomas approves actor-clustering and cross-venue exposure access; smart-money-mid-cap-accumulation remains conceptually strong but waits for Dune/Nansen/Arkham access/export evidence, the slow-accumulator source-fit and tool-fit-map updates say copytrading/perp products are prior art rather than active slow-spot sources, and the exit-risk scan makes missing exits a veto before any paper cohort; range-grid stays offline-falsifier watch, token-unlock is source-first watch, and event-radar remains context-only
+  framework_repo_research:
+    read:
+      - loops/framework-repo-discovery-loop.md
+      - loops/x-github-research-loop.md
+      - wiki/notes/templates/community-idea-kill-test.md
+      - wiki/notes/2026-08-28-framework-shortlist-wheel-gate.md
+      - wiki/notes/2026-08-30-framework-shortlist-comparison.md
+      - wiki/notes/2026-08-27-operator-profile-community-autoresearch-lane.md
+      - wiki/notes/2026-08-29-community-idea-kill-test-template.md
+      - wiki/notes/2026-08-29-github-operator-source-map.md
+      - wiki/notes/2026-08-30-x-reddit-strategy-inspiration-scan.md
+      - wiki/notes/2026-07-01-trading-bot-build-guide-map.md
+      - wiki/notes/2026-08-30-trading-bot-build-guide-map-closeout.md
+      - wiki/notes/2026-08-30-trading-bot-operation-map.md
+      - wiki/notes/2026-08-30-event-driven-bot-repo-search.md
+      - wiki/notes/2026-08-30-grid-range-existing-tool-trial-design.md
+      - decisions/candidates.md
+    queue:
+      - discovery.freqtrade-no-key-dry-run-spike
+      - discovery.trading-bot-framework-github-map
+      - discovery.event-driven-bot-repo-search
+      - discovery.x-github-strategy-keyword-scan
+    status: public operator/profile/community inspiration lane plus framework wheel gate; 2026-08-30 grid/range trial design keeps C-028 Watch because Hummingbot, Pionex, TradingView, and public Hyperliquid grid repos show the job is already productized while real use crosses account/key/wallet/capital/manual UI boundaries, so the next allowed shape is an offline public-candle falsifier versus simple range/no-trade baselines; 2026-08-30 event-driven bot repo search ranks NautilusTrader, Barter, and Basana as clean architecture references while classifying Hyperliquid-specific grid/MM/browser-wallet bots as source claims and risk-boundary specimens, not install/run targets; 2026-08-30 trading-bot operation map defines the future bot-like operating surface as strategy spec, data intake, signal engine, T2 backtest/replay, T3 forward paper, monitoring, postmortem, and HITL boundary, with no bot build/adoption until a paper-supported candidate justifies a T4 no-key prototype proposal; 2026-08-30 framework comparison ranks vectorbt as the active ephemeral benchmark rail with `plotly<6`, Freqtrade as validation-hygiene reference until setup is approved, hftbacktest/Nautilus as replay/architecture references, and Jesse/OctoBot/grid/copy products as secondary workflow/tool-fit references; 2026-08-30 X/Reddit/social scan kept only source-backed falsification themes and promoted no strategy candidates; community idea kill-test template is the required intake shape before public operator/social ideas become candidates"
+  wallet_shadowing:
+    read:
+      - wiki/notes/2026-08-31-arkham-evaluation-checklist.md
+      - wiki/notes/2026-08-31-smart-money-cohort-discovery-layer.md
+      - wiki/notes/2026-08-26-copytrading-autoresearch-lane.md
+      - wiki/notes/2026-08-30-copytrading-public-route-ledger.md
+      - wiki/notes/2026-08-30-hyperliquid-leaderboard-address-sample.md
+      - wiki/notes/2026-08-30-hyperliquid-data-feasibility-spike.md
+      - wiki/notes/2026-08-31-wallet-shadow-delay-evidence.md
+      - wiki/notes/2026-08-31-wallet-shadowing-archetype-shadowability-map.md
+      - wiki/notes/2026-08-31-wallet-shadow-event-candidate-signal-spec.md
+      - wiki/notes/2026-09-01-event-vs-continuous-small-operator-map.md
+      - wiki/notes/2026-09-01-wallet-shadowing-existing-tool-coverage-map.md
+      - wiki/notes/2026-09-01-cohort-flow-vs-single-wallet-signal-map.md
+      - wiki/notes/2026-09-01-hyperliquid-activity-defined-universe-route.md
+      - wiki/notes/2026-09-01-no-key-copytrading-discovery-limit-map.md
+      - wiki/notes/2026-09-01-hyperliquid-wallet-shadow-delay-sample.md
+      - wiki/comparisons/wallet-shadowing-archetype-map.md
+      - wiki/notes/2026-08-30-wallet-shadow-high-volatility-event-brief.md
+      - wiki/notes/2026-08-30-event-triggered-wallet-shadow-falsification.md
+      - wiki/notes/2026-08-30-wallet-shadowing-forward-paper-trade-spec.md
+      - wiki/notes/2026-08-31-funding-basis-wallet-detection-spike.md
+      - wiki/notes/2026-08-31-slow-accumulator-copytrading-source-fit.md
+      - wiki/notes/2026-08-31-slow-accumulator-following-exit-risk-scan.md
+      - wiki/notes/2026-08-31-slow-accumulator-tool-fit-map-update.md
+      - wiki/notes/2026-08-30-trump-person-event-radar-rules.md
+      - decisions/copytrading-watch-ledger.md
+      - experiments/copytrading-address-intake/results/hyperliquid-public-route-ledger.md
+      - experiments/copytrading-address-intake/results/hyperliquid-leaderboard-address-intake-2026-08-30.md
+      - wiki/concepts/wallet-shadowing-strategy-model.md
+      - wiki/concepts/shadowability-latency-axis.md
+      - wiki/notes/2026-07-01-wallet-shadowing-address-inventory.md
+      - wiki/notes/2026-07-01-wallet-shadowing-next-direction.md
+      - wiki/notes/2026-07-01-wallet-shadowing-prior-art-tool-scan.md
+      - wiki/comparisons/fast-copy-trading-vs-slow-accumulator-following.md
+      - wiki/comparisons/wallet-shadowing-archetype-map.md
+      - loops/market-battlefield-loop.md
+      - core/data-rails.md
+    queue:
+      - investigation.wallet-shadowing-forward-paper-trade-spec
+    status: "first-class research-only copytrading/wallet-following lane; 2026-09-01 U-008/U-017 wheel gate moved wallet-shadow delay/copyability work from pending unknowns to Watch-only wallet-shadow-independent-event-window-gate: no new sample runs until Tomas names an independent event/source/account trigger or a source-ranked event record creates a precise window, then the study must require 3+ windows, 20+ quality observations, same-run raw rows plus delay joins, entry/exit classification, conservative costs, baseline rows, hidden-hedge flags, and cluster/outlier controls; 2026-09-01 U-001 wheel gate moved Arkham from pending unknown work to Watch-only arkham-material-value-tiny-export-gate: no active Arkham data route exists until Tomas explicitly approves account/API-plan-or-trial/API-key access, spend cap, endpoint scope, local export path, and a tiny decision-value comparison against public routes; 2026-09-01 manual Hyperliquid wallet-shadow delay sample opened the smallest Tomas-approved U-008/U-017 blocker: one known address returned 720 fills in a 60-minute settled window, 24 rows were frozen and joined to public 1m candles, gross delay was positive for 18/24 rows at 60s and 19/24 at 180s, and after 8 bps cost stress 9/24 stayed positive at 60s and 17/24 at 180s; rows still cluster into one address and 8 coin-direction-minute groups, so this is a tiny falsifier/mechanics artifact only, not a scanner, recurring capture, copy candidate, or strategy promotion; 2026-09-01 U-039 no-key copytrading limit map says no-key discovery is useful for prior art, triage, rejection, and tiny falsifiers, but not enough to produce useful copy candidates without non-leaderboard universe rows, full history, exits, hedge visibility, and slow cohort coverage; 2026-09-01 U-019 activity-defined universe route says RALPH cannot yet claim non-leaderboard Hyperliquid account discovery because active no-key routes cover leaderboard seeds and known-address verification, not venue-wide activity discovery; future work needs a public/no-key activity export or HITL-approved tiny keyed/export sample; 2026-09-01 U-022 cohort-vs-single-wallet map says cohort flow is the preferred signal target for Tomas's patient-retail constraints, but remains Watch/needs-access until frozen 20+ wallet/entity rows include entry, exit/distribution, baselines, delayed follower results, and outlier controls; single-wallet copying stays radar/falsifier/rejection material; 2026-09-01 U-018 existing-tool coverage map says existing tools already cover enough of the wallet-shadow workflow to block broad custom scanner/copy-engine builds: Hyperliquid public stats plus official info endpoints are active for seed and known-address triage/tiny falsifiers, while Nansen/Dune/Arkham-style rows are serious only after approved export/API access; 2026-09-01 U-010 event-vs-continuous map keeps event-triggered wallet-shadowing as falsifier/radar unless frozen rows prove delayed copyability, because events make research windows easier but execution-grade trading harder under latency, slippage, missed-fill, hidden-hedge, and selection-bias pressure; 2026-08-31 wallet-shadow event candidate signal spec resolves U-002 for current no-key/A2 routing: candidate rows must be frozen before outcome scoring, source-timestamped, access-classified, stored with raw rows and same-run delay joins, checked against costs/fills/exits/beta/outliers/hidden hedges, and need 20+ quality observations across 3+ event windows before copyability review; 2026-08-31 smart-money cohort discovery layer defines the future frozen row/export contract: 20+ wallets/entities over a 7-14 day entry plus exit/distribution window, label confidence, token/liquidity context, entry/exit flows, off-ramp context, delayed follower result, baselines, and quality flags; no public/no-key source can fill it now, so next move is HITL export approval or Watch; 2026-08-31 Arkham checklist says Arkham docs expose strong enrichment endpoints, but data access requires account/API-plan-or-trial/API-key approval and direct no-key probes returned HTTP 400, so Arkham is needs-approval/enrichment-first, not active; 2026-08-31 archetype shadowability map routes by latency plus observability: market-level funding/basis is the only current no-key measurable latency-tolerant comparison floor; wallet-level structural funding/basis is Watch/weak-public-detectability because hidden hedges and cross-venue exposure dominate; slow accumulator following is the higher-upside alpha branch but needs approved/exported smart-money data with exit/distribution rows; event and Hyperliquid wallet-shadowing remain tiny frozen-falsifier routes, not scanner or strategy-promotion routes; 2026-08-31 funding/basis wallet detectability spike resolves U-023 for the no-key phase; HypurrScan and HyperDash remain manual watch routes, while HyperTracker, Nansen, Apify, Dune, Arkham, and product exports remain needs-access or needs-approval until Tomas approves accounts/keys/paid usage"
+  killed_liquidation_q1:
+    read:
+      - experiments/liquidation-q1-baseline-kill-switch/results/major-2026-06.json
+      - wiki/sources/liquidation-q1-baseline-kill-switch-2026-07-01.md
+      - decisions/discarded.md
+    status: do_not_build for current Q1 configuration
+  mev_case_file:
+    read:
+      - wiki/notes/2026-08-30-mev-bot-failure-mode-extraction.md
+      - wiki/notes/2026-08-30-mev-bot-case-file-not-execution.md
+      - case-files/mev-bot/review.md
+      - case-files/mev-bot/README.md
+      - wiki/sources/mev-bot-archive.md
+      - wiki/sources/crypto-trading-bots-project-handoff.md
+      - decisions/candidates.md
+      - decisions/unknowns.md
+    status: historical case file only; 2026-08-30 case-file-not-execution decision closes the queue item and says the archive is not a live bot, execution workspace, deploy target, or codebase to resume without explicit fresh audit approval; 2026-08-30 failure-mode extraction resolved U-006 and marks C-006 done, turning the archive blockers into reusable checks for provenance, secret-free monitoring, schema/config/event/metric contracts, simulation realism, end-to-end wiring, venue mechanics, and latency budget before any archived trading repo or execution-capable codebase work
+  zela_validation:
+    read:
+      - wiki/notes/2026-08-30-zela-validation-rules-extraction.md
+      - wiki/sources/zela-planner-handoff.md
+      - case-files/zela-benchmark/README.md
+      - case-files/zela-benchmark/lessons.md
+      - ../zela-benchmark/source/README.md
+      - ../zela-benchmark/source/docs/M4_RESULTS.md
+      - ../zela-benchmark/source/docs/M5_RESULTS.md
+      - decisions/candidates.md
+      - decisions/unknowns.md
+    status: "methodology case file only; 2026-08-30 extraction marks C-003 done and resolves U-003 by turning Zela M4/M5 and shutdown handoff into validation rules for paired measurement, symmetric filtering, denominator/exclusion discipline, caveat-beside-claim, distribution/tail reporting, frozen artifacts, reviewer checks, workload scope, access/freshness labels, and shutdown stop-loss; do not revive the old live Zela target unless Tomas explicitly reopens it"
+  crypto_updates_monitor:
+    read:
+      - ../crypto-updates/monitor-index.yaml
+      - ../crypto-updates/wiki/monitor/index.md
+      - ../crypto-updates/digest-index.yaml
+      - ../crypto-updates/beta-operations.md
+    database:
+      - ../crypto-updates/runtime/monitor-index.sqlite
+    raw_only_when_needed:
+      - ../crypto-updates/runtime/alert-feedback.jsonl
+      - ../crypto-updates/runtime/realtime-market-watcher.log
+    status: realtime watcher active; monitor feedback is indexed outside RALPH and linked here
+  public_free_source_feeds:
+    read:
+      - wiki/notes/2026-08-30-public-free-source-feed-list.md
+      - core/data-rails.md
+      - wiki/notes/2026-08-30-existing-tool-fit-map.md
+      - wiki/notes/2026-08-30-copytrading-public-route-ledger.md
+      - wiki/notes/2026-08-10-public-orderflow-data-rail.md
+      - ../crypto-updates/orderflow-index.yaml
+      - ../crypto-updates/monitor-index.yaml
+    status: active routing map for public/no-key or keyless-proxy feeds; Binance/Bybit/Hyperliquid market data, DefiLlama, DEXScreener, GeckoTerminal, Alternative.me FNG, and Hyperliquid stats/info were reachable from this workspace on 2026-08-30; on 2026-08-31 HYPE-specific no-key L2 snapshots were verified from Hyperliquid l2Book, Binance USD-M futures HYPEUSDT depth, and Bybit linear HYPEUSDT orderbook, so HYPE L2 is active-public-proxy for access while absorption remains an unvalidated feature pending capture/replay alignment; Nansen/Arkham/Dune-style cohort work remains needs-access unless free exportable rows or approved account/key/paid access are verified
+    candidate: C-004
+  filip_feedback:
+    read:
+      - wiki/filip_feedback/README.md
+      - wiki/notes/templates/filip-feedback-intake.md
+      - wiki/notes/2026-08-31-hype-feedback-quantified-strategy-work-package.md
+      - wiki/notes/2026-08-31-hype-feedback-event-only-velocity-kill-test.md
+      - wiki/notes/2026-09-08-filip-btc-pdv-pdn-prediction-intake.md
+      - wiki/notes/2026-09-08-filip-pdv-pdn-cluster-strategy-development-lane.md
+      - wiki/notes/2026-09-08-level-breakout-acceptance-baseline.md
+      - wiki/notes/2026-09-08-planned-level-orderflow-decision-protocol.md
+      - wiki/notes/2026-09-12-planned-level-proxy-replay-scaffold.md
+      - experiments/strategy-destruction-filter/results/level-breakout-acceptance-study.md
+      - experiments/strategy-destruction-filter/results/planned-level-proxy-replay.md
+      - core/profitability-flywheel.md
+      - core/communication-protocol.md
+    status: "recurring trader-feedback intake lane. Treat Filip feedback like TA primitive intake when it provides reusable market-reading logic, but convert tradeable feedback into quantified strategy research with precise hypotheses, tests, local paper/demo evidence where allowed, and metrics/ranges. 2026-09-28 planned-level proxy refresh satisfied the prior public/no-key scaffold gate with 20 frozen BTC planned-level rows, 10 fetched BTCUSDT Binance aggTrades windows, 0 fetch failures, and verdict proxy_replay_rows_ready_for_baseline_test; the follow-up baseline check was mixed/no-promotion with 5c fast-kill support 3/6 and hold/retest support 1/4, so keep as planned-level-proxy-label-baseline-watch rather than a candidate. 2026-09-12 planned-level proxy replay scaffold added a BTC-gated public/no-key route for the Filip pdV/pdN plus Cluster Search lane. 2026-09-08 Tomas asked the agent to independently develop Filip's pdV/pdN plus Cluster Search hypothesis into a paper-only strategy and new planned-level alert family. First baseline added `level-breakout-acceptance-study`: candle-only acceptance/rejection around previous-candle and previous-day high/low levels is mostly weak across BTC/ETH/SOL/HYPE, so Cluster Search/orderflow should be tested as a false-break/acceptance filter, not as a standalone entry. The BTC pdV/pdN Monday prediction remains a high-quality hypothesis around same-side magnet bands, weekday conditioning, value-area deviation, and orderflow confirmation, but requires Filip's row-level export and objective definitions before validation or promotion. 2026-08-31 HYPE event-only velocity was rejected as a strategy candidate; the remaining HYPE absorption route is Watch-only and requires explicit approval before capture/replay work. Do not change live alerts, thresholds, sizing, execution, schedulers, paid/keyed access, or strategy status from feedback alone."
+    unknown: U-004
+  ta_learning_loop:
+    read:
+      - automation/ta-learning-loop.md
+      - ../crypto-updates/setup-analysis-index.yaml
+      - ../crypto-updates/wiki/setup-analysis/latest.md
+      - ../crypto-updates/runtime/setup-analysis.json
+      - ../crypto-updates/monitor-index.yaml
+      - wiki/notes/2026-08-29-ta-learning-call-candidate-forward-check.md
+    raw_only_when_needed:
+      - ../crypto-updates/runtime/alert-feedback.jsonl
+    status: first bounded research-only setup analyzer active; 2026-09-01 threshold wait moved to Watch as ta-call-candidates-20-row-threshold, so do not rerun until the largest call bucket reaches 20 reviewed rows; 2026-08-29 call-candidate forward check refreshed setup analysis to 240 reviewed setups / 149 with candle context / 245 hypothetical decisions; generated calls remain research-only/watch because candidate buckets are tiny, have zero matched executions, and need at least 20 reviewed rows plus stable tradable evidence before live wording discussion
+    queue:
+      - validation.recheck-ta-call-candidates-after-20-row-threshold
+  public_orderflow_rail:
+    read:
+      - core/data-rails.md
+      - wiki/notes/2026-08-10-public-orderflow-data-rail.md
+      - wiki/notes/2026-08-11-orderflow-feature-taxonomy.md
+      - wiki/notes/2026-08-30-trader-grade-ta-feature-taxonomy.md
+      - wiki/notes/2026-08-13-orderflow-alert-alignment-check.md
+      - wiki/notes/2026-08-30-orderflow-replay-alignment-audit.md
+      - wiki/notes/2026-09-28-historical-orderflow-data-rails.md
+      - wiki/notes/2026-08-11-trader-grade-ta-orderflow-tool-stack.md
+      - wiki/notes/2026-08-11-trader-tool-access-audit.md
+      - ../crypto-updates/orderflow-index.yaml
+      - ../crypto-updates/wiki/orderflow/index.md
+      - ../crypto-updates/wiki/orderflow/replay-alignment.md
+      - decisions/candidates.md
+      - decisions/unknowns.md
+      - ../crypto-updates/monitor-index.yaml
+    candidate: C-036
+    unknown: U-038
+    queue:
+      - investigation.orderflow-feature-taxonomy
+    status: no-key Binance/Hyperliquid capture and 1-second feature extraction are technically viable; 2026-09-28 historical orderflow rail check found Binance spot and USD-M futures historical aggTrades ZIP archives reachable with no key and classified them as the first active historical tape rail for planned-level/orderflow backtesting; Binance book-depth archive path was not verified, Bybit recent public trades are recent-only, Hyperliquid recent trades/current L2 work no-key, and Hyperliquid historical S3 remains requester-pays/needs-tooling because aws/lz4 are not installed. 2026-08-30 replay-alignment audit checked 244 sent alerts, 239 finalized reviews, and 6 saved feature runs, finding 0 exact symbol/time matches and 8 near misses, including a two-hour BTC capture that overlapped HYPE/SOL alert windows by time but not symbol; saved captures remain pipeline evidence only, so next orderflow work should use Binance historical aggTrades around frozen planned-level or alert/review windows before any recurring capture job
+    no_key_sources:
+      - Binance public websocket trade/aggTrade/bookTicker/depth streams
+      - Hyperliquid public websocket trades/l2Book/bbo/allMids streams
+      - Bybit public websocket trade/orderbook streams
+    trader_tool_benchmarks:
+      - ATAS
+      - Bookmap
+      - Exocharts
+      - TradingView
+      - CoinGlass
+      - Coinalyze
+      - Laevitas
+      - Hyblock
+  aggregate_flow_signal_feasibility:
+    read:
+      - wiki/notes/2026-08-30-aggregate-flow-signal-feasibility.md
+      - wiki/notes/2026-08-31-mid-cap-accumulation-flow-scan.md
+      - wiki/concepts/smart-money-accumulation-cohort.md
+      - raw/wallet-shadowing-latency-axis-correction-2026-07-01.md
+      - raw/patient-retail-strategy-map-2026-07-01.md
+      - raw/slow-accumulator-tool-fit-check-2026-07-01.md
+      - wiki/notes/2026-08-30-orderflow-replay-alignment-audit.md
+      - ../crypto-updates/orderflow-index.yaml
+      - ../crypto-updates/monitor-index.yaml
+    status: wallet/cohort aggregate flow is needs-access/watch until a no-key/exportable cohort source exists; 2026-08-31 mid-cap accumulation flow scan found Dune query-fit but key/export-gated, Nansen highest-fit but paid/keyed approval-gated, Arkham enrichment-gated, and DefiLlama active-public-context only; exchange/orderflow aggregate flow is active-public-proxy but not signal evidence until exact alert/orderflow overlap exists; alert-edge aggregate flow is watch only
+    candidate: C-020
+    unknown: U-022
+  patient_retail_archetype_prioritization:
+    read:
+      - wiki/notes/2026-08-31-patient-retail-archetype-prioritization.md
+      - wiki/concepts/patient-retail-strategy-map.md
+      - wiki/comparisons/patient-retail-strategy-archetypes.md
+      - wiki/concepts/funding-basis-structural-baseline.md
+      - wiki/notes/2026-08-31-mid-cap-accumulation-flow-scan.md
+      - decisions/candidates.md
+      - decisions/unknowns.md
+    status: 2026-08-31 prioritization ranks funding/basis structural baseline as the next practical no-key patient-retail branch; smart-money/mid-cap accumulation stays the higher-upside alpha branch but is gated on Dune/Nansen/Arkham access/export evidence; range/grid stays offline-falsifier watch; token unlocks are source-first watch; delegated copy is prior-art only; event-timing wallets are radar-only
+    candidate: C-023
+    unknown:
+      - U-021
+      - U-025
+  btc_eth_alert_edge:
+    read:
+      - automation/btc-eth-alert-edge-loop.md
+      - wiki/notes/2026-08-11-btc-eth-edge-prior-art-scan.md
+      - wiki/notes/2026-08-11-trader-grade-ta-orderflow-tool-stack.md
+      - wiki/notes/2026-08-11-trader-tool-access-audit.md
+      - wiki/concepts/prior-art-before-experiment.md
+      - experiments/btc-eth-alert-edge/universe-policy.md
+      - experiments/btc-eth-alert-edge/results/universe-snapshot.json
+      - experiments/btc-eth-alert-edge/results/universe-summary.md
+      - experiments/btc-eth-alert-edge/results/edge-snapshot.json
+      - experiments/btc-eth-alert-edge/results/edge-summary.md
+      - experiments/btc-eth-alert-edge/results/paper-dashboard.json
+      - experiments/btc-eth-alert-edge/results/paper-dashboard.md
+      - experiments/btc-eth-alert-edge/results/framework-benchmark.md
+      - experiments/btc-eth-alert-edge/results/demo-sim-orb-continuation.md
+      - wiki/concepts/impulse-exhaustion-research-branch.md
+      - wiki/notes/2026-09-27-survivor-cluster-postmortem.md
+      - wiki/notes/2026-09-27-impulse-exhaustion-cooldown-postmortem.md
+      - wiki/notes/2026-09-27-impulse-cooldown-purged-forward-test.md
+      - wiki/notes/2026-09-27-impulse-decay-state-feature-scan.md
+      - wiki/notes/2026-09-28-demo-sim-range-breakout-baseline-lift-check.md
+      - experiments/btc-eth-alert-edge/results/demo-sim-impulse-decay-state-feature-scan.md
+      - wiki/notes/2026-09-26-btc-risk-on-orb-continuation-kill-test.md
+      - wiki/notes/2026-08-30-btc-eth-row-level-parity.md
+      - wiki/notes/2026-08-21-relative-pair-matrix.md
+      - wiki/notes/2026-08-29-forward-paper-regime-tagging.md
+    status: >-
+      paper-only backtest loop active; 2026-09-28 DEMO-SIM refresh keeps the whole paper fund capital-impaired
+      at 490 closed trades, 5868.50 USDT ending equity, -4131.50 USDT net, PF 0.9320, and 85.85% ledger max drawdown.
+      Shorts remain quarantined at 198 records, -14469.77 USDT, PF 0.4162, and 0/20 revalidated short families.
+      The current research-watch survivor is still `range_breakout_long + BTC_RISK_ON + 4h + B|low-sample`:
+      26 post-purge forward trades, +2351.05 USDT, PF 1.6356, 6.94% max drawdown, beating broader long/BTC-risk-on
+      baselines but still blocked from capital/live/demo sizing promotion by synthetic replay, grid-selection risk,
+      small sample, and impaired account surface. 2026-09-27 impulse-exhaustion branch is now explicitly tagged `postmortem_viable_only`
+      and `not-forward-validated`: the survivor-cluster postmortem explains W34 as a short-lived broad BTC-led alt impulse,
+      the cooldown postmortem found target 72h >25% as a crude explanatory skip, and the purged-forward test rejected it
+      as a promotion rule; the richer impulse-decay state-feature scan also failed to improve the purged-forward slice, so do
+      not keep tuning this lane without new forward rows or richer breadth/flow/orderflow evidence. Use
+      `wiki/concepts/impulse-exhaustion-research-branch.md` as the canonical pointer before revisiting this direction.
+      2026-09-26 fixed BTC-risk-on ORB continuation kill test is rejected (`reject_drawdown_too_high`):
+      329 purged walk-forward trades, -3206.24 USDT per 10k, PF 0.8947, 1/5 positive forward months, and 99.47% max drawdown,
+      while existing `range_breakout_long + BTC_RISK_ON` replay remains stronger. Forward paper signals and dashboard are regime-tagged
+      at trend/volatility granularity so B-tier candidate checks can require matching T3 support; 2026-08-30 row-level vectorbt parity
+      is reproducible with `plotly<6` and shows explainable framework/custom row differences for BTC/ETH 4h momentum_reversal_long
+      while preserving the weak-edge conclusion; dynamic universe selector added for SOL/HYPE/liquid alts; trader-grade TA/orderflow
+      benchmarks added; 2026-08-21 relative-pair matrix says synthetic ratios should become a context/pre-ML layer, but recent BTC/ETH/SOL
+      alert joins are mixed and not promotable as a standalone gate
+    cron: liquid-crypto-alert-edge-backtest
+  profitability_loop:
+    read:
+      - core/profitability-flywheel.md
+      - wiki/notes/2026-08-30-strategy-family-taxonomy.md
+      - wiki/notes/2026-08-25-profitability-loop-integration-map.md
+      - wiki/notes/2026-08-29-ralph-grand-loop-verify-reassess.md
+      - automation/current-operating-map.md
+      - automation/ralph-autoresearch-loop.md
+      - automation/ta-learning-loop.md
+      - wiki/notes/2026-08-19-high-probability-setup-router.md
+      - wiki/concepts/strategy-destruction-filter.md
+      - wiki/concepts/forward-paper-trade-gate.md
+      - wiki/notes/2026-08-21-alert-feedback-data-analysis.md
+      - wiki/notes/2026-08-11-orderflow-feature-taxonomy.md
+      - wiki/comparisons/fast-copy-trading-vs-slow-accumulator-following.md
+      - experiments/btc-eth-alert-edge/results/paper-dashboard.md
+      - experiments/btc-eth-alert-edge/results/edge-summary.md
+      - experiments/btc-eth-alert-edge/results/paper-dashboard.json
+      - experiments/btc-eth-alert-edge/results/edge-snapshot.json
+      - wiki/notes/2026-08-29-doge-candidate-destruction-lookback.md
+      - wiki/notes/2026-08-29-sol-b-tier-candidate-destruction.md
+    status: 'active research/paper operating contract under the RALPH Profitability Flywheel; 2026-09-26 Phase 2 validation has now rejected both PDH/PDL second-gate and fixed BTC-risk-on ORB continuation, leaving `range_breakout_long + BTC_RISK_ON` as the only current watch pocket, still blocked from promotion by strict-filter failure and DEMO-SIM capital impairment. 2026-09-01 U-005 route reconciliation says current promotion-vs-discard gates are the combined flywheel state machine, source-falsification guide, candidate scoring, and strategy score rubric: require named trigger, mechanism, baseline, falsifier, access class, cheapest kill test, tier-appropriate evidence, and HITL approval for gated surfaces; 2026-08-30 strategy-family taxonomy prioritizes slow structural baselines, slow informational cohorts, and strict TA/orderflow/paper rejection gates while keeping speed MEV discard/reference; alert-edge is the high-throughput paper ledger, strategy-destruction-filter is the kill gate, source-falsification is now the required cheap T1/T2 prior-art/access/mechanism check before candidate expansion or promotion, autoresearch is the bounded researcher, orderflow is execution-realism/context, copytrading is radar or slow-cohort hypothesis source, and computer-use remains proposed until access is verified; 2026-08-29 Tomas approved formalizing the flywheel as the router/queue contract while keeping live trading, keys, paid services, public posting, scheduler changes, live alert wording, risk/sizing/TP/SL, and execution changes behind explicit per-action approval; 2026-08-29 index lint repaired the stale top-level wiki-page count, regenerated index.md navigation, and added frontmatter to recent forward-paper/AVAX notes'
+    queue:
+      - recheck-ta-call-candidates-after-20-row-threshold
+      - align-orderflow-features-to-alert-feedback
+      - slow-accumulator-forward-paper-spec
+  dont_reinvent_wheel_gate:
+    read:
+      - rules.md
+      - core/testing-protocol.md
+      - wiki/concepts/prior-art-before-experiment.md
+      - wiki/notes/2026-08-29-source-falsification-guide.md
+      - wiki/notes/2026-08-11-btc-eth-edge-prior-art-scan.md
+      - wiki/notes/2026-08-30-build-vs-buy-decision-memo.md
+      - wiki/notes/2026-08-30-existing-tool-fit-map.md
+      - decisions/decisions.md
+    status: hard rule from Tomas; 2026-08-30 existing-tool fit map says vectorbt is active candle sanity rail, Freqtrade is validation-hygiene reference, hftbacktest/Nautilus are replay/fill-realism references, Nautilus/Barter/Basana are architecture references, public orderflow is active-public-proxy, Hyperliquid wallet routes are discovery/verification only, Nansen/Arkham/Dune cohort work is needs-access/approval, and grid/MM/copy products are prior art; custom RALPH work is justified only for branch selection, falsifier design, validation/rejection, paper evidence, small adapters, and memory; run source-falsification before custom build/data/backtest expansion
+  shared_language_and_full_ta:
+    read:
+      - docs/ubiquitous-language.md
+      - wiki/concepts/multi-timeframe-full-ta.md
+      - wiki/notes/2026-08-30-trader-grade-ta-feature-taxonomy.md
+      - wiki/notes/2026-08-29-shared-language-maintenance-and-grill-me.md
+      - ../crypto-updates/docs/ubiquitous-language.md
+      - ../crypto-updates/wiki/trading-journal/index.md
+    status: active vocabulary route; 2026-08-30 trader-grade TA taxonomy separates HTF context, mid-TF setup, LTF trigger, orderflow proxy, derivatives context, statistical evidence, and quality flags; Full TA means HTF context plus mid-TF setup plus LTF trigger plus scenario alternatives, invalidation, and trade-class fit; volume velocity is LTF trigger by default; default trade classes are fast seconds-30m, medium 30m-8h, long_running 8h-multi-day-or-weeks, plus no_trade
+  indexing_and_evals:
+    read:
+      - wiki/notes/2026-08-30-indexing-and-evals-audit.md
+      - wiki/notes/2026-08-30-research-validation-checklist.md
+      - wiki/notes/2026-08-30-autoresearch-cron-remediation-hitl.md
+      - core/indexing-token-budget.md
+      - core/testing-protocol.md
+      - core/communication-protocol.md
+      - automation/current-operating-map.md
+      - automation/research-validation-checklist.mjs
+      - outputs/research-validation-checklist.md
+      - automation/evidence-ledger-prioritizer.mjs
+      - experiments/btc-eth-alert-edge/src/verify-backtest.mjs
+      - experiments/strategy-destruction-filter/src/verify-filter.mjs
+      - experiments/strategy-destruction-filter/test/engine.test.mjs
+      - experiments/liquidation-q1-baseline-kill-switch/test/q1-harness.test.mjs
+      - ../crypto-updates/verify-setup-analysis.mjs
+      - ../crypto-updates/monitor-index.yaml
+      - ../crypto-updates/orderflow-index.yaml
+      - ../crypto-updates/setup-analysis-index.yaml
+    status: 'RALPH has partial evals: setup-analysis, alert-edge, strategy-filter, liquidation harness, evidence prioritizer, generated YAML indexes, and SQLite runtime stores. The 2026-08-30 research-validation checklist is the first compact maintenance surface for retrieval/index budget, simple path references, queue consistency, cron health with consecutive-error count, delivery verification, HITL ask quality, loop quality, handoff readiness, paper/demo readiness, and boundary deltas. The autoresearch cron remediation HITL note captures the current 2-error timeout/gateway-restart scheduler warning without authorizing scheduler mutation.'
+update_rules:
+  new_source: Update raw, wiki/sources, index.yaml, regenerate index.md, append log.md.
+  new_synthesis: Update existing wiki page when possible; otherwise create one focused page and regenerate index.md.
+  new_loop_state: Update automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, and log.md.
+  no_duplicate_summary: Link to the canonical page instead of copying content.

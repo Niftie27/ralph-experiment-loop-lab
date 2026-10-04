@@ -1,0 +1,1716 @@
+ATAS: ATAS.DataFeedsCore Namespace Reference 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Namespaces | Classes | Enumerations | Functions | Variables 
+
+ATAS.DataFeedsCore Namespace Reference 
+
+Namespaces 
+
+namespace Commissions 
+
+namespace ConnectorWebsocket 
+
+namespace Database 
+
+namespace Dom 
+
+namespace Exceptions 
+
+namespace Pricing 
+
+namespace Rebate 
+
+namespace SessionServer 
+
+namespace Statistics 
+
+namespace TradeStatistics 
+
+Classes 
+
+class AsyncConnector 
+
+Connector base that allows to use await to switch to the connector queue thread. More... 
+
+class AsyncConnectorMessage 
+
+Service message for passing continuations to the connector thread. More... 
+
+class AsyncMessageQueue 
+
+class BaseConnector 
+
+class BaseMarketDataOnlyConnectorSettings 
+
+class BaseMessageQueue 
+
+class BasketConnector 
+
+class BasketConnectorSettings 
+
+class ConnectionStateEventArgs 
+
+class ConnectorLatencyManager 
+
+class CryptoAsyncConnector 
+
+class CryptoBaseConnector 
+
+class DailyNote 
+
+class EcnHelper 
+
+class Exchange 
+
+class Extensions 
+
+class GroupExchange 
+
+class HistoryMyTrade 
+
+Represents a historical trade record. More... 
+
+class HistoryMyTradePlaybook 
+
+interface IConnectorExchangeInfoProvider 
+
+Defines methods to retrieve exchange information based on security or exchange codes. More... 
+
+interface IConnectorLatencyManager 
+
+interface ICryptoKeySecretConnector 
+
+interface IDataFeedConnector 
+
+interface IEntity 
+
+Represents an entity in the application. More... 
+
+interface IEntityFactory 
+
+interface IKnowSession 
+
+interface ILiquidationFeed 
+
+Provides liquidation orders stream for securities. More... 
+
+interface IMarketByOrdersManager 
+
+Interface for manager that provides access to market by order data. More... 
+
+interface IMarketDataPublisher 
+
+interface IMarketDepth 
+
+Represents a market depth entry. More... 
+
+interface IMarketDepthHistoryProvider 
+
+Optional connector capability: historical order book (market depth) data, e.g. the dxFeed ORCS service. Consumers (the heatmap) probe for this interface on the instrument's connectors and backfill the book history when supported. More... 
+
+interface IMboAnalyticsDataProvider 
+
+Optional online-provider capability for MBO-derived analytics. More... 
+
+interface IMessageQueue 
+
+class InstrumentExchange 
+
+interface IOptionsDataFeed 
+
+interface IOrderOptionCloseOnTrigger 
+
+Represents an order option for closing a position when triggered. More... 
+
+interface IOrderOptionPostOnly 
+
+Represents an order option for placing a post-only order. More... 
+
+interface IOrderOptionReduceOnly 
+
+Represents an order option for reducing the position size. More... 
+
+interface IPasswordChanger 
+
+interface IPortfolioExtendedInfo 
+
+Base interface for extended portfolio information. Each connector can have its own implementation with unique parameters. More... 
+
+interface IPriceFormatter 
+
+Exposes the subset of trading-entity properties required to format prices and derive instrument classification (US bonds, MOEX futures). Implemented by Security directly and by OFT.Platform.Models.Instrument via explicit interface implementation. More... 
+
+interface IReferralAccountConnector 
+
+interface ISecurityPositionManager 
+
+interface ISecurityTradingOptions 
+
+Represents an interface for providing trading options related to a security or trading connector. More... 
+
+interface ISupportChangePosition 
+
+interface ISupportMarketDataOnly 
+
+interface ISupportResetPortfolio 
+
+interface ISupportTPlusLimits 
+
+class MarketByOrder 
+
+Market by Order (MBO) describes an order-based data feed that provides the ability to view individual queue position, full depth of book and the size of individual orders at each price level. More... 
+
+class MarketByOrdersManager 
+
+Manager that provides access to market by order data. More... 
+
+class MarketDepth 
+
+Represents a market depth entry. More... 
+
+class MarketDepthComparer 
+
+class MboActivityAccumulationCalculator 
+
+class MboActivityAccumulationSession 
+
+Resumable, caching wrapper around MboActivityAccumulationCalculator for a regular sample grid over a time-sorted, append-only event stream. More... 
+
+struct MboActivityAccumulationState 
+
+Mutable accumulation state shared by MboActivityAccumulationCalculator and MboActivityAccumulationSession. Captures everything the per-mode kernels carry between samples, so a computation can be suspended at any sample boundary and resumed later with bit-identical results. 
+
+class MboAggregationHelpers 
+
+class MboAnalyticsDataStatus 
+
+Runtime state of Market-By-Order data reaching MBO analytics. More... 
+
+class MboAnnotatedTrade 
+
+Trade fill enriched with MBO-derived classification and matching-event metadata. More... 
+
+class MboHiddenDetectEvidence 
+
+class MboIcebergOrderEvent 
+
+class MboIcebergRecord 
+
+Current iceberg state for one exchange order. More... 
+
+class MboIcebergTrade 
+
+class MboIcebergViewFilter 
+
+struct MboIcebergViewFilterOptions 
+
+class MboOrderEvent 
+
+Normalized Market-By-Order update consumed and stored by MBO analytics. More... 
+
+class MboPriorityRefreshEvidence 
+
+class MboStopCascade 
+
+class MboStopCascadeBuilder 
+
+class MboStopLeg 
+
+struct MboStopRun 
+
+class MboStopRunClusterer 
+
+struct MboStopRunClusterOptions 
+
+class MboStopRunClusterState 
+
+class MboSweepRecord 
+
+class MboSweepRecordBuilder 
+
+struct MboSweepRun 
+
+class MboSweepRunClusterer 
+
+struct MboSweepRunClusterOptions 
+
+class MboSweepRunClusterState 
+
+struct Money 
+
+Represents decimal amount in some currency. More... 
+
+class MultiConnectorMessageQueue 
+
+class MyTrade 
+
+Represents a trade entity in the system. More... 
+
+class News 
+
+struct OptionSeries 
+
+class Order 
+
+Represents an order for trading on a financial exchange. More... 
+
+class OvernightSwapValue 
+
+class Playbook 
+
+class PnLTradesQueue 
+
+class Portfolio 
+
+Represents a portfolio entity with various properties related to account balance, Profit and Loss (PnL), permissions, trading options, and more. More... 
+
+class PortfolioChange 
+
+class PortfolioExtendedInfoBase 
+
+Base implementation of IPortfolioExtendedInfo with common functionality. More... 
+
+class PortfolioGroup 
+
+Represents a portfolio group used in the application. More... 
+
+class PortfolioState 
+
+class PortfolioViewer 
+
+Represents a portfolio viewer used in the application. More... 
+
+class Position 
+
+Represents a trading position. More... 
+
+class PositionState 
+
+class PositionTradesQueue 
+
+struct PriceUnit 
+
+class Security 
+
+Represents a security entity used in the application. More... 
+
+class SecurityFilter 
+
+class SecurityMargin 
+
+class SecurityPositionManager 
+
+class SecurityRoute 
+
+class SecurityRouteCache 
+
+class SecuritySummary 
+
+class SecurityTradingOptions 
+
+Each connector may have different order placement settings like TimeInForce or ReduceOnly etc. This class shows connector configuration. More... 
+
+class ServerPnL 
+
+class SimpleMessageQueue 
+
+class SimpleMyTrade 
+
+class SubscriptionCounter 
+
+class SubscriptionManager 
+
+class Trade 
+
+Represents an tick on a financial exchange. More... 
+
+class TradesTimeChecker 
+
+class TradingOptions 
+
+class TradingOptionsSecurity 
+
+class UniversalMarketData 
+
+class User 
+
+class UserChange 
+
+class UserChangeHistory 
+
+class UserGroup 
+
+class UserRole 
+
+class UserRoleRight 
+
+struct VolumeUnit 
+
+class WorkingTime 
+
+Enumerations 
+
+enum RebateResult { Valid = 0
+, WrongRefCode = 1
+ } 
+
+enum Currencies { 
+USD = 0
+, EUR = 1
+, GBP = 2
+, JPY = 3
+, 
+RUB = 4
+, AUD = 5
+, CHF = 6
+, BTC = 7
+, 
+ETH = 8
+, EOS = 9
+, XRP = 10
+, LTC = 11
+, 
+BCH = 12
+, XTZ = 13
+, UNI = 14
+, DOT = 15
+, 
+ADA = 16
+, LINK = 17
+, USDT = 18
+, BIT = 19
+, 
+LUNA = 20
+, MANA = 21
+, SOL = 22
+, BUSD = 23
+, 
+USDC = 24
+, XCH = 25
+, BNB = 26
+, DOGE = 27
+, 
+UST = 28
+, AVAX = 29
+, SHIB = 30
+, DAI = 31
+, 
+MATIC = 32
+, TRX = 33
+, BGB = 34
+, INCH = 35
+, 
+CNY = 36
+, BNFCR = 37
+, LOT = 10000 
+} 
+
+Represents a list of currency values used in the application. More... 
+
+enum EcnId { 
+NONE , NASDAQ , NYSE , SIAC , 
+ISI , ISLAND , ARCA , ADFN , 
+BATS , INCA , NYOB , MKXT , 
+CME , ESSEX , CHIC , BRASS , 
+BOS , SUMO , INET , BLZ , 
+EDGX , CBOT , IPE , NYBOT , 
+USFE , EUREX , EDGA , TSE , 
+AMEX , CBOE , PCX , BOX , 
+ISE , PHX , CMECBT , VSE , 
+PENSON , OTC , NSE , MI , 
+CHX , EDGE , BATX , BATY , 
+EDGD , PHL , ARCX , NTRF , 
+IEX , MEMX , PEARL , SMALL , 
+LTSE , LSE , X24 , UNKNOWN = 255 
+} 
+
+enum EntityAction { 
+Logon = 0
+, Logout = 1
+, UserAdd = 2
+, UserChange = 3
+, 
+UserRemove = 4
+, UserLock = 29
+, UserKick = 30
+, UserChangeExpiration = 47
+, 
+UserGroupAdd = 5
+, UserGroupChange = 6
+, UserGroupRemove = 7
+, UserRoleAdd = 8
+, 
+UserRoleChange = 9
+, UserRoleRemove = 10
+, ExchangeAdd = 11
+, ExchangeChange = 12
+, 
+ExchangeRemove = 13
+, CommissionGroupAdd = 17
+, CommissionGroupChange = 18
+, CommissionGroupRemove = 19
+, 
+SecurityMarginAdd = 20
+, SecurityMarginChange = 21
+, SecurityMarginRemove = 22
+, PortfolioAdd = 23
+, 
+PortfolioChange = 32
+, PortfolioValue = 24
+, PortfolioLock = 25
+, OrderRegister = 26
+, 
+OrderMove = 27
+, OrderCancel = 28
+, NewsSend = 31
+, ServerSettings = 33
+, 
+RequestStatistics = 34
+, OrderCancelled = 35
+, OrderMatched = 36
+, ServerPnL = 37
+, 
+PortfolioSuspend = 38
+, PortfolioViewerAdd = 39
+, ConnectorAdd = 40
+, ConnectorChange = 41
+, 
+ConnectorRemove = 42
+, ConnectorEnable = 43
+, PortfolioViewerRemove = 44
+, TradeAllowed = 45
+, 
+PortfolioReset = 46
+, GetUserChangeHistory = 48
+, GetPortfolioChangeHistory = 49
+, UserGroupSuspendPortfolios = 50
+, 
+UserGroupReset = 51 
+} 
+
+enum MissingDataCases { None , Opening , Closing } 
+
+Describes what part of the HistoryMyTrade was incomplete. More... 
+
+enum EntityType { 
+Security , SecurityMargin , Portfolio , Position , 
+MarketDepth , Trade , Order , MyTrade , 
+News , UserRole , UserGroup , User , 
+UserChange , CommissionGroup , WorkingTime , Exchange , 
+PortfolioChange , TradingOptions , PortfolioState , PositionState , 
+Connector , MarketByOrder 
+} 
+
+Represents the types of entities used in the application. More... 
+
+enum OptionSeriesType { Regular , Weekly , EndOfMonth } 
+
+enum MarketByOrderUpdateTypes { Snapshot , New , Change , Delete } 
+
+Type of market by order update. More... 
+
+enum MarketDataDelayPeriods { Realtime , Delayed15M } 
+
+enum MarketDataType { Bid = 0
+, Ask = 1
+, Trade = 2
+ } 
+
+Specifies the type of market data. More... 
+
+enum MboActivityAccumulationMode { 
+ExponentialHalfLife , TotalSum , ResetEveryInterval , SlidingWindow , 
+SameSideSum 
+} 
+
+enum MboIcebergStatus { Active , Closed , Expired } 
+
+enum MboOrderSide { Unknown , Bid , Ask } 
+
+Side of a Market-By-Order entry. More... 
+
+enum MboOrderUpdateType { Snapshot , New , Change , Delete } 
+
+Normalized Market-By-Order update type. More... 
+
+enum MboTradeKind { Unknown , Market , ModifiedLimit , Stop } 
+
+MBO-derived trade classification. More... 
+
+enum MessageType { Warning , Error , Information } 
+
+enum NewsType { Text , Admin , Risk } 
+
+enum OptionTypes { Put , Call } 
+
+enum OrderDirections { Buy = 0
+, Sell = 1
+ } 
+
+Specifies the direction of an order. More... 
+
+enum OrderStates { None = 0
+, Active = 1
+, Done = 2
+, Failed = 3
+ } 
+
+Represents the possible states of an order. More... 
+
+enum OrderStatus { 
+None = 0
+, Placed = 1
+, Filled = 2
+, PartlyFilled = 3
+, 
+Canceled = 4 
+} 
+
+Represents the possible status of an order. More... 
+
+enum OrderTypes { 
+Limit = 0
+, Market = 1
+, Stop = 2
+, StopLimit = 3
+, 
+Unknown 
+} 
+
+Specifies the type of an order. More... 
+
+enum PortfolioChangeType { IncreaseBalance , ReduceBalance , ChangeLeverage , OvernightSwap } 
+
+enum TPlusLimits { T0 = 0
+, T1 = 1
+, T2 = 2
+, Tx = 365
+ } 
+
+Represents different T+ (settlement) periods for trading. T+ refers to the number of days it takes for a trade to settle and for the funds and securities to be exchanged between the parties involved in the transaction. More... 
+
+enum PositionAveragePriceValueTypes { 
+None , ReceivedFromServer , CalculatedByAllTrades , CalculatedByPartTrades , 
+NotCalculated 
+} 
+
+Represents different types of values for the average price of a position. The average price is the average cost of all the trades that make up a position. More... 
+
+enum PnlPercentType { Portfolio , Margin } 
+
+Represents the type of percentage calculation for profit and loss (PNL). More... 
+
+enum PriceUnitTypes { Price , Tick , Percent } 
+
+enum SecType { 
+Future = 0
+, Forex = 1
+, Stock = 2
+, Bitcoin = 3
+, 
+CryptoFutures = 4
+, Indexes = 5
+, Option = 6
+, Cfd = 7 
+} 
+
+Represents the type of security or financial instrument. More... 
+
+enum SubscriptionType { 
+None = 0x0000
+, Prints = 0x0001
+, Best = 0x0002
+, Quotes = 0x0004
+, 
+MarketByOrder = 0x0008
+, Summary = 0x0010 
+} 
+
+enum TimeInForce { 
+None = 0
+, GoodTillCancel = 1 << 0
+, FillOrKill = 1 << 1
+, ImmediateOrCancel = 1 << 2
+, 
+Day = 1 << 3
+, Default = GoodTillCancel | FillOrKill | Day 
+} 
+
+Specifies the time in force options for an order. More... 
+
+enum TradeDirection { Buy = 1
+, Sell = 2
+, Between = 0
+ } 
+
+Represents the trade direction. More... 
+
+enum TriggerPriceType { None = 0
+, Last = 1 << 0
+, Index = 1 << 1
+, Mark = 1 << 2
+ } 
+
+Defines price source for conditional order trigger. More... 
+
+enum UserChangeTypes { ExtendExpirationPeriod , ReduceExpirationPeriod } 
+
+enum VolumeUnitTypes { Absolute , Percent } 
+
+Functions 
+
+delegate void ConnectorEventHandler ( IDataFeedConnector connector) 
+
+delegate void ConnectorEventHandler< in T > ( IDataFeedConnector connector, T arg) 
+
+delegate void ConnectorEventHandler< in T1, in T2 > ( IDataFeedConnector connector, T1 arg1, T2 arg2) 
+
+delegate void ConnectorEventHandler< in T1, in T2, in T3 > ( IDataFeedConnector connector, T1 arg1, T2 arg2, T3 arg3) 
+
+readonly record struct MarketDepthHistoryLevel (long TimeNanos, decimal Price , decimal Volume, bool IsAsk) 
+
+One historical order-book level update: at TimeNanos (UTC, Unix-epoch nanoseconds) the resting volume at Price on the given side became Volume (0 removes the level). Replaying the chronologically ordered updates rebuilds the historical book. 
+
+record struct CurrencyInfo (string Code, bool IsBase, int Precision) 
+
+Represents currency information for a decimal value. 
+
+Variables 
+
+record OrderExtendedOptionsFlags 
+
+Represents extended order options stored as a set of flag values for quick serialization and comparison. 
+
+record IOrderOptionPostOnly 
+
+record IOrderOptionReduceOnly 
+
+Enumeration Type Documentation 
+
+◆ Currencies 
+
+enum ATAS.DataFeedsCore.Currencies 
+
+Represents a list of currency values used in the application. 
+
+Enumerator 
+
+USD 
+United States Dollar. 
+
+EUR 
+Euro. 
+
+GBP 
+British Pound Sterling. 
+
+JPY 
+Japanese Yen. 
+
+RUB 
+Russian Ruble. 
+
+AUD 
+Australian Dollar. 
+
+CHF 
+Swiss Franc. 
+
+BTC 
+Bitcoin. 
+
+ETH 
+Ethereum. 
+
+EOS 
+EOS. 
+
+XRP 
+Ripple (XRP). 
+
+LTC 
+Litecoin. 
+
+BCH 
+Bitcoin Cash (BCH). 
+
+XTZ 
+Tezos (XTZ). 
+
+UNI 
+Uniswap (UNI). 
+
+DOT 
+Polkadot (DOT). 
+
+ADA 
+Cardano (ADA). 
+
+LINK 
+Chainlink (LINK). 
+
+USDT 
+Tether (USDT). 
+
+BIT 
+BitToken (BIT). 
+
+LUNA 
+Terra (LUNA). 
+
+MANA 
+Decentraland (MANA). 
+
+SOL 
+Solana (SOL). 
+
+BUSD 
+Binance USD (BUSD). 
+
+USDC 
+USD Coin (USDC). 
+
+XCH 
+Chia (XCH). 
+
+BNB 
+Binance Coin (BNB). 
+
+DOGE 
+Dogecoin (DOGE). 
+
+UST 
+TerraUSD (UST). 
+
+AVAX 
+Avalanche (AVAX). 
+
+SHIB 
+Shiba Inu (SHIB). 
+
+DAI 
+Dai. 
+
+MATIC 
+Polygon (MATIC). 
+
+TRX 
+TRON (TRX). 
+
+BGB 
+BAGBUX Token (BGB). 
+
+INCH 
+1inch (INCH). 
+
+CNY 
+Chinese Yuan (CNY). 
+
+BNFCR 
+Binance Credits (BNFCR). 
+
+LOT 
+LottoCoin. 
+
+◆ EcnId 
+
+enum ATAS.DataFeedsCore.EcnId 
+
+Enumerator 
+
+NONE 
+
+NASDAQ 
+
+NYSE 
+
+SIAC 
+
+ISI 
+
+ISLAND 
+
+ARCA 
+
+ADFN 
+
+BATS 
+
+INCA 
+
+NYOB 
+
+MKXT 
+
+CME 
+
+ESSEX 
+
+CHIC 
+
+BRASS 
+
+BOS 
+
+SUMO 
+
+INET 
+
+BLZ 
+
+EDGX 
+
+CBOT 
+
+IPE 
+
+NYBOT 
+
+USFE 
+
+EUREX 
+
+EDGA 
+
+TSE 
+
+AMEX 
+
+CBOE 
+
+PCX 
+
+BOX 
+
+ISE 
+
+PHX 
+
+CMECBT 
+
+VSE 
+
+PENSON 
+
+OTC 
+
+NSE 
+
+MI 
+
+CHX 
+
+EDGE 
+
+BATX 
+
+BATY 
+
+EDGD 
+
+PHL 
+
+ARCX 
+
+NTRF 
+
+IEX 
+
+MEMX 
+
+PEARL 
+
+SMALL 
+
+LTSE 
+
+LSE 
+
+X24 
+
+UNKNOWN 
+
+◆ EntityAction 
+
+enum ATAS.DataFeedsCore.EntityAction 
+
+Enumerator 
+
+Logon 
+
+Logout 
+
+UserAdd 
+
+UserChange 
+
+UserRemove 
+
+UserLock 
+
+UserKick 
+
+UserChangeExpiration 
+
+UserGroupAdd 
+
+UserGroupChange 
+
+UserGroupRemove 
+
+UserRoleAdd 
+
+UserRoleChange 
+
+UserRoleRemove 
+
+ExchangeAdd 
+
+ExchangeChange 
+
+ExchangeRemove 
+
+CommissionGroupAdd 
+
+CommissionGroupChange 
+
+CommissionGroupRemove 
+
+SecurityMarginAdd 
+
+SecurityMarginChange 
+
+SecurityMarginRemove 
+
+PortfolioAdd 
+
+PortfolioChange 
+
+PortfolioValue 
+
+PortfolioLock 
+
+OrderRegister 
+
+OrderMove 
+
+OrderCancel 
+
+NewsSend 
+
+ServerSettings 
+
+RequestStatistics 
+
+OrderCancelled 
+
+OrderMatched 
+
+ServerPnL 
+
+PortfolioSuspend 
+
+PortfolioViewerAdd 
+
+ConnectorAdd 
+
+ConnectorChange 
+
+ConnectorRemove 
+
+ConnectorEnable 
+
+PortfolioViewerRemove 
+
+TradeAllowed 
+
+PortfolioReset 
+
+GetUserChangeHistory 
+
+GetPortfolioChangeHistory 
+
+UserGroupSuspendPortfolios 
+
+UserGroupReset 
+
+◆ EntityType 
+
+enum ATAS.DataFeedsCore.EntityType 
+
+Represents the types of entities used in the application. 
+
+Enumerator 
+
+Security 
+Represents a security entity. 
+
+SecurityMargin 
+Represents a security margin entity. 
+
+Portfolio 
+Represents a portfolio entity. 
+
+Position 
+Represents a position entity. 
+
+MarketDepth 
+Represents a market depth entity. 
+
+Trade 
+Represents a trade entity. 
+
+Order 
+Represents an order entity. 
+
+MyTrade 
+Represents a user's trade entity. 
+
+News 
+Represents a news entity. 
+
+UserRole 
+Represents a user role entity. 
+
+UserGroup 
+Represents a user group entity. 
+
+User 
+Represents a user entity. 
+
+UserChange 
+Represents a user change entity. 
+
+CommissionGroup 
+Represents a commission group entity. 
+
+WorkingTime 
+Represents a working time entity. 
+
+Exchange 
+Represents an exchange entity. 
+
+PortfolioChange 
+Represents a portfolio change entity. 
+
+TradingOptions 
+Represents trading options entity. 
+
+PortfolioState 
+Represents the state of a portfolio entity. 
+
+PositionState 
+Represents the state of a position entity. 
+
+Connector 
+Represents a connector entity. 
+
+MarketByOrder 
+Represents a Market by Order (MBO) item. 
+
+◆ MarketByOrderUpdateTypes 
+
+enum ATAS.DataFeedsCore.MarketByOrderUpdateTypes 
+
+Type of market by order update. 
+
+Enumerator 
+
+Snapshot 
+Indicates that the MBO data is from a cache and not from the real-time data stream. 
+
+New 
+Indicates that the MBO data represents a new order added to the order book of this instrument. 
+
+Change 
+Indicates that the MBO data represents a change to an existing order. 
+
+Delete 
+Indicates that the MBO data represents a deletion of an existing order. 
+
+◆ MarketDataDelayPeriods 
+
+enum ATAS.DataFeedsCore.MarketDataDelayPeriods 
+
+Enumerator 
+
+Realtime 
+
+Delayed15M 
+
+◆ MarketDataType 
+
+enum ATAS.DataFeedsCore.MarketDataType 
+
+Specifies the type of market data. 
+
+Enumerator 
+
+Bid 
+Represents bid (buy) market data. 
+
+Ask 
+Represents ask (sell) market data. 
+
+Trade 
+Represents trade market data. 
+
+◆ MboActivityAccumulationMode 
+
+enum ATAS.DataFeedsCore.MboActivityAccumulationMode 
+
+Enumerator 
+
+ExponentialHalfLife 
+
+TotalSum 
+
+ResetEveryInterval 
+
+SlidingWindow 
+
+SameSideSum 
+
+◆ MboIcebergStatus 
+
+enum ATAS.DataFeedsCore.MboIcebergStatus 
+
+Enumerator 
+
+Active 
+
+Closed 
+
+Expired 
+Terminal state for an iceberg whose Delete was never observed: the order vanished across a session restart, a feed gap or retention pruning. 
+
+◆ MboOrderSide 
+
+enum ATAS.DataFeedsCore.MboOrderSide 
+
+Side of a Market-By-Order entry. 
+
+Enumerator 
+
+Unknown 
+
+Bid 
+
+Ask 
+
+◆ MboOrderUpdateType 
+
+enum ATAS.DataFeedsCore.MboOrderUpdateType 
+
+Normalized Market-By-Order update type. 
+
+Enumerator 
+
+Snapshot 
+
+New 
+
+Change 
+
+Delete 
+
+◆ MboTradeKind 
+
+enum ATAS.DataFeedsCore.MboTradeKind 
+
+MBO-derived trade classification. 
+
+Enumerator 
+
+Unknown 
+
+Market 
+
+ModifiedLimit 
+
+Stop 
+
+◆ MessageType 
+
+enum ATAS.DataFeedsCore.MessageType 
+
+Enumerator 
+
+Warning 
+
+Error 
+
+Information 
+
+◆ MissingDataCases 
+
+enum ATAS.DataFeedsCore.MissingDataCases 
+
+Describes what part of the HistoryMyTrade was incomplete. 
+
+Enumerator 
+
+None 
+The trade has complete data. 
+
+Opening 
+Missing the opening part of the trade. 
+
+Closing 
+Missing the closing part of the trade. 
+
+◆ NewsType 
+
+enum ATAS.DataFeedsCore.NewsType 
+
+Enumerator 
+
+Text 
+
+Admin 
+
+Risk 
+
+◆ OptionSeriesType 
+
+enum ATAS.DataFeedsCore.OptionSeriesType 
+
+Enumerator 
+
+Regular 
+Regular (quarterly) options. 
+
+Weekly 
+Weekly options. 
+
+EndOfMonth 
+End of month options. 
+
+◆ OptionTypes 
+
+enum ATAS.DataFeedsCore.OptionTypes 
+
+Enumerator 
+
+Put 
+
+Call 
+
+◆ OrderDirections 
+
+enum ATAS.DataFeedsCore.OrderDirections 
+
+Specifies the direction of an order. 
+
+Enumerator 
+
+Buy 
+Indicates a "Buy" order direction. 
+
+Sell 
+Indicates a "Sell" order direction. 
+
+◆ OrderStates 
+
+enum ATAS.DataFeedsCore.OrderStates 
+
+Represents the possible states of an order. 
+
+Enumerator 
+
+None 
+The order is in none state. 
+
+Active 
+The order is in active state, i.e., it is currently being processed or waiting to be executed. 
+
+Done 
+The order is in done state, i.e., it has been fully executed or processed successfully. 
+
+Failed 
+The order is in failed state, i.e., it could not be processed or executed successfully. 
+
+◆ OrderStatus 
+
+enum ATAS.DataFeedsCore.OrderStatus 
+
+Represents the possible status of an order. 
+
+Enumerator 
+
+None 
+The order has no specific status. 
+
+Placed 
+The order has been placed successfully. 
+
+Filled 
+The order has been fully filled (executed). 
+
+PartlyFilled 
+The order has been partly filled (partially executed). 
+
+Canceled 
+The order has been canceled. 
+
+◆ OrderTypes 
+
+enum ATAS.DataFeedsCore.OrderTypes 
+
+Specifies the type of an order. 
+
+Enumerator 
+
+Limit 
+Indicates a "Limit" order type. 
+
+Market 
+Indicates a "Market" order type. 
+
+Stop 
+Indicates a "StopMarket" order type. 
+
+StopLimit 
+Indicates a "StopLimit" order type. 
+
+Unknown 
+Indicates an unknown or unsupported order type. 
+
+◆ PnlPercentType 
+
+enum ATAS.DataFeedsCore.PnlPercentType 
+
+Represents the type of percentage calculation for profit and loss (PNL). 
+
+Enumerator 
+
+Portfolio 
+Percentage calculation based on the portfolio. 
+
+Margin 
+Percentage calculation based on the margin. 
+
+◆ PortfolioChangeType 
+
+enum ATAS.DataFeedsCore.PortfolioChangeType 
+
+Enumerator 
+
+IncreaseBalance 
+
+ReduceBalance 
+
+ChangeLeverage 
+
+OvernightSwap 
+
+◆ PositionAveragePriceValueTypes 
+
+enum ATAS.DataFeedsCore.PositionAveragePriceValueTypes 
+
+Represents different types of values for the average price of a position. The average price is the average cost of all the trades that make up a position. 
+
+Enumerator 
+
+None 
+No specific average price value is set. 
+
+ReceivedFromServer 
+The average price is received from the server. 
+
+CalculatedByAllTrades 
+The average price is calculated using all trades that contribute to the position. 
+
+CalculatedByPartTrades 
+The average price is calculated using only a part of the trades that contribute to the position. 
+
+NotCalculated 
+The average price is not calculated or set for the position. 
+
+◆ PriceUnitTypes 
+
+enum ATAS.DataFeedsCore.PriceUnitTypes 
+
+Enumerator 
+
+Price 
+
+Tick 
+
+Percent 
+
+◆ RebateResult 
+
+enum ATAS.DataFeedsCore.RebateResult 
+
+Enumerator 
+
+Valid 
+
+WrongRefCode 
+The exchange account is registered under a referral code that does not belong to ATAS . 
+
+◆ SecType 
+
+enum ATAS.DataFeedsCore.SecType 
+
+Represents the type of security or financial instrument. 
+
+Enumerator 
+
+Future 
+Represents a future contract. 
+
+Forex 
+Represents a forex (foreign exchange) pair. 
+
+Stock 
+Represents a stock. 
+
+Bitcoin 
+Represents any crypto security, not limited to Bitcoin only. 
+
+CryptoFutures 
+Represents a crypto futures contract. 
+
+Indexes 
+Represents indexes or index-based securities. 
+
+Option 
+Represents an option contract. 
+
+Cfd 
+Represents a Contract for Difference (CFD) instrument. 
+
+◆ SubscriptionType 
+
+enum ATAS.DataFeedsCore.SubscriptionType 
+
+Enumerator 
+
+None 
+None. 
+
+Prints 
+Single ticks. 
+
+Best 
+Best bid/ask prices. 
+
+Quotes 
+Depth of Market (DOM) 
+
+MarketByOrder 
+Market by Order (MBO) 
+
+Summary 
+Summary (OHLCV and etc.) 
+
+◆ TimeInForce 
+
+enum ATAS.DataFeedsCore.TimeInForce 
+
+Specifies the time in force options for an order. 
+
+Enumerator 
+
+None 
+No specific time in force specified. 
+
+GoodTillCancel 
+Order will be active until filled completely or cancelled by the user. 
+
+FillOrKill 
+Order will either fill completely or will be cancelled if not fully filled. 
+
+ImmediateOrCancel 
+Order may be filled completely or partially; if partially filled, the unfilled part will be cancelled. 
+
+Day 
+Order is valid only for the current trading session and will be cancelled at the end of the trading day. 
+
+Default 
+The default time in force options supported by connectors. 
+
+◆ TPlusLimits 
+
+enum ATAS.DataFeedsCore.TPlusLimits 
+
+Represents different T+ (settlement) periods for trading. T+ refers to the number of days it takes for a trade to settle and for the funds and securities to be exchanged between the parties involved in the transaction. 
+
+Enumerator 
+
+T0 
+Same-day settlement (T0). The trade is settled on the same day it occurs. 
+
+T1 
+One-day settlement (T1). The trade is settled one business day after the trade date. 
+
+T2 
+Two-day settlement (T2). The trade is settled two business days after the trade date. 
+
+Tx 
+Custom settlement period (Tx). The trade is settled after a custom number of days (365 days in this case). 
+
+◆ TradeDirection 
+
+enum ATAS.DataFeedsCore.TradeDirection 
+
+Represents the trade direction. 
+
+Enumerator 
+
+Buy 
+Indicates a buy trade direction. 
+
+Sell 
+Indicates a sell trade direction. 
+
+Between 
+Indicates a trade direction that is neither buy nor sell. 
+
+◆ TriggerPriceType 
+
+enum ATAS.DataFeedsCore.TriggerPriceType 
+
+Defines price source for conditional order trigger. 
+
+Enumerator 
+
+None 
+
+Last 
+Order will trigger based on last tick on the exchange. 
+
+Index 
+Index price is calculated based on several exchanges price with their weight 
+Implementation may vary on exchange. 
+
+Mark 
+Estimated fair value of a contract 
+Implementation may vary on exchange. 
+
+◆ UserChangeTypes 
+
+enum ATAS.DataFeedsCore.UserChangeTypes 
+
+Enumerator 
+
+ExtendExpirationPeriod 
+
+ReduceExpirationPeriod 
+
+◆ VolumeUnitTypes 
+
+enum ATAS.DataFeedsCore.VolumeUnitTypes 
+
+Enumerator 
+
+Absolute 
+
+Percent 
+
+Function Documentation 
+
+◆ ConnectorEventHandler() 
+
+delegate void ATAS.DataFeedsCore.ConnectorEventHandler ( IDataFeedConnector connector ) 
+
+◆ ConnectorEventHandler< in T >() 
+
+delegate void ATAS.DataFeedsCore.ConnectorEventHandler < in T > ( IDataFeedConnector connector , 
+
+T arg 
+
+) 
+
+◆ ConnectorEventHandler< in T1, in T2 >() 
+
+delegate void ATAS.DataFeedsCore.ConnectorEventHandler < in T1 , in T2 > ( IDataFeedConnector connector , 
+
+T1 arg1 , 
+
+T2 arg2 
+
+) 
+
+◆ ConnectorEventHandler< in T1, in T2, in T3 >() 
+
+delegate void ATAS.DataFeedsCore.ConnectorEventHandler < in T1 , in T2 , in T3 > ( IDataFeedConnector connector , 
+
+T1 arg1 , 
+
+T2 arg2 , 
+
+T3 arg3 
+
+) 
+
+◆ CurrencyInfo() 
+
+record struct ATAS.DataFeedsCore.CurrencyInfo ( string Code , 
+
+bool IsBase , 
+
+int Precision 
+
+) 
+
+Represents currency information for a decimal value. 
+Parameters 
+
+Code Currency code 
+
+IsBase True- Currency is base for security 
+
+Precision Number of numbers after the decimal point 
+
+Get display format for decimal value 
+
+Get edit format for decimal value 
+
+◆ MarketDepthHistoryLevel() 
+
+readonly record struct ATAS.DataFeedsCore.MarketDepthHistoryLevel ( long TimeNanos , 
+
+decimal Price , 
+
+decimal Volume , 
+
+bool IsAsk 
+
+) 
+
+One historical order-book level update: at TimeNanos (UTC, Unix-epoch nanoseconds) the resting volume at Price on the given side became Volume (0 removes the level). Replaying the chronologically ordered updates rebuilds the historical book. 
+
+Variable Documentation 
+
+◆ IOrderOptionPostOnly 
+
+record ATAS.DataFeedsCore.IOrderOptionPostOnly 
+
+◆ IOrderOptionReduceOnly 
+
+record ATAS.DataFeedsCore.IOrderOptionReduceOnly 
+
+◆ OrderExtendedOptionsFlags 
+
+record ATAS.DataFeedsCore.OrderExtendedOptionsFlags 
+
+Represents extended order options stored as a set of flag values for quick serialization and comparison. 
+
+ATAS 
+
+DataFeedsCore 
+
+Generated by 1.9.7 
+
+Join our developers chat

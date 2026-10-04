@@ -1,0 +1,218 @@
+{
+  "job_id": "orderflow_book_quality_audit",
+  "agent_id": "orderflow_quality_auditor",
+  "generated": "2026-08-21T20:31:21.428Z",
+  "run_id": "2026-08-21T203121Z",
+  "status": "research-only-no-live-execution",
+  "source_files_used": [
+    "results/agent-swarm-feature-table.json",
+    "results/agent-scoreboard.json"
+  ],
+  "forbidden_actions": [
+    "place_live_orders",
+    "modify_live_alert_runtime",
+    "modify_alert_wording",
+    "modify_alert_thresholds",
+    "modify_risk_or_sizing",
+    "read_exchange_account_or_wallet_credentials",
+    "use_exchange_account_or_wallet_access",
+    "use_paid_apis",
+    "claim_live_promotion",
+    "change_book_freshness_rules",
+    "change_orderflow_scoring",
+    "touch_live_connectors"
+  ],
+  "sample_counts": {
+    "rows": 64,
+    "with_cvd": 63,
+    "fresh_book": 12,
+    "stale_or_missing_book": 52,
+    "negative_book_age": 6
+  },
+  "orderflow_quality": {
+    "cvd_coverage": 0.9844,
+    "fresh_book_coverage": 0.1875,
+    "quality_flag_counts": {
+      "book_not_fresh": 52,
+      "negative_book_age": 6,
+      "score_above_max": 1
+    },
+    "top_book_agent": {
+      "agentId": "book_pressure_scout",
+      "family": "liquidity-scout",
+      "description": "Uses fresh public order-book imbalance and liquidity thinning.",
+      "evaluated": 12,
+      "abstained": 52,
+      "correct": 6,
+      "wrong": 6,
+      "byLabel": {
+        "fade": 7,
+        "follow": 4,
+        "noisy": 1
+      },
+      "byPrediction": {
+        "fade": 5,
+        "follow": 6,
+        "noisy": 1
+      },
+      "examples": [
+        {
+          "id": "ETH-UP-1787301604930-4fuxko",
+          "alertIso": "2026-08-21T08:40:04.930Z",
+          "asset": "ETH",
+          "trigger": "WICK 5s",
+          "prediction": "fade",
+          "label": "fade",
+          "correct": true,
+          "reason": "book pressure hostile or thin"
+        },
+        {
+          "id": "BTC-DOWN-1787302839370-zpc95e",
+          "alertIso": "2026-08-21T09:00:39.370Z",
+          "asset": "BTC",
+          "trigger": "WICK 5s",
+          "prediction": "follow",
+          "label": "follow",
+          "correct": true,
+          "reason": "book pressure aligned"
+        },
+        {
+          "id": "ETH-DOWN-1787302839766-uwgqsx",
+          "alertIso": "2026-08-21T09:00:39.766Z",
+          "asset": "ETH",
+          "trigger": "WICK 5s",
+          "prediction": "noisy",
+          "label": "follow",
+          "correct": false,
+          "reason": "book pressure weak"
+        },
+        {
+          "id": "SOL-UP-1787303515481-68uthi",
+          "alertIso": "2026-08-21T09:11:55.481Z",
+          "asset": "SOL",
+          "trigger": "WICK 5s",
+          "prediction": "follow",
+          "label": "fade",
+          "correct": false,
+          "reason": "book pressure aligned"
+        },
+        {
+          "id": "ETH-DOWN-1787306244437-fyw5vc",
+          "alertIso": "2026-08-21T09:57:24.437Z",
+          "asset": "ETH",
+          "trigger": "VELOCITY 5m",
+          "prediction": "fade",
+          "label": "fade",
+          "correct": true,
+          "reason": "book pressure hostile or thin"
+        },
+        {
+          "id": "SOL-DOWN-1787310760275-0fd565",
+          "alertIso": "2026-08-21T11:12:40.275Z",
+          "asset": "SOL",
+          "trigger": "VELOCITY 60s",
+          "prediction": "fade",
+          "label": "follow",
+          "correct": false,
+          "reason": "book pressure hostile or thin"
+        }
+      ],
+      "accuracy": 0.5,
+      "coverage": 0.1875
+    },
+    "top_cvd_agent": {
+      "agentId": "cvd_confirmation_scout",
+      "family": "orderflow-scout",
+      "description": "Follows alerts when signed CVD supports the alert direction; fades when it opposes.",
+      "evaluated": 63,
+      "abstained": 1,
+      "correct": 22,
+      "wrong": 41,
+      "byLabel": {
+        "fade": 26,
+        "follow": 27,
+        "noisy": 10
+      },
+      "byPrediction": {
+        "follow": 52,
+        "fade": 6,
+        "noisy": 5
+      },
+      "examples": [
+        {
+          "id": "ETH-DOWN-1786462644866-k89vtm",
+          "alertIso": "2026-08-11T15:37:24.866Z",
+          "asset": "ETH",
+          "trigger": "VELOCITY 5m",
+          "prediction": "follow",
+          "label": "fade",
+          "correct": false,
+          "reason": "CVD aligned"
+        },
+        {
+          "id": "ETH-DOWN-1786537806074-zf65xw",
+          "alertIso": "2026-08-12T12:30:06.074Z",
+          "asset": "ETH",
+          "trigger": "WICK 5s",
+          "prediction": "fade",
+          "label": "follow",
+          "correct": false,
+          "reason": "CVD opposed"
+        },
+        {
+          "id": "SOL-DOWN-1786537807264-ikm6x9",
+          "alertIso": "2026-08-12T12:30:07.264Z",
+          "asset": "SOL",
+          "trigger": "WICK 5s",
+          "prediction": "noisy",
+          "label": "follow",
+          "correct": false,
+          "reason": "CVD weak"
+        },
+        {
+          "id": "BTC-DOWN-1786537807292-k5b8zx",
+          "alertIso": "2026-08-12T12:30:07.292Z",
+          "asset": "BTC",
+          "trigger": "WICK 5s",
+          "prediction": "fade",
+          "label": "follow",
+          "correct": false,
+          "reason": "CVD opposed"
+        },
+        {
+          "id": "SOL-DOWN-1786916405762-s1pudb",
+          "alertIso": "2026-08-16T21:40:05.762Z",
+          "asset": "SOL",
+          "trigger": "WICK 5s",
+          "prediction": "follow",
+          "label": "follow",
+          "correct": true,
+          "reason": "CVD aligned"
+        },
+        {
+          "id": "BTC-DOWN-1786916406641-e8hw5f",
+          "alertIso": "2026-08-16T21:40:06.641Z",
+          "asset": "BTC",
+          "trigger": "WICK 5s",
+          "prediction": "follow",
+          "label": "noisy",
+          "correct": false,
+          "reason": "CVD aligned"
+        }
+      ],
+      "accuracy": 0.3492,
+      "coverage": 0.9844
+    }
+  },
+  "top_findings": [
+    "12/64 rows have fresh book evidence under the current feature flags.",
+    "6 rows have negative book age and must stay blocked until the clock/freshness issue is explained.",
+    "Orderflow scouts are measurable, but current accuracy is not promotable."
+  ],
+  "blocked": [
+    "Book freshness is too sparse.",
+    "Known negative-age and score-above-max quality flags remain in the historical row set.",
+    "Changing orderflow scoring would touch alert behavior and is outside this task."
+  ],
+  "promotable": false
+}

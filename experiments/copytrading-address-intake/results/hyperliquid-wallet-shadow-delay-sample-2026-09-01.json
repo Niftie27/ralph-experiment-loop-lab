@@ -1,0 +1,1265 @@
+{
+  "generatedAt": "2026-09-01T06:40:40.497Z",
+  "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+  "lookbackMinutes": 60,
+  "settleMinutes": 6,
+  "maxRows": 24,
+  "costBps": 8,
+  "source": "Hyperliquid public info endpoint",
+  "windowStart": "2026-09-01T05:34:40.497Z",
+  "windowEnd": "2026-09-01T06:34:40.497Z",
+  "fillsReturned": 720,
+  "rows": [
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:34:33.989Z",
+      "observationAgeMs": 366508,
+      "ageSeconds": 366.5,
+      "coin": "xyz:MU",
+      "dir": "Close Long",
+      "side": "A",
+      "size": 0.172,
+      "fillPrice": 959.85,
+      "closedPnl": 3.80034,
+      "fee": -0.000165,
+      "hash": "0x5b31eeb11344c45b5cab04436e9e3e0201760096ae47e32dfefa9a03d2489e45",
+      "oid": 532660140316,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 7,
+        "delays": {
+          "15s": {
+            "proxyClose": 959.72,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": -1.35,
+            "costStressedBps": -9.35
+          },
+          "60s": {
+            "proxyClose": 959.33,
+            "proxyTime": "2026-09-01T06:36:00.000Z",
+            "grossDirectionAdjustedBps": -5.42,
+            "costStressedBps": -13.42
+          },
+          "180s": {
+            "proxyClose": 960.23,
+            "proxyTime": "2026-09-01T06:38:00.000Z",
+            "grossDirectionAdjustedBps": 3.96,
+            "costStressedBps": -4.04
+          },
+          "300s": {
+            "proxyClose": null,
+            "proxyTime": null,
+            "grossDirectionAdjustedBps": null,
+            "costStressedBps": null
+          }
+        }
+      },
+      "qualityFlags": [
+        "exit-row-not-entry-signal",
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:34:31.570Z",
+      "observationAgeMs": 368927,
+      "ageSeconds": 368.9,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.244,
+      "fillPrice": 1548.5,
+      "closedPnl": 0,
+      "fee": -0.000377,
+      "hash": "0x41f3611f67823bbb436d04436e9e1a02030e000502855a8de5bc0c72268615a5",
+      "oid": 532660118827,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 8,
+        "delays": {
+          "15s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": 5.81,
+            "costStressedBps": -2.19
+          },
+          "60s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:36:00.000Z",
+            "grossDirectionAdjustedBps": 5.81,
+            "costStressedBps": -2.19
+          },
+          "180s": {
+            "proxyClose": 1549.7,
+            "proxyTime": "2026-09-01T06:38:00.000Z",
+            "grossDirectionAdjustedBps": -7.75,
+            "costStressedBps": -15.75
+          },
+          "300s": {
+            "proxyClose": 1549.1,
+            "proxyTime": "2026-09-01T06:40:00.000Z",
+            "grossDirectionAdjustedBps": -3.87,
+            "costStressedBps": -11.87
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:34:31.570Z",
+      "observationAgeMs": 368927,
+      "ageSeconds": 368.9,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.421,
+      "fillPrice": 1548.5,
+      "closedPnl": 0,
+      "fee": -0.000651,
+      "hash": "0xf4c6d7ba81137e36f64004436e9e1a02030f00a01c169d09988f830d40175821",
+      "oid": 532660118827,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 8,
+        "delays": {
+          "15s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": 5.81,
+            "costStressedBps": -2.19
+          },
+          "60s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:36:00.000Z",
+            "grossDirectionAdjustedBps": 5.81,
+            "costStressedBps": -2.19
+          },
+          "180s": {
+            "proxyClose": 1549.7,
+            "proxyTime": "2026-09-01T06:38:00.000Z",
+            "grossDirectionAdjustedBps": -7.75,
+            "costStressedBps": -15.75
+          },
+          "300s": {
+            "proxyClose": 1549.1,
+            "proxyTime": "2026-09-01T06:40:00.000Z",
+            "grossDirectionAdjustedBps": -3.87,
+            "costStressedBps": -11.87
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:33:48.575Z",
+      "observationAgeMs": 411922,
+      "ageSeconds": 411.9,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.04,
+      "fillPrice": 1549.3,
+      "closedPnl": 0,
+      "fee": -0.000061,
+      "hash": "0xb2e79430a551d1b1b46104436e9be402038100164054f08356b03f836455ab9c",
+      "oid": 532659631450,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": 10.97,
+            "costStressedBps": 2.97
+          },
+          "60s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": 10.97,
+            "costStressedBps": 2.97
+          },
+          "180s": {
+            "proxyClose": 1547.7,
+            "proxyTime": "2026-09-01T06:37:00.000Z",
+            "grossDirectionAdjustedBps": 10.33,
+            "costStressedBps": 2.33
+          },
+          "300s": {
+            "proxyClose": 1549.8,
+            "proxyTime": "2026-09-01T06:39:00.000Z",
+            "grossDirectionAdjustedBps": -3.23,
+            "costStressedBps": -11.23
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:33:47.024Z",
+      "observationAgeMs": 413473,
+      "ageSeconds": 413.5,
+      "coin": "XMR",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.449,
+      "fillPrice": 522.24,
+      "closedPnl": 0,
+      "fee": -0.002344,
+      "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "oid": 532659707363,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 523.14,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": -17.23,
+            "costStressedBps": -25.23
+          },
+          "60s": {
+            "proxyClose": 523.14,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": -17.23,
+            "costStressedBps": -25.23
+          },
+          "180s": {
+            "proxyClose": 522.32,
+            "proxyTime": "2026-09-01T06:37:00.000Z",
+            "grossDirectionAdjustedBps": -1.53,
+            "costStressedBps": -9.53
+          },
+          "300s": {
+            "proxyClose": 522.31,
+            "proxyTime": "2026-09-01T06:39:00.000Z",
+            "grossDirectionAdjustedBps": -1.34,
+            "costStressedBps": -9.34
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:33:47.024Z",
+      "observationAgeMs": 413473,
+      "ageSeconds": 413.5,
+      "coin": "XMR",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.673,
+      "fillPrice": 522.35,
+      "closedPnl": 0,
+      "fee": -0.003515,
+      "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "oid": 532659707362,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 523.14,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": -15.12,
+            "costStressedBps": -23.12
+          },
+          "60s": {
+            "proxyClose": 523.14,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": -15.12,
+            "costStressedBps": -23.12
+          },
+          "180s": {
+            "proxyClose": 522.32,
+            "proxyTime": "2026-09-01T06:37:00.000Z",
+            "grossDirectionAdjustedBps": 0.57,
+            "costStressedBps": -7.43
+          },
+          "300s": {
+            "proxyClose": 522.31,
+            "proxyTime": "2026-09-01T06:39:00.000Z",
+            "grossDirectionAdjustedBps": 0.77,
+            "costStressedBps": -7.23
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:33:31.479Z",
+      "observationAgeMs": 429018,
+      "ageSeconds": 429,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.055,
+      "fillPrice": 1549.1,
+      "closedPnl": 0,
+      "fee": -0.000085,
+      "hash": "0xa6fdc83d3b381e7ca87704436e9ae90202b60022d63b3d4e4ac6738ffa3bf867",
+      "oid": 532659523705,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1548.6,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": 3.23,
+            "costStressedBps": -4.77
+          },
+          "60s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": 9.68,
+            "costStressedBps": 1.68
+          },
+          "180s": {
+            "proxyClose": 1547.7,
+            "proxyTime": "2026-09-01T06:37:00.000Z",
+            "grossDirectionAdjustedBps": 9.04,
+            "costStressedBps": 1.04
+          },
+          "300s": {
+            "proxyClose": 1549.8,
+            "proxyTime": "2026-09-01T06:39:00.000Z",
+            "grossDirectionAdjustedBps": -4.52,
+            "costStressedBps": -12.52
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:33:30.876Z",
+      "observationAgeMs": 429621,
+      "ageSeconds": 429.6,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.129,
+      "fillPrice": 1549.1,
+      "closedPnl": 0,
+      "fee": -0.000199,
+      "hash": "0x6895a3b9caa470cf6a0f04436e9ae00203b2009f65a78fa10c5e4f0c89a84aba",
+      "oid": 532659523705,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1548.6,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": 3.23,
+            "costStressedBps": -4.77
+          },
+          "60s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": 9.68,
+            "costStressedBps": 1.68
+          },
+          "180s": {
+            "proxyClose": 1547.7,
+            "proxyTime": "2026-09-01T06:37:00.000Z",
+            "grossDirectionAdjustedBps": 9.04,
+            "costStressedBps": 1.04
+          },
+          "300s": {
+            "proxyClose": 1549.8,
+            "proxyTime": "2026-09-01T06:39:00.000Z",
+            "grossDirectionAdjustedBps": -4.52,
+            "costStressedBps": -12.52
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:33:30.876Z",
+      "observationAgeMs": 429621,
+      "ageSeconds": 429.6,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 1.9,
+      "fillPrice": 1549.1,
+      "closedPnl": 0,
+      "fee": -0.002943,
+      "hash": "0x1b691a54e435b34b1ce204436e9ae00203b3003a7f38d21dbf31c5a7a3398d35",
+      "oid": 532659523705,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1548.6,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": 3.23,
+            "costStressedBps": -4.77
+          },
+          "60s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": 9.68,
+            "costStressedBps": 1.68
+          },
+          "180s": {
+            "proxyClose": 1547.7,
+            "proxyTime": "2026-09-01T06:37:00.000Z",
+            "grossDirectionAdjustedBps": 9.04,
+            "costStressedBps": 1.04
+          },
+          "300s": {
+            "proxyClose": 1549.8,
+            "proxyTime": "2026-09-01T06:39:00.000Z",
+            "grossDirectionAdjustedBps": -4.52,
+            "costStressedBps": -12.52
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:33:30.267Z",
+      "observationAgeMs": 430230,
+      "ageSeconds": 430.2,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.129,
+      "fillPrice": 1549.1,
+      "closedPnl": 0,
+      "fee": -0.000199,
+      "hash": "0xc7eced8b92d6539ec96604436e9ad702041a00712dd972706bb598de51da2d89",
+      "oid": 532659523705,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1548.6,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": 3.23,
+            "costStressedBps": -4.77
+          },
+          "60s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": 9.68,
+            "costStressedBps": 1.68
+          },
+          "180s": {
+            "proxyClose": 1547.7,
+            "proxyTime": "2026-09-01T06:37:00.000Z",
+            "grossDirectionAdjustedBps": 9.04,
+            "costStressedBps": 1.04
+          },
+          "300s": {
+            "proxyClose": 1549.8,
+            "proxyTime": "2026-09-01T06:39:00.000Z",
+            "grossDirectionAdjustedBps": -4.52,
+            "costStressedBps": -12.52
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:33:29.664Z",
+      "observationAgeMs": 430833,
+      "ageSeconds": 430.8,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.129,
+      "fillPrice": 1549.1,
+      "closedPnl": 0,
+      "fee": -0.000199,
+      "hash": "0x5e57b14ba3294cce5fd104436e9ace02025400313e2c6ba002205c9e622d26b9",
+      "oid": 532659523705,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1548.6,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": 3.23,
+            "costStressedBps": -4.77
+          },
+          "60s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": 9.68,
+            "costStressedBps": 1.68
+          },
+          "180s": {
+            "proxyClose": 1547.7,
+            "proxyTime": "2026-09-01T06:37:00.000Z",
+            "grossDirectionAdjustedBps": 9.04,
+            "costStressedBps": 1.04
+          },
+          "300s": {
+            "proxyClose": 1549.8,
+            "proxyTime": "2026-09-01T06:39:00.000Z",
+            "grossDirectionAdjustedBps": -4.52,
+            "costStressedBps": -12.52
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:33:29.060Z",
+      "observationAgeMs": 431437,
+      "ageSeconds": 431.4,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 1.484,
+      "fillPrice": 1549.1,
+      "closedPnl": 0,
+      "fee": -0.002298,
+      "hash": "0xfa32def89a5845bbfbac04436e9ac502032c00de355b648e9dfb8a4b595c1fa6",
+      "oid": 532659523705,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1548.6,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": 3.23,
+            "costStressedBps": -4.77
+          },
+          "60s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": 9.68,
+            "costStressedBps": 1.68
+          },
+          "180s": {
+            "proxyClose": 1547.7,
+            "proxyTime": "2026-09-01T06:37:00.000Z",
+            "grossDirectionAdjustedBps": 9.04,
+            "costStressedBps": 1.04
+          },
+          "300s": {
+            "proxyClose": 1549.8,
+            "proxyTime": "2026-09-01T06:39:00.000Z",
+            "grossDirectionAdjustedBps": -4.52,
+            "costStressedBps": -12.52
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:33:29.060Z",
+      "observationAgeMs": 431437,
+      "ageSeconds": 431.4,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.129,
+      "fillPrice": 1549.1,
+      "closedPnl": 0,
+      "fee": -0.000199,
+      "hash": "0xc580b965009d4faac6fa04436e9ac5020330004a9b906e7c694964b7bf912995",
+      "oid": 532659523705,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1548.6,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": 3.23,
+            "costStressedBps": -4.77
+          },
+          "60s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": 9.68,
+            "costStressedBps": 1.68
+          },
+          "180s": {
+            "proxyClose": 1547.7,
+            "proxyTime": "2026-09-01T06:37:00.000Z",
+            "grossDirectionAdjustedBps": 9.04,
+            "costStressedBps": 1.04
+          },
+          "300s": {
+            "proxyClose": 1549.8,
+            "proxyTime": "2026-09-01T06:39:00.000Z",
+            "grossDirectionAdjustedBps": -4.52,
+            "costStressedBps": -12.52
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:33:29.060Z",
+      "observationAgeMs": 431437,
+      "ageSeconds": 431.4,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 1,
+      "fillPrice": 1549.1,
+      "closedPnl": 0,
+      "fee": -0.001549,
+      "hash": "0x2b27a69b33bfd4a22ca104436e9ac50203320080ceb2f374cef051edf2b3ae8c",
+      "oid": 532659523705,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1548.6,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": 3.23,
+            "costStressedBps": -4.77
+          },
+          "60s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": 9.68,
+            "costStressedBps": 1.68
+          },
+          "180s": {
+            "proxyClose": 1547.7,
+            "proxyTime": "2026-09-01T06:37:00.000Z",
+            "grossDirectionAdjustedBps": 9.04,
+            "costStressedBps": 1.04
+          },
+          "300s": {
+            "proxyClose": 1549.8,
+            "proxyTime": "2026-09-01T06:39:00.000Z",
+            "grossDirectionAdjustedBps": -4.52,
+            "costStressedBps": -12.52
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:33:26.644Z",
+      "observationAgeMs": 433853,
+      "ageSeconds": 433.9,
+      "coin": "xyz:NVDA",
+      "dir": "Close Long",
+      "side": "A",
+      "size": 2.27,
+      "fillPrice": 220.45,
+      "closedPnl": 3.39138,
+      "fee": -0.0005,
+      "hash": "0x638126f46731864664fa04436e9aa10202de00da0234a5180749d24726356031",
+      "oid": 532659515126,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 8,
+        "delays": {
+          "15s": {
+            "proxyClose": 220.41,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": -1.81,
+            "costStressedBps": -9.81
+          },
+          "60s": {
+            "proxyClose": 220.44,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": -0.45,
+            "costStressedBps": -8.45
+          },
+          "180s": {
+            "proxyClose": 220.38,
+            "proxyTime": "2026-09-01T06:37:00.000Z",
+            "grossDirectionAdjustedBps": -3.18,
+            "costStressedBps": -11.18
+          },
+          "300s": {
+            "proxyClose": 220.52,
+            "proxyTime": "2026-09-01T06:39:00.000Z",
+            "grossDirectionAdjustedBps": 3.18,
+            "costStressedBps": -4.82
+          }
+        }
+      },
+      "qualityFlags": [
+        "exit-row-not-entry-signal",
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:32:56.460Z",
+      "observationAgeMs": 464037,
+      "ageSeconds": 464,
+      "coin": "WLD",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 693.7,
+      "fillPrice": 0.37187,
+      "closedPnl": 0,
+      "fee": -0.002579,
+      "hash": "0x831e006b648fa81a849704436e98fc0201740050ff82c6ec26e6abbe23838205",
+      "oid": 532659235148,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 0.37205,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": -4.84,
+            "costStressedBps": -12.84
+          },
+          "60s": {
+            "proxyClose": 0.37205,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": -4.84,
+            "costStressedBps": -12.84
+          },
+          "180s": {
+            "proxyClose": 0.37151,
+            "proxyTime": "2026-09-01T06:36:00.000Z",
+            "grossDirectionAdjustedBps": 9.68,
+            "costStressedBps": 1.68
+          },
+          "300s": {
+            "proxyClose": 0.37167,
+            "proxyTime": "2026-09-01T06:38:00.000Z",
+            "grossDirectionAdjustedBps": 5.38,
+            "costStressedBps": -2.62
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:32:15.521Z",
+      "observationAgeMs": 504976,
+      "ageSeconds": 505,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.993,
+      "fillPrice": 1549.2,
+      "closedPnl": 0,
+      "fee": -0.001538,
+      "hash": "0x4db23f8fb3c0bb7e4f2b04436e96c00202b400754ec3da50f17aeae272c49568",
+      "oid": 532658822215,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1549.3,
+            "proxyTime": "2026-09-01T06:33:00.000Z",
+            "grossDirectionAdjustedBps": -0.65,
+            "costStressedBps": -8.65
+          },
+          "60s": {
+            "proxyClose": 1548.6,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": 3.87,
+            "costStressedBps": -4.13
+          },
+          "180s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:36:00.000Z",
+            "grossDirectionAdjustedBps": 10.33,
+            "costStressedBps": 2.33
+          },
+          "300s": {
+            "proxyClose": 1549.7,
+            "proxyTime": "2026-09-01T06:38:00.000Z",
+            "grossDirectionAdjustedBps": -3.23,
+            "costStressedBps": -11.23
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:32:10.052Z",
+      "observationAgeMs": 510445,
+      "ageSeconds": 510.4,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.77,
+      "fillPrice": 1549.2,
+      "closedPnl": 0,
+      "fee": -0.001192,
+      "hash": "0x1353379102629e1e14cc04436e96750201e500769d65bcf0b71be2e3c1667808",
+      "oid": 532658729375,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1549.3,
+            "proxyTime": "2026-09-01T06:33:00.000Z",
+            "grossDirectionAdjustedBps": -0.65,
+            "costStressedBps": -8.65
+          },
+          "60s": {
+            "proxyClose": 1548.6,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": 3.87,
+            "costStressedBps": -4.13
+          },
+          "180s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:36:00.000Z",
+            "grossDirectionAdjustedBps": 10.33,
+            "costStressedBps": 2.33
+          },
+          "300s": {
+            "proxyClose": 1549.7,
+            "proxyTime": "2026-09-01T06:38:00.000Z",
+            "grossDirectionAdjustedBps": -3.23,
+            "costStressedBps": -11.23
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:32:09.383Z",
+      "observationAgeMs": 511114,
+      "ageSeconds": 511.1,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.23,
+      "fillPrice": 1549.2,
+      "closedPnl": 0,
+      "fee": -0.000356,
+      "hash": "0x8d468f862ce2ff368ec004436e966b02047f006bc7e61e08310f3ad8ebe6d921",
+      "oid": 532658729375,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1549.3,
+            "proxyTime": "2026-09-01T06:33:00.000Z",
+            "grossDirectionAdjustedBps": -0.65,
+            "costStressedBps": -8.65
+          },
+          "60s": {
+            "proxyClose": 1548.6,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": 3.87,
+            "costStressedBps": -4.13
+          },
+          "180s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:36:00.000Z",
+            "grossDirectionAdjustedBps": 10.33,
+            "costStressedBps": 2.33
+          },
+          "300s": {
+            "proxyClose": 1549.7,
+            "proxyTime": "2026-09-01T06:38:00.000Z",
+            "grossDirectionAdjustedBps": -3.23,
+            "costStressedBps": -11.23
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:32:06.949Z",
+      "observationAgeMs": 513548,
+      "ageSeconds": 513.5,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.129,
+      "fillPrice": 1549.2,
+      "closedPnl": 0,
+      "fee": -0.000199,
+      "hash": "0xe2c53ce1d0570811e43e04436e96480206bd00c76b5a26e3868de8348f5ae1fc",
+      "oid": 532658729375,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1549.3,
+            "proxyTime": "2026-09-01T06:33:00.000Z",
+            "grossDirectionAdjustedBps": -0.65,
+            "costStressedBps": -8.65
+          },
+          "60s": {
+            "proxyClose": 1548.6,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": 3.87,
+            "costStressedBps": -4.13
+          },
+          "180s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:36:00.000Z",
+            "grossDirectionAdjustedBps": 10.33,
+            "costStressedBps": 2.33
+          },
+          "300s": {
+            "proxyClose": 1549.7,
+            "proxyTime": "2026-09-01T06:38:00.000Z",
+            "grossDirectionAdjustedBps": -3.23,
+            "costStressedBps": -11.23
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:32:06.546Z",
+      "observationAgeMs": 513951,
+      "ageSeconds": 514,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.803,
+      "fillPrice": 1549.2,
+      "closedPnl": 0,
+      "fee": -0.001244,
+      "hash": "0x144768946a907df215c104436e964202069f007a05939cc4b81013e7299457dc",
+      "oid": 532658729375,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1549.3,
+            "proxyTime": "2026-09-01T06:33:00.000Z",
+            "grossDirectionAdjustedBps": -0.65,
+            "costStressedBps": -8.65
+          },
+          "60s": {
+            "proxyClose": 1548.6,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": 3.87,
+            "costStressedBps": -4.13
+          },
+          "180s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:36:00.000Z",
+            "grossDirectionAdjustedBps": 10.33,
+            "costStressedBps": 2.33
+          },
+          "300s": {
+            "proxyClose": 1549.7,
+            "proxyTime": "2026-09-01T06:38:00.000Z",
+            "grossDirectionAdjustedBps": -3.23,
+            "costStressedBps": -11.23
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:32:06.349Z",
+      "observationAgeMs": 514148,
+      "ageSeconds": 514.1,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.129,
+      "fillPrice": 1549.2,
+      "closedPnl": 0,
+      "fee": -0.000199,
+      "hash": "0x1b5af37d12350e7e1cd404436e963f0202780062ad382d50bf239ecfd138e868",
+      "oid": 532658729375,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1549.3,
+            "proxyTime": "2026-09-01T06:33:00.000Z",
+            "grossDirectionAdjustedBps": -0.65,
+            "costStressedBps": -8.65
+          },
+          "60s": {
+            "proxyClose": 1548.6,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": 3.87,
+            "costStressedBps": -4.13
+          },
+          "180s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:36:00.000Z",
+            "grossDirectionAdjustedBps": 10.33,
+            "costStressedBps": 2.33
+          },
+          "300s": {
+            "proxyClose": 1549.7,
+            "proxyTime": "2026-09-01T06:38:00.000Z",
+            "grossDirectionAdjustedBps": -3.23,
+            "costStressedBps": -11.23
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:32:06.349Z",
+      "observationAgeMs": 514148,
+      "ageSeconds": 514.1,
+      "coin": "xyz:SNDK",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 1,
+      "fillPrice": 1549.2,
+      "closedPnl": 0,
+      "fee": -0.001549,
+      "hash": "0x33d5574e5ee8d5f1354f04436e963f02027b0033f9ebf4c3d79e02a11decafdb",
+      "oid": 532658729375,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 1549.3,
+            "proxyTime": "2026-09-01T06:33:00.000Z",
+            "grossDirectionAdjustedBps": -0.65,
+            "costStressedBps": -8.65
+          },
+          "60s": {
+            "proxyClose": 1548.6,
+            "proxyTime": "2026-09-01T06:34:00.000Z",
+            "grossDirectionAdjustedBps": 3.87,
+            "costStressedBps": -4.13
+          },
+          "180s": {
+            "proxyClose": 1547.6,
+            "proxyTime": "2026-09-01T06:36:00.000Z",
+            "grossDirectionAdjustedBps": 10.33,
+            "costStressedBps": 2.33
+          },
+          "300s": {
+            "proxyClose": 1549.7,
+            "proxyTime": "2026-09-01T06:38:00.000Z",
+            "grossDirectionAdjustedBps": -3.23,
+            "costStressedBps": -11.23
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "capturedAt": "2026-09-01T06:40:40.497Z",
+      "sourceRoute": "Hyperliquid public info userFillsByTime + candleSnapshot",
+      "walletEventTime": "2026-09-01T06:31:56.957Z",
+      "observationAgeMs": 523540,
+      "ageSeconds": 523.5,
+      "coin": "xyz:GOLD",
+      "dir": "Open Short",
+      "side": "A",
+      "size": 0.2052,
+      "fillPrice": 4431,
+      "closedPnl": 0,
+      "fee": -0.009092,
+      "hash": "0x8c6bde222271ecdf8de504436e95c30201880007bd750bb130348974e175c6ca",
+      "oid": 532658349450,
+      "delayJoin": {
+        "skipped": false,
+        "candleRows": 9,
+        "delays": {
+          "15s": {
+            "proxyClose": 4431,
+            "proxyTime": "2026-09-01T06:33:00.000Z",
+            "grossDirectionAdjustedBps": 0,
+            "costStressedBps": -8
+          },
+          "60s": {
+            "proxyClose": 4431,
+            "proxyTime": "2026-09-01T06:33:00.000Z",
+            "grossDirectionAdjustedBps": 0,
+            "costStressedBps": -8
+          },
+          "180s": {
+            "proxyClose": 4432.2,
+            "proxyTime": "2026-09-01T06:35:00.000Z",
+            "grossDirectionAdjustedBps": -2.71,
+            "costStressedBps": -10.71
+          },
+          "300s": {
+            "proxyClose": 4432.6,
+            "proxyTime": "2026-09-01T06:37:00.000Z",
+            "grossDirectionAdjustedBps": -3.61,
+            "costStressedBps": -11.61
+          }
+        }
+      },
+      "qualityFlags": [
+        "single-known-address",
+        "no-hidden-hedge-check",
+        "no-selection-baseline"
+      ]
+    }
+  ],
+  "verdict": "Captured 24 recent fill rows from one known public Hyperliquid address; 24 joined to public 1m candles. 18/24 joined rows had positive gross 60s delay and 19/24 had positive gross 180s delay. After the configured cost stress, 9/24 stayed positive at 60s and 17/24 stayed positive at 180s. This is a mechanics/falsifier artifact only. It does not prove copyability, candidate quality, or strategy edge."
+}

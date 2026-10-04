@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-09-01T06:43:55.698Z",
+  "address": "0x20c2d95a3dfdca9e9ad12794d5fa6fad99da44f5",
+  "lookbackMinutes": 60,
+  "settleMinutes": 6,
+  "maxRows": 24,
+  "costBps": 8,
+  "source": "Hyperliquid public info endpoint",
+  "windowStart": "2026-09-01T05:37:55.698Z",
+  "windowEnd": "2026-09-01T06:37:55.698Z",
+  "fillsReturned": 0,
+  "rows": [],
+  "verdict": "Captured 0 recent fill rows from one known public Hyperliquid address; 0 joined to public 1m candles. 0/0 joined rows had positive gross 60s delay and 0/0 had positive gross 180s delay. After the configured cost stress, 0/0 stayed positive at 60s and 0/0 stayed positive at 180s. This is a mechanics/falsifier artifact only. It does not prove copyability, candidate quality, or strategy edge."
+}

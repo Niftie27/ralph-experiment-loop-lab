@@ -1,0 +1,2955 @@
+{
+  "generated": "2026-09-26T17:28:19.816Z",
+  "status": "reject_no_touch_baseline_lift",
+  "candidate": "pdh-pdl-btc-gated-liquidity-sweep-long",
+  "test": "second_gate_monthly_walk_forward_session_sensitivity",
+  "boundaries": [
+    "research_only",
+    "no_live_alert_changes",
+    "no_scheduler_changes",
+    "no_keys_accounts_or_paid_services",
+    "no_sizing_or_execution_changes",
+    "no_strategy_promotion"
+  ],
+  "assumptions": {
+    "timeframe": "1h",
+    "holdBars": 12,
+    "sessionOffsetsHours": [
+      0,
+      8,
+      12
+    ],
+    "monthlyFold": "previous month fit, current month forward, first 24h of forward month embargoed",
+    "btcGate": "BTC_RISK_ON only, using close/MA20/MA50 proxy shared with DEMO-SIM replay context",
+    "costs": "4 bps fee plus 2 bps slippage per side",
+    "comparisonCaveat": "Existing DEMO-SIM replay comparison is limited to available paper-signal replay rows, currently August/September only."
+  },
+  "sourceData": {
+    "loaded": [
+      {
+        "symbol": "ETH",
+        "rows": 4303
+      },
+      {
+        "symbol": "SOL",
+        "rows": 4303
+      },
+      {
+        "symbol": "BNB",
+        "rows": 4303
+      },
+      {
+        "symbol": "XRP",
+        "rows": 4303
+      },
+      {
+        "symbol": "DOGE",
+        "rows": 4303
+      },
+      {
+        "symbol": "ADA",
+        "rows": 4303
+      },
+      {
+        "symbol": "LINK",
+        "rows": 4303
+      },
+      {
+        "symbol": "AVAX",
+        "rows": 4303
+      }
+    ],
+    "candleDir": "data/candles",
+    "replay": "results/historical-demo-sim-replay.json"
+  },
+  "results": {
+    "topSweep": {
+      "key": "sweep_reclaim|pdh_reclaim_long|session_8h",
+      "trades": 945,
+      "wins": 426,
+      "losses": 519,
+      "winrate": 0.450794,
+      "avgNetReturn": 0.000379,
+      "netPnlPer10kUsd": 3583.34,
+      "profitFactor": 1.0444,
+      "endingEquityUsd": 13583.34,
+      "maxDrawdownUsd": 25711.16,
+      "maxDrawdownPct": 2.351172,
+      "maxDrawdownAt": "2026-08-18T11:00:00.000Z",
+      "walkForward": {
+        "trades": 785,
+        "wins": 376,
+        "losses": 409,
+        "winrate": 0.478981,
+        "avgNetReturn": 0.002045,
+        "netPnlPer10kUsd": 16050.85,
+        "profitFactor": 1.2606,
+        "endingEquityUsd": 26050.85,
+        "maxDrawdownUsd": 15195.96,
+        "maxDrawdownPct": 1.1791,
+        "maxDrawdownAt": "2026-08-18T11:00:00.000Z"
+      },
+      "folds": [
+        {
+          "fitMonth": "2026-04",
+          "forwardMonth": "2026-05",
+          "fit": {
+            "trades": 144,
+            "wins": 46,
+            "losses": 98,
+            "winrate": 0.319444,
+            "avgNetReturn": -0.008066,
+            "netPnlPer10kUsd": -11614.68,
+            "profitFactor": 0.3511,
+            "endingEquityUsd": -1614.68,
+            "maxDrawdownUsd": 12550.15,
+            "maxDrawdownPct": 1.147656,
+            "maxDrawdownAt": "2026-04-27T16:00:00.000Z"
+          },
+          "forward": {
+            "trades": 128,
+            "wins": 63,
+            "losses": 65,
+            "winrate": 0.492188,
+            "avgNetReturn": -0.000297,
+            "netPnlPer10kUsd": -379.49,
+            "profitFactor": 0.9512,
+            "endingEquityUsd": 9620.51,
+            "maxDrawdownUsd": 4323.02,
+            "maxDrawdownPct": 0.357217,
+            "maxDrawdownAt": "2026-05-30T14:00:00.000Z"
+          }
+        },
+        {
+          "fitMonth": "2026-05",
+          "forwardMonth": "2026-06",
+          "fit": {
+            "trades": 139,
+            "wins": 65,
+            "losses": 74,
+            "winrate": 0.467626,
+            "avgNetReturn": -0.000992,
+            "netPnlPer10kUsd": -1378.34,
+            "profitFactor": 0.8434,
+            "endingEquityUsd": 8621.66,
+            "maxDrawdownUsd": 4323.02,
+            "maxDrawdownPct": 0.389352,
+            "maxDrawdownAt": "2026-05-30T14:00:00.000Z"
+          },
+          "forward": {
+            "trades": 167,
+            "wins": 63,
+            "losses": 104,
+            "winrate": 0.377246,
+            "avgNetReturn": -0.004362,
+            "netPnlPer10kUsd": -7285.15,
+            "profitFactor": 0.5534,
+            "endingEquityUsd": 2714.85,
+            "maxDrawdownUsd": 10552.4,
+            "maxDrawdownPct": 0.795372,
+            "maxDrawdownAt": "2026-06-30T11:00:00.000Z"
+          }
+        },
+        {
+          "fitMonth": "2026-06",
+          "forwardMonth": "2026-07",
+          "fit": {
+            "trades": 167,
+            "wins": 63,
+            "losses": 104,
+            "winrate": 0.377246,
+            "avgNetReturn": -0.004362,
+            "netPnlPer10kUsd": -7285.15,
+            "profitFactor": 0.5534,
+            "endingEquityUsd": 2714.85,
+            "maxDrawdownUsd": 10552.4,
+            "maxDrawdownPct": 0.795372,
+            "maxDrawdownAt": "2026-06-30T11:00:00.000Z"
+          },
+          "forward": {
+            "trades": 189,
+            "wins": 83,
+            "losses": 106,
+            "winrate": 0.439153,
+            "avgNetReturn": -0.000753,
+            "netPnlPer10kUsd": -1422.39,
+            "profitFactor": 0.8813,
+            "endingEquityUsd": 8577.61,
+            "maxDrawdownUsd": 7000.33,
+            "maxDrawdownPct": 0.449375,
+            "maxDrawdownAt": "2026-07-31T10:00:00.000Z"
+          }
+        },
+        {
+          "fitMonth": "2026-07",
+          "forwardMonth": "2026-08",
+          "fit": {
+            "trades": 194,
+            "wins": 85,
+            "losses": 109,
+            "winrate": 0.438144,
+            "avgNetReturn": -0.000658,
+            "netPnlPer10kUsd": -1276.36,
+            "profitFactor": 0.8943,
+            "endingEquityUsd": 8723.64,
+            "maxDrawdownUsd": 7000.33,
+            "maxDrawdownPct": 0.445201,
+            "maxDrawdownAt": "2026-07-31T10:00:00.000Z"
+          },
+          "forward": {
+            "trades": 181,
+            "wins": 87,
+            "losses": 94,
+            "winrate": 0.480663,
+            "avgNetReturn": 0.00597,
+            "netPnlPer10kUsd": 10806.21,
+            "profitFactor": 1.6214,
+            "endingEquityUsd": 20806.21,
+            "maxDrawdownUsd": 11570.89,
+            "maxDrawdownPct": 0.357379,
+            "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+          }
+        },
+        {
+          "fitMonth": "2026-08",
+          "forwardMonth": "2026-09",
+          "fit": {
+            "trades": 181,
+            "wins": 87,
+            "losses": 94,
+            "winrate": 0.480663,
+            "avgNetReturn": 0.00597,
+            "netPnlPer10kUsd": 10806.21,
+            "profitFactor": 1.6214,
+            "endingEquityUsd": 20806.21,
+            "maxDrawdownUsd": 11570.89,
+            "maxDrawdownPct": 0.357379,
+            "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+          },
+          "forward": {
+            "trades": 120,
+            "wins": 80,
+            "losses": 40,
+            "winrate": 0.666667,
+            "avgNetReturn": 0.011943,
+            "netPnlPer10kUsd": 14331.66,
+            "profitFactor": 2.7612,
+            "endingEquityUsd": 24331.66,
+            "maxDrawdownUsd": 3764.09,
+            "maxDrawdownPct": 0.149299,
+            "maxDrawdownAt": "2026-09-20T07:00:00.000Z"
+          }
+        }
+      ],
+      "forwardMonths": 5,
+      "positiveForwardMonths": 2,
+      "positiveForwardMonthRate": 0.4
+    },
+    "topTouchBaseline": {
+      "key": "touch_baseline|pdh_touch_hold|session_8h",
+      "trades": 1936,
+      "wins": 857,
+      "losses": 1079,
+      "winrate": 0.442665,
+      "avgNetReturn": 0.000544,
+      "netPnlPer10kUsd": 10531.98,
+      "profitFactor": 1.0676,
+      "endingEquityUsd": 20531.98,
+      "maxDrawdownUsd": 47550.02,
+      "maxDrawdownPct": 4.755002,
+      "maxDrawdownAt": "2026-08-18T12:00:00.000Z",
+      "walkForward": {
+        "trades": 1577,
+        "wins": 759,
+        "losses": 818,
+        "winrate": 0.481294,
+        "avgNetReturn": 0.002719,
+        "netPnlPer10kUsd": 42877.06,
+        "profitFactor": 1.3869,
+        "endingEquityUsd": 52877.06,
+        "maxDrawdownUsd": 23245.98,
+        "maxDrawdownPct": 1.288506,
+        "maxDrawdownAt": "2026-08-18T12:00:00.000Z"
+      },
+      "folds": [
+        {
+          "fitMonth": "2026-04",
+          "forwardMonth": "2026-05",
+          "fit": {
+            "trades": 314,
+            "wins": 86,
+            "losses": 228,
+            "winrate": 0.273885,
+            "avgNetReturn": -0.009681,
+            "netPnlPer10kUsd": -30398.91,
+            "profitFactor": 0.2709,
+            "endingEquityUsd": -20398.91,
+            "maxDrawdownUsd": 30398.91,
+            "maxDrawdownPct": 3.039891,
+            "maxDrawdownAt": "2026-04-27T16:00:00.000Z"
+          },
+          "forward": {
+            "trades": 259,
+            "wins": 123,
+            "losses": 136,
+            "winrate": 0.474903,
+            "avgNetReturn": 0.000416,
+            "netPnlPer10kUsd": 1078.3,
+            "profitFactor": 1.0719,
+            "endingEquityUsd": 11078.3,
+            "maxDrawdownUsd": 6616.93,
+            "maxDrawdownPct": 0.413274,
+            "maxDrawdownAt": "2026-05-30T14:00:00.000Z"
+          }
+        },
+        {
+          "fitMonth": "2026-05",
+          "forwardMonth": "2026-06",
+          "fit": {
+            "trades": 294,
+            "wins": 128,
+            "losses": 166,
+            "winrate": 0.435374,
+            "avgNetReturn": -0.000646,
+            "netPnlPer10kUsd": -1898.65,
+            "profitFactor": 0.8952,
+            "endingEquityUsd": 8101.35,
+            "maxDrawdownUsd": 6616.93,
+            "maxDrawdownPct": 0.507665,
+            "maxDrawdownAt": "2026-05-30T14:00:00.000Z"
+          },
+          "forward": {
+            "trades": 337,
+            "wins": 130,
+            "losses": 207,
+            "winrate": 0.385757,
+            "avgNetReturn": -0.002562,
+            "netPnlPer10kUsd": -8635.33,
+            "profitFactor": 0.6954,
+            "endingEquityUsd": 1364.67,
+            "maxDrawdownUsd": 15598.06,
+            "maxDrawdownPct": 0.919549,
+            "maxDrawdownAt": "2026-06-30T11:00:00.000Z"
+          }
+        },
+        {
+          "fitMonth": "2026-06",
+          "forwardMonth": "2026-07",
+          "fit": {
+            "trades": 337,
+            "wins": 130,
+            "losses": 207,
+            "winrate": 0.385757,
+            "avgNetReturn": -0.002562,
+            "netPnlPer10kUsd": -8635.33,
+            "profitFactor": 0.6954,
+            "endingEquityUsd": 1364.67,
+            "maxDrawdownUsd": 15598.06,
+            "maxDrawdownPct": 0.919549,
+            "maxDrawdownAt": "2026-06-30T11:00:00.000Z"
+          },
+          "forward": {
+            "trades": 398,
+            "wins": 189,
+            "losses": 209,
+            "winrate": 0.474874,
+            "avgNetReturn": -0.000125,
+            "netPnlPer10kUsd": -497.53,
+            "profitFactor": 0.9793,
+            "endingEquityUsd": 9502.47,
+            "maxDrawdownUsd": 12288.4,
+            "maxDrawdownPct": 0.563924,
+            "maxDrawdownAt": "2026-07-31T12:00:00.000Z"
+          }
+        },
+        {
+          "fitMonth": "2026-07",
+          "forwardMonth": "2026-08",
+          "fit": {
+            "trades": 408,
+            "wins": 196,
+            "losses": 212,
+            "winrate": 0.480392,
+            "avgNetReturn": 0.000131,
+            "netPnlPer10kUsd": 533.25,
+            "profitFactor": 1.0221,
+            "endingEquityUsd": 10533.25,
+            "maxDrawdownUsd": 12288.4,
+            "maxDrawdownPct": 0.538454,
+            "maxDrawdownAt": "2026-07-31T12:00:00.000Z"
+          },
+          "forward": {
+            "trades": 358,
+            "wins": 173,
+            "losses": 185,
+            "winrate": 0.48324,
+            "avgNetReturn": 0.007182,
+            "netPnlPer10kUsd": 25711.95,
+            "profitFactor": 1.9064,
+            "endingEquityUsd": 35711.95,
+            "maxDrawdownUsd": 15963.17,
+            "maxDrawdownPct": 0.308914,
+            "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+          }
+        },
+        {
+          "fitMonth": "2026-08",
+          "forwardMonth": "2026-09",
+          "fit": {
+            "trades": 358,
+            "wins": 173,
+            "losses": 185,
+            "winrate": 0.48324,
+            "avgNetReturn": 0.007182,
+            "netPnlPer10kUsd": 25711.95,
+            "profitFactor": 1.9064,
+            "endingEquityUsd": 35711.95,
+            "maxDrawdownUsd": 15963.17,
+            "maxDrawdownPct": 0.308914,
+            "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+          },
+          "forward": {
+            "trades": 225,
+            "wins": 144,
+            "losses": 81,
+            "winrate": 0.64,
+            "avgNetReturn": 0.011209,
+            "netPnlPer10kUsd": 25219.66,
+            "profitFactor": 2.6697,
+            "endingEquityUsd": 35219.66,
+            "maxDrawdownUsd": 6869.75,
+            "maxDrawdownPct": 0.20215,
+            "maxDrawdownAt": "2026-09-20T07:00:00.000Z"
+          }
+        }
+      ],
+      "forwardMonths": 5,
+      "positiveForwardMonths": 3,
+      "positiveForwardMonthRate": 0.6
+    },
+    "sweepVariants": [
+      {
+        "key": "sweep_reclaim|pdh_reclaim_long|session_8h",
+        "trades": 945,
+        "wins": 426,
+        "losses": 519,
+        "winrate": 0.450794,
+        "avgNetReturn": 0.000379,
+        "netPnlPer10kUsd": 3583.34,
+        "profitFactor": 1.0444,
+        "endingEquityUsd": 13583.34,
+        "maxDrawdownUsd": 25711.16,
+        "maxDrawdownPct": 2.351172,
+        "maxDrawdownAt": "2026-08-18T11:00:00.000Z",
+        "walkForward": {
+          "trades": 785,
+          "wins": 376,
+          "losses": 409,
+          "winrate": 0.478981,
+          "avgNetReturn": 0.002045,
+          "netPnlPer10kUsd": 16050.85,
+          "profitFactor": 1.2606,
+          "endingEquityUsd": 26050.85,
+          "maxDrawdownUsd": 15195.96,
+          "maxDrawdownPct": 1.1791,
+          "maxDrawdownAt": "2026-08-18T11:00:00.000Z"
+        },
+        "folds": [
+          {
+            "fitMonth": "2026-04",
+            "forwardMonth": "2026-05",
+            "fit": {
+              "trades": 144,
+              "wins": 46,
+              "losses": 98,
+              "winrate": 0.319444,
+              "avgNetReturn": -0.008066,
+              "netPnlPer10kUsd": -11614.68,
+              "profitFactor": 0.3511,
+              "endingEquityUsd": -1614.68,
+              "maxDrawdownUsd": 12550.15,
+              "maxDrawdownPct": 1.147656,
+              "maxDrawdownAt": "2026-04-27T16:00:00.000Z"
+            },
+            "forward": {
+              "trades": 128,
+              "wins": 63,
+              "losses": 65,
+              "winrate": 0.492188,
+              "avgNetReturn": -0.000297,
+              "netPnlPer10kUsd": -379.49,
+              "profitFactor": 0.9512,
+              "endingEquityUsd": 9620.51,
+              "maxDrawdownUsd": 4323.02,
+              "maxDrawdownPct": 0.357217,
+              "maxDrawdownAt": "2026-05-30T14:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-05",
+            "forwardMonth": "2026-06",
+            "fit": {
+              "trades": 139,
+              "wins": 65,
+              "losses": 74,
+              "winrate": 0.467626,
+              "avgNetReturn": -0.000992,
+              "netPnlPer10kUsd": -1378.34,
+              "profitFactor": 0.8434,
+              "endingEquityUsd": 8621.66,
+              "maxDrawdownUsd": 4323.02,
+              "maxDrawdownPct": 0.389352,
+              "maxDrawdownAt": "2026-05-30T14:00:00.000Z"
+            },
+            "forward": {
+              "trades": 167,
+              "wins": 63,
+              "losses": 104,
+              "winrate": 0.377246,
+              "avgNetReturn": -0.004362,
+              "netPnlPer10kUsd": -7285.15,
+              "profitFactor": 0.5534,
+              "endingEquityUsd": 2714.85,
+              "maxDrawdownUsd": 10552.4,
+              "maxDrawdownPct": 0.795372,
+              "maxDrawdownAt": "2026-06-30T11:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-06",
+            "forwardMonth": "2026-07",
+            "fit": {
+              "trades": 167,
+              "wins": 63,
+              "losses": 104,
+              "winrate": 0.377246,
+              "avgNetReturn": -0.004362,
+              "netPnlPer10kUsd": -7285.15,
+              "profitFactor": 0.5534,
+              "endingEquityUsd": 2714.85,
+              "maxDrawdownUsd": 10552.4,
+              "maxDrawdownPct": 0.795372,
+              "maxDrawdownAt": "2026-06-30T11:00:00.000Z"
+            },
+            "forward": {
+              "trades": 189,
+              "wins": 83,
+              "losses": 106,
+              "winrate": 0.439153,
+              "avgNetReturn": -0.000753,
+              "netPnlPer10kUsd": -1422.39,
+              "profitFactor": 0.8813,
+              "endingEquityUsd": 8577.61,
+              "maxDrawdownUsd": 7000.33,
+              "maxDrawdownPct": 0.449375,
+              "maxDrawdownAt": "2026-07-31T10:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-07",
+            "forwardMonth": "2026-08",
+            "fit": {
+              "trades": 194,
+              "wins": 85,
+              "losses": 109,
+              "winrate": 0.438144,
+              "avgNetReturn": -0.000658,
+              "netPnlPer10kUsd": -1276.36,
+              "profitFactor": 0.8943,
+              "endingEquityUsd": 8723.64,
+              "maxDrawdownUsd": 7000.33,
+              "maxDrawdownPct": 0.445201,
+              "maxDrawdownAt": "2026-07-31T10:00:00.000Z"
+            },
+            "forward": {
+              "trades": 181,
+              "wins": 87,
+              "losses": 94,
+              "winrate": 0.480663,
+              "avgNetReturn": 0.00597,
+              "netPnlPer10kUsd": 10806.21,
+              "profitFactor": 1.6214,
+              "endingEquityUsd": 20806.21,
+              "maxDrawdownUsd": 11570.89,
+              "maxDrawdownPct": 0.357379,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-08",
+            "forwardMonth": "2026-09",
+            "fit": {
+              "trades": 181,
+              "wins": 87,
+              "losses": 94,
+              "winrate": 0.480663,
+              "avgNetReturn": 0.00597,
+              "netPnlPer10kUsd": 10806.21,
+              "profitFactor": 1.6214,
+              "endingEquityUsd": 20806.21,
+              "maxDrawdownUsd": 11570.89,
+              "maxDrawdownPct": 0.357379,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            },
+            "forward": {
+              "trades": 120,
+              "wins": 80,
+              "losses": 40,
+              "winrate": 0.666667,
+              "avgNetReturn": 0.011943,
+              "netPnlPer10kUsd": 14331.66,
+              "profitFactor": 2.7612,
+              "endingEquityUsd": 24331.66,
+              "maxDrawdownUsd": 3764.09,
+              "maxDrawdownPct": 0.149299,
+              "maxDrawdownAt": "2026-09-20T07:00:00.000Z"
+            }
+          }
+        ],
+        "forwardMonths": 5,
+        "positiveForwardMonths": 2,
+        "positiveForwardMonthRate": 0.4
+      },
+      {
+        "key": "sweep_reclaim|pdl_sweep_reclaim_long|session_0h",
+        "trades": 159,
+        "wins": 78,
+        "losses": 81,
+        "winrate": 0.490566,
+        "avgNetReturn": 0.002896,
+        "netPnlPer10kUsd": 4605.27,
+        "profitFactor": 1.3748,
+        "endingEquityUsd": 14605.27,
+        "maxDrawdownUsd": 7381.81,
+        "maxDrawdownPct": 0.348197,
+        "maxDrawdownAt": "2026-08-18T03:00:00.000Z",
+        "walkForward": {
+          "trades": 110,
+          "wins": 43,
+          "losses": 67,
+          "winrate": 0.390909,
+          "avgNetReturn": -0.003572,
+          "netPnlPer10kUsd": -3929.76,
+          "profitFactor": 0.6348,
+          "endingEquityUsd": 6070.24,
+          "maxDrawdownUsd": 7381.81,
+          "maxDrawdownPct": 0.582848,
+          "maxDrawdownAt": "2026-08-18T03:00:00.000Z"
+        },
+        "folds": [
+          {
+            "fitMonth": "2026-04",
+            "forwardMonth": "2026-05",
+            "fit": {
+              "trades": 49,
+              "wins": 35,
+              "losses": 14,
+              "winrate": 0.714286,
+              "avgNetReturn": 0.017418,
+              "netPnlPer10kUsd": 8535.03,
+              "profitFactor": 6.5799,
+              "endingEquityUsd": 18535.03,
+              "maxDrawdownUsd": 1443.05,
+              "maxDrawdownPct": 0.072231,
+              "maxDrawdownAt": "2026-04-24T03:00:00.000Z"
+            },
+            "forward": {
+              "trades": 21,
+              "wins": 13,
+              "losses": 8,
+              "winrate": 0.619048,
+              "avgNetReturn": 0.008569,
+              "netPnlPer10kUsd": 1799.41,
+              "profitFactor": 2.3747,
+              "endingEquityUsd": 11799.41,
+              "maxDrawdownUsd": 669.88,
+              "maxDrawdownPct": 0.0657,
+              "maxDrawdownAt": "2026-05-07T19:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-05",
+            "forwardMonth": "2026-06",
+            "fit": {
+              "trades": 21,
+              "wins": 13,
+              "losses": 8,
+              "winrate": 0.619048,
+              "avgNetReturn": 0.008569,
+              "netPnlPer10kUsd": 1799.41,
+              "profitFactor": 2.3747,
+              "endingEquityUsd": 11799.41,
+              "maxDrawdownUsd": 669.88,
+              "maxDrawdownPct": 0.0657,
+              "maxDrawdownAt": "2026-05-07T19:00:00.000Z"
+            },
+            "forward": {
+              "trades": 7,
+              "wins": 5,
+              "losses": 2,
+              "winrate": 0.714286,
+              "avgNetReturn": 0.00892,
+              "netPnlPer10kUsd": 624.39,
+              "profitFactor": 4.3638,
+              "endingEquityUsd": 10624.39,
+              "maxDrawdownUsd": 144.81,
+              "maxDrawdownPct": 0.013619,
+              "maxDrawdownAt": "2026-06-16T20:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-06",
+            "forwardMonth": "2026-07",
+            "fit": {
+              "trades": 7,
+              "wins": 5,
+              "losses": 2,
+              "winrate": 0.714286,
+              "avgNetReturn": 0.00892,
+              "netPnlPer10kUsd": 624.39,
+              "profitFactor": 4.3638,
+              "endingEquityUsd": 10624.39,
+              "maxDrawdownUsd": 144.81,
+              "maxDrawdownPct": 0.013619,
+              "maxDrawdownAt": "2026-06-16T20:00:00.000Z"
+            },
+            "forward": {
+              "trades": 24,
+              "wins": 6,
+              "losses": 18,
+              "winrate": 0.25,
+              "avgNetReturn": -0.021898,
+              "netPnlPer10kUsd": -5255.5,
+              "profitFactor": 0.0824,
+              "endingEquityUsd": 4744.5,
+              "maxDrawdownUsd": 5496.78,
+              "maxDrawdownPct": 0.536728,
+              "maxDrawdownAt": "2026-07-28T01:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-07",
+            "forwardMonth": "2026-08",
+            "fit": {
+              "trades": 24,
+              "wins": 6,
+              "losses": 18,
+              "winrate": 0.25,
+              "avgNetReturn": -0.021898,
+              "netPnlPer10kUsd": -5255.5,
+              "profitFactor": 0.0824,
+              "endingEquityUsd": 4744.5,
+              "maxDrawdownUsd": 5496.78,
+              "maxDrawdownPct": 0.536728,
+              "maxDrawdownAt": "2026-07-28T01:00:00.000Z"
+            },
+            "forward": {
+              "trades": 56,
+              "wins": 17,
+              "losses": 39,
+              "winrate": 0.303571,
+              "avgNetReturn": -0.002493,
+              "netPnlPer10kUsd": -1396.23,
+              "profitFactor": 0.6052,
+              "endingEquityUsd": 8603.77,
+              "maxDrawdownUsd": 1885.03,
+              "maxDrawdownPct": 0.188503,
+              "maxDrawdownAt": "2026-08-18T03:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-08",
+            "forwardMonth": "2026-09",
+            "fit": {
+              "trades": 56,
+              "wins": 17,
+              "losses": 39,
+              "winrate": 0.303571,
+              "avgNetReturn": -0.002493,
+              "netPnlPer10kUsd": -1396.23,
+              "profitFactor": 0.6052,
+              "endingEquityUsd": 8603.77,
+              "maxDrawdownUsd": 1885.03,
+              "maxDrawdownPct": 0.188503,
+              "maxDrawdownAt": "2026-08-18T03:00:00.000Z"
+            },
+            "forward": {
+              "trades": 2,
+              "wins": 2,
+              "losses": 0,
+              "winrate": 1,
+              "avgNetReturn": 0.014908,
+              "netPnlPer10kUsd": 298.17,
+              "profitFactor": null,
+              "endingEquityUsd": 10298.17,
+              "maxDrawdownUsd": 0,
+              "maxDrawdownPct": 0,
+              "maxDrawdownAt": null
+            }
+          }
+        ],
+        "forwardMonths": 5,
+        "positiveForwardMonths": 3,
+        "positiveForwardMonthRate": 0.6
+      },
+      {
+        "key": "sweep_reclaim|pdh_reclaim_long|session_12h",
+        "trades": 973,
+        "wins": 390,
+        "losses": 583,
+        "winrate": 0.400822,
+        "avgNetReturn": -0.001677,
+        "netPnlPer10kUsd": -16313.47,
+        "profitFactor": 0.8176,
+        "endingEquityUsd": -6313.47,
+        "maxDrawdownUsd": 38171.87,
+        "maxDrawdownPct": 3.539777,
+        "maxDrawdownAt": "2026-08-18T11:00:00.000Z",
+        "walkForward": {
+          "trades": 819,
+          "wins": 344,
+          "losses": 475,
+          "winrate": 0.420024,
+          "avgNetReturn": -0.000621,
+          "netPnlPer10kUsd": -5086.18,
+          "profitFactor": 0.9292,
+          "endingEquityUsd": 4913.82,
+          "maxDrawdownUsd": 28301.03,
+          "maxDrawdownPct": 2.331196,
+          "maxDrawdownAt": "2026-08-18T11:00:00.000Z"
+        },
+        "folds": [
+          {
+            "fitMonth": "2026-04",
+            "forwardMonth": "2026-05",
+            "fit": {
+              "trades": 137,
+              "wins": 42,
+              "losses": 95,
+              "winrate": 0.306569,
+              "avgNetReturn": -0.007477,
+              "netPnlPer10kUsd": -10243.16,
+              "profitFactor": 0.3759,
+              "endingEquityUsd": -243.16,
+              "maxDrawdownUsd": 11026.86,
+              "maxDrawdownPct": 1.022549,
+              "maxDrawdownAt": "2026-04-27T14:00:00.000Z"
+            },
+            "forward": {
+              "trades": 132,
+              "wins": 55,
+              "losses": 77,
+              "winrate": 0.416667,
+              "avgNetReturn": -0.003181,
+              "netPnlPer10kUsd": -4199.55,
+              "profitFactor": 0.5785,
+              "endingEquityUsd": 5800.45,
+              "maxDrawdownUsd": 6926.16,
+              "maxDrawdownPct": 0.570518,
+              "maxDrawdownAt": "2026-05-30T23:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-05",
+            "forwardMonth": "2026-06",
+            "fit": {
+              "trades": 144,
+              "wins": 57,
+              "losses": 87,
+              "winrate": 0.395833,
+              "avgNetReturn": -0.003701,
+              "netPnlPer10kUsd": -5329.7,
+              "profitFactor": 0.5207,
+              "endingEquityUsd": 4670.3,
+              "maxDrawdownUsd": 6926.16,
+              "maxDrawdownPct": 0.62908,
+              "maxDrawdownAt": "2026-05-30T23:00:00.000Z"
+            },
+            "forward": {
+              "trades": 181,
+              "wins": 55,
+              "losses": 126,
+              "winrate": 0.303867,
+              "avgNetReturn": -0.008222,
+              "netPnlPer10kUsd": -14881.16,
+              "profitFactor": 0.2565,
+              "endingEquityUsd": -4881.16,
+              "maxDrawdownUsd": 16162.52,
+              "maxDrawdownPct": 1.432676,
+              "maxDrawdownAt": "2026-06-30T11:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-06",
+            "forwardMonth": "2026-07",
+            "fit": {
+              "trades": 181,
+              "wins": 55,
+              "losses": 126,
+              "winrate": 0.303867,
+              "avgNetReturn": -0.008222,
+              "netPnlPer10kUsd": -14881.16,
+              "profitFactor": 0.2565,
+              "endingEquityUsd": -4881.16,
+              "maxDrawdownUsd": 16162.52,
+              "maxDrawdownPct": 1.432676,
+              "maxDrawdownAt": "2026-06-30T11:00:00.000Z"
+            },
+            "forward": {
+              "trades": 201,
+              "wins": 84,
+              "losses": 117,
+              "winrate": 0.41791,
+              "avgNetReturn": -0.001444,
+              "netPnlPer10kUsd": -2902.29,
+              "profitFactor": 0.7857,
+              "endingEquityUsd": 7097.71,
+              "maxDrawdownUsd": 7730.05,
+              "maxDrawdownPct": 0.521323,
+              "maxDrawdownAt": "2026-07-31T10:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-07",
+            "forwardMonth": "2026-08",
+            "fit": {
+              "trades": 206,
+              "wins": 86,
+              "losses": 120,
+              "winrate": 0.417476,
+              "avgNetReturn": -0.001338,
+              "netPnlPer10kUsd": -2756.26,
+              "profitFactor": 0.7978,
+              "endingEquityUsd": 7243.74,
+              "maxDrawdownUsd": 7730.05,
+              "maxDrawdownPct": 0.516239,
+              "maxDrawdownAt": "2026-07-31T10:00:00.000Z"
+            },
+            "forward": {
+              "trades": 167,
+              "wins": 63,
+              "losses": 104,
+              "winrate": 0.377246,
+              "avgNetReturn": 0.000542,
+              "netPnlPer10kUsd": 904.64,
+              "profitFactor": 1.0439,
+              "endingEquityUsd": 10904.64,
+              "maxDrawdownUsd": 13768.78,
+              "maxDrawdownPct": 0.558041,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-08",
+            "forwardMonth": "2026-09",
+            "fit": {
+              "trades": 167,
+              "wins": 63,
+              "losses": 104,
+              "winrate": 0.377246,
+              "avgNetReturn": 0.000542,
+              "netPnlPer10kUsd": 904.64,
+              "profitFactor": 1.0439,
+              "endingEquityUsd": 10904.64,
+              "maxDrawdownUsd": 13768.78,
+              "maxDrawdownPct": 0.558041,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            },
+            "forward": {
+              "trades": 138,
+              "wins": 87,
+              "losses": 51,
+              "winrate": 0.630435,
+              "avgNetReturn": 0.011589,
+              "netPnlPer10kUsd": 15992.18,
+              "profitFactor": 3.0839,
+              "endingEquityUsd": 25992.18,
+              "maxDrawdownUsd": 2480.97,
+              "maxDrawdownPct": 0.186505,
+              "maxDrawdownAt": "2026-09-15T08:00:00.000Z"
+            }
+          }
+        ],
+        "forwardMonths": 5,
+        "positiveForwardMonths": 2,
+        "positiveForwardMonthRate": 0.4
+      },
+      {
+        "key": "sweep_reclaim|pdh_reclaim_long|session_0h",
+        "trades": 907,
+        "wins": 321,
+        "losses": 586,
+        "winrate": 0.353914,
+        "avgNetReturn": -0.003004,
+        "netPnlPer10kUsd": -27250.31,
+        "profitFactor": 0.6965,
+        "endingEquityUsd": -17250.31,
+        "maxDrawdownUsd": 42476.24,
+        "maxDrawdownPct": 3.833046,
+        "maxDrawdownAt": "2026-08-18T11:00:00.000Z",
+        "walkForward": {
+          "trades": 710,
+          "wins": 276,
+          "losses": 434,
+          "winrate": 0.388732,
+          "avgNetReturn": -0.001052,
+          "netPnlPer10kUsd": -7469.18,
+          "profitFactor": 0.8872,
+          "endingEquityUsd": 2530.82,
+          "maxDrawdownUsd": 23424.87,
+          "maxDrawdownPct": 2.087899,
+          "maxDrawdownAt": "2026-08-18T11:00:00.000Z"
+        },
+        "folds": [
+          {
+            "fitMonth": "2026-04",
+            "forwardMonth": "2026-05",
+            "fit": {
+              "trades": 153,
+              "wins": 32,
+              "losses": 121,
+              "winrate": 0.20915,
+              "avgNetReturn": -0.011832,
+              "netPnlPer10kUsd": -18102.86,
+              "profitFactor": 0.1451,
+              "endingEquityUsd": -8102.86,
+              "maxDrawdownUsd": 19184.45,
+              "maxDrawdownPct": 1.7312,
+              "maxDrawdownAt": "2026-04-27T16:00:00.000Z"
+            },
+            "forward": {
+              "trades": 149,
+              "wins": 58,
+              "losses": 91,
+              "winrate": 0.389262,
+              "avgNetReturn": -0.004013,
+              "netPnlPer10kUsd": -5980.04,
+              "profitFactor": 0.4084,
+              "endingEquityUsd": 4019.96,
+              "maxDrawdownUsd": 7199.39,
+              "maxDrawdownPct": 0.641694,
+              "maxDrawdownAt": "2026-05-31T16:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-05",
+            "forwardMonth": "2026-06",
+            "fit": {
+              "trades": 183,
+              "wins": 67,
+              "losses": 116,
+              "winrate": 0.36612,
+              "avgNetReturn": -0.003966,
+              "netPnlPer10kUsd": -7256.92,
+              "profitFactor": 0.3897,
+              "endingEquityUsd": 2743.08,
+              "maxDrawdownUsd": 7655.43,
+              "maxDrawdownPct": 0.736205,
+              "maxDrawdownAt": "2026-05-31T16:00:00.000Z"
+            },
+            "forward": {
+              "trades": 133,
+              "wins": 41,
+              "losses": 92,
+              "winrate": 0.308271,
+              "avgNetReturn": -0.004403,
+              "netPnlPer10kUsd": -5856.29,
+              "profitFactor": 0.5107,
+              "endingEquityUsd": 4143.71,
+              "maxDrawdownUsd": 6021.21,
+              "maxDrawdownPct": 0.592352,
+              "maxDrawdownAt": "2026-06-28T04:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-06",
+            "forwardMonth": "2026-07",
+            "fit": {
+              "trades": 133,
+              "wins": 41,
+              "losses": 92,
+              "winrate": 0.308271,
+              "avgNetReturn": -0.004403,
+              "netPnlPer10kUsd": -5856.29,
+              "profitFactor": 0.5107,
+              "endingEquityUsd": 4143.71,
+              "maxDrawdownUsd": 6021.21,
+              "maxDrawdownPct": 0.592352,
+              "maxDrawdownAt": "2026-06-28T04:00:00.000Z"
+            },
+            "forward": {
+              "trades": 162,
+              "wins": 48,
+              "losses": 114,
+              "winrate": 0.296296,
+              "avgNetReturn": -0.004679,
+              "netPnlPer10kUsd": -7579.31,
+              "profitFactor": 0.4361,
+              "endingEquityUsd": 2420.69,
+              "maxDrawdownUsd": 9533.7,
+              "maxDrawdownPct": 0.797506,
+              "maxDrawdownAt": "2026-07-31T10:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-07",
+            "forwardMonth": "2026-08",
+            "fit": {
+              "trades": 166,
+              "wins": 51,
+              "losses": 115,
+              "winrate": 0.307229,
+              "avgNetReturn": -0.004451,
+              "netPnlPer10kUsd": -7388.69,
+              "profitFactor": 0.4507,
+              "endingEquityUsd": 2611.31,
+              "maxDrawdownUsd": 9533.7,
+              "maxDrawdownPct": 0.784989,
+              "maxDrawdownAt": "2026-07-31T10:00:00.000Z"
+            },
+            "forward": {
+              "trades": 169,
+              "wins": 71,
+              "losses": 98,
+              "winrate": 0.420118,
+              "avgNetReturn": 0.003077,
+              "netPnlPer10kUsd": 5200.04,
+              "profitFactor": 1.2604,
+              "endingEquityUsd": 15200.04,
+              "maxDrawdownUsd": 15295.11,
+              "maxDrawdownPct": 0.501559,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-08",
+            "forwardMonth": "2026-09",
+            "fit": {
+              "trades": 169,
+              "wins": 71,
+              "losses": 98,
+              "winrate": 0.420118,
+              "avgNetReturn": 0.003077,
+              "netPnlPer10kUsd": 5200.04,
+              "profitFactor": 1.2604,
+              "endingEquityUsd": 15200.04,
+              "maxDrawdownUsd": 15295.11,
+              "maxDrawdownPct": 0.501559,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            },
+            "forward": {
+              "trades": 97,
+              "wins": 58,
+              "losses": 39,
+              "winrate": 0.597938,
+              "avgNetReturn": 0.006955,
+              "netPnlPer10kUsd": 6746.43,
+              "profitFactor": 1.6301,
+              "endingEquityUsd": 16746.43,
+              "maxDrawdownUsd": 4919.25,
+              "maxDrawdownPct": 0.227913,
+              "maxDrawdownAt": "2026-09-23T18:00:00.000Z"
+            }
+          }
+        ],
+        "forwardMonths": 5,
+        "positiveForwardMonths": 2,
+        "positiveForwardMonthRate": 0.4
+      },
+      {
+        "key": "sweep_reclaim|pdl_sweep_reclaim_long|session_8h",
+        "trades": 150,
+        "wins": 52,
+        "losses": 98,
+        "winrate": 0.346667,
+        "avgNetReturn": -0.006097,
+        "netPnlPer10kUsd": -9146.13,
+        "profitFactor": 0.4019,
+        "endingEquityUsd": 853.87,
+        "maxDrawdownUsd": 11704.96,
+        "maxDrawdownPct": 0.93201,
+        "maxDrawdownAt": "2026-09-10T02:00:00.000Z",
+        "walkForward": {
+          "trades": 112,
+          "wins": 35,
+          "losses": 77,
+          "winrate": 0.3125,
+          "avgNetReturn": -0.007494,
+          "netPnlPer10kUsd": -8393.32,
+          "profitFactor": 0.2987,
+          "endingEquityUsd": 1606.68,
+          "maxDrawdownUsd": 10001.14,
+          "maxDrawdownPct": 0.861587,
+          "maxDrawdownAt": "2026-09-10T02:00:00.000Z"
+        },
+        "folds": [
+          {
+            "fitMonth": "2026-04",
+            "forwardMonth": "2026-05",
+            "fit": {
+              "trades": 24,
+              "wins": 17,
+              "losses": 7,
+              "winrate": 0.708333,
+              "avgNetReturn": 0.004844,
+              "netPnlPer10kUsd": 1162.63,
+              "profitFactor": 1.8256,
+              "endingEquityUsd": 11162.63,
+              "maxDrawdownUsd": 1396.21,
+              "maxDrawdownPct": 0.111173,
+              "maxDrawdownAt": "2026-04-24T03:00:00.000Z"
+            },
+            "forward": {
+              "trades": 4,
+              "wins": 2,
+              "losses": 2,
+              "winrate": 0.5,
+              "avgNetReturn": -0.005337,
+              "netPnlPer10kUsd": -213.47,
+              "profitFactor": 0.1268,
+              "endingEquityUsd": 9786.53,
+              "maxDrawdownUsd": 244.47,
+              "maxDrawdownPct": 0.024372,
+              "maxDrawdownAt": "2026-05-07T04:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-05",
+            "forwardMonth": "2026-06",
+            "fit": {
+              "trades": 6,
+              "wins": 2,
+              "losses": 4,
+              "winrate": 0.333333,
+              "avgNetReturn": -0.004507,
+              "netPnlPer10kUsd": -270.45,
+              "profitFactor": 0.1029,
+              "endingEquityUsd": 9729.55,
+              "maxDrawdownUsd": 270.45,
+              "maxDrawdownPct": 0.027045,
+              "maxDrawdownAt": "2026-05-07T04:00:00.000Z"
+            },
+            "forward": {
+              "trades": 18,
+              "wins": 12,
+              "losses": 6,
+              "winrate": 0.666667,
+              "avgNetReturn": 0.008218,
+              "netPnlPer10kUsd": 1479.3,
+              "profitFactor": 4.285,
+              "endingEquityUsd": 11479.3,
+              "maxDrawdownUsd": 251.77,
+              "maxDrawdownPct": 0.024335,
+              "maxDrawdownAt": "2026-06-14T20:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-06",
+            "forwardMonth": "2026-07",
+            "fit": {
+              "trades": 30,
+              "wins": 12,
+              "losses": 18,
+              "winrate": 0.4,
+              "avgNetReturn": -0.001264,
+              "netPnlPer10kUsd": -379.15,
+              "profitFactor": 0.8358,
+              "endingEquityUsd": 9620.85,
+              "maxDrawdownUsd": 1858.45,
+              "maxDrawdownPct": 0.185845,
+              "maxDrawdownAt": "2026-06-01T12:00:00.000Z"
+            },
+            "forward": {
+              "trades": 31,
+              "wins": 7,
+              "losses": 24,
+              "winrate": 0.225806,
+              "avgNetReturn": -0.019161,
+              "netPnlPer10kUsd": -5939.89,
+              "profitFactor": 0.0668,
+              "endingEquityUsd": 4060.11,
+              "maxDrawdownUsd": 6281.87,
+              "maxDrawdownPct": 0.607415,
+              "maxDrawdownAt": "2026-07-28T01:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-07",
+            "forwardMonth": "2026-08",
+            "fit": {
+              "trades": 31,
+              "wins": 7,
+              "losses": 24,
+              "winrate": 0.225806,
+              "avgNetReturn": -0.019161,
+              "netPnlPer10kUsd": -5939.89,
+              "profitFactor": 0.0668,
+              "endingEquityUsd": 4060.11,
+              "maxDrawdownUsd": 6281.87,
+              "maxDrawdownPct": 0.607415,
+              "maxDrawdownAt": "2026-07-28T01:00:00.000Z"
+            },
+            "forward": {
+              "trades": 58,
+              "wins": 14,
+              "losses": 44,
+              "winrate": 0.241379,
+              "avgNetReturn": -0.005967,
+              "netPnlPer10kUsd": -3461.03,
+              "profitFactor": 0.2557,
+              "endingEquityUsd": 6538.97,
+              "maxDrawdownUsd": 3461.03,
+              "maxDrawdownPct": 0.346103,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-08",
+            "forwardMonth": "2026-09",
+            "fit": {
+              "trades": 58,
+              "wins": 14,
+              "losses": 44,
+              "winrate": 0.241379,
+              "avgNetReturn": -0.005967,
+              "netPnlPer10kUsd": -3461.03,
+              "profitFactor": 0.2557,
+              "endingEquityUsd": 6538.97,
+              "maxDrawdownUsd": 3461.03,
+              "maxDrawdownPct": 0.346103,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            },
+            "forward": {
+              "trades": 1,
+              "wins": 0,
+              "losses": 1,
+              "winrate": 0,
+              "avgNetReturn": -0.025823,
+              "netPnlPer10kUsd": -258.23,
+              "profitFactor": 0,
+              "endingEquityUsd": 9741.77,
+              "maxDrawdownUsd": 258.23,
+              "maxDrawdownPct": 0.025823,
+              "maxDrawdownAt": "2026-09-10T02:00:00.000Z"
+            }
+          }
+        ],
+        "forwardMonths": 5,
+        "positiveForwardMonths": 1,
+        "positiveForwardMonthRate": 0.2
+      },
+      {
+        "key": "sweep_reclaim|pdl_sweep_reclaim_long|session_12h",
+        "trades": 147,
+        "wins": 42,
+        "losses": 105,
+        "winrate": 0.285714,
+        "avgNetReturn": -0.006893,
+        "netPnlPer10kUsd": -10132.1,
+        "profitFactor": 0.3704,
+        "endingEquityUsd": -132.1,
+        "maxDrawdownUsd": 12095.84,
+        "maxDrawdownPct": 1.032071,
+        "maxDrawdownAt": "2026-08-10T23:00:00.000Z",
+        "walkForward": {
+          "trades": 116,
+          "wins": 31,
+          "losses": 85,
+          "winrate": 0.267241,
+          "avgNetReturn": -0.007473,
+          "netPnlPer10kUsd": -8668.97,
+          "profitFactor": 0.308,
+          "endingEquityUsd": 1331.03,
+          "maxDrawdownUsd": 9319.88,
+          "maxDrawdownPct": 0.895527,
+          "maxDrawdownAt": "2026-08-10T23:00:00.000Z"
+        },
+        "folds": [
+          {
+            "fitMonth": "2026-04",
+            "forwardMonth": "2026-05",
+            "fit": {
+              "trades": 17,
+              "wins": 11,
+              "losses": 6,
+              "winrate": 0.647059,
+              "avgNetReturn": 0.003031,
+              "netPnlPer10kUsd": 515.32,
+              "profitFactor": 1.3249,
+              "endingEquityUsd": 10515.32,
+              "maxDrawdownUsd": 1574.01,
+              "maxDrawdownPct": 0.134302,
+              "maxDrawdownAt": "2026-04-17T03:00:00.000Z"
+            },
+            "forward": {
+              "trades": 6,
+              "wins": 1,
+              "losses": 5,
+              "winrate": 0.166667,
+              "avgNetReturn": -0.012345,
+              "netPnlPer10kUsd": -740.69,
+              "profitFactor": 0.0275,
+              "endingEquityUsd": 9259.31,
+              "maxDrawdownUsd": 761.62,
+              "maxDrawdownPct": 0.076003,
+              "maxDrawdownAt": "2026-05-07T19:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-05",
+            "forwardMonth": "2026-06",
+            "fit": {
+              "trades": 8,
+              "wins": 1,
+              "losses": 7,
+              "winrate": 0.125,
+              "avgNetReturn": -0.009971,
+              "netPnlPer10kUsd": -797.67,
+              "profitFactor": 0.0256,
+              "endingEquityUsd": 9202.33,
+              "maxDrawdownUsd": 797.67,
+              "maxDrawdownPct": 0.079767,
+              "maxDrawdownAt": "2026-05-07T19:00:00.000Z"
+            },
+            "forward": {
+              "trades": 15,
+              "wins": 7,
+              "losses": 8,
+              "winrate": 0.466667,
+              "avgNetReturn": 0.005329,
+              "netPnlPer10kUsd": 799.32,
+              "profitFactor": 2.8166,
+              "endingEquityUsd": 10799.32,
+              "maxDrawdownUsd": 348.52,
+              "maxDrawdownPct": 0.031263,
+              "maxDrawdownAt": "2026-06-22T22:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-06",
+            "forwardMonth": "2026-07",
+            "fit": {
+              "trades": 27,
+              "wins": 7,
+              "losses": 20,
+              "winrate": 0.259259,
+              "avgNetReturn": -0.004156,
+              "netPnlPer10kUsd": -1122.16,
+              "profitFactor": 0.5248,
+              "endingEquityUsd": 8877.84,
+              "maxDrawdownUsd": 1921.48,
+              "maxDrawdownPct": 0.192148,
+              "maxDrawdownAt": "2026-06-01T12:00:00.000Z"
+            },
+            "forward": {
+              "trades": 29,
+              "wins": 4,
+              "losses": 25,
+              "winrate": 0.137931,
+              "avgNetReturn": -0.023319,
+              "netPnlPer10kUsd": -6762.49,
+              "profitFactor": 0.0312,
+              "endingEquityUsd": 3237.51,
+              "maxDrawdownUsd": 6897.16,
+              "maxDrawdownPct": 0.680551,
+              "maxDrawdownAt": "2026-07-28T01:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-07",
+            "forwardMonth": "2026-08",
+            "fit": {
+              "trades": 29,
+              "wins": 4,
+              "losses": 25,
+              "winrate": 0.137931,
+              "avgNetReturn": -0.023319,
+              "netPnlPer10kUsd": -6762.49,
+              "profitFactor": 0.0312,
+              "endingEquityUsd": 3237.51,
+              "maxDrawdownUsd": 6897.16,
+              "maxDrawdownPct": 0.680551,
+              "maxDrawdownAt": "2026-07-28T01:00:00.000Z"
+            },
+            "forward": {
+              "trades": 61,
+              "wins": 18,
+              "losses": 43,
+              "winrate": 0.295082,
+              "avgNetReturn": -0.002657,
+              "netPnlPer10kUsd": -1620.85,
+              "profitFactor": 0.588,
+              "endingEquityUsd": 8379.15,
+              "maxDrawdownUsd": 2236.99,
+              "maxDrawdownPct": 0.223072,
+              "maxDrawdownAt": "2026-08-10T23:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-08",
+            "forwardMonth": "2026-09",
+            "fit": {
+              "trades": 61,
+              "wins": 18,
+              "losses": 43,
+              "winrate": 0.295082,
+              "avgNetReturn": -0.002657,
+              "netPnlPer10kUsd": -1620.85,
+              "profitFactor": 0.588,
+              "endingEquityUsd": 8379.15,
+              "maxDrawdownUsd": 2236.99,
+              "maxDrawdownPct": 0.223072,
+              "maxDrawdownAt": "2026-08-10T23:00:00.000Z"
+            },
+            "forward": {
+              "trades": 5,
+              "wins": 1,
+              "losses": 4,
+              "winrate": 0.2,
+              "avgNetReturn": -0.006885,
+              "netPnlPer10kUsd": -344.26,
+              "profitFactor": 0.1638,
+              "endingEquityUsd": 9655.74,
+              "maxDrawdownUsd": 378.73,
+              "maxDrawdownPct": 0.037873,
+              "maxDrawdownAt": "2026-09-10T02:00:00.000Z"
+            }
+          }
+        ],
+        "forwardMonths": 5,
+        "positiveForwardMonths": 1,
+        "positiveForwardMonthRate": 0.2
+      }
+    ],
+    "touchVariants": [
+      {
+        "key": "touch_baseline|pdh_touch_hold|session_8h",
+        "trades": 1936,
+        "wins": 857,
+        "losses": 1079,
+        "winrate": 0.442665,
+        "avgNetReturn": 0.000544,
+        "netPnlPer10kUsd": 10531.98,
+        "profitFactor": 1.0676,
+        "endingEquityUsd": 20531.98,
+        "maxDrawdownUsd": 47550.02,
+        "maxDrawdownPct": 4.755002,
+        "maxDrawdownAt": "2026-08-18T12:00:00.000Z",
+        "walkForward": {
+          "trades": 1577,
+          "wins": 759,
+          "losses": 818,
+          "winrate": 0.481294,
+          "avgNetReturn": 0.002719,
+          "netPnlPer10kUsd": 42877.06,
+          "profitFactor": 1.3869,
+          "endingEquityUsd": 52877.06,
+          "maxDrawdownUsd": 23245.98,
+          "maxDrawdownPct": 1.288506,
+          "maxDrawdownAt": "2026-08-18T12:00:00.000Z"
+        },
+        "folds": [
+          {
+            "fitMonth": "2026-04",
+            "forwardMonth": "2026-05",
+            "fit": {
+              "trades": 314,
+              "wins": 86,
+              "losses": 228,
+              "winrate": 0.273885,
+              "avgNetReturn": -0.009681,
+              "netPnlPer10kUsd": -30398.91,
+              "profitFactor": 0.2709,
+              "endingEquityUsd": -20398.91,
+              "maxDrawdownUsd": 30398.91,
+              "maxDrawdownPct": 3.039891,
+              "maxDrawdownAt": "2026-04-27T16:00:00.000Z"
+            },
+            "forward": {
+              "trades": 259,
+              "wins": 123,
+              "losses": 136,
+              "winrate": 0.474903,
+              "avgNetReturn": 0.000416,
+              "netPnlPer10kUsd": 1078.3,
+              "profitFactor": 1.0719,
+              "endingEquityUsd": 11078.3,
+              "maxDrawdownUsd": 6616.93,
+              "maxDrawdownPct": 0.413274,
+              "maxDrawdownAt": "2026-05-30T14:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-05",
+            "forwardMonth": "2026-06",
+            "fit": {
+              "trades": 294,
+              "wins": 128,
+              "losses": 166,
+              "winrate": 0.435374,
+              "avgNetReturn": -0.000646,
+              "netPnlPer10kUsd": -1898.65,
+              "profitFactor": 0.8952,
+              "endingEquityUsd": 8101.35,
+              "maxDrawdownUsd": 6616.93,
+              "maxDrawdownPct": 0.507665,
+              "maxDrawdownAt": "2026-05-30T14:00:00.000Z"
+            },
+            "forward": {
+              "trades": 337,
+              "wins": 130,
+              "losses": 207,
+              "winrate": 0.385757,
+              "avgNetReturn": -0.002562,
+              "netPnlPer10kUsd": -8635.33,
+              "profitFactor": 0.6954,
+              "endingEquityUsd": 1364.67,
+              "maxDrawdownUsd": 15598.06,
+              "maxDrawdownPct": 0.919549,
+              "maxDrawdownAt": "2026-06-30T11:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-06",
+            "forwardMonth": "2026-07",
+            "fit": {
+              "trades": 337,
+              "wins": 130,
+              "losses": 207,
+              "winrate": 0.385757,
+              "avgNetReturn": -0.002562,
+              "netPnlPer10kUsd": -8635.33,
+              "profitFactor": 0.6954,
+              "endingEquityUsd": 1364.67,
+              "maxDrawdownUsd": 15598.06,
+              "maxDrawdownPct": 0.919549,
+              "maxDrawdownAt": "2026-06-30T11:00:00.000Z"
+            },
+            "forward": {
+              "trades": 398,
+              "wins": 189,
+              "losses": 209,
+              "winrate": 0.474874,
+              "avgNetReturn": -0.000125,
+              "netPnlPer10kUsd": -497.53,
+              "profitFactor": 0.9793,
+              "endingEquityUsd": 9502.47,
+              "maxDrawdownUsd": 12288.4,
+              "maxDrawdownPct": 0.563924,
+              "maxDrawdownAt": "2026-07-31T12:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-07",
+            "forwardMonth": "2026-08",
+            "fit": {
+              "trades": 408,
+              "wins": 196,
+              "losses": 212,
+              "winrate": 0.480392,
+              "avgNetReturn": 0.000131,
+              "netPnlPer10kUsd": 533.25,
+              "profitFactor": 1.0221,
+              "endingEquityUsd": 10533.25,
+              "maxDrawdownUsd": 12288.4,
+              "maxDrawdownPct": 0.538454,
+              "maxDrawdownAt": "2026-07-31T12:00:00.000Z"
+            },
+            "forward": {
+              "trades": 358,
+              "wins": 173,
+              "losses": 185,
+              "winrate": 0.48324,
+              "avgNetReturn": 0.007182,
+              "netPnlPer10kUsd": 25711.95,
+              "profitFactor": 1.9064,
+              "endingEquityUsd": 35711.95,
+              "maxDrawdownUsd": 15963.17,
+              "maxDrawdownPct": 0.308914,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-08",
+            "forwardMonth": "2026-09",
+            "fit": {
+              "trades": 358,
+              "wins": 173,
+              "losses": 185,
+              "winrate": 0.48324,
+              "avgNetReturn": 0.007182,
+              "netPnlPer10kUsd": 25711.95,
+              "profitFactor": 1.9064,
+              "endingEquityUsd": 35711.95,
+              "maxDrawdownUsd": 15963.17,
+              "maxDrawdownPct": 0.308914,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            },
+            "forward": {
+              "trades": 225,
+              "wins": 144,
+              "losses": 81,
+              "winrate": 0.64,
+              "avgNetReturn": 0.011209,
+              "netPnlPer10kUsd": 25219.66,
+              "profitFactor": 2.6697,
+              "endingEquityUsd": 35219.66,
+              "maxDrawdownUsd": 6869.75,
+              "maxDrawdownPct": 0.20215,
+              "maxDrawdownAt": "2026-09-20T07:00:00.000Z"
+            }
+          }
+        ],
+        "forwardMonths": 5,
+        "positiveForwardMonths": 3,
+        "positiveForwardMonthRate": 0.6
+      },
+      {
+        "key": "touch_baseline|pdh_touch_hold|session_0h",
+        "trades": 1906,
+        "wins": 755,
+        "losses": 1151,
+        "winrate": 0.396118,
+        "avgNetReturn": -0.002029,
+        "netPnlPer10kUsd": -38677.49,
+        "profitFactor": 0.7724,
+        "endingEquityUsd": -28677.49,
+        "maxDrawdownUsd": 54131.47,
+        "maxDrawdownPct": 4.805514,
+        "maxDrawdownAt": "2026-08-18T13:00:00.000Z",
+        "walkForward": {
+          "trades": 1490,
+          "wins": 636,
+          "losses": 854,
+          "winrate": 0.426846,
+          "avgNetReturn": -0.000141,
+          "netPnlPer10kUsd": -2108.46,
+          "profitFactor": 0.9825,
+          "endingEquityUsd": 7891.54,
+          "maxDrawdownUsd": 25469.7,
+          "maxDrawdownPct": 0.968154,
+          "maxDrawdownAt": "2026-09-04T22:00:00.000Z"
+        },
+        "folds": [
+          {
+            "fitMonth": "2026-04",
+            "forwardMonth": "2026-05",
+            "fit": {
+              "trades": 327,
+              "wins": 88,
+              "losses": 239,
+              "winrate": 0.269113,
+              "avgNetReturn": -0.010441,
+              "netPnlPer10kUsd": -34142.22,
+              "profitFactor": 0.2281,
+              "endingEquityUsd": -24142.22,
+              "maxDrawdownUsd": 35406.67,
+              "maxDrawdownPct": 3.143222,
+              "maxDrawdownAt": "2026-04-27T16:00:00.000Z"
+            },
+            "forward": {
+              "trades": 297,
+              "wins": 126,
+              "losses": 171,
+              "winrate": 0.424242,
+              "avgNetReturn": -0.00242,
+              "netPnlPer10kUsd": -7188.61,
+              "profitFactor": 0.6034,
+              "endingEquityUsd": 2811.39,
+              "maxDrawdownUsd": 12300.91,
+              "maxDrawdownPct": 0.813967,
+              "maxDrawdownAt": "2026-05-31T18:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-05",
+            "forwardMonth": "2026-06",
+            "fit": {
+              "trades": 363,
+              "wins": 147,
+              "losses": 216,
+              "winrate": 0.404959,
+              "avgNetReturn": -0.002572,
+              "netPnlPer10kUsd": -9337.78,
+              "profitFactor": 0.5608,
+              "endingEquityUsd": 662.22,
+              "maxDrawdownUsd": 12300.91,
+              "maxDrawdownPct": 0.948915,
+              "maxDrawdownAt": "2026-05-31T18:00:00.000Z"
+            },
+            "forward": {
+              "trades": 297,
+              "wins": 119,
+              "losses": 178,
+              "winrate": 0.400673,
+              "avgNetReturn": 0.000577,
+              "netPnlPer10kUsd": 1713.06,
+              "profitFactor": 1.0812,
+              "endingEquityUsd": 11713.06,
+              "maxDrawdownUsd": 10013.62,
+              "maxDrawdownPct": 0.460891,
+              "maxDrawdownAt": "2026-06-30T11:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-06",
+            "forwardMonth": "2026-07",
+            "fit": {
+              "trades": 297,
+              "wins": 119,
+              "losses": 178,
+              "winrate": 0.400673,
+              "avgNetReturn": 0.000577,
+              "netPnlPer10kUsd": 1713.06,
+              "profitFactor": 1.0812,
+              "endingEquityUsd": 11713.06,
+              "maxDrawdownUsd": 10013.62,
+              "maxDrawdownPct": 0.460891,
+              "maxDrawdownAt": "2026-06-30T11:00:00.000Z"
+            },
+            "forward": {
+              "trades": 363,
+              "wins": 132,
+              "losses": 231,
+              "winrate": 0.363636,
+              "avgNetReturn": -0.002738,
+              "netPnlPer10kUsd": -9940.22,
+              "profitFactor": 0.6196,
+              "endingEquityUsd": 59.78,
+              "maxDrawdownUsd": 16897.55,
+              "maxDrawdownPct": 0.996475,
+              "maxDrawdownAt": "2026-07-31T11:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-07",
+            "forwardMonth": "2026-08",
+            "fit": {
+              "trades": 374,
+              "wins": 141,
+              "losses": 233,
+              "winrate": 0.377005,
+              "avgNetReturn": -0.002279,
+              "netPnlPer10kUsd": -8521.77,
+              "profitFactor": 0.6742,
+              "endingEquityUsd": 1478.23,
+              "maxDrawdownUsd": 16897.55,
+              "maxDrawdownPct": 0.919556,
+              "maxDrawdownAt": "2026-07-31T11:00:00.000Z"
+            },
+            "forward": {
+              "trades": 346,
+              "wins": 155,
+              "losses": 191,
+              "winrate": 0.447977,
+              "avgNetReturn": 0.001963,
+              "netPnlPer10kUsd": 6790.47,
+              "profitFactor": 1.1945,
+              "endingEquityUsd": 16790.47,
+              "maxDrawdownUsd": 24932.8,
+              "maxDrawdownPct": 0.597575,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-08",
+            "forwardMonth": "2026-09",
+            "fit": {
+              "trades": 346,
+              "wins": 155,
+              "losses": 191,
+              "winrate": 0.447977,
+              "avgNetReturn": 0.001963,
+              "netPnlPer10kUsd": 6790.47,
+              "profitFactor": 1.1945,
+              "endingEquityUsd": 16790.47,
+              "maxDrawdownUsd": 24932.8,
+              "maxDrawdownPct": 0.597575,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            },
+            "forward": {
+              "trades": 187,
+              "wins": 104,
+              "losses": 83,
+              "winrate": 0.55615,
+              "avgNetReturn": 0.003485,
+              "netPnlPer10kUsd": 6516.84,
+              "profitFactor": 1.3171,
+              "endingEquityUsd": 16516.84,
+              "maxDrawdownUsd": 8940.7,
+              "maxDrawdownPct": 0.352333,
+              "maxDrawdownAt": "2026-09-25T23:00:00.000Z"
+            }
+          }
+        ],
+        "forwardMonths": 5,
+        "positiveForwardMonths": 3,
+        "positiveForwardMonthRate": 0.6
+      },
+      {
+        "key": "touch_baseline|pdh_touch_hold|session_12h",
+        "trades": 1986,
+        "wins": 818,
+        "losses": 1168,
+        "winrate": 0.411883,
+        "avgNetReturn": -0.001663,
+        "netPnlPer10kUsd": -33035.71,
+        "profitFactor": 0.8081,
+        "endingEquityUsd": -23035.71,
+        "maxDrawdownUsd": 66310.45,
+        "maxDrawdownPct": 6.631045,
+        "maxDrawdownAt": "2026-08-18T12:00:00.000Z",
+        "walkForward": {
+          "trades": 1655,
+          "wins": 729,
+          "losses": 926,
+          "winrate": 0.440483,
+          "avgNetReturn": -0.000311,
+          "netPnlPer10kUsd": -5151.57,
+          "profitFactor": 0.9608,
+          "endingEquityUsd": 4848.43,
+          "maxDrawdownUsd": 42785.52,
+          "maxDrawdownPct": 2.979657,
+          "maxDrawdownAt": "2026-08-18T12:00:00.000Z"
+        },
+        "folds": [
+          {
+            "fitMonth": "2026-04",
+            "forwardMonth": "2026-05",
+            "fit": {
+              "trades": 286,
+              "wins": 78,
+              "losses": 208,
+              "winrate": 0.272727,
+              "avgNetReturn": -0.009019,
+              "netPnlPer10kUsd": -25794.84,
+              "profitFactor": 0.3111,
+              "endingEquityUsd": -15794.84,
+              "maxDrawdownUsd": 25794.84,
+              "maxDrawdownPct": 2.579484,
+              "maxDrawdownAt": "2026-04-27T16:00:00.000Z"
+            },
+            "forward": {
+              "trades": 267,
+              "wins": 112,
+              "losses": 155,
+              "winrate": 0.419476,
+              "avgNetReturn": -0.002678,
+              "netPnlPer10kUsd": -7149.36,
+              "profitFactor": 0.6169,
+              "endingEquityUsd": 2850.64,
+              "maxDrawdownUsd": 11508.57,
+              "maxDrawdownPct": 0.801476,
+              "maxDrawdownAt": "2026-05-31T18:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-05",
+            "forwardMonth": "2026-06",
+            "fit": {
+              "trades": 302,
+              "wins": 116,
+              "losses": 186,
+              "winrate": 0.384106,
+              "avgNetReturn": -0.0034,
+              "netPnlPer10kUsd": -10269.43,
+              "profitFactor": 0.5312,
+              "endingEquityUsd": -269.43,
+              "maxDrawdownUsd": 11508.57,
+              "maxDrawdownPct": 1.023973,
+              "maxDrawdownAt": "2026-05-31T18:00:00.000Z"
+            },
+            "forward": {
+              "trades": 368,
+              "wins": 124,
+              "losses": 244,
+              "winrate": 0.336957,
+              "avgNetReturn": -0.005791,
+              "netPnlPer10kUsd": -21312.24,
+              "profitFactor": 0.3869,
+              "endingEquityUsd": -11312.24,
+              "maxDrawdownUsd": 23604.68,
+              "maxDrawdownPct": 1.92026,
+              "maxDrawdownAt": "2026-06-30T11:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-06",
+            "forwardMonth": "2026-07",
+            "fit": {
+              "trades": 368,
+              "wins": 124,
+              "losses": 244,
+              "winrate": 0.336957,
+              "avgNetReturn": -0.005791,
+              "netPnlPer10kUsd": -21312.24,
+              "profitFactor": 0.3869,
+              "endingEquityUsd": -11312.24,
+              "maxDrawdownUsd": 23604.68,
+              "maxDrawdownPct": 1.92026,
+              "maxDrawdownAt": "2026-06-30T11:00:00.000Z"
+            },
+            "forward": {
+              "trades": 411,
+              "wins": 195,
+              "losses": 216,
+              "winrate": 0.474453,
+              "avgNetReturn": -0.000383,
+              "netPnlPer10kUsd": -1572.36,
+              "profitFactor": 0.9408,
+              "endingEquityUsd": 8427.64,
+              "maxDrawdownUsd": 13931.18,
+              "maxDrawdownPct": 0.623073,
+              "maxDrawdownAt": "2026-07-31T12:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-07",
+            "forwardMonth": "2026-08",
+            "fit": {
+              "trades": 421,
+              "wins": 202,
+              "losses": 219,
+              "winrate": 0.47981,
+              "avgNetReturn": -0.000129,
+              "netPnlPer10kUsd": -541.59,
+              "profitFactor": 0.9797,
+              "endingEquityUsd": 9458.41,
+              "maxDrawdownUsd": 13931.18,
+              "maxDrawdownPct": 0.595614,
+              "maxDrawdownAt": "2026-07-31T12:00:00.000Z"
+            },
+            "forward": {
+              "trades": 369,
+              "wins": 142,
+              "losses": 227,
+              "winrate": 0.384824,
+              "avgNetReturn": -0.000015,
+              "netPnlPer10kUsd": -54.52,
+              "profitFactor": 0.9985,
+              "endingEquityUsd": 9945.48,
+              "maxDrawdownUsd": 22706.8,
+              "maxDrawdownPct": 0.695412,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-08",
+            "forwardMonth": "2026-09",
+            "fit": {
+              "trades": 369,
+              "wins": 142,
+              "losses": 227,
+              "winrate": 0.384824,
+              "avgNetReturn": -0.000015,
+              "netPnlPer10kUsd": -54.52,
+              "profitFactor": 0.9985,
+              "endingEquityUsd": 9945.48,
+              "maxDrawdownUsd": 22706.8,
+              "maxDrawdownPct": 0.695412,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            },
+            "forward": {
+              "trades": 240,
+              "wins": 156,
+              "losses": 84,
+              "winrate": 0.65,
+              "avgNetReturn": 0.01039,
+              "netPnlPer10kUsd": 24936.92,
+              "profitFactor": 2.7853,
+              "endingEquityUsd": 34936.92,
+              "maxDrawdownUsd": 4830.71,
+              "maxDrawdownPct": 0.154309,
+              "maxDrawdownAt": "2026-09-20T05:00:00.000Z"
+            }
+          }
+        ],
+        "forwardMonths": 5,
+        "positiveForwardMonths": 1,
+        "positiveForwardMonthRate": 0.2
+      },
+      {
+        "key": "touch_baseline|pdl_touch_hold|session_12h",
+        "trades": 264,
+        "wins": 103,
+        "losses": 161,
+        "winrate": 0.390152,
+        "avgNetReturn": -0.003589,
+        "netPnlPer10kUsd": -9474.98,
+        "profitFactor": 0.6324,
+        "endingEquityUsd": 525.02,
+        "maxDrawdownUsd": 13591.65,
+        "maxDrawdownPct": 1.1597,
+        "maxDrawdownAt": "2026-08-06T14:00:00.000Z",
+        "walkForward": {
+          "trades": 227,
+          "wins": 92,
+          "losses": 135,
+          "winrate": 0.405286,
+          "avgNetReturn": -0.003215,
+          "netPnlPer10kUsd": -7298.68,
+          "profitFactor": 0.6604,
+          "endingEquityUsd": 2701.32,
+          "maxDrawdownUsd": 10556.3,
+          "maxDrawdownPct": 0.971952,
+          "maxDrawdownAt": "2026-08-06T14:00:00.000Z"
+        },
+        "folds": [
+          {
+            "fitMonth": "2026-04",
+            "forwardMonth": "2026-05",
+            "fit": {
+              "trades": 18,
+              "wins": 11,
+              "losses": 7,
+              "winrate": 0.611111,
+              "avgNetReturn": 0.00148,
+              "netPnlPer10kUsd": 266.47,
+              "profitFactor": 1.1452,
+              "endingEquityUsd": 10266.47,
+              "maxDrawdownUsd": 1822.87,
+              "maxDrawdownPct": 0.155535,
+              "maxDrawdownAt": "2026-04-17T03:00:00.000Z"
+            },
+            "forward": {
+              "trades": 12,
+              "wins": 5,
+              "losses": 7,
+              "winrate": 0.416667,
+              "avgNetReturn": -0.006023,
+              "netPnlPer10kUsd": -722.75,
+              "profitFactor": 0.2955,
+              "endingEquityUsd": 9277.25,
+              "maxDrawdownUsd": 980.95,
+              "maxDrawdownPct": 0.095626,
+              "maxDrawdownAt": "2026-05-07T19:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-05",
+            "forwardMonth": "2026-06",
+            "fit": {
+              "trades": 16,
+              "wins": 5,
+              "losses": 11,
+              "winrate": 0.3125,
+              "avgNetReturn": -0.005092,
+              "netPnlPer10kUsd": -814.73,
+              "profitFactor": 0.2712,
+              "endingEquityUsd": 9185.27,
+              "maxDrawdownUsd": 980.95,
+              "maxDrawdownPct": 0.096491,
+              "maxDrawdownAt": "2026-05-07T19:00:00.000Z"
+            },
+            "forward": {
+              "trades": 21,
+              "wins": 12,
+              "losses": 9,
+              "winrate": 0.571429,
+              "avgNetReturn": 0.004882,
+              "netPnlPer10kUsd": 1025.26,
+              "profitFactor": 2.5776,
+              "endingEquityUsd": 11025.26,
+              "maxDrawdownUsd": 558.41,
+              "maxDrawdownPct": 0.048207,
+              "maxDrawdownAt": "2026-06-22T23:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-06",
+            "forwardMonth": "2026-07",
+            "fit": {
+              "trades": 36,
+              "wins": 12,
+              "losses": 24,
+              "winrate": 0.333333,
+              "avgNetReturn": -0.003682,
+              "netPnlPer10kUsd": -1325.53,
+              "profitFactor": 0.5583,
+              "endingEquityUsd": 8674.47,
+              "maxDrawdownUsd": 2350.79,
+              "maxDrawdownPct": 0.235079,
+              "maxDrawdownAt": "2026-06-01T12:00:00.000Z"
+            },
+            "forward": {
+              "trades": 42,
+              "wins": 9,
+              "losses": 33,
+              "winrate": 0.214286,
+              "avgNetReturn": -0.021701,
+              "netPnlPer10kUsd": -9114.39,
+              "profitFactor": 0.0706,
+              "endingEquityUsd": 885.61,
+              "maxDrawdownUsd": 9315.42,
+              "maxDrawdownPct": 0.913184,
+              "maxDrawdownAt": "2026-07-28T01:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-07",
+            "forwardMonth": "2026-08",
+            "fit": {
+              "trades": 42,
+              "wins": 9,
+              "losses": 33,
+              "winrate": 0.214286,
+              "avgNetReturn": -0.021701,
+              "netPnlPer10kUsd": -9114.39,
+              "profitFactor": 0.0706,
+              "endingEquityUsd": 885.61,
+              "maxDrawdownUsd": 9315.42,
+              "maxDrawdownPct": 0.913184,
+              "maxDrawdownAt": "2026-07-28T01:00:00.000Z"
+            },
+            "forward": {
+              "trades": 147,
+              "wins": 65,
+              "losses": 82,
+              "winrate": 0.442177,
+              "avgNetReturn": 0.001264,
+              "netPnlPer10kUsd": 1857.47,
+              "profitFactor": 1.1935,
+              "endingEquityUsd": 11857.47,
+              "maxDrawdownUsd": 5490.49,
+              "maxDrawdownPct": 0.330755,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-08",
+            "forwardMonth": "2026-09",
+            "fit": {
+              "trades": 147,
+              "wins": 65,
+              "losses": 82,
+              "winrate": 0.442177,
+              "avgNetReturn": 0.001264,
+              "netPnlPer10kUsd": 1857.47,
+              "profitFactor": 1.1935,
+              "endingEquityUsd": 11857.47,
+              "maxDrawdownUsd": 5490.49,
+              "maxDrawdownPct": 0.330755,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            },
+            "forward": {
+              "trades": 5,
+              "wins": 1,
+              "losses": 4,
+              "winrate": 0.2,
+              "avgNetReturn": -0.006885,
+              "netPnlPer10kUsd": -344.26,
+              "profitFactor": 0.1638,
+              "endingEquityUsd": 9655.74,
+              "maxDrawdownUsd": 378.73,
+              "maxDrawdownPct": 0.037873,
+              "maxDrawdownAt": "2026-09-10T02:00:00.000Z"
+            }
+          }
+        ],
+        "forwardMonths": 5,
+        "positiveForwardMonths": 2,
+        "positiveForwardMonthRate": 0.4
+      },
+      {
+        "key": "touch_baseline|pdl_touch_hold|session_0h",
+        "trades": 328,
+        "wins": 159,
+        "losses": 169,
+        "winrate": 0.484756,
+        "avgNetReturn": 0.002846,
+        "netPnlPer10kUsd": 9335.64,
+        "profitFactor": 1.3638,
+        "endingEquityUsd": 19335.64,
+        "maxDrawdownUsd": 15752.01,
+        "maxDrawdownPct": 0.49906,
+        "maxDrawdownAt": "2026-08-06T14:00:00.000Z",
+        "walkForward": {
+          "trades": 233,
+          "wins": 83,
+          "losses": 150,
+          "winrate": 0.356223,
+          "avgNetReturn": -0.003911,
+          "netPnlPer10kUsd": -9113.12,
+          "profitFactor": 0.6097,
+          "endingEquityUsd": 886.88,
+          "maxDrawdownUsd": 15752.01,
+          "maxDrawdownPct": 1.201107,
+          "maxDrawdownAt": "2026-08-06T14:00:00.000Z"
+        },
+        "folds": [
+          {
+            "fitMonth": "2026-04",
+            "forwardMonth": "2026-05",
+            "fit": {
+              "trades": 95,
+              "wins": 76,
+              "losses": 19,
+              "winrate": 0.8,
+              "avgNetReturn": 0.01942,
+              "netPnlPer10kUsd": 18448.77,
+              "profitFactor": 8.9911,
+              "endingEquityUsd": 28448.77,
+              "maxDrawdownUsd": 2222.11,
+              "maxDrawdownPct": 0.07245,
+              "maxDrawdownAt": "2026-04-24T04:00:00.000Z"
+            },
+            "forward": {
+              "trades": 26,
+              "wins": 17,
+              "losses": 9,
+              "winrate": 0.653846,
+              "avgNetReturn": 0.008498,
+              "netPnlPer10kUsd": 2209.34,
+              "profitFactor": 2.483,
+              "endingEquityUsd": 12209.34,
+              "maxDrawdownUsd": 771.07,
+              "maxDrawdownPct": 0.059403,
+              "maxDrawdownAt": "2026-05-26T22:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-05",
+            "forwardMonth": "2026-06",
+            "fit": {
+              "trades": 26,
+              "wins": 17,
+              "losses": 9,
+              "winrate": 0.653846,
+              "avgNetReturn": 0.008498,
+              "netPnlPer10kUsd": 2209.34,
+              "profitFactor": 2.483,
+              "endingEquityUsd": 12209.34,
+              "maxDrawdownUsd": 771.07,
+              "maxDrawdownPct": 0.059403,
+              "maxDrawdownAt": "2026-05-26T22:00:00.000Z"
+            },
+            "forward": {
+              "trades": 12,
+              "wins": 6,
+              "losses": 6,
+              "winrate": 0.5,
+              "avgNetReturn": 0.004519,
+              "netPnlPer10kUsd": 542.31,
+              "profitFactor": 2.0694,
+              "endingEquityUsd": 10542.31,
+              "maxDrawdownUsd": 383.76,
+              "maxDrawdownPct": 0.036092,
+              "maxDrawdownAt": "2026-06-28T23:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-06",
+            "forwardMonth": "2026-07",
+            "fit": {
+              "trades": 12,
+              "wins": 6,
+              "losses": 6,
+              "winrate": 0.5,
+              "avgNetReturn": 0.004519,
+              "netPnlPer10kUsd": 542.31,
+              "profitFactor": 2.0694,
+              "endingEquityUsd": 10542.31,
+              "maxDrawdownUsd": 383.76,
+              "maxDrawdownPct": 0.036092,
+              "maxDrawdownAt": "2026-06-28T23:00:00.000Z"
+            },
+            "forward": {
+              "trades": 54,
+              "wins": 12,
+              "losses": 42,
+              "winrate": 0.222222,
+              "avgNetReturn": -0.021257,
+              "netPnlPer10kUsd": -11478.94,
+              "profitFactor": 0.0985,
+              "endingEquityUsd": -1478.94,
+              "maxDrawdownUsd": 11841.87,
+              "maxDrawdownPct": 1.142714,
+              "maxDrawdownAt": "2026-07-28T01:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-07",
+            "forwardMonth": "2026-08",
+            "fit": {
+              "trades": 54,
+              "wins": 12,
+              "losses": 42,
+              "winrate": 0.222222,
+              "avgNetReturn": -0.021257,
+              "netPnlPer10kUsd": -11478.94,
+              "profitFactor": 0.0985,
+              "endingEquityUsd": -1478.94,
+              "maxDrawdownUsd": 11841.87,
+              "maxDrawdownPct": 1.142714,
+              "maxDrawdownAt": "2026-07-28T01:00:00.000Z"
+            },
+            "forward": {
+              "trades": 137,
+              "wins": 46,
+              "losses": 91,
+              "winrate": 0.335766,
+              "avgNetReturn": -0.000094,
+              "netPnlPer10kUsd": -129.02,
+              "profitFactor": 0.984,
+              "endingEquityUsd": 9870.98,
+              "maxDrawdownUsd": 4076.22,
+              "maxDrawdownPct": 0.400963,
+              "maxDrawdownAt": "2026-08-06T14:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-08",
+            "forwardMonth": "2026-09",
+            "fit": {
+              "trades": 137,
+              "wins": 46,
+              "losses": 91,
+              "winrate": 0.335766,
+              "avgNetReturn": -0.000094,
+              "netPnlPer10kUsd": -129.02,
+              "profitFactor": 0.984,
+              "endingEquityUsd": 9870.98,
+              "maxDrawdownUsd": 4076.22,
+              "maxDrawdownPct": 0.400963,
+              "maxDrawdownAt": "2026-08-06T14:00:00.000Z"
+            },
+            "forward": {
+              "trades": 4,
+              "wins": 2,
+              "losses": 2,
+              "winrate": 0.5,
+              "avgNetReturn": -0.00642,
+              "netPnlPer10kUsd": -256.82,
+              "profitFactor": 0.5372,
+              "endingEquityUsd": 9743.18,
+              "maxDrawdownUsd": 554.99,
+              "maxDrawdownPct": 0.055499,
+              "maxDrawdownAt": "2026-09-10T02:00:00.000Z"
+            }
+          }
+        ],
+        "forwardMonths": 5,
+        "positiveForwardMonths": 2,
+        "positiveForwardMonthRate": 0.4
+      },
+      {
+        "key": "touch_baseline|pdl_touch_hold|session_8h",
+        "trades": 274,
+        "wins": 105,
+        "losses": 169,
+        "winrate": 0.383212,
+        "avgNetReturn": -0.004277,
+        "netPnlPer10kUsd": -11718.81,
+        "profitFactor": 0.5901,
+        "endingEquityUsd": -1718.81,
+        "maxDrawdownUsd": 14959.82,
+        "maxDrawdownPct": 1.154043,
+        "maxDrawdownAt": "2026-09-10T02:00:00.000Z",
+        "walkForward": {
+          "trades": 223,
+          "wins": 84,
+          "losses": 139,
+          "winrate": 0.376682,
+          "avgNetReturn": -0.004611,
+          "netPnlPer10kUsd": -10283.36,
+          "profitFactor": 0.5747,
+          "endingEquityUsd": -283.36,
+          "maxDrawdownUsd": 13748.05,
+          "maxDrawdownPct": 1.042574,
+          "maxDrawdownAt": "2026-09-10T02:00:00.000Z"
+        },
+        "folds": [
+          {
+            "fitMonth": "2026-04",
+            "forwardMonth": "2026-05",
+            "fit": {
+              "trades": 32,
+              "wins": 21,
+              "losses": 11,
+              "winrate": 0.65625,
+              "avgNetReturn": 0.002607,
+              "netPnlPer10kUsd": 834.27,
+              "profitFactor": 1.3897,
+              "endingEquityUsd": 10834.27,
+              "maxDrawdownUsd": 2128.69,
+              "maxDrawdownPct": 0.164213,
+              "maxDrawdownAt": "2026-04-24T04:00:00.000Z"
+            },
+            "forward": {
+              "trades": 8,
+              "wins": 4,
+              "losses": 4,
+              "winrate": 0.5,
+              "avgNetReturn": -0.00155,
+              "netPnlPer10kUsd": -124.04,
+              "profitFactor": 0.7562,
+              "endingEquityUsd": 9875.96,
+              "maxDrawdownUsd": 463.8,
+              "maxDrawdownPct": 0.046094,
+              "maxDrawdownAt": "2026-05-07T19:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-05",
+            "forwardMonth": "2026-06",
+            "fit": {
+              "trades": 13,
+              "wins": 4,
+              "losses": 9,
+              "winrate": 0.307692,
+              "avgNetReturn": -0.001923,
+              "netPnlPer10kUsd": -249.97,
+              "profitFactor": 0.6061,
+              "endingEquityUsd": 9750.03,
+              "maxDrawdownUsd": 527.65,
+              "maxDrawdownPct": 0.052765,
+              "maxDrawdownAt": "2026-05-07T19:00:00.000Z"
+            },
+            "forward": {
+              "trades": 25,
+              "wins": 19,
+              "losses": 6,
+              "winrate": 0.76,
+              "avgNetReturn": 0.011875,
+              "netPnlPer10kUsd": 2968.7,
+              "profitFactor": 7.5925,
+              "endingEquityUsd": 12968.7,
+              "maxDrawdownUsd": 251.77,
+              "maxDrawdownPct": 0.024335,
+              "maxDrawdownAt": "2026-06-14T20:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-06",
+            "forwardMonth": "2026-07",
+            "fit": {
+              "trades": 39,
+              "wins": 19,
+              "losses": 20,
+              "winrate": 0.487179,
+              "avgNetReturn": 0.002115,
+              "netPnlPer10kUsd": 824.91,
+              "profitFactor": 1.318,
+              "endingEquityUsd": 10824.91,
+              "maxDrawdownUsd": 2143.79,
+              "maxDrawdownPct": 0.214379,
+              "maxDrawdownAt": "2026-06-01T12:00:00.000Z"
+            },
+            "forward": {
+              "trades": 50,
+              "wins": 11,
+              "losses": 39,
+              "winrate": 0.22,
+              "avgNetReturn": -0.021582,
+              "netPnlPer10kUsd": -10790.79,
+              "profitFactor": 0.0733,
+              "endingEquityUsd": -790.79,
+              "maxDrawdownUsd": 11132.77,
+              "maxDrawdownPct": 1.076464,
+              "maxDrawdownAt": "2026-07-28T01:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-07",
+            "forwardMonth": "2026-08",
+            "fit": {
+              "trades": 50,
+              "wins": 11,
+              "losses": 39,
+              "winrate": 0.22,
+              "avgNetReturn": -0.021582,
+              "netPnlPer10kUsd": -10790.79,
+              "profitFactor": 0.0733,
+              "endingEquityUsd": -790.79,
+              "maxDrawdownUsd": 11132.77,
+              "maxDrawdownPct": 1.076464,
+              "maxDrawdownAt": "2026-07-28T01:00:00.000Z"
+            },
+            "forward": {
+              "trades": 136,
+              "wins": 49,
+              "losses": 87,
+              "winrate": 0.360294,
+              "avgNetReturn": -0.001325,
+              "netPnlPer10kUsd": -1802.05,
+              "profitFactor": 0.8326,
+              "endingEquityUsd": 8197.95,
+              "maxDrawdownUsd": 4988.09,
+              "maxDrawdownPct": 0.378286,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            }
+          },
+          {
+            "fitMonth": "2026-08",
+            "forwardMonth": "2026-09",
+            "fit": {
+              "trades": 136,
+              "wins": 49,
+              "losses": 87,
+              "winrate": 0.360294,
+              "avgNetReturn": -0.001325,
+              "netPnlPer10kUsd": -1802.05,
+              "profitFactor": 0.8326,
+              "endingEquityUsd": 8197.95,
+              "maxDrawdownUsd": 4988.09,
+              "maxDrawdownPct": 0.378286,
+              "maxDrawdownAt": "2026-08-31T09:00:00.000Z"
+            },
+            "forward": {
+              "trades": 4,
+              "wins": 1,
+              "losses": 3,
+              "winrate": 0.25,
+              "avgNetReturn": -0.013379,
+              "netPnlPer10kUsd": -535.18,
+              "profitFactor": 0.3419,
+              "endingEquityUsd": 9464.82,
+              "maxDrawdownUsd": 813.23,
+              "maxDrawdownPct": 0.081323,
+              "maxDrawdownAt": "2026-09-10T02:00:00.000Z"
+            }
+          }
+        ],
+        "forwardMonths": 5,
+        "positiveForwardMonths": 1,
+        "positiveForwardMonthRate": 0.2
+      }
+    ],
+    "sweepBySymbol": [
+      {
+        "key": "BNB",
+        "trades": 137,
+        "wins": 67,
+        "losses": 70,
+        "winrate": 0.489051,
+        "avgNetReturn": 0.001,
+        "netPnlPer10kUsd": 1370.24,
+        "profitFactor": 1.2215,
+        "endingEquityUsd": 11370.24,
+        "maxDrawdownUsd": 1495.5,
+        "maxDrawdownPct": 0.131482,
+        "maxDrawdownAt": "2026-07-27T15:00:00.000Z"
+      },
+      {
+        "key": "SOL",
+        "trades": 136,
+        "wins": 72,
+        "losses": 64,
+        "winrate": 0.529412,
+        "avgNetReturn": 0.004426,
+        "netPnlPer10kUsd": 6019.6,
+        "profitFactor": 1.6718,
+        "endingEquityUsd": 16019.6,
+        "maxDrawdownUsd": 2929.66,
+        "maxDrawdownPct": 0.290503,
+        "maxDrawdownAt": "2026-08-18T04:00:00.000Z"
+      },
+      {
+        "key": "LINK",
+        "trades": 133,
+        "wins": 57,
+        "losses": 76,
+        "winrate": 0.428571,
+        "avgNetReturn": -0.001211,
+        "netPnlPer10kUsd": -1611.28,
+        "profitFactor": 0.8754,
+        "endingEquityUsd": 8388.72,
+        "maxDrawdownUsd": 2892.66,
+        "maxDrawdownPct": 0.282244,
+        "maxDrawdownAt": "2026-08-09T01:00:00.000Z"
+      },
+      {
+        "key": "ETH",
+        "trades": 120,
+        "wins": 47,
+        "losses": 73,
+        "winrate": 0.391667,
+        "avgNetReturn": 0.001382,
+        "netPnlPer10kUsd": 1658.8,
+        "profitFactor": 1.1969,
+        "endingEquityUsd": 11658.8,
+        "maxDrawdownUsd": 3062.2,
+        "maxDrawdownPct": 0.291762,
+        "maxDrawdownAt": "2026-06-07T20:00:00.000Z"
+      },
+      {
+        "key": "AVAX",
+        "trades": 114,
+        "wins": 54,
+        "losses": 60,
+        "winrate": 0.473684,
+        "avgNetReturn": 0.000368,
+        "netPnlPer10kUsd": 419.18,
+        "profitFactor": 1.0446,
+        "endingEquityUsd": 10419.18,
+        "maxDrawdownUsd": 6018.31,
+        "maxDrawdownPct": 0.601831,
+        "maxDrawdownAt": "2026-08-04T13:00:00.000Z"
+      },
+      {
+        "key": "DOGE",
+        "trades": 113,
+        "wins": 46,
+        "losses": 67,
+        "winrate": 0.40708,
+        "avgNetReturn": -0.002535,
+        "netPnlPer10kUsd": -2864.01,
+        "profitFactor": 0.7911,
+        "endingEquityUsd": 7135.99,
+        "maxDrawdownUsd": 6489.77,
+        "maxDrawdownPct": 0.648977,
+        "maxDrawdownAt": "2026-08-03T11:00:00.000Z"
+      },
+      {
+        "key": "XRP",
+        "trades": 97,
+        "wins": 39,
+        "losses": 58,
+        "winrate": 0.402062,
+        "avgNetReturn": 0.000235,
+        "netPnlPer10kUsd": 227.72,
+        "profitFactor": 1.0265,
+        "endingEquityUsd": 10227.72,
+        "maxDrawdownUsd": 3935.99,
+        "maxDrawdownPct": 0.387174,
+        "maxDrawdownAt": "2026-08-09T03:00:00.000Z"
+      },
+      {
+        "key": "ADA",
+        "trades": 95,
+        "wins": 44,
+        "losses": 51,
+        "winrate": 0.463158,
+        "avgNetReturn": -0.001723,
+        "netPnlPer10kUsd": -1636.91,
+        "profitFactor": 0.8681,
+        "endingEquityUsd": 8363.09,
+        "maxDrawdownUsd": 4068.02,
+        "maxDrawdownPct": 0.369755,
+        "maxDrawdownAt": "2026-09-15T06:00:00.000Z"
+      }
+    ],
+    "sweepBySessionOffset": [
+      {
+        "key": "12h",
+        "trades": 1120,
+        "wins": 432,
+        "losses": 688,
+        "winrate": 0.385714,
+        "avgNetReturn": -0.002361,
+        "netPnlPer10kUsd": -26445.57,
+        "profitFactor": 0.7494,
+        "endingEquityUsd": -16445.57,
+        "maxDrawdownUsd": 49793.09,
+        "maxDrawdownPct": 4.055593,
+        "maxDrawdownAt": "2026-08-10T23:00:00.000Z"
+      },
+      {
+        "key": "8h",
+        "trades": 1095,
+        "wins": 478,
+        "losses": 617,
+        "winrate": 0.43653,
+        "avgNetReturn": -0.000508,
+        "netPnlPer10kUsd": -5562.78,
+        "profitFactor": 0.942,
+        "endingEquityUsd": 4437.22,
+        "maxDrawdownUsd": 36524.64,
+        "maxDrawdownPct": 2.75278,
+        "maxDrawdownAt": "2026-08-18T11:00:00.000Z"
+      },
+      {
+        "key": "0h",
+        "trades": 1066,
+        "wins": 399,
+        "losses": 667,
+        "winrate": 0.374296,
+        "avgNetReturn": -0.002124,
+        "netPnlPer10kUsd": -22645.05,
+        "profitFactor": 0.7781,
+        "endingEquityUsd": -12645.05,
+        "maxDrawdownUsd": 47352.84,
+        "maxDrawdownPct": 2.394401,
+        "maxDrawdownAt": "2026-08-18T11:00:00.000Z"
+      }
+    ],
+    "rangeBreakoutBtcRiskOnComparison": {
+      "note": "Existing DEMO-SIM replay comparison is limited to available paper-signal replay rows, currently August/September only.",
+      "overall": {
+        "trades": 107,
+        "wins": 54,
+        "losses": 53,
+        "winrate": 0.504673,
+        "avgNetReturn": 0.008444,
+        "netPnlPer10kUsd": 9035.42,
+        "profitFactor": 1.6348,
+        "endingEquityUsd": 19035.42,
+        "maxDrawdownUsd": 5548.27,
+        "maxDrawdownPct": 0.245439,
+        "maxDrawdownAt": "2026-09-14T22:00:00.000Z"
+      },
+      "byMonth": [
+        {
+          "key": "2026-08",
+          "trades": 69,
+          "wins": 40,
+          "losses": 29,
+          "winrate": 0.57971,
+          "avgNetReturn": 0.011228,
+          "netPnlPer10kUsd": 7747.56,
+          "profitFactor": 1.8955,
+          "endingEquityUsd": 17747.56,
+          "maxDrawdownUsd": 4857.95,
+          "maxDrawdownPct": 0.214901,
+          "maxDrawdownAt": "2026-08-28T12:00:00.000Z"
+        },
+        {
+          "key": "2026-09",
+          "trades": 38,
+          "wins": 14,
+          "losses": 24,
+          "winrate": 0.368421,
+          "avgNetReturn": 0.003389,
+          "netPnlPer10kUsd": 1287.86,
+          "profitFactor": 1.2307,
+          "endingEquityUsd": 11287.86,
+          "maxDrawdownUsd": 1485.46,
+          "maxDrawdownPct": 0.133526,
+          "maxDrawdownAt": "2026-09-22T04:00:00.000Z"
+        }
+      ],
+      "bySymbol": [
+        {
+          "key": "AVAX",
+          "trades": 16,
+          "wins": 9,
+          "losses": 7,
+          "winrate": 0.5625,
+          "avgNetReturn": 0.014409,
+          "netPnlPer10kUsd": 2305.4,
+          "profitFactor": 2.006,
+          "endingEquityUsd": 12305.4,
+          "maxDrawdownUsd": 995.73,
+          "maxDrawdownPct": 0.07486,
+          "maxDrawdownAt": "2026-09-22T04:00:00.000Z"
+        },
+        {
+          "key": "BNB",
+          "trades": 16,
+          "wins": 10,
+          "losses": 6,
+          "winrate": 0.625,
+          "avgNetReturn": 0.010631,
+          "netPnlPer10kUsd": 1700.95,
+          "profitFactor": 2.5539,
+          "endingEquityUsd": 11700.95,
+          "maxDrawdownUsd": 736.02,
+          "maxDrawdownPct": 0.05918,
+          "maxDrawdownAt": "2026-09-23T08:00:00.000Z"
+        },
+        {
+          "key": "SOL",
+          "trades": 15,
+          "wins": 8,
+          "losses": 7,
+          "winrate": 0.533333,
+          "avgNetReturn": 0.005317,
+          "netPnlPer10kUsd": 797.5,
+          "profitFactor": 1.4605,
+          "endingEquityUsd": 10797.5,
+          "maxDrawdownUsd": 1024.24,
+          "maxDrawdownPct": 0.086641,
+          "maxDrawdownAt": "2026-09-23T12:00:00.000Z"
+        },
+        {
+          "key": "DOGE",
+          "trades": 14,
+          "wins": 8,
+          "losses": 6,
+          "winrate": 0.571429,
+          "avgNetReturn": 0.013227,
+          "netPnlPer10kUsd": 1851.81,
+          "profitFactor": 1.9893,
+          "endingEquityUsd": 11851.81,
+          "maxDrawdownUsd": 1440.22,
+          "maxDrawdownPct": 0.128809,
+          "maxDrawdownAt": "2026-09-19T20:00:00.000Z"
+        },
+        {
+          "key": "XRP",
+          "trades": 14,
+          "wins": 7,
+          "losses": 7,
+          "winrate": 0.5,
+          "avgNetReturn": 0.007964,
+          "netPnlPer10kUsd": 1114.97,
+          "profitFactor": 1.5335,
+          "endingEquityUsd": 11114.97,
+          "maxDrawdownUsd": 1510.31,
+          "maxDrawdownPct": 0.119626,
+          "maxDrawdownAt": "2026-09-22T04:00:00.000Z"
+        },
+        {
+          "key": "ADA",
+          "trades": 11,
+          "wins": 7,
+          "losses": 4,
+          "winrate": 0.636364,
+          "avgNetReturn": 0.024333,
+          "netPnlPer10kUsd": 2676.58,
+          "profitFactor": 2.7798,
+          "endingEquityUsd": 12676.58,
+          "maxDrawdownUsd": 1319.23,
+          "maxDrawdownPct": 0.104736,
+          "maxDrawdownAt": "2026-09-20T00:00:00.000Z"
+        },
+        {
+          "key": "LINK",
+          "trades": 11,
+          "wins": 3,
+          "losses": 8,
+          "winrate": 0.272727,
+          "avgNetReturn": -0.006568,
+          "netPnlPer10kUsd": -722.5,
+          "profitFactor": 0.6726,
+          "endingEquityUsd": 9277.5,
+          "maxDrawdownUsd": 1990.82,
+          "maxDrawdownPct": 0.176674,
+          "maxDrawdownAt": "2026-09-23T08:00:00.000Z"
+        },
+        {
+          "key": "ETH",
+          "trades": 10,
+          "wins": 2,
+          "losses": 8,
+          "winrate": 0.2,
+          "avgNetReturn": -0.006893,
+          "netPnlPer10kUsd": -689.28,
+          "profitFactor": 0.5223,
+          "endingEquityUsd": 9310.72,
+          "maxDrawdownUsd": 1207.58,
+          "maxDrawdownPct": 0.114808,
+          "maxDrawdownAt": "2026-09-23T12:00:00.000Z"
+        }
+      ]
+    }
+  },
+  "decision": {
+    "verdict": "reject_no_touch_baseline_lift",
+    "reasons": [
+      "best sweep variant is not positive in at least 60% of forward months",
+      "best sweep variant max drawdown is above 25%",
+      "best sweep variant does not beat best touch-only baseline"
+    ]
+  },
+  "limitations": [
+    "Session sensitivity uses three simple offsets only: UTC, UTC+8, and UTC+12 style session boundaries.",
+    "Monthly folds are still candle-only and do not model book/trade flow, funding, liquidation context, queue position, or margin reservation.",
+    "Range-breakout comparison uses available historical DEMO-SIM replay rows, not a freshly derived candle-native range-breakout simulation.",
+    "The BTC gate remains a coarse research proxy, not a live watcher rule."
+  ],
+  "outputs": {
+    "json": "results/demo-sim-pdh-pdl-second-gate-walk-forward.json",
+    "markdown": "results/demo-sim-pdh-pdl-second-gate-walk-forward.md"
+  }
+}

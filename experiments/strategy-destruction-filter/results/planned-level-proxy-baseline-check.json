@@ -1,0 +1,359 @@
+{
+  "generatedAt": "2026-09-28T09:01:08.929Z",
+  "status": "research-only-no-live-execution",
+  "purpose": "baseline-check-for-planned-level-public-orderflow-proxy-labels",
+  "source": {
+    "replayReport": "results/planned-level-proxy-replay.json",
+    "replayGeneratedAt": "2026-09-28T08:58:49.934Z",
+    "fetchedRows": 10,
+    "auth": "none",
+    "provider": "binance_spot_public_aggTrades"
+  },
+  "gates": {
+    "minFetchedRowsBeforeInterpretation": 10,
+    "requiresBtcGate": true,
+    "requiresBaselineLiftBeforePromotion": true
+  },
+  "totals": {
+    "replayRows": 20,
+    "fetchedRows": 10,
+    "fastKillCandidates": 6,
+    "holdOrRetestCandidates": 4
+  },
+  "horizonSummaries": {
+    "1": {
+      "horizon": "1c",
+      "rows": 10,
+      "favorableDominant": 5,
+      "adverseDominant": 5,
+      "tied": 0,
+      "favorableShare": 0.5,
+      "adverseShare": 0.5,
+      "meanNetOpportunityPct": -0.0653
+    },
+    "3": {
+      "horizon": "3c",
+      "rows": 10,
+      "favorableDominant": 4,
+      "adverseDominant": 6,
+      "tied": 0,
+      "favorableShare": 0.4,
+      "adverseShare": 0.6,
+      "meanNetOpportunityPct": -0.0328
+    },
+    "5": {
+      "horizon": "5c",
+      "rows": 10,
+      "favorableDominant": 4,
+      "adverseDominant": 6,
+      "tied": 0,
+      "favorableShare": 0.4,
+      "adverseShare": 0.6,
+      "meanNetOpportunityPct": 0.1035
+    }
+  },
+  "labelSummaries": {
+    "fastKillCandidate": {
+      "rows": 6,
+      "h1": {
+        "rows": 6,
+        "supportive": 2,
+        "contrary": 4,
+        "supportiveShare": 0.3333,
+        "meanNetOpportunityPct": 0.0704
+      },
+      "h3": {
+        "rows": 6,
+        "supportive": 3,
+        "contrary": 3,
+        "supportiveShare": 0.5,
+        "meanNetOpportunityPct": 0.2727
+      },
+      "h5": {
+        "rows": 6,
+        "supportive": 3,
+        "contrary": 3,
+        "supportiveShare": 0.5,
+        "meanNetOpportunityPct": 0.3884
+      }
+    },
+    "holdOrRetestCandidate": {
+      "rows": 4,
+      "h1": {
+        "rows": 4,
+        "supportive": 1,
+        "contrary": 3,
+        "supportiveShare": 0.25,
+        "meanNetOpportunityPct": -0.2686
+      },
+      "h3": {
+        "rows": 4,
+        "supportive": 1,
+        "contrary": 3,
+        "supportiveShare": 0.25,
+        "meanNetOpportunityPct": -0.491
+      },
+      "h5": {
+        "rows": 4,
+        "supportive": 1,
+        "contrary": 3,
+        "supportiveShare": 0.25,
+        "meanNetOpportunityPct": -0.3239
+      }
+    }
+  },
+  "rows": [
+    {
+      "eventId": "BTC-1h-previous_day_high-1789606800",
+      "time": "2026-09-17T01:00:00.000Z",
+      "setupType": "fade_short",
+      "classification": "sweep_rejection",
+      "btcGate": "BTC_TRANSITION",
+      "proxyClusterLabel": "acceptance_proxy",
+      "fastKillLabel": "hold_or_retest_candidate",
+      "h1": {
+        "mfePct": 0.4175,
+        "maePct": 0.1452,
+        "netOpportunityPct": 0.2723
+      },
+      "h3": {
+        "mfePct": 0.4175,
+        "maePct": 0.293,
+        "netOpportunityPct": 0.1245
+      },
+      "h5": {
+        "mfePct": 0.4175,
+        "maePct": 0.3377,
+        "netOpportunityPct": 0.0798
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1789700400",
+      "time": "2026-09-18T03:00:00.000Z",
+      "setupType": "continuation_long",
+      "classification": "accepted_break",
+      "btcGate": "BTC_RISK_ON",
+      "proxyClusterLabel": "fail_back_or_reclaim",
+      "fastKillLabel": "fast_kill_candidate",
+      "h1": {
+        "mfePct": 0.2488,
+        "maePct": 0.2154,
+        "netOpportunityPct": 0.0334
+      },
+      "h3": {
+        "mfePct": 0.429,
+        "maePct": 0.2154,
+        "netOpportunityPct": 0.2136
+      },
+      "h5": {
+        "mfePct": 1.1583,
+        "maePct": 0.2154,
+        "netOpportunityPct": 0.9429
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1789776000",
+      "time": "2026-09-19T00:00:00.000Z",
+      "setupType": "continuation_long",
+      "classification": "accepted_break",
+      "btcGate": "BTC_RISK_ON",
+      "proxyClusterLabel": "fail_back_or_reclaim",
+      "fastKillLabel": "fast_kill_candidate",
+      "h1": {
+        "mfePct": 0.0882,
+        "maePct": 0.7579,
+        "netOpportunityPct": -0.6697
+      },
+      "h3": {
+        "mfePct": 0.0882,
+        "maePct": 0.7579,
+        "netOpportunityPct": -0.6697
+      },
+      "h5": {
+        "mfePct": 0.0882,
+        "maePct": 0.928,
+        "netOpportunityPct": -0.8398
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_low-1789869600",
+      "time": "2026-09-20T02:00:00.000Z",
+      "setupType": "continuation_short",
+      "classification": "accepted_break",
+      "btcGate": "BTC_RISK_OFF",
+      "proxyClusterLabel": "fail_back_or_reclaim",
+      "fastKillLabel": "fast_kill_candidate",
+      "h1": {
+        "mfePct": 0.2558,
+        "maePct": 0.2419,
+        "netOpportunityPct": 0.0139
+      },
+      "h3": {
+        "mfePct": 0.2558,
+        "maePct": 0.4191,
+        "netOpportunityPct": -0.1633
+      },
+      "h5": {
+        "mfePct": 0.2558,
+        "maePct": 0.4191,
+        "netOpportunityPct": -0.1633
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1789948800",
+      "time": "2026-09-21T00:00:00.000Z",
+      "setupType": "continuation_long",
+      "classification": "accepted_break",
+      "btcGate": "BTC_RISK_ON",
+      "proxyClusterLabel": "mixed_no_trade_proxy",
+      "fastKillLabel": "hold_or_retest_candidate",
+      "h1": {
+        "mfePct": 0.6032,
+        "maePct": 0.9282,
+        "netOpportunityPct": -0.325
+      },
+      "h3": {
+        "mfePct": 0.6032,
+        "maePct": 0.9282,
+        "netOpportunityPct": -0.325
+      },
+      "h5": {
+        "mfePct": 0.6032,
+        "maePct": 0.9282,
+        "netOpportunityPct": -0.325
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1790125200",
+      "time": "2026-09-23T01:00:00.000Z",
+      "setupType": "fade_short",
+      "classification": "sweep_rejection",
+      "btcGate": "BTC_TRANSITION",
+      "proxyClusterLabel": "mixed_no_trade_proxy",
+      "fastKillLabel": "hold_or_retest_candidate",
+      "h1": {
+        "mfePct": 0.1273,
+        "maePct": 0.3105,
+        "netOpportunityPct": -0.1832
+      },
+      "h3": {
+        "mfePct": 0.1273,
+        "maePct": 1.0519,
+        "netOpportunityPct": -0.9246
+      },
+      "h5": {
+        "mfePct": 0.1273,
+        "maePct": 1.0519,
+        "netOpportunityPct": -0.9246
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_low-1790172000",
+      "time": "2026-09-23T14:00:00.000Z",
+      "setupType": "continuation_short",
+      "classification": "accepted_break",
+      "btcGate": "BTC_RISK_OFF",
+      "proxyClusterLabel": "fail_back_or_reclaim",
+      "fastKillLabel": "fast_kill_candidate",
+      "h1": {
+        "mfePct": 0.6908,
+        "maePct": 0.3076,
+        "netOpportunityPct": 0.3832
+      },
+      "h3": {
+        "mfePct": 1.2232,
+        "maePct": 0.3076,
+        "netOpportunityPct": 0.9156
+      },
+      "h5": {
+        "mfePct": 1.2232,
+        "maePct": 0.3076,
+        "netOpportunityPct": 0.9156
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_low-1790236800",
+      "time": "2026-09-24T08:00:00.000Z",
+      "setupType": "fade_long",
+      "classification": "sweep_rejection",
+      "btcGate": "BTC_TRANSITION",
+      "proxyClusterLabel": "acceptance_proxy",
+      "fastKillLabel": "hold_or_retest_candidate",
+      "h1": {
+        "mfePct": 0.0997,
+        "maePct": 0.9384,
+        "netOpportunityPct": -0.8387
+      },
+      "h3": {
+        "mfePct": 0.0997,
+        "maePct": 0.9384,
+        "netOpportunityPct": -0.8387
+      },
+      "h5": {
+        "mfePct": 0.8128,
+        "maePct": 0.9384,
+        "netOpportunityPct": -0.1256
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1790334000",
+      "time": "2026-09-25T11:00:00.000Z",
+      "setupType": "fade_short",
+      "classification": "sweep_rejection",
+      "btcGate": "BTC_TRANSITION",
+      "proxyClusterLabel": "fail_back_or_reclaim",
+      "fastKillLabel": "fast_kill_candidate",
+      "h1": {
+        "mfePct": 0.8071,
+        "maePct": 0.1435,
+        "netOpportunityPct": 0.6636
+      },
+      "h3": {
+        "mfePct": 1.6548,
+        "maePct": 0.1435,
+        "netOpportunityPct": 1.5113
+      },
+      "h5": {
+        "mfePct": 1.6548,
+        "maePct": 0.1435,
+        "netOpportunityPct": 1.5113
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1790470800",
+      "time": "2026-09-27T01:00:00.000Z",
+      "setupType": "continuation_long",
+      "classification": "accepted_break",
+      "btcGate": "BTC_RISK_ON",
+      "proxyClusterLabel": "fail_back_or_reclaim",
+      "fastKillLabel": "fast_kill_candidate",
+      "h1": {
+        "mfePct": 0.0533,
+        "maePct": 0.0556,
+        "netOpportunityPct": -0.0023
+      },
+      "h3": {
+        "mfePct": 0.0533,
+        "maePct": 0.2245,
+        "netOpportunityPct": -0.1712
+      },
+      "h5": {
+        "mfePct": 0.1882,
+        "maePct": 0.2245,
+        "netOpportunityPct": -0.0363
+      }
+    }
+  ],
+  "decision": {
+    "verdict": "proxy_labels_mixed_no_promotion",
+    "reason": "The refreshed proxy labels do not clear a simple 5-candle MFE/MAE sanity check; use this as a falsification baseline before richer orderflow work.",
+    "candidateAdded": false,
+    "noLiveChange": true,
+    "headline": {
+      "fetchedRows": 10,
+      "overallH5FavorableShare": 0.4,
+      "fastKillH5SupportiveShare": 0.5,
+      "holdH5SupportiveShare": 0.25
+    }
+  }
+}

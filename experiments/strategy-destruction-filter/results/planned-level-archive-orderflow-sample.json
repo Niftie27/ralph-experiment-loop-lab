@@ -1,0 +1,160 @@
+{
+  "generatedAt": "2026-09-28T13:41:49.620Z",
+  "status": "research-only-no-live-execution",
+  "purpose": "archive-backed sanity sample aligning Binance spot aggTrades to frozen planned-level windows before any watcher-gate proposal",
+  "source": {
+    "plannedLevelReplay": "results/planned-level-proxy-replay.json",
+    "plannedLevelBaseline": "results/planned-level-proxy-baseline-check.json",
+    "aggTradesProvider": "binance-spot-daily-aggTrades-archive",
+    "auth": "none",
+    "selectedRows": "first fetched frozen planned-level windows with nonzero existing near-level aggressive notional, then remaining fetched windows"
+  },
+  "parameters": {
+    "maxWindows": 2,
+    "levelBandAtrMultiple": 0.05,
+    "levelBandBps": 2,
+    "absorptionDominance": 1.25,
+    "absorptionProgressBps": 2
+  },
+  "totals": {
+    "requestedWindows": 2,
+    "analyzedWindows": 2,
+    "noTradeWindows": 0,
+    "absorbedNearLevel": 1,
+    "baselineLabelMatches": 1,
+    "baselineLabelMismatches": 1
+  },
+  "baselineComparison": {
+    "plannedLevelProxyBaselineVerdict": "proxy_labels_mixed_no_promotion",
+    "plannedLevelProxyBaselineReason": "The refreshed proxy labels do not clear a simple 5-candle MFE/MAE sanity check; use this as a falsification baseline before richer orderflow work.",
+    "comparedRows": 2,
+    "labelMatches": 1,
+    "labelMismatches": 1,
+    "rows": [
+      {
+        "eventId": "BTC-1h-previous_day_high-1789948800",
+        "baselineFastKillLabel": "hold_or_retest_candidate",
+        "archiveFastKillLabel": "fast_kill_candidate",
+        "labelMatchesExistingProxy": false,
+        "baselineH5NetOpportunityPct": -0.325,
+        "archiveProxyLabel": "fail_back_or_reclaim",
+        "absorbedNearLevel": true
+      },
+      {
+        "eventId": "BTC-1h-previous_day_high-1790125200",
+        "baselineFastKillLabel": "hold_or_retest_candidate",
+        "archiveFastKillLabel": "hold_or_retest_candidate",
+        "labelMatchesExistingProxy": true,
+        "baselineH5NetOpportunityPct": -0.9246,
+        "archiveProxyLabel": "mixed_no_trade_proxy",
+        "absorbedNearLevel": false
+      }
+    ]
+  },
+  "rows": [
+    {
+      "eventId": "BTC-1h-previous_day_high-1789948800",
+      "symbol": "BTCUSDT",
+      "candleTimeUtc": "2026-09-21T00:00:00.000Z",
+      "levelSource": "previous_day_high",
+      "levelPrice": 81497.33,
+      "levelSide": "up",
+      "setupType": "continuation_long",
+      "direction": "long",
+      "classification": "accepted_break",
+      "btcGate": "BTC_RISK_ON",
+      "baselineProxy": {
+        "proxyClusterLabel": "mixed_no_trade_proxy",
+        "fastKillLabel": "hold_or_retest_candidate",
+        "tradeSideDeltaNotional": 1788292,
+        "cvdSlopeNotionalPerMin": 119219,
+        "aggressiveVolumeAtLevel": 1794135,
+        "priceProgressPerAggressiveVolume": -0.00005232,
+        "opposingAbsorptionCandidate": false,
+        "failBackOrReclaim": false
+      },
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-20T23:55:00.000Z",
+        "end": "2026-09-21T00:10:00.000Z",
+        "trades": 15470,
+        "firstTradeTime": "2026-09-20T23:55:00.009Z",
+        "lastTradeTime": "2026-09-21T00:09:59.684Z"
+      },
+      "features": {
+        "firstPrice": 81188.01,
+        "lastPrice": 81494.01,
+        "levelBand": 17.95,
+        "signedTakerDeltaNotional": 2036832,
+        "cvdSlopeNotionalPerMin": 135789,
+        "aggressiveNotionalNearLevel": 2765304,
+        "alignedAggressiveNotionalNearLevel": 2145397,
+        "opposingAggressiveNotionalNearLevel": 619907,
+        "directionalPriceProgress": -113.71,
+        "levelSideProgressBps": -0.4074,
+        "priceProgressPerAggressiveVolume": -0.0000411203,
+        "aggressionAbsorbedNearPlannedLevel": true,
+        "archiveProxyLabel": "fail_back_or_reclaim",
+        "archiveFastKillLabel": "fast_kill_candidate"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1790125200",
+      "symbol": "BTCUSDT",
+      "candleTimeUtc": "2026-09-23T01:00:00.000Z",
+      "levelSource": "previous_day_high",
+      "levelPrice": 86717.6,
+      "levelSide": "up",
+      "setupType": "fade_short",
+      "direction": "short",
+      "classification": "sweep_rejection",
+      "btcGate": "BTC_TRANSITION",
+      "baselineProxy": {
+        "proxyClusterLabel": "mixed_no_trade_proxy",
+        "fastKillLabel": "hold_or_retest_candidate",
+        "tradeSideDeltaNotional": -1624909,
+        "cvdSlopeNotionalPerMin": -108327,
+        "aggressiveVolumeAtLevel": 200921,
+        "priceProgressPerAggressiveVolume": -0.00122138,
+        "opposingAbsorptionCandidate": false,
+        "failBackOrReclaim": false
+      },
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-23T00:55:00.000Z",
+        "end": "2026-09-23T01:10:00.000Z",
+        "trades": 9146,
+        "firstTradeTime": "2026-09-23T00:55:00.030Z",
+        "lastTradeTime": "2026-09-23T01:09:59.660Z"
+      },
+      "features": {
+        "firstPrice": 86456.01,
+        "lastPrice": 86615.4,
+        "levelBand": 24.49,
+        "signedTakerDeltaNotional": -1611459,
+        "cvdSlopeNotionalPerMin": -107431,
+        "aggressiveNotionalNearLevel": 200921,
+        "alignedAggressiveNotionalNearLevel": 13779,
+        "opposingAggressiveNotionalNearLevel": 187142,
+        "directionalPriceProgress": -245.4,
+        "levelSideProgressBps": -11.7854,
+        "priceProgressPerAggressiveVolume": -0.001221378,
+        "aggressionAbsorbedNearPlannedLevel": false,
+        "archiveProxyLabel": "mixed_no_trade_proxy",
+        "archiveFastKillLabel": "hold_or_retest_candidate"
+      }
+    }
+  ],
+  "decision": {
+    "verdict": "archive_features_sample_ready_no_promotion",
+    "reason": "Archive-backed window features are reproducible on the tiny sample, but the existing planned-level proxy baseline is mixed and this sample is far below any watcher-gate threshold.",
+    "comparison": {
+      "baselineVerdict": "proxy_labels_mixed_no_promotion",
+      "labelMatches": 1,
+      "labelMismatches": 1
+    },
+    "candidateAdded": false,
+    "watcherGateChangeProposed": false,
+    "noLiveChange": true
+  }
+}

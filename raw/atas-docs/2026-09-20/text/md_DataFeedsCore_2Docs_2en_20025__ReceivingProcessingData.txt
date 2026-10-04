@@ -1,0 +1,763 @@
+ATAS: Receiving and processing data 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Receiving and processing data 
+
+Obtaining and using candle data 
+
+To receive and use these candles, you need to get an object of the IndicatorCandle class. To do this, we can use the GetCandle(int bar) method by specifying the bar number. 
+It must be remembered that bar is an integer and the numbering of bars starts from 0 and ends with CurrentBar - 1 , where CurrentBar is the total number of loaded bars. 
+We can get the bar value from the parameters in the overridden OnCalculate method. 
+If you specify a bar number less than 0 or greater than CurrentBar - 1 when calling the GetCandle(bar) method, this will lead to an error and the calculations will be interrupted. 
+
+‍ Performance. On the current bar OnCalculate is called on every tick, so call GetCandle(bar) once and store the result in a local variable instead of requesting the candle repeatedly for the same bar. Iterating cluster (footprint) data via GetAllPriceLevels() is more expensive than accessing the candle itself — do it only when necessary. For more performance recommendations see the «Performance recommendations» article. 
+
+The IndicatorCandle object contains data that can be obtained from its properties or by calling methods of this object. 
+Some properties worth clarifying: 
+
+LastTime - time of the last trade on this bar, 
+
+MaxDelta is the largest delta value that was on this bar, 
+
+MinDelta - the lowest delta value that was on this bar, 
+
+MaxOI - the largest OI value that was on this bar, 
+
+MinOI - the lowest OI value that was on this bar 
+
+public class SimpleInd : ATAS .Indicators.Indicator 
+
+{ 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+var candle = GetCandle(bar); 
+
+var open = candle.Open; 
+
+var close = candle.Close; 
+
+var high = candle.High; 
+
+var low = candle.Low; 
+
+var volume = candle.Volume; 
+
+var ask = candle.Ask; 
+
+var bid = candle.Bid; 
+
+var delta = candle.Delta; 
+
+// TODO: your code 
+
+} 
+
+} 
+
+ATAS 
+
+Definition AsyncConnector.cs:2 
+
+Footprint data 
+
+One important data type is bar data at a certain price ( footprint data ), which is stored in the PriceVolumeInfo object. 
+PriceVolumeInfo stores such data as: price, the number of volumes traded at the bid price, ask price, etc. 
+
+Here are some ways to get PriceVolumeInfo objects from an IndicatorCandle object: 
+
+GetPriceVolumeInfo (decimal price) - cluster data at a certain price, 
+
+GetAllPriceLevels () - cluster data for all prices, in this case we will get a collection of PriceVolumeInfo objects, 
+
+MaxVolumePriceInfo - cluster data at the price of the maximum volume, 
+
+MaxTickPriceInfo - cluster data for the price with the most ticks, 
+
+MaxPositiveDeltaPriceInfo - cluster data on the price with maximum delta, 
+
+MaxNegativeDeltaPriceInfo - cluster data for the price with minimal delta 
+
+public class SimpleInd : ATAS .Indicators.Indicator 
+
+{ 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+var candle = GetCandle(bar); 
+
+var high = candle.High; 
+
+var highData = candle.GetPriceVolumeInfo(high); 
+
+if (highData != null ) 
+
+{ 
+
+var highVolume = highData.Volume; 
+
+// TODO: your code 
+
+} 
+
+var maxVolumeData = candle.MaxVolumePriceInfo; 
+
+if (maxVolumeData != null ) 
+
+{ 
+
+var maxVolume = maxVolumeData.Volume; 
+
+// TODO: your code 
+
+} 
+
+var allPriceLevels = candle.GetAllPriceLevels(); 
+
+foreach ( var level in allPriceLevels ) 
+
+{ 
+
+if (level == null ) 
+
+continue ; 
+
+var price = level.Price; 
+
+var volume = level.Volume; 
+
+var delta = level.Ask - level.Bid; 
+
+// TODO: your code 
+
+} 
+
+} 
+
+} 
+
+Getting online ticks and aggregated trades 
+
+To get the online tick data, it is necessary to redefine the OnNewTrade(MarketDataArg arg) method: 
+
+public class SampleTick : Indicator 
+
+{ 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+} 
+
+protected override void OnNewTrade(MarketDataArg arg) 
+
+{ 
+
+} 
+
+} 
+
+API also allows getting aggregated trades. For this, it is necessary to redefine the OnCumulativeTrade(CumulativeTrade arg) method. 
+This method will be automatically called when a new cumulative trade appears. Such trades may be subsequently modified. In order to keep track of these changes, you need to override the OnUpdateCumulativeTrade(CumulativeTrade trade) method. 
+Example of realization of the indicator, which outputs the delta of cumulative trades of the volume of more than 3 lots: 
+
+public class SampleCumulativeTrades : ATAS .Indicators.Indicator 
+
+{ 
+
+private CumulativeTrade _lastTrade; 
+
+private decimal _lastCumulativeTradeVolume; 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+} 
+
+protected override void OnCumulativeTrade(CumulativeTrade trade) 
+
+{ 
+
+AddCumulativeTrade(trade); 
+
+} 
+
+protected override void OnUpdateCumulativeTrade(CumulativeTrade trade) 
+
+{ 
+
+AddCumulativeTrade(trade); 
+
+} 
+
+private void AddCumulativeTrade(CumulativeTrade trade) 
+
+{ 
+
+if (trade.Volume < 3) 
+
+return ; 
+
+if (_lastTrade != trade) 
+
+{ 
+
+_lastTrade = trade; 
+
+this [CurrentBar - 1] += GetVolumeByDirection(trade.Volume, trade.Direction); 
+
+} 
+
+else 
+
+{ 
+
+this [CurrentBar - 1] += GetVolumeByDirection(trade.Volume - _lastCumulativeTradeVolume, trade.Direction); 
+
+} 
+
+_lastCumulativeTradeVolume = trade.Volume; 
+
+} 
+
+private decimal GetVolumeByDirection(decimal volume, TradeDirection direction) 
+
+{ 
+
+return volume * (direction == TradeDirection.Buy ? 1 : -1); 
+
+} 
+
+} 
+
+To get historical cumulative trades, you need to call the RequestForCumulativeTrades method, pass the CumulativeTradesRequest request to the parameters, and override the OnCumulativeTradesResponse method. In the request, you need to specify the beginning and end of the time period for which you want to get cumulative trades, you can also set filters for the minimum and maximum volume of trades. If you specify 0 for the minimum and maximum volumes, then filters by volume will not be applied. 
+An example of an indicator that receives data from cumulative trades from the first to the last bar: 
+
+public class SampleCumulativeTrades : ATAS .Indicators.Indicator 
+
+{ 
+
+private List<CumulativeTrade> _trades; 
+
+private CumulativeTradesRequest _request; 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+} 
+
+protected override void OnFinishRecalculate() 
+
+{ 
+
+var startTime = GetCandle(0).Time; 
+
+var lastTime = GetCandle(CurrentBar - 1).LastTime; 
+
+_request = new CumulativeTradesRequest(startTime, lastTime, 0, 0); 
+
+RequestForCumulativeTrades(_request); 
+
+} 
+
+protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades) 
+
+{ 
+
+if (request != _request) 
+
+return ; 
+
+_trades = cumulativeTrades.ToList(); 
+
+} 
+
+} 
+
+Working with Market Depth 
+
+API allows getting the data about updates of the MarketDepth. For this, the MarketDepthChanged(MarketDataArg arg) method should be redefined: 
+
+public class SampleMD : ATAS .Indicators.Indicator 
+
+{ 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+} 
+
+protected override void MarketDepthChanged(MarketDataArg arg) 
+
+{ 
+
+} 
+
+} 
+
+It is also possible to get the total volume of all Bids and total volume of all Asks with the help of the MarketDepthInfo object properties: CumulativeDomAsks and CumulativeDomBids . Example of the indicator which reflects the history of the total values of the Asks and Bids volumes 
+
+public class DomPower : ATAS .Indicators.Indicator 
+
+{ 
+
+private ValueDataSeries _asks; 
+
+private ValueDataSeries _bids = new ValueDataSeries( "Bids" ); 
+
+private int _lastCalculatedBar = 0; 
+
+privte bool _first = true ; 
+
+public DomPower() : base(true) 
+
+{ 
+
+Panel = IndicatorDataProvider.NewPanel; 
+
+_asks = (ValueDataSeries)DataSeries[0]; 
+
+_asks.Name = "Asks" ; 
+
+_bids.Color = Colors.Green; 
+
+DataSeries.Add(_bids); 
+
+} 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+} 
+
+protected override void MarketDepthChanged(MarketDataArg arg) 
+
+{ 
+
+if (_first) 
+
+{ 
+
+_first = false ; 
+
+_lastCalculatedBar = CurrentBar - 1; 
+
+} 
+
+var lastCandle = CurrentBar - 1; 
+
+var cumAsks = MarketDepthInfo.CumulativeDomAsks; 
+
+var cumBids = MarketDepthInfo.CumulativeDomBids; 
+
+for ( int i = _lastCalculatedBar; i <= lastCandle; i++) 
+
+{ 
+
+_asks[i] = -cumAsks; 
+
+_bids[i] = cumBids; 
+
+} 
+
+_lastCalculatedBar = lastCandle; 
+
+} 
+
+} 
+
+In some cases it might be necessary to get a snapshot of the MaketDepth data. For this, the MarketDepthInfo.GetMarketDepthSnapshot() function could be used. The function returns a list of all levels in the DOM. 
+
+MBO (Market By Orders) 
+
+To date, this data is provided only by the Rithmic provider. 
+To receive MBO (Market By Orders) data, first enable the subscription by calling the SubscribeMarketByOrderData method. The returned Task completes when the subscription is active. After that: 
+
+the MarketByOrders property returns a snapshot of the current market by order data — a collection of objects of type MarketByOrder ; 
+
+to monitor changes in real time, override the OnMarketByOrdersChanged method, which is called with the changed MarketByOrder items; 
+
+to keep a history of recent updates for a time window, use the GetMarketByOrdersCache or GetMarketByOrdersWithTradesCache methods, which return caches holding the items received during the specified period. 
+
+MarketByOrder objects have the following properties: 
+
+Security - security associated with the market by order entry. 
+
+Time - date and time of the market by order entry. 
+
+Type - type of market by order update: 
+Snapshot - Indicates that the MBO data is from a cache and not from the real-time data stream. 
+
+New - Indicates that the MBO data represents a new order added to the order book of this instrument. 
+
+Change - Indicates that the MBO data represents a change to an existing order. 
+
+Delete - Indicates that the MBO data represents a deletion of an existing order. 
+
+Side - Specifies the type of market data: 
+Bid 
+
+Ask 
+
+Trade 
+
+Priority - Priority of this order in the exchange's matching engine queue. 
+
+ExchangeOrderId - Exchange order id of this order. 
+
+Price - Price associated with this order. 
+
+Volume - Volume associated with this order. 
+
+Below is an example of an indicator receiving MBO data. 
+
+public class SampleMBODataIndicator : ATAS .Indicators.Indicator 
+
+{ 
+
+protected override async void OnInitialize() 
+
+{ 
+
+await SubscribeMarketByOrderData(); 
+
+ProcessMarketByOrders(MarketByOrders); 
+
+} 
+
+protected override void OnMarketByOrdersChanged(System.Collections.Generic.IEnumerable< ATAS . DataFeedsCore . MarketByOrder > values) 
+
+{ 
+
+this.LogInfo( "new MBO data" ); 
+
+ProcessMarketByOrders(values); 
+
+} 
+
+private void ProcessMarketByOrders(System.Collections.Generic.IEnumerable< ATAS . DataFeedsCore . MarketByOrder > marketByOrders) 
+
+{ 
+
+foreach (var marketByOrder in marketByOrders) 
+
+{ 
+
+this.LogInfo( "{0}" , marketByOrder); 
+
+} 
+
+} 
+
+#region Overrides of ExtendedIndicator 
+
+protected override void OnNewTrade(MarketDataArg trade) 
+
+{ 
+
+this.LogInfo($ "ExchangeOrderId: {trade.ExchangeOrderId}, AggressorExchangeOrderId: {trade.AggressorExchangeOrderId}" ); 
+
+} 
+
+#endregion 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+} 
+
+} 
+
+ATAS.DataFeedsCore.MarketByOrder 
+
+Market by Order (MBO) describes an order-based data feed that provides the ability to view individual... 
+
+Definition MarketByOrder.cs:36 
+
+ATAS.DataFeedsCore 
+
+Definition AsyncConnector.cs:2 
+
+Statistical data 
+
+You can get statistical data using the indicator property TradingStatisticsProvider . Statistical data is stored in an object that implements ITradingStatistics , which you can retrieve through: 
+
+The TradingStatisticsProvider.Realtime property. 
+
+The asynchronous method TradingStatisticsProvider.LoadAsync(DateTime from, DateTime to, ICollection<string>? accounts = null, ICollection<string>? securities = null). 
+
+To get the history of statistics, you need to call the LoadAsync asynchronous method, passing the start time and end time of the desired period as parameters. You can also pass in the parameters for which accounts and instruments you need data. Statistics data obtained using this method displays statistics for a certain period and is not updated in real time. 
+An example of an indicator that logs equity data for the period from the beginning of the chart to the current bar: 
+
+using ATAS.DataFeedsCore ; 
+
+using ATAS.DataFeedsCore.Statistics ; 
+
+using ATAS.Indicators ; 
+
+using Utils.Common.Collections; 
+
+using Utils.Common.Logging; 
+
+public class SampleStatistics : Indicator 
+
+{ 
+
+private ITradingStatistics _tradingStatistics; 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+} 
+
+protected override void OnFinishRecalculate() 
+
+{ 
+
+if (_tradingStatistics is null ) 
+
+return ; 
+
+foreach (var equity in _tradingStatistics. Equity ) 
+
+{ 
+
+this.LogInfo($ "Time: {equity.Time} | equity: {equity.Equity} | total equity: {equity.TotalEquity}" ); 
+
+} 
+
+} 
+
+protected override async void OnInitialize() 
+
+{ 
+
+var start = GetCandle(0).Time; 
+
+var end = GetCandle(CurrentBar - 1).LastTime; 
+
+_tradingStatistics = await TradingStatisticsProvider.LoadAsync(start, end); 
+
+} 
+
+} 
+
+ATAS.Indicators.Indicator 
+
+Base class for custom indicators. 
+
+Definition Indicator.cs:48 
+
+ATAS.DataFeedsCore.Statistics.ITradingStatistics 
+
+Definition ITradingStatistics.cs:10 
+
+ATAS.DataFeedsCore.Statistics.ITradingStatistics.Equity 
+
+IMutableEnumerable< EquityValue > Equity 
+
+Definition ITradingStatistics.cs:19 
+
+ATAS.DataFeedsCore.Statistics 
+
+Definition ITradingStatistics.cs:1 
+
+ATAS.Indicators 
+
+Definition FeatureId.cs:2 
+
+The ITradingStatistics object contains the following types of statistics: 
+
+Equity the collection of EquityValue 
+
+HistoryMyTrades the collection of HistoryMyTrade 
+
+Orders the collection of Order 
+
+MyTrades the collection of MyTrade 
+
+Statistics the collection of IStatisticsParameterGroup 
+
+If you get the ITradingStatistics object using TradingStatisticsProvider.Realtime , then you can track changes in these properties in real time by subscribing to their events: 
+
+Added 
+
+Changed 
+
+Removed 
+
+Cleared 
+
+An example of an indicator that outputs these data to the log when new statistical data appears: 
+
+using ATAS.DataFeedsCore ; 
+
+using ATAS.DataFeedsCore.Statistics ; 
+
+using ATAS.Indicators ; 
+
+using Utils.Common.Collections; 
+
+using Utils.Common.Logging; 
+
+public class SampleStatistics : Indicator 
+
+{ 
+
+private IMutableEnumerable<HistoryMyTrade> _historyMyTrades; 
+
+private IMutableEnumerable<EquityValue> _equity; 
+
+private IMutableEnumerable<Order> _orders; 
+
+private IMutableEnumerable<MyTrade> _myTrades; 
+
+private IMutableEnumerable<IStatisticsParameterGroup> _statistics; 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+} 
+
+protected override void OnInitialize() 
+
+{ 
+
+var tradingStatistics = TradingStatisticsProvider.Realtime; 
+
+_historyMyTrades = tradingStatistics.HistoryMyTrades; 
+
+_historyMyTrades.Added += HistoryMyTrades_Added; 
+
+_equity = tradingStatistics.Equity; 
+
+_equity.Added += Equity_Added; 
+
+_orders = tradingStatistics.Orders; 
+
+_orders.Added += Orders_Added; ; 
+
+_myTrades = tradingStatistics.MyTrades; 
+
+_myTrades.Added += MyTrades_Added; 
+
+_statistics = tradingStatistics.Statistics; 
+
+_statistics.Added += Statistics_Added; 
+
+} 
+
+private void Statistics_Added( IStatisticsParameterGroup spGroup) 
+
+{ 
+
+this.LogInfo($ "New {spGroup.Name} data." ); 
+
+} 
+
+private void MyTrades_Added( MyTrade trade) 
+
+{ 
+
+this.LogInfo($ "New MyTrade {trade.AccountID} added." ); 
+
+} 
+
+private void Orders_Added( Order order) 
+
+{ 
+
+this.LogInfo($ "New Order {order.AccountID} added." ); 
+
+} 
+
+private void Equity_Added(EquityValue equity) 
+
+{ 
+
+this.LogInfo($ "Time: {equity.Time} | equity: {equity.Equity} | total equity: {equity.TotalEquity}" ); 
+
+} 
+
+private void HistoryMyTrades_Added( HistoryMyTrade trade) 
+
+{ 
+
+this.LogInfo($ "New HistoryMyTrade {trade.AccountID} added." ); 
+
+} 
+
+protected override void OnDispose() 
+
+{ 
+
+base.OnDispose(); 
+
+if (_historyMyTrades != null ) 
+
+_historyMyTrades.Added -= HistoryMyTrades_Added; 
+
+if (_equity != null ) 
+
+_equity.Added -= Equity_Added; 
+
+if (_orders != null ) 
+
+_orders.Added -= Orders_Added; 
+
+if (_myTrades != null ) 
+
+_myTrades.Added -= MyTrades_Added; 
+
+if (_statistics != null ) 
+
+_statistics.Added -= Statistics_Added; 
+
+} 
+
+} 
+
+ATAS.DataFeedsCore.HistoryMyTrade 
+
+Represents a historical trade record. 
+
+Definition HistoryMyTrade.cs:37 
+
+ATAS.DataFeedsCore.MyTrade 
+
+Represents a trade entity in the system. 
+
+Definition MyTrade.cs:14 
+
+ATAS.DataFeedsCore.Order 
+
+Represents an order for trading on a financial exchange. 
+
+Definition Order.cs:13 
+
+ATAS.DataFeedsCore.Statistics.IStatisticsParameterGroup 
+
+Definition StatisticsParameterGroup.cs:9 
+
+Generated by 1.9.7 
+
+Join our developers chat

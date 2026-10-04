@@ -1,0 +1,1865 @@
+{
+  "generated": "2026-10-04T08:03:40.256Z",
+  "status": "research-only-no-live-execution",
+  "rules": {
+    "minVolumeUsd": 25000000,
+    "selectedLimit": 40,
+    "selection": "deep stats require watchlist or multi-venue liquidity; single-venue movers are watch-only"
+  },
+  "sources": [
+    "Binance spot exchangeInfo + 24hr ticker",
+    "Binance USD-M futures exchangeInfo + 24hr ticker",
+    "Hyperliquid metaAndAssetCtxs",
+    "CoinGecko trending search"
+  ],
+  "errors": [],
+  "selected": [
+    {
+      "asset": "STRK",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "STRK-PERP",
+        "STRKUSDT"
+      ],
+      "maxVolumeUsd": 199363602,
+      "totalVenueVolumeUsd": 236093351,
+      "maxAbsChangePct24h": 30.77,
+      "bestChangePct24h": 30.77,
+      "openInterest": 213436900.4,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 8.8,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "PUMP",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "PUMP-PERP",
+        "PUMPUSDT"
+      ],
+      "maxVolumeUsd": 378063582,
+      "totalVenueVolumeUsd": 575768865,
+      "maxAbsChangePct24h": 17.22,
+      "bestChangePct24h": 17.22,
+      "openInterest": 50633742982,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 8.799,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "ZRO",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "ZRO-PERP",
+        "ZROUSDT"
+      ],
+      "maxVolumeUsd": 142711055,
+      "totalVenueVolumeUsd": 228094194,
+      "maxAbsChangePct24h": 14.93,
+      "bestChangePct24h": 14.93,
+      "openInterest": 49126207.2,
+      "funding": 0.00005524,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 8.147,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "HYPE",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "HYPE-PERP",
+        "HYPEUSDT"
+      ],
+      "maxVolumeUsd": 235030576,
+      "totalVenueVolumeUsd": 378915439,
+      "maxAbsChangePct24h": 2.16,
+      "bestChangePct24h": 2.16,
+      "openInterest": 20349520.78,
+      "funding": 0.0000125,
+      "watchlist": true,
+      "trending": true,
+      "universeScore": 8.087,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "ZEC",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "ZEC-PERP",
+        "ZECUSDT"
+      ],
+      "maxVolumeUsd": 1012868054,
+      "totalVenueVolumeUsd": 1294429519,
+      "maxAbsChangePct24h": 1.74,
+      "bestChangePct24h": 1.74,
+      "openInterest": 428047.9,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 7.674,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "ETH",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "ETH-PERP",
+        "ETHUSDT"
+      ],
+      "maxVolumeUsd": 2200017910,
+      "totalVenueVolumeUsd": 2568880624,
+      "maxAbsChangePct24h": 0.88,
+      "bestChangePct24h": 0.88,
+      "openInterest": 1197202.2,
+      "funding": 0.0000125,
+      "watchlist": true,
+      "trending": false,
+      "universeScore": 7.588,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "BTC",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "BTC-PERP",
+        "BTCUSDT"
+      ],
+      "maxVolumeUsd": 3439521103,
+      "totalVenueVolumeUsd": 4498579063,
+      "maxAbsChangePct24h": 0.63,
+      "bestChangePct24h": 0.63,
+      "openInterest": 37491.49,
+      "funding": 0.0000125,
+      "watchlist": true,
+      "trending": false,
+      "universeScore": 7.563,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "SOL",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "SOL-PERP",
+        "SOLUSDT"
+      ],
+      "maxVolumeUsd": 743315878,
+      "totalVenueVolumeUsd": 913415556,
+      "maxAbsChangePct24h": 1.62,
+      "bestChangePct24h": 1.62,
+      "openInterest": 5457723.7,
+      "funding": 0.0000125,
+      "watchlist": true,
+      "trending": false,
+      "universeScore": 7.533,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "NEAR",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "NEAR-PERP",
+        "NEARUSDT"
+      ],
+      "maxVolumeUsd": 302806645,
+      "totalVenueVolumeUsd": 451515482,
+      "maxAbsChangePct24h": 2.78,
+      "bestChangePct24h": 2.78,
+      "openInterest": 69835428.8,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 7.259,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "TAO",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "TAO-PERP",
+        "TAOUSDT"
+      ],
+      "maxVolumeUsd": 114797262,
+      "totalVenueVolumeUsd": 148460696,
+      "maxAbsChangePct24h": 5.96,
+      "bestChangePct24h": 5.96,
+      "openInterest": 238694.49,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 7.156,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "ENA",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "ENA-PERP",
+        "ENAUSDT"
+      ],
+      "maxVolumeUsd": 123090712,
+      "totalVenueVolumeUsd": 165240737,
+      "maxAbsChangePct24h": 3.54,
+      "bestChangePct24h": 3.54,
+      "openInterest": 626455226,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 6.944,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "QNT",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "QNTUSDT"
+      ],
+      "maxVolumeUsd": 432683745,
+      "totalVenueVolumeUsd": 489374741,
+      "maxAbsChangePct24h": 2.34,
+      "bestChangePct24h": -2.34,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 6.87,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "WLD",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "WLD-PERP",
+        "WLDUSDT"
+      ],
+      "maxVolumeUsd": 433742865,
+      "totalVenueVolumeUsd": 550953536,
+      "maxAbsChangePct24h": 6.42,
+      "bestChangePct24h": 6.42,
+      "openInterest": 153610077.2,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 6.78,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "ONDO",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "ONDO-PERP",
+        "ONDOUSDT"
+      ],
+      "maxVolumeUsd": 69060427,
+      "totalVenueVolumeUsd": 96206437,
+      "maxAbsChangePct24h": 3.59,
+      "bestChangePct24h": 3.59,
+      "openInterest": 120112980,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 6.698,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "AXS",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "AXS-PERP",
+        "AXSUSDT"
+      ],
+      "maxVolumeUsd": 62790228,
+      "totalVenueVolumeUsd": 77452779,
+      "maxAbsChangePct24h": 12.82,
+      "bestChangePct24h": 12.82,
+      "openInterest": 496342.8,
+      "funding": -0.00007949,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 6.58,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "PENGU",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "PENGU-PERP",
+        "PENGUUSDT"
+      ],
+      "maxVolumeUsd": 42962873,
+      "totalVenueVolumeUsd": 51184567,
+      "maxAbsChangePct24h": 4.19,
+      "bestChangePct24h": 4.19,
+      "openInterest": 1483179168,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 6.552,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "SAND",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "SAND-PERP",
+        "SANDUSDT"
+      ],
+      "maxVolumeUsd": 676633406,
+      "totalVenueVolumeUsd": 780119148,
+      "maxAbsChangePct24h": 0.73,
+      "bestChangePct24h": -0.73,
+      "openInterest": 154389338,
+      "funding": -0.000135,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 6.404,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "BNB",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "BNB-PERP",
+        "BNBUSDT"
+      ],
+      "maxVolumeUsd": 350519382,
+      "totalVenueVolumeUsd": 434843311,
+      "maxAbsChangePct24h": 2.93,
+      "bestChangePct24h": 2.93,
+      "openInterest": 62217.18,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 6.338,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "ZAMA",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "ZAMAUSDT"
+      ],
+      "maxVolumeUsd": 46271555,
+      "totalVenueVolumeUsd": 55776327,
+      "maxAbsChangePct24h": 15.56,
+      "bestChangePct24h": 15.56,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 6.222,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "XRP",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "XRP-PERP",
+        "XRPUSDT"
+      ],
+      "maxVolumeUsd": 330041586,
+      "totalVenueVolumeUsd": 422345524,
+      "maxAbsChangePct24h": 1.22,
+      "bestChangePct24h": 1.22,
+      "openInterest": 198576590,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 6.141,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "SUI",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "SUI-PERP",
+        "SUIUSDT"
+      ],
+      "maxVolumeUsd": 194749325,
+      "totalVenueVolumeUsd": 264872919,
+      "maxAbsChangePct24h": 2.38,
+      "bestChangePct24h": 2.38,
+      "openInterest": 79684704.4,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 6.027,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "SUPER",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "SUPER-PERP",
+        "SUPERUSDT"
+      ],
+      "maxVolumeUsd": 60265361,
+      "totalVenueVolumeUsd": 72654729,
+      "maxAbsChangePct24h": 6.32,
+      "bestChangePct24h": 6.32,
+      "openInterest": 4029206,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.912,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "TIA",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "TIA-PERP",
+        "TIAUSDT"
+      ],
+      "maxVolumeUsd": 37516718,
+      "totalVenueVolumeUsd": 44898005,
+      "maxAbsChangePct24h": 8.03,
+      "bestChangePct24h": 8.03,
+      "openInterest": 16380967.2,
+      "funding": 0.00001784,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.878,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "DOGE",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "DOGE-PERP",
+        "DOGEUSDT"
+      ],
+      "maxVolumeUsd": 173983532,
+      "totalVenueVolumeUsd": 208323111,
+      "maxAbsChangePct24h": 0.93,
+      "bestChangePct24h": 0.93,
+      "openInterest": 1066445084,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.834,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "UNI",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "UNI-PERP",
+        "UNIUSDT"
+      ],
+      "maxVolumeUsd": 149938901,
+      "totalVenueVolumeUsd": 203274065,
+      "maxAbsChangePct24h": 0.56,
+      "bestChangePct24h": -0.56,
+      "openInterest": 9870449.6,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.732,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "AERO",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "AERO-PERP",
+        "AEROUSDT"
+      ],
+      "maxVolumeUsd": 28556287,
+      "totalVenueVolumeUsd": 40379141,
+      "maxAbsChangePct24h": 7.74,
+      "bestChangePct24h": 7.74,
+      "openInterest": 41438570,
+      "funding": 0.00011826,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.729,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "LTC",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "LTC-PERP",
+        "LTCUSDT"
+      ],
+      "maxVolumeUsd": 97677040,
+      "totalVenueVolumeUsd": 131678302,
+      "maxAbsChangePct24h": 1.95,
+      "bestChangePct24h": 1.95,
+      "openInterest": 686254.72,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.685,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "AAVE",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "AAVE-PERP",
+        "AAVEUSDT"
+      ],
+      "maxVolumeUsd": 110051554,
+      "totalVenueVolumeUsd": 140133432,
+      "maxAbsChangePct24h": 1.37,
+      "bestChangePct24h": 1.37,
+      "openInterest": 475693.04,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.678,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "USELESS",
+      "venues": [
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "USELESS-PERP",
+        "USELESSUSDT"
+      ],
+      "maxVolumeUsd": 30219826,
+      "totalVenueVolumeUsd": 35021589,
+      "maxAbsChangePct24h": 11.76,
+      "bestChangePct24h": 11.76,
+      "openInterest": 49682798,
+      "funding": 0.00011935,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.656,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "ARK",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "ARK-PERP",
+        "ARKUSDT"
+      ],
+      "maxVolumeUsd": 40769851,
+      "totalVenueVolumeUsd": 47672480,
+      "maxAbsChangePct24h": 5.42,
+      "bestChangePct24h": 5.42,
+      "openInterest": 0,
+      "funding": 0,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.653,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "AVAX",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "AVAX-PERP",
+        "AVAXUSDT"
+      ],
+      "maxVolumeUsd": 89751346,
+      "totalVenueVolumeUsd": 125691975,
+      "maxAbsChangePct24h": 1.73,
+      "bestChangePct24h": 1.73,
+      "openInterest": 3781270.68,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.626,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "ARB",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "ARB-PERP",
+        "ARBUSDT"
+      ],
+      "maxVolumeUsd": 58646439,
+      "totalVenueVolumeUsd": 78004036,
+      "maxAbsChangePct24h": 2.86,
+      "bestChangePct24h": 2.86,
+      "openInterest": 119416504.4,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.554,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "LINK",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "LINK-PERP",
+        "LINKUSDT"
+      ],
+      "maxVolumeUsd": 95927657,
+      "totalVenueVolumeUsd": 116940742,
+      "maxAbsChangePct24h": 0.7,
+      "bestChangePct24h": 0.7,
+      "openInterest": 5989764.8,
+      "funding": 0.0000072,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.552,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "DOT",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "DOT-PERP",
+        "DOTUSDT"
+      ],
+      "maxVolumeUsd": 46864914,
+      "totalVenueVolumeUsd": 56384878,
+      "maxAbsChangePct24h": 3.76,
+      "bestChangePct24h": 3.76,
+      "openInterest": 4621981.4,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.547,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "ADA",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "ADA-PERP",
+        "ADAUSDT"
+      ],
+      "maxVolumeUsd": 86478076,
+      "totalVenueVolumeUsd": 106246894,
+      "maxAbsChangePct24h": 1.03,
+      "bestChangePct24h": 1.03,
+      "openInterest": 160221994,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.54,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "MON",
+      "venues": [
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "MON-PERP",
+        "MONUSDT"
+      ],
+      "maxVolumeUsd": 30334176,
+      "totalVenueVolumeUsd": 41689867,
+      "maxAbsChangePct24h": 10.49,
+      "bestChangePct24h": 10.49,
+      "openInterest": 1926234840,
+      "funding": 0.00003084,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.531,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "BCH",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "BCH-PERP",
+        "BCHUSDT"
+      ],
+      "maxVolumeUsd": 58056057,
+      "totalVenueVolumeUsd": 71155063,
+      "maxAbsChangePct24h": 2.51,
+      "bestChangePct24h": 2.51,
+      "openInterest": 31577.95,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.515,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "FIL",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "FIL-PERP",
+        "FILUSDT"
+      ],
+      "maxVolumeUsd": 61443113,
+      "totalVenueVolumeUsd": 67707850,
+      "maxAbsChangePct24h": 2.15,
+      "bestChangePct24h": 2.15,
+      "openInterest": 7826888.2,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.504,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "FET",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "FET-PERP",
+        "FETUSDT"
+      ],
+      "maxVolumeUsd": 40473579,
+      "totalVenueVolumeUsd": 58959765,
+      "maxAbsChangePct24h": 3.93,
+      "bestChangePct24h": 3.93,
+      "openInterest": 54289126,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.5,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "AR",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "AR-PERP",
+        "ARUSDT"
+      ],
+      "maxVolumeUsd": 28244119,
+      "totalVenueVolumeUsd": 40133120,
+      "maxAbsChangePct24h": 5.47,
+      "bestChangePct24h": 5.47,
+      "openInterest": 869941.58,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.498,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    }
+  ],
+  "watchlist": [
+    {
+      "asset": "HYPE",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "HYPE-PERP",
+        "HYPEUSDT"
+      ],
+      "maxVolumeUsd": 235030576,
+      "totalVenueVolumeUsd": 378915439,
+      "maxAbsChangePct24h": 2.16,
+      "bestChangePct24h": 2.16,
+      "openInterest": 20349520.78,
+      "funding": 0.0000125,
+      "watchlist": true,
+      "trending": true,
+      "universeScore": 8.087,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "ETH",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "ETH-PERP",
+        "ETHUSDT"
+      ],
+      "maxVolumeUsd": 2200017910,
+      "totalVenueVolumeUsd": 2568880624,
+      "maxAbsChangePct24h": 0.88,
+      "bestChangePct24h": 0.88,
+      "openInterest": 1197202.2,
+      "funding": 0.0000125,
+      "watchlist": true,
+      "trending": false,
+      "universeScore": 7.588,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "BTC",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "BTC-PERP",
+        "BTCUSDT"
+      ],
+      "maxVolumeUsd": 3439521103,
+      "totalVenueVolumeUsd": 4498579063,
+      "maxAbsChangePct24h": 0.63,
+      "bestChangePct24h": 0.63,
+      "openInterest": 37491.49,
+      "funding": 0.0000125,
+      "watchlist": true,
+      "trending": false,
+      "universeScore": 7.563,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "SOL",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "SOL-PERP",
+        "SOLUSDT"
+      ],
+      "maxVolumeUsd": 743315878,
+      "totalVenueVolumeUsd": 913415556,
+      "maxAbsChangePct24h": 1.62,
+      "bestChangePct24h": 1.62,
+      "openInterest": 5457723.7,
+      "funding": 0.0000125,
+      "watchlist": true,
+      "trending": false,
+      "universeScore": 7.533,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    }
+  ],
+  "watchOnlyMovers": [
+    {
+      "asset": "AIN",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "AINUSDT"
+      ],
+      "maxVolumeUsd": 634947110,
+      "totalVenueVolumeUsd": 634947110,
+      "maxAbsChangePct24h": 123.29,
+      "bestChangePct24h": 123.29,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 7.303,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "COLLECT",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "COLLECTUSDT"
+      ],
+      "maxVolumeUsd": 26651303,
+      "totalVenueVolumeUsd": 26651303,
+      "maxAbsChangePct24h": 34.06,
+      "bestChangePct24h": 34.06,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.926,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "BTW",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "BTWUSDT"
+      ],
+      "maxVolumeUsd": 245495556,
+      "totalVenueVolumeUsd": 245495556,
+      "maxAbsChangePct24h": 29.19,
+      "bestChangePct24h": -29.19,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 6.89,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "ATH",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "ATHUSDT"
+      ],
+      "maxVolumeUsd": 61715085,
+      "totalVenueVolumeUsd": 61715085,
+      "maxAbsChangePct24h": 23.44,
+      "bestChangePct24h": 23.44,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 7.29,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "BR",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "BRUSDT"
+      ],
+      "maxVolumeUsd": 64246487,
+      "totalVenueVolumeUsd": 64246487,
+      "maxAbsChangePct24h": 20.38,
+      "bestChangePct24h": -20.38,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 6.308,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "SPORTFUN",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "SPORTFUNUSDT"
+      ],
+      "maxVolumeUsd": 28043459,
+      "totalVenueVolumeUsd": 28043459,
+      "maxAbsChangePct24h": 18.34,
+      "bestChangePct24h": 18.34,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.782,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "US",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "USUSDT"
+      ],
+      "maxVolumeUsd": 37391536,
+      "totalVenueVolumeUsd": 37391536,
+      "maxAbsChangePct24h": 16.88,
+      "bestChangePct24h": -16.88,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.76,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "MAGMA",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "MAGMAUSDT"
+      ],
+      "maxVolumeUsd": 115061393,
+      "totalVenueVolumeUsd": 115061393,
+      "maxAbsChangePct24h": 11.72,
+      "bestChangePct24h": -11.72,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.733,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "CT",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "CTUSDT"
+      ],
+      "maxVolumeUsd": 37919348,
+      "totalVenueVolumeUsd": 37919348,
+      "maxAbsChangePct24h": 7.56,
+      "bestChangePct24h": -7.56,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 4.834,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "PUMPBTC",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "PUMPBTCUSDT"
+      ],
+      "maxVolumeUsd": 39487699,
+      "totalVenueVolumeUsd": 39487699,
+      "maxAbsChangePct24h": 6.71,
+      "bestChangePct24h": 6.71,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 4.767,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "VELVET",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "VELVETUSDT"
+      ],
+      "maxVolumeUsd": 76711381,
+      "totalVenueVolumeUsd": 76711381,
+      "maxAbsChangePct24h": 5.89,
+      "bestChangePct24h": -5.89,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 4.974,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "RAYSOL",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "RAYSOLUSDT"
+      ],
+      "maxVolumeUsd": 28580909,
+      "totalVenueVolumeUsd": 28580909,
+      "maxAbsChangePct24h": 5.7,
+      "bestChangePct24h": 5.7,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 4.526,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "AKE",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "AKEUSDT"
+      ],
+      "maxVolumeUsd": 37059422,
+      "totalVenueVolumeUsd": 37059422,
+      "maxAbsChangePct24h": 5.5,
+      "bestChangePct24h": 5.5,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 4.618,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "LYN",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "LYNUSDT"
+      ],
+      "maxVolumeUsd": 33349430,
+      "totalVenueVolumeUsd": 33349430,
+      "maxAbsChangePct24h": 5.09,
+      "bestChangePct24h": 5.09,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 4.532,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "1000PEPE",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "1000PEPEUSDT"
+      ],
+      "maxVolumeUsd": 98690686,
+      "totalVenueVolumeUsd": 98690686,
+      "maxAbsChangePct24h": 1.44,
+      "bestChangePct24h": 1.44,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 4.639,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    }
+  ],
+  "topMovers": [
+    {
+      "asset": "AIN",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "AINUSDT"
+      ],
+      "maxVolumeUsd": 634947110,
+      "totalVenueVolumeUsd": 634947110,
+      "maxAbsChangePct24h": 123.29,
+      "bestChangePct24h": 123.29,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 7.303,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "COLLECT",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "COLLECTUSDT"
+      ],
+      "maxVolumeUsd": 26651303,
+      "totalVenueVolumeUsd": 26651303,
+      "maxAbsChangePct24h": 34.06,
+      "bestChangePct24h": 34.06,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.926,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "STRK",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "STRK-PERP",
+        "STRKUSDT"
+      ],
+      "maxVolumeUsd": 199363602,
+      "totalVenueVolumeUsd": 236093351,
+      "maxAbsChangePct24h": 30.77,
+      "bestChangePct24h": 30.77,
+      "openInterest": 213436900.4,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 8.8,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "BTW",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "BTWUSDT"
+      ],
+      "maxVolumeUsd": 245495556,
+      "totalVenueVolumeUsd": 245495556,
+      "maxAbsChangePct24h": 29.19,
+      "bestChangePct24h": -29.19,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 6.89,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "ATH",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "ATHUSDT"
+      ],
+      "maxVolumeUsd": 61715085,
+      "totalVenueVolumeUsd": 61715085,
+      "maxAbsChangePct24h": 23.44,
+      "bestChangePct24h": 23.44,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 7.29,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "BR",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "BRUSDT"
+      ],
+      "maxVolumeUsd": 64246487,
+      "totalVenueVolumeUsd": 64246487,
+      "maxAbsChangePct24h": 20.38,
+      "bestChangePct24h": -20.38,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 6.308,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "SPORTFUN",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "SPORTFUNUSDT"
+      ],
+      "maxVolumeUsd": 28043459,
+      "totalVenueVolumeUsd": 28043459,
+      "maxAbsChangePct24h": 18.34,
+      "bestChangePct24h": 18.34,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.782,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "PUMP",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "PUMP-PERP",
+        "PUMPUSDT"
+      ],
+      "maxVolumeUsd": 378063582,
+      "totalVenueVolumeUsd": 575768865,
+      "maxAbsChangePct24h": 17.22,
+      "bestChangePct24h": 17.22,
+      "openInterest": 50633742982,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 8.799,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "US",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "USUSDT"
+      ],
+      "maxVolumeUsd": 37391536,
+      "totalVenueVolumeUsd": 37391536,
+      "maxAbsChangePct24h": 16.88,
+      "bestChangePct24h": -16.88,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.76,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "ZAMA",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "ZAMAUSDT"
+      ],
+      "maxVolumeUsd": 46271555,
+      "totalVenueVolumeUsd": 55776327,
+      "maxAbsChangePct24h": 15.56,
+      "bestChangePct24h": 15.56,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 6.222,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "ZRO",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "ZRO-PERP",
+        "ZROUSDT"
+      ],
+      "maxVolumeUsd": 142711055,
+      "totalVenueVolumeUsd": 228094194,
+      "maxAbsChangePct24h": 14.93,
+      "bestChangePct24h": 14.93,
+      "openInterest": 49126207.2,
+      "funding": 0.00005524,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 8.147,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "AXS",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "AXS-PERP",
+        "AXSUSDT"
+      ],
+      "maxVolumeUsd": 62790228,
+      "totalVenueVolumeUsd": 77452779,
+      "maxAbsChangePct24h": 12.82,
+      "bestChangePct24h": 12.82,
+      "openInterest": 496342.8,
+      "funding": -0.00007949,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 6.58,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "USELESS",
+      "venues": [
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "USELESS-PERP",
+        "USELESSUSDT"
+      ],
+      "maxVolumeUsd": 30219826,
+      "totalVenueVolumeUsd": 35021589,
+      "maxAbsChangePct24h": 11.76,
+      "bestChangePct24h": 11.76,
+      "openInterest": 49682798,
+      "funding": 0.00011935,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.656,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "MAGMA",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "MAGMAUSDT"
+      ],
+      "maxVolumeUsd": 115061393,
+      "totalVenueVolumeUsd": 115061393,
+      "maxAbsChangePct24h": 11.72,
+      "bestChangePct24h": -11.72,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.733,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "MON",
+      "venues": [
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "MON-PERP",
+        "MONUSDT"
+      ],
+      "maxVolumeUsd": 30334176,
+      "totalVenueVolumeUsd": 41689867,
+      "maxAbsChangePct24h": 10.49,
+      "bestChangePct24h": 10.49,
+      "openInterest": 1926234840,
+      "funding": 0.00003084,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.531,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "GRASS",
+      "venues": [
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "GRASS-PERP",
+        "GRASSUSDT"
+      ],
+      "maxVolumeUsd": 25315864,
+      "totalVenueVolumeUsd": 29400140,
+      "maxAbsChangePct24h": 8.36,
+      "bestChangePct24h": 8.36,
+      "openInterest": 52411300.8,
+      "funding": 0.00006333,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.24,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "TIA",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "TIA-PERP",
+        "TIAUSDT"
+      ],
+      "maxVolumeUsd": 37516718,
+      "totalVenueVolumeUsd": 44898005,
+      "maxAbsChangePct24h": 8.03,
+      "bestChangePct24h": 8.03,
+      "openInterest": 16380967.2,
+      "funding": 0.00001784,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.878,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "AERO",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "AERO-PERP",
+        "AEROUSDT"
+      ],
+      "maxVolumeUsd": 28556287,
+      "totalVenueVolumeUsd": 40379141,
+      "maxAbsChangePct24h": 7.74,
+      "bestChangePct24h": 7.74,
+      "openInterest": 41438570,
+      "funding": 0.00011826,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.729,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "CT",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "CTUSDT"
+      ],
+      "maxVolumeUsd": 37919348,
+      "totalVenueVolumeUsd": 37919348,
+      "maxAbsChangePct24h": 7.56,
+      "bestChangePct24h": -7.56,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 4.834,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "AT",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "ATUSDT"
+      ],
+      "maxVolumeUsd": 26208592,
+      "totalVenueVolumeUsd": 34898160,
+      "maxAbsChangePct24h": 7.2,
+      "bestChangePct24h": -7.2,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.139,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "PUMPBTC",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "PUMPBTCUSDT"
+      ],
+      "maxVolumeUsd": 39487699,
+      "totalVenueVolumeUsd": 39487699,
+      "maxAbsChangePct24h": 6.71,
+      "bestChangePct24h": 6.71,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 4.767,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    },
+    {
+      "asset": "WLD",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "WLD-PERP",
+        "WLDUSDT"
+      ],
+      "maxVolumeUsd": 433742865,
+      "totalVenueVolumeUsd": 550953536,
+      "maxAbsChangePct24h": 6.42,
+      "bestChangePct24h": 6.42,
+      "openInterest": 153610077.2,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 6.78,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "SUPER",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "SUPER-PERP",
+        "SUPERUSDT"
+      ],
+      "maxVolumeUsd": 60265361,
+      "totalVenueVolumeUsd": 72654729,
+      "maxAbsChangePct24h": 6.32,
+      "bestChangePct24h": 6.32,
+      "openInterest": 4029206,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 5.912,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "TAO",
+      "venues": [
+        "binance_spot",
+        "binance_usdt_perp",
+        "hyperliquid_perp"
+      ],
+      "markets": [
+        "TAO-PERP",
+        "TAOUSDT"
+      ],
+      "maxVolumeUsd": 114797262,
+      "totalVenueVolumeUsd": 148460696,
+      "maxAbsChangePct24h": 5.96,
+      "bestChangePct24h": 5.96,
+      "openInterest": 238694.49,
+      "funding": 0.0000125,
+      "watchlist": false,
+      "trending": true,
+      "universeScore": 7.156,
+      "eligibleForDeepStats": true,
+      "watchOnlyReason": null
+    },
+    {
+      "asset": "VELVET",
+      "venues": [
+        "binance_usdt_perp"
+      ],
+      "markets": [
+        "VELVETUSDT"
+      ],
+      "maxVolumeUsd": 76711381,
+      "totalVenueVolumeUsd": 76711381,
+      "maxAbsChangePct24h": 5.89,
+      "bestChangePct24h": -5.89,
+      "openInterest": 0,
+      "funding": null,
+      "watchlist": false,
+      "trending": false,
+      "universeScore": 4.974,
+      "eligibleForDeepStats": false,
+      "watchOnlyReason": "single-venue-or-below-liquidity"
+    }
+  ]
+}

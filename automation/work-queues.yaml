@@ -1,0 +1,296 @@
+version: 1
+last_updated: '2026-10-04T08:52:00Z'
+mode: A2
+queues:
+  source_intake:
+    pending: []
+    done:
+      - ralph-operating-thesis-voice-note-2026-07-01
+      - ralph-session-transcript-structured
+      - crypto-trading-bots-project-handoff
+      - mev-bot-archive
+      - zela-planner-handoff
+      - ai-research-os-workshop-readme
+      - ai-research-os-conventions
+      - youtube-ai-research-os-workshop-video
+      - wallet-shadowing-chatgpt-session-transcript
+      - wallet-shadowing-claude-session-transcript
+      - wallet-shadowing-latency-axis-correction-2026-07-01
+      - patient-retail-strategy-map-2026-07-01
+      - tool-first-pivot-2026-07-01
+      - slow-copy-trading-distinction-2026-07-01
+      - slow-accumulator-tool-fit-check-2026-07-01
+      - liquidation-map-liquidity-provision-2026-07-01
+      - liquidation-map-prior-art-gap-map-2026-07-01
+      - liquidation-q1-baseline-kill-switch-2026-07-01
+      - algorithmic-paper-trading-course-intake-2026-09-29
+      - miles-3-tier-ai-trading-setup-intake-2026-09-29
+  unknowns:
+    pending: []
+    active: null
+    done:
+      - U-006
+      - U-003
+      - U-014
+      - U-016
+      - U-020
+      - U-031
+      - U-032
+      - U-033
+      - U-034
+      - U-036
+      - U-023
+      - U-021
+      - U-007
+      - U-002
+      - U-009
+      - U-011
+      - U-010
+      - U-018
+      - U-037
+      - U-022
+      - U-024
+      - U-019
+      - U-039
+      - U-005
+      - U-012
+      - U-028
+      - U-013
+  discovery:
+    pending: []
+    active: null
+    done:
+      - market-bot-reverse-engineering-source-map
+      - demo-sim-profitable-strategy-source-scan
+      - demo-sim-strategy-candidate-spec-seed-list
+      - obsidian-node-connector-check
+      - wallet-shadowing-prior-art-tool-scan
+      - liquidation-q1-baseline-kill-switch
+      - btc-eth-binance-public-archive-adapter
+      - trader-grade-ta-orderflow-tool-fit-map
+      - x-github-strategy-keyword-scan
+      - trading-bot-framework-github-map
+      - freqtrade-no-key-dry-run-spike
+      - github-strategy-profile-scan
+      - operator-profile-source-map
+      - public-orderflow-data-rail-spike
+      - copytrading-public-route-ledger
+      - x-reddit-strategy-inspiration-scan
+      - hyperliquid-copytrading-address-sample
+      - aggregate-flow-signal-feasibility
+      - event-driven-bot-repo-search
+      - existing-tool-fit-map
+      - public-free-source-feed-list
+      - hyperliquid-data-feasibility-spike
+      - grid-range-existing-tool-trial-design
+      - mid-cap-accumulation-flow-scan
+      - patient-retail-archetype-prioritization
+      - strategy-leg-garden
+      - funding-basis-baseline-monitor
+      - funding-basis-wallet-detection-spike
+      - slow-accumulator-copytrading-source-fit
+      - slow-accumulator-following-exit-risk-scan
+      - slow-accumulator-tool-fit-map
+      - wallet-shadow-delay-evidence
+      - wallet-shadowing-archetype-shadowability-map
+      - arkham-evaluation-checklist
+      - smart-money-cohort-discovery-layer
+  investigation:
+    pending: []
+    active: null
+    done:
+      - btc-eth-edge-framework-benchmark
+      - orderflow-feature-taxonomy
+      - community-idea-to-kill-test-template
+      - btc-eth-edge-row-level-parity
+      - build-vs-buy-decision-memo
+      - framework-shortlist-comparison
+      - mev-bot-failure-mode-extraction
+      - strategy-family-taxonomy
+      - trader-grade-ta-feature-taxonomy
+      - trading-bot-build-guide-map
+      - trading-bot-operation-map
+      - wallet-shadow-high-volatility-event-brief
+      - event-triggered-wallet-shadow-falsification
+      - wallet-shadowing-forward-paper-trade-spec
+      - trump-person-event-radar-rules
+      - zela-validation-rules-extraction
+  validation:
+    pending: []
+    done:
+      - impulse-decay-state-feature-scan
+      - impulse-cooldown-purged-forward-test
+      - impulse-exhaustion-cooldown-postmortem
+      - survivor-cluster-postmortem
+      - funding-context-survivor-stress
+      - range-grid-offline-falsifier
+      - grid-range-claim-falsifier-contract
+      - strategy-spam-survivor-stress
+      - strategy-spam-funnel-cleanup-btc-gated-alt-dedupe
+      - strategy-spam-funnel-btc-first-pass
+      - funding-persistence-context-baseline
+      - demo-sim-range-breakout-survivor-stress
+      - btc-risk-on-opening-range-breakout-continuation
+      - pdh-pdl-second-gate-walk-forward
+      - pdh-pdl-btc-gated-liquidity-sweep-long-kill-test
+      - strategy-filter-purged-embargo-split-classifier-implementation
+      - demo-sim-short-strategy-quarantine-and-revalidation
+      - strategy-filter-atas-verifier-status-reconciliation
+      - strategy-filter-previous-report-drift-sidecar-closeout
+      - ralph-adversarial-improvement-loop-bootstrap-closeout
+      - atas-orderflow-access-audit-closeout
+      - youtube-transcript-fallback-test
+      - orderflow-alert-alignment-backtest
+      - ta-orderflow-alert-gate-backtest
+      - book-freshness-repair-for-orderflow-alert-gate
+      - no-key-first-experiment-selection
+      - ta-learning-loop-bootstrap
+      - forward-paper-tier-dashboard
+      - strategy-filter-out-of-sample-split
+      - strategy-filter-baseline-comparison
+      - strategy-filter-deflated-sharpe-calibration
+      - strategy-idea-spec-schema
+      - strategy-filter-rejection-ledger-semantic-field-implementation
+      - pre-ml-feature-label-table-spec
+      - candidate-scoring-dry-run
+      - strategy-score-rubric-dry-run
+      - hftbacktest-orderflow-replay-feasibility
+      - orderflow-capture-v2-schema
+      - hftbacktest-minimal-replay-runtime-spike
+      - hftbacktest-replay-fixture-tests
+      - hftbacktest-native-timestamp-probe
+      - two-to-four-hour-orderflow-capture
+      - strategy-filter-calibration-audit
+      - strategy-filter-current-sieve-audit
+      - strategy-filter-threshold-sensitivity
+      - strategy-filter-walk-forward-survivor-invariant
+      - strategy-filter-shadow-pnl-ledger
+      - strategy-filter-psr-diagnostic-stress
+      - strategy-filter-rejection-ledger-quality-audit
+      - strategy-filter-rejection-ledger-schema-guard
+      - strategy-filter-routing-reconciliation
+      - strategy-filter-bias-hygiene-checklist
+      - strategy-filter-startup-variance-guard
+      - strategy-filter-lookahead-source-guard
+      - strategy-filter-doge-alert-edge-candidate-destruction
+      - ta-learning-loop-call-candidate-forward-check
+      - profitability-flywheel-routing-contract-formalization
+      - strategy-filter-sol-b-tier-candidate-destruction
+      - add-forward-paper-regime-tagging-before-more-historical-bucket-promotion
+      - optionally-test-remaining-avax-b-tier-alert-edge-candidates
+      - optionally-test-avax-trend-pullback-reclaim-b-tier-candidate
+      - guide-source-falsification
+      - ai-research-os-index-lint
+      - funding-basis-public-snapshot-table
+      - funding-basis-fixed-window-accounting-design
+      - funding-basis-previous-output-comparison-extension
+      - hype-feedback-to-quantified-demo-strategy-loop
+      - strategy-filter-oos-baseline-lift-audit
+      - strategy-filter-oos-baseline-lift-gate-design
+      - strategy-filter-oos-baseline-lift-gate-implementation
+      - strategy-filter-psr-diagnostic-overlap-audit
+      - strategy-filter-gate-group-reporting
+      - strategy-filter-avax-watch-downgrade-reconciliation
+      - strategy-filter-near-miss-gate-pressure-audit
+      - strategy-filter-previous-report-drift-contract
+      - backtest-readiness-purged-embargo-design
+      - strategy-filter-purged-embargo-implementation-scope
+      - strategy-filter-purged-embargo-verifier-assertion-map
+      - strategy-filter-purged-embargo-implementation-preflight
+      - strategy-filter-atas-verifier-drift-blocker
+      - demo-sim-paper-fund-ledger-implementation
+      - demo-sim-paper-fund-drawdown-and-risk-report
+      - demo-sim-range-breakout-btc-risk-on-forward-gate
+      - demo-sim-replay-signal-price-precision-fix
+      - demo-sim-replay-walk-forward-filter-grid
+      - planned-level-proxy-refresh-baseline
+      - usdm-absorption-balanced-manifest-validation
+      - usdm-absorption-targeted-comparable-falsification
+      - usdm-absorption-full-path-mfe-mae-rescore
+    active: null
+  decision:
+    pending: []
+    active: null
+    done:
+      - strategy-spam-recurring-lane-contract
+      - autoresearch-evidence-ledger-prioritizer
+      - index-generated-navigation-split
+      - mev-bot-case-file-not-execution
+      - open-unknown-route-reconciliation
+  watch:
+    items:
+      - polymarket
+      - homerun-framework
+      - hummingbot-framework
+      - freqtrade-framework
+      - evm-event-driven-wallet-shadow
+      - hyperliquid-wallet-shadowing
+      - freqtrade-engine
+      - pionex-grid-bot
+      - copin-copy-trading
+      - trump-person-event-radar
+      - cex-backtest-rail
+      - public-orderflow-rail
+      - atas-orderflow-exporter
+      - hype-l2-absorption-capture-falsifier
+      - copytrading-wallet-following-rail
+      - operator-profile-community-rail
+      - trader-grade-ta-orderflow-stack
+      - hummingbot-capital-fit
+      - youtube-transcript-throwaway-account-option
+      - ta-call-candidates-20-row-threshold
+      - arkham-material-value-tiny-export-gate
+      - wallet-shadow-independent-event-window-gate
+      - filip-btc-pdv-pdn-monday-band-validation
+      - planned-level-proxy-label-baseline-watch
+      - algorithmic-paper-trading-system-prior-art
+      - ralph-operator-console-human-in-the-loop-prior-art
+guardrails:
+  no_live_trading: true
+  no_wallet_keys: true
+  no_unapproved_live_write_trading: true
+  no_unapproved_exchange_accounts: true
+  no_paid_infra_without_approval: true
+  no_public_publishing_without_approval: true
+  no_automatic_skill_installation: true
+  no_scheduler_changes_without_per_action_approval: true
+  no_live_alert_wording_changes_without_per_action_approval: true
+  no_risk_sizing_tp_sl_changes_without_per_action_approval: true
+  no_execution_changes_without_per_action_approval: true
+  no_keys_or_paid_services_without_per_action_approval: true
+operating_contract:
+  name: RALPH Profitability Flywheel
+  status: active_research_paper_contract
+  approved_by: Tomas
+  approved_at: '2026-08-29T19:49:15Z'
+  file: core/profitability-flywheel.md
+  proposal_note: wiki/notes/2026-08-29-ralph-grand-loop-verify-reassess.md
+  approval_scope: internal RALPH docs, router, queues, research loops, paper/demo evidence workflow
+  still_requires_per_action_approval:
+    - live trading
+    - wallet keys
+    - exchange keys
+    - paid services
+    - public posting
+    - scheduler changes
+    - live alert wording
+    - risk/sizing/TP/SL
+    - execution changes
+automation:
+  active_loop: ralph-autoresearch-loop
+  cadence: Daily at 09:30 Europe/Prague
+  session_target: isolated
+  notify_tomas_only_when_needed: true
+  retrieval_router: automation/retrieval-router.yaml
+  token_budget_contract: core/indexing-token-budget.md
+  preferred_lanes:
+    - profitability-flywheel
+    - strategy-destruction-filter
+    - strategy-research
+    - framework-repo-discovery
+    - x-github-research
+    - operator-profile-community-research
+    - market-battlefield
+    - copytrading-wallet-following-research
+    - paper-demo-dry-run-tooling
+    - self-improvement

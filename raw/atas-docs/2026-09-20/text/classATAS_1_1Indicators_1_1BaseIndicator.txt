@@ -1,0 +1,715 @@
+ATAS: ATAS.Indicators.BaseIndicator Class Reference 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Public Member Functions | Static Public Attributes | Protected Member Functions | Static Protected Member Functions | Protected Attributes | Properties | Events | List of all members 
+
+ATAS.Indicators.BaseIndicator Class Reference abstract 
+
+Base class for custom indicators in a chart. More... 
+
+Inheritance diagram for ATAS.Indicators.BaseIndicator: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Collaboration diagram for ATAS.Indicators.BaseIndicator: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Public Member Functions 
+
+virtual void Dispose () 
+
+override string ToString () 
+
+Converts the current instance of the indicator to its string representation. 
+
+Public Member Functions inherited from ATAS.Indicators.ChartObject 
+
+virtual bool ProcessMouseClick (RenderControlMouseEventArgs e) 
+
+Processes a mouse click event on the chart object. 
+
+virtual bool ProcessMouseWheel (int delta) 
+
+Processes a mouse wheel event on the chart object. 
+
+virtual bool ProcessMouseDown (RenderControlMouseEventArgs e) 
+
+Processes a mouse down event on the chart object. 
+
+virtual bool ProcessMouseUp (RenderControlMouseEventArgs e) 
+
+Processes a mouse up event on the chart object. 
+
+virtual bool ProcessMouseMove (RenderControlMouseEventArgs e) 
+
+Processes a mouse move event on the chart object. 
+
+virtual bool ProcessMouseDoubleClick (RenderControlMouseEventArgs e) 
+
+Processes a mouse double click event on the chart object. 
+
+virtual StdCursor GetCursor (RenderControlMouseEventArgs e) 
+
+Gets the cursor to display when the mouse is over the chart object. 
+
+virtual bool ProcessKeyDown ( CrossKeyEventArgs e) 
+
+Processes a key down event on the chart object. 
+
+virtual bool ProcessKeyUp ( CrossKeyEventArgs e) 
+
+Processes a key up event on the chart object. 
+
+Static Public Attributes 
+
+const int MaxCustomNameLength = 50 
+
+Maximum allowed length of the user-defined CustomName. 
+
+Protected Member Functions 
+
+BaseIndicator (bool useCandles=false) 
+
+virtual void RecalculateValues () 
+
+Recalculate the indicator values on each bar. 
+
+virtual void OnInitialize () 
+
+The method is executed before the first calculation. 
+
+virtual void OnRecalculate () 
+
+The method is executed before a new calculation. 
+
+virtual void OnFinishRecalculate () 
+
+The method is executed after the end of the calculation. 
+
+virtual void Calculate (int bar, decimal value) 
+
+Performs the calculation for the indicator at the specified bar and value. 
+
+abstract void OnCalculate (int bar, decimal value) 
+
+The main indicator calculation method is called for each bar on the history, then it is called on each tick. 
+
+void Add ( Indicator indicator) 
+
+Adds an indicator to the list of used indicators by this indicator. 
+
+void Clear () 
+
+Clear all data series. 
+
+virtual void OnSourceChanged () 
+
+This method is called when the SourceDataSeries property is changed. 
+
+virtual void OnPropertiesEditorChanged ( IPropertiesEditor ? oldValue, IPropertiesEditor ? newValue) 
+
+Called when the PropertiesEditor property changes. 
+
+void RaisePropertyChanged (string propertyName) 
+
+Raises the PropertyChanged event for the specified property name. 
+
+void RaisePropertyChanged (object? sender, PropertyChangedEventArgs e) 
+
+Raises the PropertyChanged event with the specified event arguments. 
+
+void RaisePanelPropertyChanged (string name) 
+
+Raises the PanelPropertyChanged event with the specified property name. 
+
+void RaiseBarValueChanged (int bar) 
+
+Raises the BarValueChanged event with the specified bar value. 
+
+virtual void OnDispose () 
+
+Called when the indicator is being disposed. 
+
+override void OnVisibleChanged () 
+
+Called when the Visible property changes. 
+
+Protected Member Functions inherited from ATAS.Indicators.ChartObject 
+
+virtual void OnVisibleChanged () 
+
+Called when the Visible property changes. 
+
+virtual void LockedOnChanged () 
+
+Called when the Locked property changes. 
+
+Protected Member Functions inherited from ATAS.Indicators.Filters.TrackedPropertyBase 
+
+void SetProperty< TProperty > (ref TProperty store, TProperty value, Action? onChanged=null, Func< TProperty, bool >? onChanging=null, [CallerMemberName] string propertyName="") 
+
+Sets the value of a property and notifies subscribers if the value has changed. 
+
+void SetTrackedProperty< TProperty > (ref TProperty store, TProperty value, Action< string >? onChanged=null, [CallerMemberName] string propertyName="") 
+
+Sets the value of a property that implements the INotifyPropertyChanged interface and notifies subscribers if the value has changed. 
+
+virtual void OnChangeProperty ([CallerMemberName] string propertyName="") 
+
+Notifies subscribers when a property value changes. 
+
+Static Protected Member Functions 
+
+static PerfCounter MeasurePerformance (string name) 
+
+Measures the performance of a specific operation with the given name. If a performance diagnoser is available, it will be used to measure the performance; otherwise, a default performance counter will be returned. 
+
+Protected Attributes 
+
+readonly List< Indicator > UsedIndicators = new() 
+
+The list of indicators that are being used by this indicator. 
+
+Properties 
+
+static ? PerformanceDiagnoser PerformanceDiagnoser [get] 
+
+Indicator performance tracker. 
+
+static bool UseProfiling [get, set] 
+
+Set to true to measure the performance of all indicators. 
+
+IPropertiesEditor ? PropertiesEditor [get, set] 
+
+string Name [get, set] 
+
+Name of the indicator. 
+
+string? CustomName [get, set] 
+
+User-defined display name of this indicator instance. It is independent from other instances of the same indicator type and is used purely as a label. When null or empty, the auto-generated name (see ToString) is shown instead. 
+
+bool IsDisposed [get, set] 
+
+Gets or sets a value indicating whether the indicator object has been disposed of. 
+
+List< IDataSeries > DataSeries [get] 
+
+List of data series used by the indicator. 
+
+bool SupportsExtendedSeries [get] 
+
+Gets value indicating whether the data series can be drawn out of chart bars. 
+
+List< LineSeries > LineSeries [get] 
+
+List of line series used by the indicator. 
+
+string Panel [get, set] 
+
+The name of the panel where the indicator is placed. 
+
+bool IsVerticalIndicator [get, set] 
+
+Gets or sets a value indicating whether the indicator is intended to be displayed as a vertical indicator. 
+
+bool UseCandles [get] 
+
+Gets a value indicating whether the indicator uses candle data series. 
+
+bool ExternalCalculation [get, set] 
+
+When true the indicator's own OnCalculate pipeline is suppressed and its data series are filled by an external calculation service (the platform's multi-timeframe projection host, PLAT-4527). The host listens to ExternalCalculateBarRequested / ExternalRecalculateRequested to keep the series in sync. Not persisted; set by the host only. 
+
+int CurrentBar [get] 
+
+Bars number. All bars and the values of the corresponding data series have a serial number. The earliest bar of the chart is assigned the number 0; the next bar is assigned the number 1, and so on. 
+
+IDataSeries < decimal >? SourceDataSeries [get, set] 
+
+Gets or sets the data series used as the source for the indicator's calculations. 
+
+decimal this[int index] [get, protected set] 
+
+Gets or sets the value of the first data series of the indicator at the specified index. 
+
+Properties inherited from ATAS.Indicators.ChartObject 
+
+bool Visible [get, set] 
+
+Gets or sets a value indicating whether the chart object is visible. 
+
+bool Locked [get, set] 
+
+Gets or sets a value indicating whether the chart object is locked. 
+
+bool AllowedInteraction [get] 
+
+Gets a value indicating whether interaction with the chart object is allowed. 
+
+Properties inherited from ATAS.Indicators.IPropertiesEditorOwner 
+
+IPropertiesEditor ? PropertiesEditor [get, set] 
+
+Events 
+
+Action< int >? ExternalCalculateBarRequested 
+
+Raised instead of a single-bar calculation when ExternalCalculation is on (a source data series tick arrived for the given bar). 
+
+Action? ExternalRecalculateRequested 
+
+Raised instead of a full recalculation when ExternalCalculation is on (the data series were cleared and must be re-projected in full). 
+
+new? PropertyChangedEventHandler PropertyChanged 
+
+PropertyChangedEventHandler? PanelPropertyChanged 
+
+Action< int >? BarValueChanged 
+
+Event that is raised when the value of a bar in the indicator changes. 
+
+Events inherited from ATAS.Indicators.Filters.TrackedPropertyBase 
+
+PropertyChangedEventHandler? PropertyChanged 
+
+Events inherited from ATAS.Indicators.INotifyPanelPropertyChanged 
+
+PropertyChangedEventHandler PanelPropertyChanged 
+
+Occurs when a panel property value changes. 
+
+Detailed Description 
+
+Base class for custom indicators in a chart. 
+
+Constructor & Destructor Documentation 
+
+◆ BaseIndicator() 
+
+ATAS.Indicators.BaseIndicator.BaseIndicator ( bool useCandles = false ) 
+
+protected 
+
+Member Function Documentation 
+
+◆ Add() 
+
+void ATAS.Indicators.BaseIndicator.Add ( Indicator indicator ) 
+
+protected 
+
+Adds an indicator to the list of used indicators by this indicator. 
+Parameters 
+
+indicator The indicator to be added to the list of used indicators. 
+
+◆ Calculate() 
+
+virtual void ATAS.Indicators.BaseIndicator.Calculate ( int bar , 
+
+decimal value 
+
+) 
+
+protected virtual 
+
+Performs the calculation for the indicator at the specified bar and value. 
+Parameters 
+
+bar The bar number for which the calculation is performed. 
+
+value The input value from the data series at the specified bar. 
+
+Reimplemented in ATAS.Indicators.ExtendedIndicator . 
+
+◆ Clear() 
+
+void ATAS.Indicators.BaseIndicator.Clear ( ) 
+
+protected 
+
+Clear all data series. 
+
+◆ Dispose() 
+
+virtual void ATAS.Indicators.BaseIndicator.Dispose ( ) 
+
+virtual 
+
+Reimplemented in ATAS.Indicators.ExtendedIndicator . 
+
+◆ MeasurePerformance() 
+
+static PerfCounter ATAS.Indicators.BaseIndicator.MeasurePerformance ( string name ) 
+
+static protected 
+
+Measures the performance of a specific operation with the given name. If a performance diagnoser is available, it will be used to measure the performance; otherwise, a default performance counter will be returned. 
+Parameters 
+
+name The name of the operation to measure performance for. 
+
+Returns A performance counter representing the measured performance. If no performance diagnoser is available, a default performance counter will be returned. 
+
+◆ OnCalculate() 
+
+abstract void ATAS.Indicators.BaseIndicator.OnCalculate ( int bar , 
+
+decimal value 
+
+) 
+
+protected pure virtual 
+
+The main indicator calculation method is called for each bar on the history, then it is called on each tick. 
+Parameters 
+
+bar Bar number. 
+
+value Input data series value. 
+
+Implemented in ATAS.Strategies.Chart.SmaChartStrategy . 
+
+◆ OnDispose() 
+
+virtual void ATAS.Indicators.BaseIndicator.OnDispose ( ) 
+
+protected virtual 
+
+Called when the indicator is being disposed. 
+
+◆ OnFinishRecalculate() 
+
+virtual void ATAS.Indicators.BaseIndicator.OnFinishRecalculate ( ) 
+
+protected virtual 
+
+The method is executed after the end of the calculation. 
+
+◆ OnInitialize() 
+
+virtual void ATAS.Indicators.BaseIndicator.OnInitialize ( ) 
+
+protected virtual 
+
+The method is executed before the first calculation. 
+
+◆ OnPropertiesEditorChanged() 
+
+virtual void ATAS.Indicators.BaseIndicator.OnPropertiesEditorChanged ( IPropertiesEditor ? oldValue , 
+
+IPropertiesEditor ? newValue 
+
+) 
+
+protected virtual 
+
+Called when the PropertiesEditor property changes. 
+Parameters 
+
+oldValue The previous properties editor instance. 
+
+newValue The new properties editor instance. 
+
+◆ OnRecalculate() 
+
+virtual void ATAS.Indicators.BaseIndicator.OnRecalculate ( ) 
+
+protected virtual 
+
+The method is executed before a new calculation. 
+
+◆ OnSourceChanged() 
+
+virtual void ATAS.Indicators.BaseIndicator.OnSourceChanged ( ) 
+
+protected virtual 
+
+This method is called when the SourceDataSeries property is changed. 
+
+◆ OnVisibleChanged() 
+
+override void ATAS.Indicators.BaseIndicator.OnVisibleChanged ( ) 
+
+protected virtual 
+
+Called when the Visible property changes. 
+
+Reimplemented from ATAS.Indicators.ChartObject . 
+
+Reimplemented in ATAS.Indicators.ExtendedIndicator . 
+
+◆ RaiseBarValueChanged() 
+
+void ATAS.Indicators.BaseIndicator.RaiseBarValueChanged ( int bar ) 
+
+protected 
+
+Raises the BarValueChanged event with the specified bar value. 
+Parameters 
+
+bar The bar value to pass to the event handlers. 
+
+◆ RaisePanelPropertyChanged() 
+
+void ATAS.Indicators.BaseIndicator.RaisePanelPropertyChanged ( string name ) 
+
+protected 
+
+Raises the PanelPropertyChanged event with the specified property name. 
+Parameters 
+
+name The name of the property that changed. 
+
+◆ RaisePropertyChanged() [1/2] 
+
+void ATAS.Indicators.BaseIndicator.RaisePropertyChanged ( object? sender , 
+
+PropertyChangedEventArgs e 
+
+) 
+
+protected 
+
+Raises the PropertyChanged event with the specified event arguments. 
+Parameters 
+
+sender The sender of the event. 
+
+e The event arguments. 
+
+◆ RaisePropertyChanged() [2/2] 
+
+void ATAS.Indicators.BaseIndicator.RaisePropertyChanged ( string propertyName ) 
+
+protected 
+
+Raises the PropertyChanged event for the specified property name. 
+Parameters 
+
+propertyName The name of the property that changed. 
+
+◆ RecalculateValues() 
+
+virtual void ATAS.Indicators.BaseIndicator.RecalculateValues ( ) 
+
+protected virtual 
+
+Recalculate the indicator values on each bar. 
+
+Reimplemented in ATAS.Indicators.ExtendedIndicator . 
+
+◆ ToString() 
+
+override string ATAS.Indicators.BaseIndicator.ToString ( ) 
+
+Converts the current instance of the indicator to its string representation. 
+Returns A string representation of the indicator. 
+
+Member Data Documentation 
+
+◆ MaxCustomNameLength 
+
+const int ATAS.Indicators.BaseIndicator.MaxCustomNameLength = 50 
+
+static 
+
+Maximum allowed length of the user-defined CustomName. 
+
+◆ UsedIndicators 
+
+readonly List< Indicator > ATAS.Indicators.BaseIndicator.UsedIndicators = new() 
+
+protected 
+
+The list of indicators that are being used by this indicator. 
+
+Property Documentation 
+
+◆ CurrentBar 
+
+int ATAS.Indicators.BaseIndicator.CurrentBar 
+
+get 
+
+Bars number. All bars and the values of the corresponding data series have a serial number. The earliest bar of the chart is assigned the number 0; the next bar is assigned the number 1, and so on. 
+
+◆ CustomName 
+
+string? ATAS.Indicators.BaseIndicator.CustomName 
+
+get set 
+
+User-defined display name of this indicator instance. It is independent from other instances of the same indicator type and is used purely as a label. When null or empty, the auto-generated name (see ToString) is shown instead. 
+
+◆ DataSeries 
+
+List< IDataSeries > ATAS.Indicators.BaseIndicator.DataSeries 
+
+get 
+
+List of data series used by the indicator. 
+
+◆ ExternalCalculation 
+
+bool ATAS.Indicators.BaseIndicator.ExternalCalculation 
+
+get set 
+
+When true the indicator's own OnCalculate pipeline is suppressed and its data series are filled by an external calculation service (the platform's multi-timeframe projection host, PLAT-4527). The host listens to ExternalCalculateBarRequested / ExternalRecalculateRequested to keep the series in sync. Not persisted; set by the host only. 
+
+◆ IsDisposed 
+
+bool ATAS.Indicators.BaseIndicator.IsDisposed 
+
+get set 
+
+Gets or sets a value indicating whether the indicator object has been disposed of. 
+
+◆ IsVerticalIndicator 
+
+bool ATAS.Indicators.BaseIndicator.IsVerticalIndicator 
+
+get set 
+
+Gets or sets a value indicating whether the indicator is intended to be displayed as a vertical indicator. 
+
+◆ LineSeries 
+
+List< LineSeries > ATAS.Indicators.BaseIndicator.LineSeries 
+
+get 
+
+List of line series used by the indicator. 
+
+◆ Name 
+
+string ATAS.Indicators.BaseIndicator.Name 
+
+get set 
+
+Name of the indicator. 
+
+◆ Panel 
+
+string ATAS.Indicators.BaseIndicator.Panel 
+
+get set 
+
+The name of the panel where the indicator is placed. 
+
+◆ PerformanceDiagnoser 
+
+? PerformanceDiagnoser ATAS.Indicators.BaseIndicator.PerformanceDiagnoser 
+
+static get protected 
+
+Indicator performance tracker. 
+
+◆ PropertiesEditor 
+
+IPropertiesEditor ? ATAS.Indicators.BaseIndicator.PropertiesEditor 
+
+get set 
+
+Implements ATAS.Indicators.IPropertiesEditorOwner . 
+
+◆ SourceDataSeries 
+
+IDataSeries <decimal>? ATAS.Indicators.BaseIndicator.SourceDataSeries 
+
+get set 
+
+Gets or sets the data series used as the source for the indicator's calculations. 
+
+The source data series provides the input data for the indicator's calculations. When this property is set, the indicator will automatically recalculate its values based on the new source data series. 
+
+◆ SupportsExtendedSeries 
+
+bool ATAS.Indicators.BaseIndicator.SupportsExtendedSeries 
+
+get 
+
+Gets value indicating whether the data series can be drawn out of chart bars. 
+
+◆ this[int index] 
+
+decimal ATAS.Indicators.BaseIndicator.this[int index] 
+
+get protected set 
+
+Gets or sets the value of the first data series of the indicator at the specified index. 
+Parameters 
+
+index The index of the value to get or set. 
+
+Returns The value of the indicator at the specified index. 
+
+◆ UseCandles 
+
+bool ATAS.Indicators.BaseIndicator.UseCandles 
+
+get 
+
+Gets a value indicating whether the indicator uses candle data series. 
+
+◆ UseProfiling 
+
+bool ATAS.Indicators.BaseIndicator.UseProfiling 
+
+static get set protected 
+
+Set to true to measure the performance of all indicators. 
+
+Event Documentation 
+
+◆ BarValueChanged 
+
+Action<int>? ATAS.Indicators.BaseIndicator.BarValueChanged 
+
+Event that is raised when the value of a bar in the indicator changes. 
+
+◆ ExternalCalculateBarRequested 
+
+Action<int>? ATAS.Indicators.BaseIndicator.ExternalCalculateBarRequested 
+
+Raised instead of a single-bar calculation when ExternalCalculation is on (a source data series tick arrived for the given bar). 
+
+◆ ExternalRecalculateRequested 
+
+Action? ATAS.Indicators.BaseIndicator.ExternalRecalculateRequested 
+
+Raised instead of a full recalculation when ExternalCalculation is on (the data series were cleared and must be re-projected in full). 
+
+◆ PanelPropertyChanged 
+
+PropertyChangedEventHandler? ATAS.Indicators.BaseIndicator.PanelPropertyChanged 
+
+◆ PropertyChanged 
+
+new? PropertyChangedEventHandler ATAS.Indicators.BaseIndicator.PropertyChanged 
+
+The documentation for this class was generated from the following file: 
+BaseIndicator.cs 
+
+ATAS 
+
+Indicators 
+
+BaseIndicator 
+
+Generated by 1.9.7 
+
+Join our developers chat

@@ -1,0 +1,11 @@
+{
+  "name": "copytrading-address-intake",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "intake:hyperliquid": "node src/run-hyperliquid-address-intake.mjs",
+    "ledger:hyperliquid-delay-sample": "node src/run-hyperliquid-delay-sample.mjs",
+    "ledger:public-routes": "node src/run-hyperliquid-public-route-ledger.mjs"
+  }
+}

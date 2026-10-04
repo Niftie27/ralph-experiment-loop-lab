@@ -1,0 +1,2654 @@
+{
+  "generatedAt": "2026-08-26T08:22:41.023Z",
+  "status": "research-only-no-live-execution",
+  "source": "crypto-updates/runtime/alert-feedback.jsonl",
+  "cacheDir": "ralph-research-os/experiments/strategy-destruction-filter/data/aggtrades-cache",
+  "scope": {
+    "venue": "binance_spot_public_aggTrades",
+    "maxAlerts": 80,
+    "assets": [
+      "BTC",
+      "ETH",
+      "SOL"
+    ],
+    "excluded": [
+      "HYPE",
+      "non-VELOCITY triggers",
+      "strict-quality failures"
+    ]
+  },
+  "replayMethod": {
+    "endpoint": "/api/v3/aggTrades",
+    "auth": "none",
+    "recentWindowMs": 5000,
+    "baselineWindowMs": 300000,
+    "baselineSlots": 59,
+    "volumeVelocityFormula": "recent_5s_notional / mean(previous_5m_split_into_5s_slots)",
+    "priceMoveFormula": "last_trade_at_or_before_event / last_trade_at_or_before_event_minus_trigger_window - 1"
+  },
+  "totals": {
+    "replayed": 54,
+    "replayOk": 54,
+    "fetchFailed": 0,
+    "noTradesReturned": 0,
+    "exactMatch": 29,
+    "usableRows": 29,
+    "verdicts": {
+      "noisy": 10,
+      "follow-useful": 20,
+      "fade-useful": 24
+    }
+  },
+  "buckets": [
+    {
+      "key": "ETH|5m|UP|follow-useful",
+      "asset": "ETH",
+      "triggerLabel": "5m",
+      "direction": "UP",
+      "verdict": "follow-useful",
+      "sample": 4,
+      "avgReplayVelocityRatio": 2.8529,
+      "avgReplayMovePct": 0.9176,
+      "ids": [
+        "ETH-UP-1787151298775-bhrjsk",
+        "ETH-UP-1787153055182-ymjew4",
+        "ETH-UP-1787213450759-gcxdd2",
+        "ETH-UP-1787238219715-lur5og"
+      ]
+    },
+    {
+      "key": "ETH|60s|DOWN|fade-useful",
+      "asset": "ETH",
+      "triggerLabel": "60s",
+      "direction": "DOWN",
+      "verdict": "fade-useful",
+      "sample": 4,
+      "avgReplayVelocityRatio": 8.2763,
+      "avgReplayMovePct": -0.6599,
+      "ids": [
+        "ETH-DOWN-1787351462736-f5kvh3",
+        "ETH-DOWN-1787364017274-190mj4",
+        "ETH-DOWN-1787644182524-q4d5qb",
+        "ETH-DOWN-1787692087789-pk6bzs"
+      ]
+    },
+    {
+      "key": "ETH|5m|DOWN|fade-useful",
+      "asset": "ETH",
+      "triggerLabel": "5m",
+      "direction": "DOWN",
+      "verdict": "fade-useful",
+      "sample": 2,
+      "avgReplayVelocityRatio": 2.3853,
+      "avgReplayMovePct": -0.9016,
+      "ids": [
+        "ETH-DOWN-1787337935499-ypx996",
+        "ETH-DOWN-1787357205898-w0o15a"
+      ]
+    },
+    {
+      "key": "SOL|15m|DOWN|fade-useful",
+      "asset": "SOL",
+      "triggerLabel": "15m",
+      "direction": "DOWN",
+      "verdict": "fade-useful",
+      "sample": 2,
+      "avgReplayVelocityRatio": 4.654,
+      "avgReplayMovePct": -1.6612,
+      "ids": [
+        "SOL-DOWN-1787387436908-gaekvu",
+        "SOL-DOWN-1787622780137-43xvxn"
+      ]
+    },
+    {
+      "key": "BTC|15m|UP|noisy",
+      "asset": "BTC",
+      "triggerLabel": "15m",
+      "direction": "UP",
+      "verdict": "noisy",
+      "sample": 1,
+      "avgReplayVelocityRatio": 4.5975,
+      "avgReplayMovePct": 1.2508,
+      "ids": [
+        "BTC-UP-1787238242568-s2y5k6"
+      ]
+    },
+    {
+      "key": "BTC|5m|UP|follow-useful",
+      "asset": "BTC",
+      "triggerLabel": "5m",
+      "direction": "UP",
+      "verdict": "follow-useful",
+      "sample": 1,
+      "avgReplayVelocityRatio": 4.721,
+      "avgReplayMovePct": 0.9926,
+      "ids": [
+        "BTC-UP-1787213359438-7qays5"
+      ]
+    },
+    {
+      "key": "BTC|60s|DOWN|follow-useful",
+      "asset": "BTC",
+      "triggerLabel": "60s",
+      "direction": "DOWN",
+      "verdict": "follow-useful",
+      "sample": 1,
+      "avgReplayVelocityRatio": 1.0773,
+      "avgReplayMovePct": -0.601,
+      "ids": [
+        "BTC-DOWN-1787279617750-809y4g"
+      ]
+    },
+    {
+      "key": "BTC|60s|UP|fade-useful",
+      "asset": "BTC",
+      "triggerLabel": "60s",
+      "direction": "UP",
+      "verdict": "fade-useful",
+      "sample": 1,
+      "avgReplayVelocityRatio": 5.492,
+      "avgReplayMovePct": 0.6091,
+      "ids": [
+        "BTC-UP-1787220936327-ke83bj"
+      ]
+    },
+    {
+      "key": "ETH|5m|DOWN|noisy",
+      "asset": "ETH",
+      "triggerLabel": "5m",
+      "direction": "DOWN",
+      "verdict": "noisy",
+      "sample": 1,
+      "avgReplayVelocityRatio": 23.0782,
+      "avgReplayMovePct": -0.9074,
+      "ids": [
+        "ETH-DOWN-1786462644866-k89vtm"
+      ]
+    },
+    {
+      "key": "ETH|5m|UP|noisy",
+      "asset": "ETH",
+      "triggerLabel": "5m",
+      "direction": "UP",
+      "verdict": "noisy",
+      "sample": 1,
+      "avgReplayVelocityRatio": 3.2939,
+      "avgReplayMovePct": 0.9006,
+      "ids": [
+        "ETH-UP-1787380834476-2j4any"
+      ]
+    },
+    {
+      "key": "ETH|60s|DOWN|noisy",
+      "asset": "ETH",
+      "triggerLabel": "60s",
+      "direction": "DOWN",
+      "verdict": "noisy",
+      "sample": 1,
+      "avgReplayVelocityRatio": 6.1517,
+      "avgReplayMovePct": -0.6226,
+      "ids": [
+        "ETH-DOWN-1787232650136-ns43m6"
+      ]
+    },
+    {
+      "key": "ETH|60s|UP|fade-useful",
+      "asset": "ETH",
+      "triggerLabel": "60s",
+      "direction": "UP",
+      "verdict": "fade-useful",
+      "sample": 1,
+      "avgReplayVelocityRatio": 33.1865,
+      "avgReplayMovePct": 0.6512,
+      "ids": [
+        "ETH-UP-1787276849407-2ty74i"
+      ]
+    },
+    {
+      "key": "ETH|60s|UP|follow-useful",
+      "asset": "ETH",
+      "triggerLabel": "60s",
+      "direction": "UP",
+      "verdict": "follow-useful",
+      "sample": 1,
+      "avgReplayVelocityRatio": 217.1798,
+      "avgReplayMovePct": 0.6309,
+      "ids": [
+        "ETH-UP-1787349130589-ptephm"
+      ]
+    },
+    {
+      "key": "SOL|15m|UP|follow-useful",
+      "asset": "SOL",
+      "triggerLabel": "15m",
+      "direction": "UP",
+      "verdict": "follow-useful",
+      "sample": 1,
+      "avgReplayVelocityRatio": 0.5636,
+      "avgReplayMovePct": 1.6502,
+      "ids": [
+        "SOL-UP-1787151268089-364skg"
+      ]
+    },
+    {
+      "key": "SOL|15m|UP|noisy",
+      "asset": "SOL",
+      "triggerLabel": "15m",
+      "direction": "UP",
+      "verdict": "noisy",
+      "sample": 1,
+      "avgReplayVelocityRatio": 0.2363,
+      "avgReplayMovePct": 1.673,
+      "ids": [
+        "SOL-UP-1787395094474-0cyc5n"
+      ]
+    },
+    {
+      "key": "SOL|5m|DOWN|fade-useful",
+      "asset": "SOL",
+      "triggerLabel": "5m",
+      "direction": "DOWN",
+      "verdict": "fade-useful",
+      "sample": 1,
+      "avgReplayVelocityRatio": 0.3449,
+      "avgReplayMovePct": -1.2189,
+      "ids": [
+        "SOL-DOWN-1787617033673-kiu4zh"
+      ]
+    },
+    {
+      "key": "SOL|5m|DOWN|follow-useful",
+      "asset": "SOL",
+      "triggerLabel": "5m",
+      "direction": "DOWN",
+      "verdict": "follow-useful",
+      "sample": 1,
+      "avgReplayVelocityRatio": 12.8938,
+      "avgReplayMovePct": -1.1825,
+      "ids": [
+        "SOL-DOWN-1787393034069-hgn807"
+      ]
+    },
+    {
+      "key": "SOL|5m|UP|fade-useful",
+      "asset": "SOL",
+      "triggerLabel": "5m",
+      "direction": "UP",
+      "verdict": "fade-useful",
+      "sample": 1,
+      "avgReplayVelocityRatio": 3.9592,
+      "avgReplayMovePct": 1.2031,
+      "ids": [
+        "SOL-UP-1787373085522-14v6kz"
+      ]
+    },
+    {
+      "key": "SOL|5m|UP|follow-useful",
+      "asset": "SOL",
+      "triggerLabel": "5m",
+      "direction": "UP",
+      "verdict": "follow-useful",
+      "sample": 1,
+      "avgReplayVelocityRatio": 2.5594,
+      "avgReplayMovePct": 1.2,
+      "ids": [
+        "SOL-UP-1787380707958-c9h18r"
+      ]
+    },
+    {
+      "key": "SOL|60s|DOWN|fade-useful",
+      "asset": "SOL",
+      "triggerLabel": "60s",
+      "direction": "DOWN",
+      "verdict": "fade-useful",
+      "sample": 1,
+      "avgReplayVelocityRatio": 9.7742,
+      "avgReplayMovePct": -0.902,
+      "ids": [
+        "SOL-DOWN-1787351466713-opibm0"
+      ]
+    },
+    {
+      "key": "SOL|60s|DOWN|follow-useful",
+      "asset": "SOL",
+      "triggerLabel": "60s",
+      "direction": "DOWN",
+      "verdict": "follow-useful",
+      "sample": 1,
+      "avgReplayVelocityRatio": 6.4006,
+      "avgReplayMovePct": -0.9159,
+      "ids": [
+        "SOL-DOWN-1787644183415-62on8x"
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "id": "ETH-DOWN-1786374789722-rrlduq",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "alertTime": "2026-08-10T15:13:09.722Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-10T15:07:09.722Z",
+        "end": "2026-08-10T15:13:09.722Z",
+        "trades": 8662
+      },
+      "recorded": {
+        "triggerMovePct": -0.6513,
+        "volumeRecentNotional": 462138,
+        "volumeVelocityRatio": 2.8828,
+        "verdict": "noisy",
+        "move30mPct": -0.07401924500369418,
+        "move1hPct": 0.0692266320178595
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 8662,
+        "baselineTradeTime": "2026-08-10T15:12:08.797Z",
+        "currentTradeTime": "2026-08-10T15:13:09.722Z",
+        "triggerMovePct": -0.6888,
+        "volumeRecentNotional": 610569,
+        "volumeAverageSlotNotional": 160343,
+        "volumeVelocityRatio": 3.8079,
+        "recentAggressiveBuyNotional": 170682,
+        "recentAggressiveSellNotional": 439887,
+        "moveAbsDiffPct": 0.0376,
+        "recentRelativeDiff": 0.3212,
+        "ratioRelativeDiff": 0.3209,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "ETH-DOWN-1786462644866-k89vtm",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-11T15:37:24.866Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-11T15:31:24.866Z",
+        "end": "2026-08-11T15:37:24.866Z",
+        "trades": 8574
+      },
+      "recorded": {
+        "triggerMovePct": -0.9004,
+        "volumeRecentNotional": 2849140,
+        "volumeVelocityRatio": 22.3757,
+        "verdict": "noisy",
+        "move30mPct": -0.16031417274121196,
+        "move1hPct": -0.33838125722894213
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 8574,
+        "baselineTradeTime": "2026-08-11T15:32:24.273Z",
+        "currentTradeTime": "2026-08-11T15:37:24.866Z",
+        "triggerMovePct": -0.9074,
+        "volumeRecentNotional": 2937376,
+        "volumeAverageSlotNotional": 127279,
+        "volumeVelocityRatio": 23.0782,
+        "recentAggressiveBuyNotional": 580907,
+        "recentAggressiveSellNotional": 2356469,
+        "moveAbsDiffPct": 0.0069,
+        "recentRelativeDiff": 0.031,
+        "ratioRelativeDiff": 0.0314,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "SOL-UP-1787151268089-364skg",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-19T14:54:28.089Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-19T14:38:28.089Z",
+        "end": "2026-08-19T14:54:28.089Z",
+        "trades": 4666
+      },
+      "recorded": {
+        "triggerMovePct": 1.6502,
+        "volumeRecentNotional": 44643,
+        "volumeVelocityRatio": 0.5627,
+        "verdict": "follow-useful",
+        "move30mPct": 1.2362637362637299,
+        "move1hPct": 2.0604395604395678
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 4666,
+        "baselineTradeTime": "2026-08-19T14:39:26.563Z",
+        "currentTradeTime": "2026-08-19T14:54:28.088Z",
+        "triggerMovePct": 1.6502,
+        "volumeRecentNotional": 44718,
+        "volumeAverageSlotNotional": 79344,
+        "volumeVelocityRatio": 0.5636,
+        "recentAggressiveBuyNotional": 18221,
+        "recentAggressiveSellNotional": 26496,
+        "moveAbsDiffPct": 0,
+        "recentRelativeDiff": 0.0017,
+        "ratioRelativeDiff": 0.0017,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "ETH-UP-1787151298775-bhrjsk",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-19T14:54:58.775Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-19T14:48:58.775Z",
+        "end": "2026-08-19T14:54:58.775Z",
+        "trades": 13796
+      },
+      "recorded": {
+        "triggerMovePct": 0.9001,
+        "volumeRecentNotional": 554973,
+        "volumeVelocityRatio": 1.6716,
+        "verdict": "follow-useful",
+        "move30mPct": 3.4551745960456786,
+        "move1hPct": 6.007512580510163
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 13796,
+        "baselineTradeTime": "2026-08-19T14:49:58.095Z",
+        "currentTradeTime": "2026-08-19T14:54:58.774Z",
+        "triggerMovePct": 0.9017,
+        "volumeRecentNotional": 555101,
+        "volumeAverageSlotNotional": 331588,
+        "volumeVelocityRatio": 1.6741,
+        "recentAggressiveBuyNotional": 382958,
+        "recentAggressiveSellNotional": 172144,
+        "moveAbsDiffPct": 0.0015,
+        "recentRelativeDiff": 0.0002,
+        "ratioRelativeDiff": 0.0015,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787151595654-yiizfv",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "alertTime": "2026-08-19T14:59:55.654Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-19T14:53:55.654Z",
+        "end": "2026-08-19T14:59:55.654Z",
+        "trades": 25000
+      },
+      "recorded": {
+        "triggerMovePct": -0.679,
+        "volumeRecentNotional": 3761106,
+        "volumeVelocityRatio": 6.881,
+        "verdict": "fade-useful",
+        "move30mPct": -5.474023096241144,
+        "move1hPct": -6.278367267929654
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 25000,
+        "baselineTradeTime": "2026-08-19T14:56:50.506Z",
+        "currentTradeTime": "2026-08-19T14:56:50.506Z",
+        "triggerMovePct": 0,
+        "volumeRecentNotional": 0,
+        "volumeAverageSlotNotional": 461240,
+        "volumeVelocityRatio": 0,
+        "recentAggressiveBuyNotional": 0,
+        "recentAggressiveSellNotional": 0,
+        "moveAbsDiffPct": 0.679,
+        "recentRelativeDiff": 1,
+        "ratioRelativeDiff": 1,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "BTC-UP-1787152019278-xupw3o",
+      "asset": "BTC",
+      "symbol": "BTCUSDT",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-19T15:06:59.278Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-19T14:50:59.278Z",
+        "end": "2026-08-19T15:06:59.278Z",
+        "trades": 25000
+      },
+      "recorded": {
+        "triggerMovePct": 1.2999,
+        "volumeRecentNotional": 293,
+        "volumeVelocityRatio": 0.0061,
+        "verdict": "follow-useful",
+        "move30mPct": 3.0721208837517384,
+        "move1hPct": 3.2166937571488816
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 25000,
+        "baselineTradeTime": "2026-08-19T14:51:59.166Z",
+        "currentTradeTime": "2026-08-19T15:01:08.904Z",
+        "triggerMovePct": 0.6383,
+        "volumeRecentNotional": 0,
+        "volumeAverageSlotNotional": 0,
+        "volumeVelocityRatio": null,
+        "recentAggressiveBuyNotional": 0,
+        "recentAggressiveSellNotional": 0,
+        "moveAbsDiffPct": 0.6617,
+        "recentRelativeDiff": 1,
+        "ratioRelativeDiff": 1,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "ETH-UP-1787153055182-ymjew4",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-19T15:24:15.182Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-19T15:18:15.182Z",
+        "end": "2026-08-19T15:24:15.182Z",
+        "trades": 17442
+      },
+      "recorded": {
+        "triggerMovePct": 0.9005,
+        "volumeRecentNotional": 1040737,
+        "volumeVelocityRatio": 3.0712,
+        "verdict": "follow-useful",
+        "move30mPct": 2.674809823093557,
+        "move1hPct": 3.3965447495387364
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 17442,
+        "baselineTradeTime": "2026-08-19T15:19:15.003Z",
+        "currentTradeTime": "2026-08-19T15:24:15.182Z",
+        "triggerMovePct": 0.9268,
+        "volumeRecentNotional": 1081476,
+        "volumeAverageSlotNotional": 336957,
+        "volumeVelocityRatio": 3.2095,
+        "recentAggressiveBuyNotional": 854404,
+        "recentAggressiveSellNotional": 227072,
+        "moveAbsDiffPct": 0.0264,
+        "recentRelativeDiff": 0.0391,
+        "ratioRelativeDiff": 0.0451,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "SOL-UP-1787153364061-ic0w69",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-19T15:29:24.061Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-19T15:23:24.061Z",
+        "end": "2026-08-19T15:29:24.061Z",
+        "trades": 10541
+      },
+      "recorded": {
+        "triggerMovePct": 1.2591,
+        "volumeRecentNotional": 1941,
+        "volumeVelocityRatio": 0.1299,
+        "verdict": "noisy",
+        "move30mPct": -0.17066926734121732,
+        "move1hPct": 0.0853346336706
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 10541,
+        "baselineTradeTime": "2026-08-19T15:24:23.939Z",
+        "currentTradeTime": "2026-08-19T15:29:24.061Z",
+        "triggerMovePct": 1.2091,
+        "volumeRecentNotional": 48559,
+        "volumeAverageSlotNotional": 240931,
+        "volumeVelocityRatio": 0.2015,
+        "recentAggressiveBuyNotional": 30781,
+        "recentAggressiveSellNotional": 17779,
+        "moveAbsDiffPct": 0.05,
+        "recentRelativeDiff": 24.0124,
+        "ratioRelativeDiff": 0.5512,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "BTC-UP-1787153434499-s85pic",
+      "asset": "BTC",
+      "symbol": "BTCUSDT",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-19T15:30:34.499Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-19T15:14:34.499Z",
+        "end": "2026-08-19T15:30:34.499Z",
+        "trades": 25000
+      },
+      "recorded": {
+        "triggerMovePct": 1.7401,
+        "volumeRecentNotional": 1506411,
+        "volumeVelocityRatio": 1.5769,
+        "verdict": "follow-useful",
+        "move30mPct": 1.0490713620303305,
+        "move1hPct": 1.3215059923692372
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 25000,
+        "baselineTradeTime": "2026-08-19T15:15:34.488Z",
+        "currentTradeTime": "2026-08-19T15:24:18.798Z",
+        "triggerMovePct": 0.5253,
+        "volumeRecentNotional": 0,
+        "volumeAverageSlotNotional": 0,
+        "volumeVelocityRatio": null,
+        "recentAggressiveBuyNotional": 0,
+        "recentAggressiveSellNotional": 0,
+        "moveAbsDiffPct": 1.2148,
+        "recentRelativeDiff": 1,
+        "ratioRelativeDiff": 1,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "ETH-UP-1787174375823-5yeu15",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-19T21:19:35.823Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-19T21:03:35.823Z",
+        "end": "2026-08-19T21:19:35.823Z",
+        "trades": 25000
+      },
+      "recorded": {
+        "triggerMovePct": 2.0392,
+        "volumeRecentNotional": 304136,
+        "volumeVelocityRatio": 1.7578,
+        "verdict": "follow-useful",
+        "move30mPct": 1.0084663550577604,
+        "move1hPct": 0.14463356557014487
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 25000,
+        "baselineTradeTime": "2026-08-19T21:04:35.822Z",
+        "currentTradeTime": "2026-08-19T21:05:03.197Z",
+        "triggerMovePct": 0.0731,
+        "volumeRecentNotional": 0,
+        "volumeAverageSlotNotional": 0,
+        "volumeVelocityRatio": null,
+        "recentAggressiveBuyNotional": 0,
+        "recentAggressiveSellNotional": 0,
+        "moveAbsDiffPct": 1.9661,
+        "recentRelativeDiff": 1,
+        "ratioRelativeDiff": 1,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787176906667-6oyr2y",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-19T22:01:46.667Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-19T21:45:46.667Z",
+        "end": "2026-08-19T22:01:46.667Z",
+        "trades": 25000
+      },
+      "recorded": {
+        "triggerMovePct": -1.3466,
+        "volumeRecentNotional": 577446,
+        "volumeVelocityRatio": 1.9104,
+        "verdict": "follow-useful",
+        "move30mPct": 0.616190979563083,
+        "move1hPct": 0.929792107117694
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 25000,
+        "baselineTradeTime": "2026-08-19T21:46:46.602Z",
+        "currentTradeTime": "2026-08-19T21:49:35.671Z",
+        "triggerMovePct": -0.3069,
+        "volumeRecentNotional": 0,
+        "volumeAverageSlotNotional": 0,
+        "volumeVelocityRatio": null,
+        "recentAggressiveBuyNotional": 0,
+        "recentAggressiveSellNotional": 0,
+        "moveAbsDiffPct": 1.0397,
+        "recentRelativeDiff": 1,
+        "ratioRelativeDiff": 1,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787178833331-szd94s",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-19T22:33:53.331Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-19T22:17:53.331Z",
+        "end": "2026-08-19T22:33:53.331Z",
+        "trades": 25000
+      },
+      "recorded": {
+        "triggerMovePct": -1.2006,
+        "volumeRecentNotional": 383022,
+        "volumeVelocityRatio": 2.3149,
+        "verdict": "noisy",
+        "move30mPct": -0.016488119641356252,
+        "move1hPct": -0.202313684248051
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 25000,
+        "baselineTradeTime": "2026-08-19T22:18:53.277Z",
+        "currentTradeTime": "2026-08-19T22:31:06.755Z",
+        "triggerMovePct": -0.5904,
+        "volumeRecentNotional": 0,
+        "volumeAverageSlotNotional": 75498,
+        "volumeVelocityRatio": 0,
+        "recentAggressiveBuyNotional": 0,
+        "recentAggressiveSellNotional": 0,
+        "moveAbsDiffPct": 0.6102,
+        "recentRelativeDiff": 1,
+        "ratioRelativeDiff": 1,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "ETH-UP-1787179272469-o4lvks",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-19T22:41:12.469Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-19T22:35:12.469Z",
+        "end": "2026-08-19T22:41:12.469Z",
+        "trades": 10938
+      },
+      "recorded": {
+        "triggerMovePct": 0.9018,
+        "volumeRecentNotional": 8686,
+        "volumeVelocityRatio": 0.0698,
+        "verdict": "fade-useful",
+        "move30mPct": -0.6492044927951999,
+        "move1hPct": -0.602864267272761
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 10938,
+        "baselineTradeTime": "2026-08-19T22:36:12.442Z",
+        "currentTradeTime": "2026-08-19T22:41:12.469Z",
+        "triggerMovePct": 0.9018,
+        "volumeRecentNotional": 17708,
+        "volumeAverageSlotNotional": 124336,
+        "volumeVelocityRatio": 0.1424,
+        "recentAggressiveBuyNotional": 6903,
+        "recentAggressiveSellNotional": 10804,
+        "moveAbsDiffPct": 0,
+        "recentRelativeDiff": 1.0386,
+        "ratioRelativeDiff": 1.0401,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787187119846-3vul1o",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "alertTime": "2026-08-20T00:51:59.846Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-20T00:45:59.846Z",
+        "end": "2026-08-20T00:51:59.846Z",
+        "trades": 7477
+      },
+      "recorded": {
+        "triggerMovePct": -0.6501,
+        "volumeRecentNotional": 1722701,
+        "volumeVelocityRatio": 8.5258,
+        "verdict": "fade-useful",
+        "move30mPct": 0.07664736452689162,
+        "move1hPct": -0.5174804726439723
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 7477,
+        "baselineTradeTime": "2026-08-20T00:50:59.402Z",
+        "currentTradeTime": "2026-08-20T00:51:59.846Z",
+        "triggerMovePct": -0.3838,
+        "volumeRecentNotional": 1743873,
+        "volumeAverageSlotNotional": 198926,
+        "volumeVelocityRatio": 8.7665,
+        "recentAggressiveBuyNotional": 41657,
+        "recentAggressiveSellNotional": 1702216,
+        "moveAbsDiffPct": 0.2663,
+        "recentRelativeDiff": 0.0123,
+        "ratioRelativeDiff": 0.0282,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787195477083-sqogs3",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-20T03:11:17.083Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-20T03:05:17.083Z",
+        "end": "2026-08-20T03:11:17.083Z",
+        "trades": 13049
+      },
+      "recorded": {
+        "triggerMovePct": -0.9001,
+        "volumeRecentNotional": 1181915,
+        "volumeVelocityRatio": 4.138,
+        "verdict": "fade-useful",
+        "move30mPct": -0.9837494831832466,
+        "move1hPct": -1.3998993330816702
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 13049,
+        "baselineTradeTime": "2026-08-20T03:06:16.856Z",
+        "currentTradeTime": "2026-08-20T03:11:17.083Z",
+        "triggerMovePct": -0.9219,
+        "volumeRecentNotional": 1469549,
+        "volumeAverageSlotNotional": 284315,
+        "volumeVelocityRatio": 5.1687,
+        "recentAggressiveBuyNotional": 133125,
+        "recentAggressiveSellNotional": 1336424,
+        "moveAbsDiffPct": 0.0218,
+        "recentRelativeDiff": 0.2434,
+        "ratioRelativeDiff": 0.2491,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "BTC-UP-1787213359438-7qays5",
+      "asset": "BTC",
+      "symbol": "BTCUSDT",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-20T08:09:19.438Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-20T08:03:19.438Z",
+        "end": "2026-08-20T08:09:19.438Z",
+        "trades": 17235
+      },
+      "recorded": {
+        "triggerMovePct": 1,
+        "volumeRecentNotional": 2207125,
+        "volumeVelocityRatio": 4.6967,
+        "verdict": "follow-useful",
+        "move30mPct": 1.4178160588759552,
+        "move1hPct": 1.7680845158036265
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 17235,
+        "baselineTradeTime": "2026-08-20T08:04:19.431Z",
+        "currentTradeTime": "2026-08-20T08:09:19.438Z",
+        "triggerMovePct": 0.9926,
+        "volumeRecentNotional": 2194669,
+        "volumeAverageSlotNotional": 464870,
+        "volumeVelocityRatio": 4.721,
+        "recentAggressiveBuyNotional": 2025175,
+        "recentAggressiveSellNotional": 169494,
+        "moveAbsDiffPct": 0.0074,
+        "recentRelativeDiff": 0.0056,
+        "ratioRelativeDiff": 0.0052,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "ETH-UP-1787213450759-gcxdd2",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-20T08:10:50.759Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-20T08:04:50.759Z",
+        "end": "2026-08-20T08:10:50.759Z",
+        "trades": 12529
+      },
+      "recorded": {
+        "triggerMovePct": 0.9004,
+        "volumeRecentNotional": 789875,
+        "volumeVelocityRatio": 4.2536,
+        "verdict": "follow-useful",
+        "move30mPct": 0.1435118133113706,
+        "move1hPct": 0.961000884842772
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 12529,
+        "baselineTradeTime": "2026-08-20T08:05:50.742Z",
+        "currentTradeTime": "2026-08-20T08:10:50.759Z",
+        "triggerMovePct": 0.9408,
+        "volumeRecentNotional": 878843,
+        "volumeAverageSlotNotional": 185189,
+        "volumeVelocityRatio": 4.7457,
+        "recentAggressiveBuyNotional": 619260,
+        "recentAggressiveSellNotional": 259583,
+        "moveAbsDiffPct": 0.0404,
+        "recentRelativeDiff": 0.1126,
+        "ratioRelativeDiff": 0.1157,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "BTC-UP-1787220936327-ke83bj",
+      "asset": "BTC",
+      "symbol": "BTCUSDT",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "alertTime": "2026-08-20T10:15:36.327Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-20T10:09:36.327Z",
+        "end": "2026-08-20T10:15:36.327Z",
+        "trades": 19608
+      },
+      "recorded": {
+        "triggerMovePct": 0.6002,
+        "volumeRecentNotional": 3092958,
+        "volumeVelocityRatio": 5.347,
+        "verdict": "fade-useful",
+        "move30mPct": -0.8312085572064125,
+        "move1hPct": -0.7060677755518907
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 19608,
+        "baselineTradeTime": "2026-08-20T10:14:36.285Z",
+        "currentTradeTime": "2026-08-20T10:15:36.326Z",
+        "triggerMovePct": 0.6091,
+        "volumeRecentNotional": 3157638,
+        "volumeAverageSlotNotional": 574952,
+        "volumeVelocityRatio": 5.492,
+        "recentAggressiveBuyNotional": 2639185,
+        "recentAggressiveSellNotional": 518453,
+        "moveAbsDiffPct": 0.0088,
+        "recentRelativeDiff": 0.0209,
+        "ratioRelativeDiff": 0.0271,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787227447653-ai8ddk",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-20T12:04:07.653Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-20T11:48:07.653Z",
+        "end": "2026-08-20T12:04:07.653Z",
+        "trades": 25000
+      },
+      "recorded": {
+        "triggerMovePct": -1.2,
+        "volumeRecentNotional": 4471813,
+        "volumeVelocityRatio": 31.4204,
+        "verdict": "follow-useful",
+        "move30mPct": 0.37090171104657343,
+        "move1hPct": -0.18282655096398737
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 25000,
+        "baselineTradeTime": "2026-08-20T11:49:07.352Z",
+        "currentTradeTime": "2026-08-20T11:56:34.112Z",
+        "triggerMovePct": -0.6486,
+        "volumeRecentNotional": 0,
+        "volumeAverageSlotNotional": 0,
+        "volumeVelocityRatio": null,
+        "recentAggressiveBuyNotional": 0,
+        "recentAggressiveSellNotional": 0,
+        "moveAbsDiffPct": 0.5514,
+        "recentRelativeDiff": 1,
+        "ratioRelativeDiff": 1,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787232650136-ns43m6",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "alertTime": "2026-08-20T13:30:50.136Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-20T13:24:50.136Z",
+        "end": "2026-08-20T13:30:50.136Z",
+        "trades": 11744
+      },
+      "recorded": {
+        "triggerMovePct": -0.6514,
+        "volumeRecentNotional": 600942,
+        "volumeVelocityRatio": 5.3707,
+        "verdict": "noisy",
+        "move30mPct": -0.12444976055513947,
+        "move1hPct": -0.06376401159184955
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 11744,
+        "baselineTradeTime": "2026-08-20T13:29:49.504Z",
+        "currentTradeTime": "2026-08-20T13:30:50.136Z",
+        "triggerMovePct": -0.6226,
+        "volumeRecentNotional": 673472,
+        "volumeAverageSlotNotional": 109478,
+        "volumeVelocityRatio": 6.1517,
+        "recentAggressiveBuyNotional": 23721,
+        "recentAggressiveSellNotional": 649751,
+        "moveAbsDiffPct": 0.0288,
+        "recentRelativeDiff": 0.1207,
+        "ratioRelativeDiff": 0.1454,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "ETH-UP-1787238219715-lur5og",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-20T15:03:39.715Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-20T14:57:39.715Z",
+        "end": "2026-08-20T15:03:39.715Z",
+        "trades": 10725
+      },
+      "recorded": {
+        "triggerMovePct": 0.9001,
+        "volumeRecentNotional": 235470,
+        "volumeVelocityRatio": 1.7793,
+        "verdict": "follow-useful",
+        "move30mPct": 0.7191299007330777,
+        "move1hPct": 1.223087075262538
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 10725,
+        "baselineTradeTime": "2026-08-20T14:58:39.177Z",
+        "currentTradeTime": "2026-08-20T15:03:39.715Z",
+        "triggerMovePct": 0.901,
+        "volumeRecentNotional": 235685,
+        "volumeAverageSlotNotional": 132240,
+        "volumeVelocityRatio": 1.7822,
+        "recentAggressiveBuyNotional": 208654,
+        "recentAggressiveSellNotional": 27031,
+        "moveAbsDiffPct": 0.0009,
+        "recentRelativeDiff": 0.0009,
+        "ratioRelativeDiff": 0.0016,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "BTC-UP-1787238242568-s2y5k6",
+      "asset": "BTC",
+      "symbol": "BTCUSDT",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-20T15:04:02.568Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-20T14:48:02.568Z",
+        "end": "2026-08-20T15:04:02.568Z",
+        "trades": 24415
+      },
+      "recorded": {
+        "triggerMovePct": 1.2501,
+        "volumeRecentNotional": 1553338,
+        "volumeVelocityRatio": 4.5859,
+        "verdict": "noisy",
+        "move30mPct": 0.09750509393639877,
+        "move1hPct": 0.07071053935268592
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 24415,
+        "baselineTradeTime": "2026-08-20T14:49:02.434Z",
+        "currentTradeTime": "2026-08-20T15:04:02.568Z",
+        "triggerMovePct": 1.2508,
+        "volumeRecentNotional": 1553146,
+        "volumeAverageSlotNotional": 337824,
+        "volumeVelocityRatio": 4.5975,
+        "recentAggressiveBuyNotional": 791715,
+        "recentAggressiveSellNotional": 761431,
+        "moveAbsDiffPct": 0.0008,
+        "recentRelativeDiff": 0.0001,
+        "ratioRelativeDiff": 0.0025,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "ETH-UP-1787241070259-ry3krz",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-20T15:51:10.259Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-20T15:45:10.259Z",
+        "end": "2026-08-20T15:51:10.259Z",
+        "trades": 14723
+      },
+      "recorded": {
+        "triggerMovePct": 0.9,
+        "volumeRecentNotional": 530782,
+        "volumeVelocityRatio": 3.4066,
+        "verdict": "follow-useful",
+        "move30mPct": -0.17332438755848067,
+        "move1hPct": 0.868772364437116
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 14723,
+        "baselineTradeTime": "2026-08-20T15:46:10.250Z",
+        "currentTradeTime": "2026-08-20T15:51:10.258Z",
+        "triggerMovePct": 0.9152,
+        "volumeRecentNotional": 534619,
+        "volumeAverageSlotNotional": 216136,
+        "volumeVelocityRatio": 2.4735,
+        "recentAggressiveBuyNotional": 451686,
+        "recentAggressiveSellNotional": 82933,
+        "moveAbsDiffPct": 0.0152,
+        "recentRelativeDiff": 0.0072,
+        "ratioRelativeDiff": 0.2739,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "BTC-UP-1787275902584-2j4z65",
+      "asset": "BTC",
+      "symbol": "BTCUSDT",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-21T01:31:42.584Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-21T01:15:42.584Z",
+        "end": "2026-08-21T01:31:42.584Z",
+        "trades": 25000
+      },
+      "recorded": {
+        "triggerMovePct": 1.251,
+        "volumeRecentNotional": 1245710,
+        "volumeVelocityRatio": 6.921,
+        "verdict": "follow-useful",
+        "move30mPct": 0.07020291432200391,
+        "move1hPct": 0.14521150446754158
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 25000,
+        "baselineTradeTime": "2026-08-21T01:16:42.103Z",
+        "currentTradeTime": "2026-08-21T01:18:58.848Z",
+        "triggerMovePct": 0.8626,
+        "volumeRecentNotional": 0,
+        "volumeAverageSlotNotional": 0,
+        "volumeVelocityRatio": null,
+        "recentAggressiveBuyNotional": 0,
+        "recentAggressiveSellNotional": 0,
+        "moveAbsDiffPct": 0.3884,
+        "recentRelativeDiff": 1,
+        "ratioRelativeDiff": 1,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "ETH-UP-1787276849407-2ty74i",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "alertTime": "2026-08-21T01:47:29.407Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-21T01:41:29.407Z",
+        "end": "2026-08-21T01:47:29.407Z",
+        "trades": 10318
+      },
+      "recorded": {
+        "triggerMovePct": 0.6508,
+        "volumeRecentNotional": 2519547,
+        "volumeVelocityRatio": 34.7531,
+        "verdict": "fade-useful",
+        "move30mPct": -0.9279774892796149,
+        "move1hPct": -1.0817277314888851
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 10318,
+        "baselineTradeTime": "2026-08-21T01:46:29.078Z",
+        "currentTradeTime": "2026-08-21T01:47:29.406Z",
+        "triggerMovePct": 0.6512,
+        "volumeRecentNotional": 2362888,
+        "volumeAverageSlotNotional": 71200,
+        "volumeVelocityRatio": 33.1865,
+        "recentAggressiveBuyNotional": 2039759,
+        "recentAggressiveSellNotional": 323129,
+        "moveAbsDiffPct": 0.0004,
+        "recentRelativeDiff": 0.0622,
+        "ratioRelativeDiff": 0.0451,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787279617750-809y4g",
+      "asset": "BTC",
+      "symbol": "BTCUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "alertTime": "2026-08-21T02:33:37.750Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-21T02:27:37.750Z",
+        "end": "2026-08-21T02:33:37.750Z",
+        "trades": 15913
+      },
+      "recorded": {
+        "triggerMovePct": -0.6,
+        "volumeRecentNotional": 282560,
+        "volumeVelocityRatio": 1.0746,
+        "verdict": "follow-useful",
+        "move30mPct": 0.2033288223633134,
+        "move1hPct": -0.04782235984242728
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 15913,
+        "baselineTradeTime": "2026-08-21T02:32:37.403Z",
+        "currentTradeTime": "2026-08-21T02:33:37.749Z",
+        "triggerMovePct": -0.601,
+        "volumeRecentNotional": 283056,
+        "volumeAverageSlotNotional": 262753,
+        "volumeVelocityRatio": 1.0773,
+        "recentAggressiveBuyNotional": 72140,
+        "recentAggressiveSellNotional": 210916,
+        "moveAbsDiffPct": 0.0009,
+        "recentRelativeDiff": 0.0018,
+        "ratioRelativeDiff": 0.0025,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787321104344-gtu8lf",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-21T14:05:04.344Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-21T13:49:04.344Z",
+        "end": "2026-08-21T14:05:04.344Z",
+        "trades": 25000
+      },
+      "recorded": {
+        "triggerMovePct": -1.2007,
+        "volumeRecentNotional": 266625,
+        "volumeVelocityRatio": 4.0871,
+        "verdict": "fade-useful",
+        "move30mPct": -0.7136605399582591,
+        "move1hPct": -0.730071366053992
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 25000,
+        "baselineTradeTime": "2026-08-21T13:50:04.334Z",
+        "currentTradeTime": "2026-08-21T14:01:33.719Z",
+        "triggerMovePct": -0.8909,
+        "volumeRecentNotional": 0,
+        "volumeAverageSlotNotional": 15938,
+        "volumeVelocityRatio": 0,
+        "recentAggressiveBuyNotional": 0,
+        "recentAggressiveSellNotional": 0,
+        "moveAbsDiffPct": 0.3097,
+        "recentRelativeDiff": 1,
+        "ratioRelativeDiff": 1,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787337935499-ypx996",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-21T18:45:35.499Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-21T18:39:35.499Z",
+        "end": "2026-08-21T18:45:35.499Z",
+        "trades": 10560
+      },
+      "recorded": {
+        "triggerMovePct": -0.9,
+        "volumeRecentNotional": 297324,
+        "volumeVelocityRatio": 2.1675,
+        "verdict": "fade-useful",
+        "move30mPct": -0.5645104174044262,
+        "move1hPct": -0.7669842645324918
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 10560,
+        "baselineTradeTime": "2026-08-21T18:40:34.841Z",
+        "currentTradeTime": "2026-08-21T18:45:35.498Z",
+        "triggerMovePct": -0.9013,
+        "volumeRecentNotional": 297770,
+        "volumeAverageSlotNotional": 136067,
+        "volumeVelocityRatio": 2.1884,
+        "recentAggressiveBuyNotional": 1241,
+        "recentAggressiveSellNotional": 296529,
+        "moveAbsDiffPct": 0.0012,
+        "recentRelativeDiff": 0.0015,
+        "ratioRelativeDiff": 0.0096,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "ETH-UP-1787349130589-ptephm",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "alertTime": "2026-08-21T21:52:10.589Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-21T21:46:10.589Z",
+        "end": "2026-08-21T21:52:10.589Z",
+        "trades": 11534
+      },
+      "recorded": {
+        "triggerMovePct": 0.6501,
+        "volumeRecentNotional": 13922782,
+        "volumeVelocityRatio": 215.1398,
+        "verdict": "follow-useful",
+        "move30mPct": 1.0970760607463956,
+        "move1hPct": 0.7417639450024722
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 11534,
+        "baselineTradeTime": "2026-08-21T21:51:09.848Z",
+        "currentTradeTime": "2026-08-21T21:52:10.589Z",
+        "triggerMovePct": 0.6309,
+        "volumeRecentNotional": 14048348,
+        "volumeAverageSlotNotional": 64685,
+        "volumeVelocityRatio": 217.1798,
+        "recentAggressiveBuyNotional": 13317585,
+        "recentAggressiveSellNotional": 730763,
+        "moveAbsDiffPct": 0.0193,
+        "recentRelativeDiff": 0.009,
+        "ratioRelativeDiff": 0.0095,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787351462736-f5kvh3",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "alertTime": "2026-08-21T22:31:02.736Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-21T22:25:02.736Z",
+        "end": "2026-08-21T22:31:02.736Z",
+        "trades": 11398
+      },
+      "recorded": {
+        "triggerMovePct": -0.6502,
+        "volumeRecentNotional": 922191,
+        "volumeVelocityRatio": 7.6113,
+        "verdict": "fade-useful",
+        "move30mPct": -0.01589345030911315,
+        "move1hPct": -0.3182663424402709
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 11398,
+        "baselineTradeTime": "2026-08-21T22:30:02.513Z",
+        "currentTradeTime": "2026-08-21T22:31:02.734Z",
+        "triggerMovePct": -0.6521,
+        "volumeRecentNotional": 946544,
+        "volumeAverageSlotNotional": 120716,
+        "volumeVelocityRatio": 7.8411,
+        "recentAggressiveBuyNotional": 183847,
+        "recentAggressiveSellNotional": 762697,
+        "moveAbsDiffPct": 0.002,
+        "recentRelativeDiff": 0.0264,
+        "ratioRelativeDiff": 0.0302,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "SOL-DOWN-1787351466713-opibm0",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "alertTime": "2026-08-21T22:31:06.713Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-21T22:25:06.713Z",
+        "end": "2026-08-21T22:31:06.713Z",
+        "trades": 1435
+      },
+      "recorded": {
+        "triggerMovePct": -0.902,
+        "volumeRecentNotional": 174080,
+        "volumeVelocityRatio": 9.7513,
+        "verdict": "fade-useful",
+        "move30mPct": -0.6960805311629961,
+        "move1hPct": -0.846005568644256
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 1435,
+        "baselineTradeTime": "2026-08-21T22:30:06.656Z",
+        "currentTradeTime": "2026-08-21T22:31:06.702Z",
+        "triggerMovePct": -0.902,
+        "volumeRecentNotional": 174489,
+        "volumeAverageSlotNotional": 17852,
+        "volumeVelocityRatio": 9.7742,
+        "recentAggressiveBuyNotional": 32004,
+        "recentAggressiveSellNotional": 142484,
+        "moveAbsDiffPct": 0,
+        "recentRelativeDiff": 0.0023,
+        "ratioRelativeDiff": 0.0023,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787357205898-w0o15a",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-22T00:06:45.898Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-22T00:00:45.898Z",
+        "end": "2026-08-22T00:06:45.898Z",
+        "trades": 13468
+      },
+      "recorded": {
+        "triggerMovePct": -0.9002,
+        "volumeRecentNotional": 370424,
+        "volumeVelocityRatio": 2.5441,
+        "verdict": "fade-useful",
+        "move30mPct": -0.656830233415022,
+        "move1hPct": -1.100991653449952
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 13468,
+        "baselineTradeTime": "2026-08-22T00:01:45.869Z",
+        "currentTradeTime": "2026-08-22T00:06:45.898Z",
+        "triggerMovePct": -0.9018,
+        "volumeRecentNotional": 370676,
+        "volumeAverageSlotNotional": 143554,
+        "volumeVelocityRatio": 2.5821,
+        "recentAggressiveBuyNotional": 84514,
+        "recentAggressiveSellNotional": 286162,
+        "moveAbsDiffPct": 0.0016,
+        "recentRelativeDiff": 0.0007,
+        "ratioRelativeDiff": 0.0149,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787364017274-190mj4",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "alertTime": "2026-08-22T02:00:17.274Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-22T01:54:17.274Z",
+        "end": "2026-08-22T02:00:17.274Z",
+        "trades": 8775
+      },
+      "recorded": {
+        "triggerMovePct": -0.651,
+        "volumeRecentNotional": 455981,
+        "volumeVelocityRatio": 3.5504,
+        "verdict": "fade-useful",
+        "move30mPct": -0.43867869975633383,
+        "move1hPct": -0.29471232647265927
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 8775,
+        "baselineTradeTime": "2026-08-22T01:59:17.257Z",
+        "currentTradeTime": "2026-08-22T02:00:17.273Z",
+        "triggerMovePct": -0.651,
+        "volumeRecentNotional": 457576,
+        "volumeAverageSlotNotional": 128312,
+        "volumeVelocityRatio": 3.5661,
+        "recentAggressiveBuyNotional": 39646,
+        "recentAggressiveSellNotional": 417930,
+        "moveAbsDiffPct": 0,
+        "recentRelativeDiff": 0.0035,
+        "ratioRelativeDiff": 0.0044,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "SOL-UP-1787373085522-14v6kz",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-22T04:31:25.522Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-22T04:25:25.522Z",
+        "end": "2026-08-22T04:31:25.522Z",
+        "trades": 3557
+      },
+      "recorded": {
+        "triggerMovePct": 1.2031,
+        "volumeRecentNotional": 403558,
+        "volumeVelocityRatio": 3.9589,
+        "verdict": "fade-useful",
+        "move30mPct": 0.995732574679947,
+        "move1hPct": -4.897378581589115
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 3557,
+        "baselineTradeTime": "2026-08-22T04:26:25.464Z",
+        "currentTradeTime": "2026-08-22T04:31:25.522Z",
+        "triggerMovePct": 1.2031,
+        "volumeRecentNotional": 403590,
+        "volumeAverageSlotNotional": 101938,
+        "volumeVelocityRatio": 3.9592,
+        "recentAggressiveBuyNotional": 345788,
+        "recentAggressiveSellNotional": 57801,
+        "moveAbsDiffPct": 0,
+        "recentRelativeDiff": 0.0001,
+        "ratioRelativeDiff": 0.0001,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "SOL-UP-1787374996149-2vjk44",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-22T05:03:16.149Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-22T04:57:16.149Z",
+        "end": "2026-08-22T05:03:16.149Z",
+        "trades": 5710
+      },
+      "recorded": {
+        "triggerMovePct": 1.2153,
+        "volumeRecentNotional": 4716,
+        "volumeVelocityRatio": 0.0663,
+        "verdict": "fade-useful",
+        "move30mPct": -6.31378827296378,
+        "move1hPct": -5.813488092855716
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 5710,
+        "baselineTradeTime": "2026-08-22T04:58:16.149Z",
+        "currentTradeTime": "2026-08-22T05:03:16.149Z",
+        "triggerMovePct": 1.2052,
+        "volumeRecentNotional": 7730,
+        "volumeAverageSlotNotional": 71032,
+        "volumeVelocityRatio": 0.1088,
+        "recentAggressiveBuyNotional": 1133,
+        "recentAggressiveSellNotional": 6597,
+        "moveAbsDiffPct": 0.0101,
+        "recentRelativeDiff": 0.6393,
+        "ratioRelativeDiff": 0.6406,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787375424400-z85x0h",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-22T05:10:24.400Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-22T04:54:24.400Z",
+        "end": "2026-08-22T05:10:24.400Z",
+        "trades": 25000
+      },
+      "recorded": {
+        "triggerMovePct": -2.7872,
+        "volumeRecentNotional": 4204,
+        "volumeVelocityRatio": 0.0339,
+        "verdict": "follow-useful",
+        "move30mPct": 0.5874758963297099,
+        "move1hPct": 0.5837990652678537
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 25000,
+        "baselineTradeTime": "2026-08-22T04:55:23.563Z",
+        "currentTradeTime": "2026-08-22T05:09:31.856Z",
+        "triggerMovePct": -1.4007,
+        "volumeRecentNotional": 0,
+        "volumeAverageSlotNotional": 331934,
+        "volumeVelocityRatio": 0,
+        "recentAggressiveBuyNotional": 0,
+        "recentAggressiveSellNotional": 0,
+        "moveAbsDiffPct": 1.3865,
+        "recentRelativeDiff": 1,
+        "ratioRelativeDiff": 1,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787375424407-i6rob9",
+      "asset": "BTC",
+      "symbol": "BTCUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-22T05:10:24.407Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-22T05:04:24.407Z",
+        "end": "2026-08-22T05:10:24.407Z",
+        "trades": 21549
+      },
+      "recorded": {
+        "triggerMovePct": -1.1098,
+        "volumeRecentNotional": 4976,
+        "volumeVelocityRatio": 0.0426,
+        "verdict": "follow-useful",
+        "move30mPct": 0.5683230417903592,
+        "move1hPct": 0.3981753154239965
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 21549,
+        "baselineTradeTime": "2026-08-22T05:05:24.186Z",
+        "currentTradeTime": "2026-08-22T05:10:24.406Z",
+        "triggerMovePct": -1.1098,
+        "volumeRecentNotional": 4611612,
+        "volumeAverageSlotNotional": 405143,
+        "volumeVelocityRatio": 11.3827,
+        "recentAggressiveBuyNotional": 1663402,
+        "recentAggressiveSellNotional": 2948210,
+        "moveAbsDiffPct": 0,
+        "recentRelativeDiff": 925.7167,
+        "ratioRelativeDiff": 266.3599,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "SOL-DOWN-1787375462566-d8vt9x",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-22T05:11:02.566Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-22T04:55:02.566Z",
+        "end": "2026-08-22T05:11:02.566Z",
+        "trades": 25000
+      },
+      "recorded": {
+        "triggerMovePct": -10.2597,
+        "volumeRecentNotional": 1388065,
+        "volumeVelocityRatio": 4.4039,
+        "verdict": "noisy",
+        "move30mPct": -4.085494823555607,
+        "move1hPct": -4.553044639875324
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 25000,
+        "baselineTradeTime": "2026-08-22T04:56:02.404Z",
+        "currentTradeTime": "2026-08-22T05:10:11.390Z",
+        "triggerMovePct": -5.2647,
+        "volumeRecentNotional": 0,
+        "volumeAverageSlotNotional": 352767,
+        "volumeVelocityRatio": 0,
+        "recentAggressiveBuyNotional": 0,
+        "recentAggressiveSellNotional": 0,
+        "moveAbsDiffPct": 4.995,
+        "recentRelativeDiff": 1,
+        "ratioRelativeDiff": 1,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "ETH-UP-1787376354071-6tjhus",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-22T05:25:54.071Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-22T05:09:54.071Z",
+        "end": "2026-08-22T05:25:54.071Z",
+        "trades": 25000
+      },
+      "recorded": {
+        "triggerMovePct": 1.2054,
+        "volumeRecentNotional": 142280,
+        "volumeVelocityRatio": 1.2598,
+        "verdict": "noisy",
+        "move30mPct": -0.051232867729031406,
+        "move1hPct": -0.15123942553610298
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 25000,
+        "baselineTradeTime": "2026-08-22T05:10:43.264Z",
+        "currentTradeTime": "2026-08-22T05:10:43.264Z",
+        "triggerMovePct": 0,
+        "volumeRecentNotional": 0,
+        "volumeAverageSlotNotional": 0,
+        "volumeVelocityRatio": null,
+        "recentAggressiveBuyNotional": 0,
+        "recentAggressiveSellNotional": 0,
+        "moveAbsDiffPct": 1.2054,
+        "recentRelativeDiff": 1,
+        "ratioRelativeDiff": 1,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "SOL-UP-1787376953160-il5m3v",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-22T05:35:53.160Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-22T05:29:53.160Z",
+        "end": "2026-08-22T05:35:53.160Z",
+        "trades": 8935
+      },
+      "recorded": {
+        "triggerMovePct": 1.2095,
+        "volumeRecentNotional": 457802,
+        "volumeVelocityRatio": 7.4829,
+        "verdict": "fade-useful",
+        "move30mPct": -1.025803722504229,
+        "move1hPct": -1.025803722504229
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 8935,
+        "baselineTradeTime": "2026-08-22T05:30:53.111Z",
+        "currentTradeTime": "2026-08-22T05:35:53.159Z",
+        "triggerMovePct": 1.2095,
+        "volumeRecentNotional": 457836,
+        "volumeAverageSlotNotional": 146938,
+        "volumeVelocityRatio": 3.1158,
+        "recentAggressiveBuyNotional": 279408,
+        "recentAggressiveSellNotional": 178428,
+        "moveAbsDiffPct": 0,
+        "recentRelativeDiff": 0.0001,
+        "ratioRelativeDiff": 0.5836,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "SOL-UP-1787380707958-c9h18r",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-22T06:38:27.958Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-22T06:32:27.958Z",
+        "end": "2026-08-22T06:38:27.958Z",
+        "trades": 2630
+      },
+      "recorded": {
+        "triggerMovePct": 1.2,
+        "volumeRecentNotional": 114646,
+        "volumeVelocityRatio": 2.5567,
+        "verdict": "follow-useful",
+        "move30mPct": 0.5293806246691372,
+        "move1hPct": 0.5082053996823759
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 2630,
+        "baselineTradeTime": "2026-08-22T06:33:27.760Z",
+        "currentTradeTime": "2026-08-22T06:38:27.957Z",
+        "triggerMovePct": 1.2,
+        "volumeRecentNotional": 114701,
+        "volumeAverageSlotNotional": 44816,
+        "volumeVelocityRatio": 2.5594,
+        "recentAggressiveBuyNotional": 84969,
+        "recentAggressiveSellNotional": 29732,
+        "moveAbsDiffPct": 0,
+        "recentRelativeDiff": 0.0005,
+        "ratioRelativeDiff": 0.001,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "ETH-UP-1787380834476-2j4any",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-22T06:40:34.476Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-22T06:34:34.476Z",
+        "end": "2026-08-22T06:40:34.476Z",
+        "trades": 10081
+      },
+      "recorded": {
+        "triggerMovePct": 0.9002,
+        "volumeRecentNotional": 615297,
+        "volumeVelocityRatio": 3.2975,
+        "verdict": "noisy",
+        "move30mPct": -0.060271591170017326,
+        "move1hPct": -0.15375405910716042
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 10081,
+        "baselineTradeTime": "2026-08-22T06:35:34.268Z",
+        "currentTradeTime": "2026-08-22T06:40:34.476Z",
+        "triggerMovePct": 0.9006,
+        "volumeRecentNotional": 614520,
+        "volumeAverageSlotNotional": 186562,
+        "volumeVelocityRatio": 3.2939,
+        "recentAggressiveBuyNotional": 596706,
+        "recentAggressiveSellNotional": 17814,
+        "moveAbsDiffPct": 0.0004,
+        "recentRelativeDiff": 0.0013,
+        "ratioRelativeDiff": 0.0011,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "SOL-DOWN-1787387436908-gaekvu",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-22T08:30:36.908Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-22T08:14:36.908Z",
+        "end": "2026-08-22T08:30:36.908Z",
+        "trades": 5465
+      },
+      "recorded": {
+        "triggerMovePct": -1.6525,
+        "volumeRecentNotional": 388483,
+        "volumeVelocityRatio": 6.5212,
+        "verdict": "fade-useful",
+        "move30mPct": -0.6528253424657529,
+        "move1hPct": -0.8561643835616408
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 5465,
+        "baselineTradeTime": "2026-08-22T08:15:35.984Z",
+        "currentTradeTime": "2026-08-22T08:30:36.908Z",
+        "triggerMovePct": -1.663,
+        "volumeRecentNotional": 416910,
+        "volumeAverageSlotNotional": 59572,
+        "volumeVelocityRatio": 6.9984,
+        "recentAggressiveBuyNotional": 19056,
+        "recentAggressiveSellNotional": 397854,
+        "moveAbsDiffPct": 0.0105,
+        "recentRelativeDiff": 0.0732,
+        "ratioRelativeDiff": 0.0732,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "SOL-DOWN-1787393034069-hgn807",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-22T10:03:54.069Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-22T09:57:54.069Z",
+        "end": "2026-08-22T10:03:54.069Z",
+        "trades": 1797
+      },
+      "recorded": {
+        "triggerMovePct": -1.2038,
+        "volumeRecentNotional": 551045,
+        "volumeVelocityRatio": 12.6455,
+        "verdict": "follow-useful",
+        "move30mPct": 0.20487384084537172,
+        "move1hPct": 0.10782833728703292
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 1797,
+        "baselineTradeTime": "2026-08-22T09:58:53.772Z",
+        "currentTradeTime": "2026-08-22T10:03:54.069Z",
+        "triggerMovePct": -1.1825,
+        "volumeRecentNotional": 561863,
+        "volumeAverageSlotNotional": 43576,
+        "volumeVelocityRatio": 12.8938,
+        "recentAggressiveBuyNotional": 114427,
+        "recentAggressiveSellNotional": 447436,
+        "moveAbsDiffPct": 0.0213,
+        "recentRelativeDiff": 0.0196,
+        "ratioRelativeDiff": 0.0196,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "SOL-UP-1787395094474-0cyc5n",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-22T10:38:14.474Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-22T10:22:14.474Z",
+        "end": "2026-08-22T10:38:14.474Z",
+        "trades": 6625
+      },
+      "recorded": {
+        "triggerMovePct": 1.673,
+        "volumeRecentNotional": 5676,
+        "volumeVelocityRatio": 0.2171,
+        "verdict": "noisy",
+        "move30mPct": 0.010755001075490326,
+        "move1hPct": 0.4732200473220023
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 6625,
+        "baselineTradeTime": "2026-08-22T10:23:14.427Z",
+        "currentTradeTime": "2026-08-22T10:38:14.474Z",
+        "triggerMovePct": 1.673,
+        "volumeRecentNotional": 6159,
+        "volumeAverageSlotNotional": 26064,
+        "volumeVelocityRatio": 0.2363,
+        "recentAggressiveBuyNotional": 4972,
+        "recentAggressiveSellNotional": 1187,
+        "moveAbsDiffPct": 0,
+        "recentRelativeDiff": 0.085,
+        "ratioRelativeDiff": 0.0884,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "SOL-DOWN-1787617033673-kiu4zh",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-25T00:17:13.673Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-25T00:11:13.673Z",
+        "end": "2026-08-25T00:17:13.673Z",
+        "trades": 14123
+      },
+      "recorded": {
+        "triggerMovePct": -1.2189,
+        "volumeRecentNotional": 90750,
+        "volumeVelocityRatio": 0.3445,
+        "verdict": "fade-useful",
+        "move30mPct": -2.4478330658105913,
+        "move1hPct": -2.066613162118768
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 14123,
+        "baselineTradeTime": "2026-08-25T00:12:13.654Z",
+        "currentTradeTime": "2026-08-25T00:17:13.673Z",
+        "triggerMovePct": -1.2189,
+        "volumeRecentNotional": 90750,
+        "volumeAverageSlotNotional": 263126,
+        "volumeVelocityRatio": 0.3449,
+        "recentAggressiveBuyNotional": 57444,
+        "recentAggressiveSellNotional": 33305,
+        "moveAbsDiffPct": 0,
+        "recentRelativeDiff": 0,
+        "ratioRelativeDiff": 0.0011,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "SOL-DOWN-1787622780137-43xvxn",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-25T01:53:00.137Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-25T01:37:00.137Z",
+        "end": "2026-08-25T01:53:00.137Z",
+        "trades": 5693
+      },
+      "recorded": {
+        "triggerMovePct": -1.6593,
+        "volumeRecentNotional": 117492,
+        "volumeVelocityRatio": 2.121,
+        "verdict": "fade-useful",
+        "move30mPct": -1.797124600638975,
+        "move1hPct": -0.6789137380191762
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 5693,
+        "baselineTradeTime": "2026-08-25T01:38:00.083Z",
+        "currentTradeTime": "2026-08-25T01:53:00.136Z",
+        "triggerMovePct": -1.6593,
+        "volumeRecentNotional": 127792,
+        "volumeAverageSlotNotional": 55334,
+        "volumeVelocityRatio": 2.3095,
+        "recentAggressiveBuyNotional": 51853,
+        "recentAggressiveSellNotional": 75939,
+        "moveAbsDiffPct": 0,
+        "recentRelativeDiff": 0.0877,
+        "ratioRelativeDiff": 0.0889,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "SOL-UP-1787624418105-j69l2e",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "alertTime": "2026-08-25T02:20:18.105Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-25T02:14:18.105Z",
+        "end": "2026-08-25T02:20:18.105Z",
+        "trades": 5077
+      },
+      "recorded": {
+        "triggerMovePct": 1.7937,
+        "volumeRecentNotional": 11,
+        "volumeVelocityRatio": 0.0004,
+        "verdict": "fade-useful",
+        "move30mPct": -1.2726382770435745,
+        "move1hPct": -0.37200195790505103
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 5077,
+        "baselineTradeTime": "2026-08-25T02:15:17.673Z",
+        "currentTradeTime": "2026-08-25T02:20:18.104Z",
+        "triggerMovePct": 1.7937,
+        "volumeRecentNotional": 58325,
+        "volumeAverageSlotNotional": 116475,
+        "volumeVelocityRatio": 0.5008,
+        "recentAggressiveBuyNotional": 42170,
+        "recentAggressiveSellNotional": 16155,
+        "moveAbsDiffPct": 0,
+        "recentRelativeDiff": 5237.3273,
+        "ratioRelativeDiff": 1388.2317,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787644182507-b3ihp1",
+      "asset": "BTC",
+      "symbol": "BTCUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "alertTime": "2026-08-25T07:49:42.507Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-25T07:43:42.507Z",
+        "end": "2026-08-25T07:49:42.507Z",
+        "trades": 14853
+      },
+      "recorded": {
+        "triggerMovePct": -0.6,
+        "volumeRecentNotional": 1881305,
+        "volumeVelocityRatio": 4.8207,
+        "verdict": "fade-useful",
+        "move30mPct": -0.2427503503170815,
+        "move1hPct": -0.17760509293316262
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 14853,
+        "baselineTradeTime": "2026-08-25T07:48:42.473Z",
+        "currentTradeTime": "2026-08-25T07:49:42.507Z",
+        "triggerMovePct": -0.6286,
+        "volumeRecentNotional": 2442685,
+        "volumeAverageSlotNotional": 388909,
+        "volumeVelocityRatio": 6.2809,
+        "recentAggressiveBuyNotional": 115172,
+        "recentAggressiveSellNotional": 2327514,
+        "moveAbsDiffPct": 0.0286,
+        "recentRelativeDiff": 0.2984,
+        "ratioRelativeDiff": 0.3029,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "SOL-DOWN-1787644183415-62on8x",
+      "asset": "SOL",
+      "symbol": "SOLUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "alertTime": "2026-08-25T07:49:43.415Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-25T07:43:43.415Z",
+        "end": "2026-08-25T07:49:43.415Z",
+        "trades": 1956
+      },
+      "recorded": {
+        "triggerMovePct": -0.906,
+        "volumeRecentNotional": 209689,
+        "volumeVelocityRatio": 6.3892,
+        "verdict": "follow-useful",
+        "move30mPct": -0.3478433710991794,
+        "move1hPct": 0.02981514609421699
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 1956,
+        "baselineTradeTime": "2026-08-25T07:48:43.183Z",
+        "currentTradeTime": "2026-08-25T07:49:43.415Z",
+        "triggerMovePct": -0.9159,
+        "volumeRecentNotional": 210063,
+        "volumeAverageSlotNotional": 32819,
+        "volumeVelocityRatio": 6.4006,
+        "recentAggressiveBuyNotional": 67034,
+        "recentAggressiveSellNotional": 143029,
+        "moveAbsDiffPct": 0.0098,
+        "recentRelativeDiff": 0.0018,
+        "ratioRelativeDiff": 0.0018,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787644182524-q4d5qb",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "alertTime": "2026-08-25T07:49:42.524Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-25T07:43:42.524Z",
+        "end": "2026-08-25T07:49:42.524Z",
+        "trades": 11040
+      },
+      "recorded": {
+        "triggerMovePct": -0.6501,
+        "volumeRecentNotional": 1631352,
+        "volumeVelocityRatio": 11.497,
+        "verdict": "fade-useful",
+        "move30mPct": -0.6950751383490252,
+        "move1hPct": -0.31766790585406435
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 11040,
+        "baselineTradeTime": "2026-08-25T07:48:42.500Z",
+        "currentTradeTime": "2026-08-25T07:49:42.521Z",
+        "triggerMovePct": -0.6428,
+        "volumeRecentNotional": 1642092,
+        "volumeAverageSlotNotional": 141820,
+        "volumeVelocityRatio": 11.5787,
+        "recentAggressiveBuyNotional": 102433,
+        "recentAggressiveSellNotional": 1539659,
+        "moveAbsDiffPct": 0.0072,
+        "recentRelativeDiff": 0.0066,
+        "ratioRelativeDiff": 0.0071,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787665987752-p9ch0s",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-25T13:53:07.752Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-25T13:37:07.752Z",
+        "end": "2026-08-25T13:53:07.752Z",
+        "trades": 25000
+      },
+      "recorded": {
+        "triggerMovePct": -1.2001,
+        "volumeRecentNotional": 15379,
+        "volumeVelocityRatio": 0.3892,
+        "verdict": "fade-useful",
+        "move30mPct": -1.047383789885247,
+        "move1hPct": -1.332030067807985
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 25000,
+        "baselineTradeTime": "2026-08-25T13:38:06.648Z",
+        "currentTradeTime": "2026-08-25T13:51:03.122Z",
+        "triggerMovePct": -0.975,
+        "volumeRecentNotional": 0,
+        "volumeAverageSlotNotional": 80335,
+        "volumeVelocityRatio": 0,
+        "recentAggressiveBuyNotional": 0,
+        "recentAggressiveSellNotional": 0,
+        "moveAbsDiffPct": 0.2251,
+        "recentRelativeDiff": 1,
+        "ratioRelativeDiff": 1,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787665992179-dwp2cp",
+      "asset": "BTC",
+      "symbol": "BTCUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "alertTime": "2026-08-25T13:53:12.179Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-25T13:37:12.179Z",
+        "end": "2026-08-25T13:53:12.179Z",
+        "trades": 25000
+      },
+      "recorded": {
+        "triggerMovePct": -1.2559,
+        "volumeRecentNotional": 207723,
+        "volumeVelocityRatio": 2.228,
+        "verdict": "fade-useful",
+        "move30mPct": -1.1024674924172722,
+        "move1hPct": -1.385272813762002
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 25000,
+        "baselineTradeTime": "2026-08-25T13:38:12.170Z",
+        "currentTradeTime": "2026-08-25T13:46:13.171Z",
+        "triggerMovePct": -0.9333,
+        "volumeRecentNotional": 0,
+        "volumeAverageSlotNotional": 0,
+        "volumeVelocityRatio": null,
+        "recentAggressiveBuyNotional": 0,
+        "recentAggressiveSellNotional": 0,
+        "moveAbsDiffPct": 0.3226,
+        "recentRelativeDiff": 1,
+        "ratioRelativeDiff": 1,
+        "exactMatch": false,
+        "usableForBucket": false
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787692087789-pk6bzs",
+      "asset": "ETH",
+      "symbol": "ETHUSDT",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "alertTime": "2026-08-25T21:08:07.789Z",
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "fetchWindow": {
+        "start": "2026-08-25T21:02:07.789Z",
+        "end": "2026-08-25T21:08:07.789Z",
+        "trades": 11281
+      },
+      "recorded": {
+        "triggerMovePct": -0.6502,
+        "volumeRecentNotional": 1670227,
+        "volumeVelocityRatio": 9.6511,
+        "verdict": "fade-useful",
+        "move30mPct": -0.7820887633582766,
+        "move1hPct": -1.1677650595444644
+      },
+      "replay": {
+        "status": "ok",
+        "tradeCount": 11281,
+        "baselineTradeTime": "2026-08-25T21:07:07.365Z",
+        "currentTradeTime": "2026-08-25T21:08:07.787Z",
+        "triggerMovePct": -0.6937,
+        "volumeRecentNotional": 1749985,
+        "volumeAverageSlotNotional": 172936,
+        "volumeVelocityRatio": 10.1193,
+        "recentAggressiveBuyNotional": 110168,
+        "recentAggressiveSellNotional": 1639817,
+        "moveAbsDiffPct": 0.0435,
+        "recentRelativeDiff": 0.0478,
+        "ratioRelativeDiff": 0.0485,
+        "exactMatch": true,
+        "usableForBucket": true
+      }
+    }
+  ],
+  "decision": {
+    "verdict": "exact_replay_rows_available_for_bucket_selection",
+    "nextStep": "Use replay-clean buckets only; require sample size, same mechanism, and strict filter survival before forward paper design.",
+    "noLiveChange": true
+  }
+}

@@ -1,0 +1,523 @@
+ATAS: ATAS.Indicators.Filter< TValue > Class Template Reference 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Public Member Functions | Static Public Member Functions | Protected Member Functions | Properties | List of all members 
+
+ATAS.Indicators.Filter< TValue > Class Template Reference 
+
+Generic filter class that implements the IFilterValue interface. More... 
+
+Inheritance diagram for ATAS.Indicators.Filter< TValue >: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Collaboration diagram for ATAS.Indicators.Filter< TValue >: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Public Member Functions 
+
+override bool Equals (object? obj) 
+
+override int GetHashCode () 
+
+bool SetValueSilently (TValue value) 
+
+Sets value of Value property. Returns false when new value equals new value. 
+
+Filter (bool enabledVisible, bool asScale=false) 
+
+Initializes a new instance of the Filter<TValue, TFilter> class with the specified parameters. 
+
+Filter () 
+
+Initializes a new instance of the Filter<TValue, TFilter> class with default parameters. 
+
+TFilter ValueOnChanging (Func< ValueChangingEventArgs < TValue >, TValue > onChanging) 
+
+Sets a function to be invoked when the value of the filter is changing. 
+
+TFilter ValueOnChanged (Action< TValue > onChanged) 
+
+Sets an action to be invoked when the value of the filter has changed. 
+
+override string ToString () 
+
+Converts the filter to its string representation. 
+
+virtual string GetStringValue () 
+
+override object Clone () 
+
+Filter (bool enabledVisible, bool asScalar=false) 
+
+Initializes a new instance of the Filter<TValue> class with the specified visibility of the Enabled property and scalar value. 
+
+Filter () 
+
+Initializes a new instance of the Filter<TValue> class with default visibility settings. 
+
+Filter (bool enableVisible, bool asScalar=false) 
+
+Initializes a new instance of the Filter class with the specified visibility of the Enabled property and scalar value. 
+
+Filter () 
+
+Initializes a new instance of the Filter class with default visibility settings. 
+
+Public Member Functions inherited from ATAS.Indicators.Filter< TValue, Filter< TValue > > 
+
+override bool Equals (object? obj) 
+
+override int GetHashCode () 
+
+bool SetValueSilently (TValue value) 
+
+Sets value of Value property. Returns false when new value equals new value. 
+
+Filter (bool enabledVisible, bool asScale=false) 
+
+Initializes a new instance of the Filter<TValue, TFilter> class with the specified parameters. 
+
+Filter () 
+
+Initializes a new instance of the Filter<TValue, TFilter> class with default parameters. 
+
+Filter (bool enabledVisible, bool asScalar=false) 
+
+Initializes a new instance of the Filter<TValue> class with the specified visibility of the Enabled property and scalar value. 
+
+Filter () 
+
+Initializes a new instance of the Filter<TValue> class with default visibility settings. 
+
+Filter (bool enableVisible, bool asScalar=false) 
+
+Initializes a new instance of the Filter class with the specified visibility of the Enabled property and scalar value. 
+
+Filter () 
+
+Initializes a new instance of the Filter class with default visibility settings. 
+
+TFilter ValueOnChanging (Func< ValueChangingEventArgs < TValue >, TValue > onChanging) 
+
+Sets a function to be invoked when the value of the filter is changing. 
+
+TFilter ValueOnChanged (Action< TValue > onChanged) 
+
+Sets an action to be invoked when the value of the filter has changed. 
+
+override string ToString () 
+
+Converts the filter to its string representation. 
+
+virtual string GetStringValue () 
+
+override object Clone () 
+
+abstract object Clone () 
+
+string GetStringValue () 
+
+Gets the string representation of value of the filter. 
+
+Static Public Member Functions 
+
+static bool operator== ( Filter < TValue, TFilter >? left, Filter < TValue, TFilter >? right) 
+
+static bool operator!= ( Filter < TValue, TFilter >? left, Filter < TValue, TFilter >? right) 
+
+static operator TValue ( Filter < TValue, TFilter > other) 
+
+Converts the Filter<TValue, TFilter> to its value of type TValue . 
+
+Static Public Member Functions inherited from ATAS.Indicators.Filter< TValue, Filter< TValue > > 
+
+static bool operator== ( Filter < TValue, TFilter >? left, Filter < TValue, TFilter >? right) 
+
+static bool operator!= ( Filter < TValue, TFilter >? left, Filter < TValue, TFilter >? right) 
+
+static operator TValue ( Filter < TValue, TFilter > other) 
+
+Converts the Filter<TValue, TFilter> to its value of type TValue . 
+
+Protected Member Functions 
+
+bool Equals ( Filter < TValue, TFilter > other) 
+
+virtual ? TValue GetRealValue (TValue? value) 
+
+void RaiseValueOnChanged () 
+
+Raises the NotifyPropertyChangedBase.PropertyChanged event for the Value property and invokes the value changed action. 
+
+virtual TValue ValueOnChanging (TValue? oldValue, TValue? newValue) 
+
+Invoked when the value of the filter is changing. 
+
+virtual TFilter CreateNew () 
+
+Creates a new instance of the derived filter type. 
+
+Protected Member Functions inherited from ATAS.Indicators.Filter< TValue, Filter< TValue > > 
+
+bool Equals ( Filter < TValue, TFilter > other) 
+
+virtual ? TValue GetRealValue (TValue? value) 
+
+virtual TValue ValueOnChanging (TValue? oldValue, TValue? newValue) 
+
+Invoked when the value of the filter is changing. 
+
+void RaiseValueOnChanged () 
+
+Raises the NotifyPropertyChangedBase.PropertyChanged event for the Value property and invokes the value changed action. 
+
+virtual TFilter CreateNew () 
+
+Creates a new instance of the derived filter type. 
+
+Protected Member Functions inherited from ATAS.Indicators.FilterBase 
+
+FilterBase (bool enabledVisible, bool asScalar) 
+
+Initializes a new instance of the FilterBase class with the specified parameters. 
+
+FilterBase () 
+
+Initializes a new instance of the FilterBase class with default parameters. 
+
+Protected Member Functions inherited from ATAS.Indicators.NotifyPropertyChangedBase 
+
+void RaisePropertyChanged ([CallerMemberName] string? propertyName=null!) 
+
+Raises the PropertyChanged event for the specified property name. 
+
+void SetProperty< TProperty > (ref TProperty store, TProperty value, [CallerMemberName] string? propertyName=null, Action? onChanged=null) 
+
+Properties 
+
+TValue Value [get, set] 
+
+Gets or sets the value of the filter. 
+
+Properties inherited from ATAS.Indicators.Filter< TValue, Filter< TValue > > 
+
+TValue Value [get, set] 
+
+Gets or sets the value of the filter. 
+
+Properties inherited from ATAS.Indicators.FilterBase 
+
+bool Enabled [get, set] 
+
+Gets or sets a value indicating whether the filter is enabled. 
+
+bool EnabledVisible [get] 
+
+Gets a value indicating whether the visibility of the "Enabled" property is visible to users. 
+
+Properties inherited from ATAS.Indicators.IFilter 
+
+bool Enabled [get, set] 
+
+Gets or sets a value indicating whether the filter is enabled. 
+
+bool EnabledVisible [get] 
+
+Gets a value indicating whether the visibility of the "Enabled" property is visible to users. 
+
+bool AsScalar [get] 
+
+Gets a value indicating whether the filter operates in scalar mode. 
+
+Properties inherited from ATAS.Indicators.IFilterValue 
+
+object Value [get, set] 
+
+Gets or sets the value of the filter. The value can hold data of any type. 
+
+Additional Inherited Members 
+
+Protected Attributes inherited from ATAS.Indicators.FilterBase 
+
+readonly bool _asScalar 
+
+Events inherited from ATAS.Indicators.NotifyPropertyChangedBase 
+
+PropertyChangedEventHandler? PropertyChanged 
+
+Event that is raised when a property value changes. 
+
+Detailed Description 
+
+Generic filter class that implements the IFilterValue interface. 
+
+Represents a filter with a decimal value type. Inherits from Filter<TValue, TFilter> where TValue is set to decimal and TFilter is set to Filter. The filter's JSON serialization is handled by the custom converter FilterJsonConverter. 
+
+Represents a filter with a specific value type TValue . Inherits from Filter<TValue, TFilter> where TFilter is set to Filter<TValue>. 
+Template Parameters 
+
+TValue The type of the filter value. 
+
+TFilter The type of the derived filter. 
+
+Template Parameters 
+
+TValue The type of value held by the filter. 
+
+Constructor & Destructor Documentation 
+
+◆ Filter() [1/6] 
+
+ATAS.Indicators.Filter < TValue >. Filter ( bool enabledVisible , 
+
+bool asScale = false 
+
+) 
+
+Initializes a new instance of the Filter<TValue, TFilter> class with the specified parameters. 
+Parameters 
+
+enabledVisible Specifies whether the "Enabled" property is visible to users. 
+
+asScale Specifies whether the filter operates in scalar mode. 
+
+◆ Filter() [2/6] 
+
+ATAS.Indicators.Filter < TValue >. Filter ( ) 
+
+Initializes a new instance of the Filter<TValue, TFilter> class with default parameters. 
+
+◆ Filter() [3/6] 
+
+ATAS.Indicators.Filter < TValue >. Filter ( bool enabledVisible , 
+
+bool asScalar = false 
+
+) 
+
+Initializes a new instance of the Filter<TValue> class with the specified visibility of the Enabled property and scalar value. 
+Parameters 
+
+enabledVisible True if the Enabled property should be visible; otherwise, false. 
+
+asScalar True if the filter holds a scalar value; otherwise, false. 
+
+◆ Filter() [4/6] 
+
+ATAS.Indicators.Filter < TValue >. Filter ( ) 
+
+Initializes a new instance of the Filter<TValue> class with default visibility settings. 
+
+◆ Filter() [5/6] 
+
+ATAS.Indicators.Filter < TValue >. Filter ( bool enableVisible , 
+
+bool asScalar = false 
+
+) 
+
+Initializes a new instance of the Filter class with the specified visibility of the Enabled property and scalar value. 
+Parameters 
+
+enableVisible True if the Enabled property should be visible; otherwise, false. 
+
+asScalar True if the filter holds a scalar value; otherwise, false. 
+
+◆ Filter() [6/6] 
+
+ATAS.Indicators.Filter < TValue >. Filter ( ) 
+
+Initializes a new instance of the Filter class with default visibility settings. 
+
+Member Function Documentation 
+
+◆ Clone() 
+
+override object ATAS.Indicators.Filter < TValue >.Clone ( ) 
+
+virtual 
+
+Implements ATAS.Indicators.FilterBase . 
+
+◆ CreateNew() 
+
+virtual TFilter ATAS.Indicators.Filter < TValue >.CreateNew ( ) 
+
+protected virtual 
+
+Creates a new instance of the derived filter type. 
+Returns The new instance of the derived filter type. 
+Reimplemented from ATAS.Indicators.Filter< TValue, Filter< TValue > > . 
+
+Reimplemented in ATAS.Indicators.Filter< TValue > . 
+
+◆ Equals() [1/2] 
+
+bool ATAS.Indicators.Filter < TValue >.Equals ( Filter < TValue, TFilter< TValue > > other ) 
+
+protected 
+
+◆ Equals() [2/2] 
+
+override bool ATAS.Indicators.Filter < TValue >.Equals ( object? obj ) 
+
+◆ GetHashCode() 
+
+override int ATAS.Indicators.Filter < TValue >.GetHashCode ( ) 
+
+◆ GetRealValue() 
+
+virtual ? TValue ATAS.Indicators.Filter < TValue >.GetRealValue ( TValue? value ) 
+
+protected virtual 
+
+Reimplemented from ATAS.Indicators.Filter< TValue, Filter< TValue > > . 
+
+Reimplemented in ATAS.Indicators.Filter< TValue > . 
+
+◆ GetStringValue() 
+
+virtual string ATAS.Indicators.Filter < TValue >.GetStringValue ( ) 
+
+virtual 
+
+Reimplemented from ATAS.Indicators.Filter< TValue, Filter< TValue > > . 
+
+Reimplemented in ATAS.Indicators.Filter< TValue > , and ATAS.Indicators.FilterEnum< TEnum > . 
+
+◆ operator TValue() 
+
+static ATAS.Indicators.Filter < TValue >.operator TValue ( Filter < TValue, TFilter< TValue > > other ) 
+
+explicit static 
+
+Converts the Filter<TValue, TFilter> to its value of type TValue . 
+Parameters 
+
+other The filter to convert. 
+
+◆ operator!=() 
+
+static bool ATAS.Indicators.Filter < TValue >.operator!= ( Filter < TValue, TFilter< TValue > >? left , 
+
+Filter < TValue, TFilter< TValue > >? right 
+
+) 
+
+static 
+
+◆ operator==() 
+
+static bool ATAS.Indicators.Filter < TValue >.operator== ( Filter < TValue, TFilter< TValue > >? left , 
+
+Filter < TValue, TFilter< TValue > >? right 
+
+) 
+
+static 
+
+◆ RaiseValueOnChanged() 
+
+void ATAS.Indicators.Filter < TValue >.RaiseValueOnChanged ( ) 
+
+protected 
+
+Raises the NotifyPropertyChangedBase.PropertyChanged event for the Value property and invokes the value changed action. 
+
+◆ SetValueSilently() 
+
+bool ATAS.Indicators.Filter < TValue >.SetValueSilently ( TValue value ) 
+
+Sets value of Value property. Returns false when new value equals new value. 
+Parameters 
+
+value 
+
+Returns 
+
+◆ ToString() 
+
+override string ATAS.Indicators.Filter < TValue >.ToString ( ) 
+
+Converts the filter to its string representation. 
+Returns A string that represents the filter. 
+
+◆ ValueOnChanged() 
+
+TFilter ATAS.Indicators.Filter < TValue >.ValueOnChanged ( Action< TValue > onChanged ) 
+
+Sets an action to be invoked when the value of the filter has changed. 
+Parameters 
+
+onChanged The action to be invoked. 
+
+Returns The current filter instance. 
+
+◆ ValueOnChanging() [1/2] 
+
+TFilter ATAS.Indicators.Filter < TValue >.ValueOnChanging ( Func< ValueChangingEventArgs < TValue >, TValue > onChanging ) 
+
+Sets a function to be invoked when the value of the filter is changing. 
+Parameters 
+
+onChanging The function to be invoked. 
+
+Returns The current filter instance. 
+
+◆ ValueOnChanging() [2/2] 
+
+virtual TValue ATAS.Indicators.Filter < TValue >.ValueOnChanging ( TValue? oldValue , 
+
+TValue? newValue 
+
+) 
+
+protected virtual 
+
+Invoked when the value of the filter is changing. 
+Parameters 
+
+oldValue The old value of the filter. 
+
+newValue The new value of the filter. 
+
+Returns The new value to be set for the filter. 
+Reimplemented from ATAS.Indicators.Filter< TValue, Filter< TValue > > . 
+
+Reimplemented in ATAS.Indicators.Filter< TValue > . 
+
+Property Documentation 
+
+◆ Value 
+
+TValue ATAS.Indicators.Filter < TValue >.Value 
+
+get set 
+
+Gets or sets the value of the filter. 
+
+Implements ATAS.Indicators.IFilterValue . 
+
+The documentation for this class was generated from the following file: 
+Filter.cs 
+
+ATAS 
+
+Indicators 
+
+Filter 
+
+Generated by 1.9.7 
+
+Join our developers chat

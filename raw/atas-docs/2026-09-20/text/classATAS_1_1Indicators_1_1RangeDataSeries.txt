@@ -1,0 +1,232 @@
+ATAS: ATAS.Indicators.RangeDataSeries Class Reference 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Public Member Functions | Properties | List of all members 
+
+ATAS.Indicators.RangeDataSeries Class Reference 
+
+Represents a data series of range values, each element is a RangeValue. More... 
+
+Inheritance diagram for ATAS.Indicators.RangeDataSeries: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Collaboration diagram for ATAS.Indicators.RangeDataSeries: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Public Member Functions 
+
+RangeDataSeries (string id, string name) 
+
+Initializes a new instance of the RangeDataSeries class with the specified unique and constant data series ID for data serialization and unique name. 
+
+RangeDataSeries (string id) 
+
+Initializes a new instance of the RangeDataSeries class with the specified unique and constant data series ID for data serialization. 
+
+override void Clear () 
+
+Public Member Functions inherited from ATAS.Indicators.BaseDataSeries< RangeValue > 
+
+virtual void Clear () 
+
+override string ToString () 
+
+Properties 
+
+override bool IsVisible [get] 
+
+System.Drawing.Color RenderColor [get, set] 
+
+CrossColor RangeColor [get, set] 
+
+Gets or sets the color of the range data series. 
+
+bool ScaleIt [get, set] 
+
+Gets or sets whether to scale the data series on the chart. 
+
+bool Visible [get, set] 
+
+Gets or sets the visibility of the range data series. 
+
+override int Count [get] 
+
+override RangeValue this[int index] [get, set] 
+
+Properties inherited from ATAS.Indicators.BaseDataSeries< RangeValue > 
+
+bool DrawAbovePrice [get, set] 
+
+bool IgnoredByAlerts [get, set] 
+
+string Id [get, set] 
+
+Gets or sets the unique and constant data series ID for data serialization. 
+
+string RenderId [get] 
+
+Unique series id for all panels and indicators. 
+
+virtual bool IsVisible [get] 
+
+Gets a value is should series drawn. 
+
+DataSeriesType Type [get] 
+
+string Name [get, set] 
+
+string DescriptionKey [get, set] 
+
+abstract int Count [get] 
+
+abstract T this[int index] [get, set] 
+
+Gets or sets the element at the specified index. 
+
+bool IsHidden [get, set] 
+
+bool ShowTooltip [get, set] 
+
+bool UseMinimizedModeIfEnabled [get, set] 
+
+bool ResetAlertsOnNewBar [get, set] 
+
+bool ShowNameOnMouseOver [get, set] 
+
+Additional Inherited Members 
+
+Protected Member Functions inherited from ATAS.Indicators.BaseDataSeries< RangeValue > 
+
+void RaiseChanged (int bar) 
+
+virtual void RaisePropertyChanged (string propertyName) 
+
+virtual void RaisePanelPropertyChanged (string propertyName) 
+
+BaseDataSeries (string id, DataSeriesType type) 
+
+BaseDataSeries (string id, string name, DataSeriesType type) 
+
+BaseDataSeries ( DataSeriesType type) 
+
+Events inherited from ATAS.Indicators.BaseDataSeries< RangeValue > 
+
+Action< int >? Changed 
+
+PropertyChangedEventHandler? PropertyChanged 
+
+PropertyChangedEventHandler? PanelPropertyChanged 
+
+Detailed Description 
+
+Represents a data series of range values, each element is a RangeValue. 
+
+Constructor & Destructor Documentation 
+
+◆ RangeDataSeries() [1/2] 
+
+ATAS.Indicators.RangeDataSeries.RangeDataSeries ( string id , 
+
+string name 
+
+) 
+
+Initializes a new instance of the RangeDataSeries class with the specified unique and constant data series ID for data serialization and unique name. 
+Parameters 
+
+id The unique and constant data series ID for data serialization. 
+
+name The unique data series name. 
+
+◆ RangeDataSeries() [2/2] 
+
+ATAS.Indicators.RangeDataSeries.RangeDataSeries ( string id ) 
+
+Initializes a new instance of the RangeDataSeries class with the specified unique and constant data series ID for data serialization. 
+Parameters 
+
+id The unique and constant data series ID for data serialization. 
+
+Member Function Documentation 
+
+◆ Clear() 
+
+override void ATAS.Indicators.RangeDataSeries.Clear ( ) 
+
+virtual 
+
+Reimplemented from ATAS.Indicators.BaseDataSeries< RangeValue > . 
+
+Property Documentation 
+
+◆ Count 
+
+override int ATAS.Indicators.RangeDataSeries.Count 
+
+get 
+
+◆ IsVisible 
+
+override bool ATAS.Indicators.RangeDataSeries.IsVisible 
+
+get 
+
+◆ RangeColor 
+
+CrossColor ATAS.Indicators.RangeDataSeries.RangeColor 
+
+get set 
+
+Gets or sets the color of the range data series. 
+
+◆ RenderColor 
+
+System.Drawing.Color ATAS.Indicators.RangeDataSeries.RenderColor 
+
+get set 
+
+◆ ScaleIt 
+
+bool ATAS.Indicators.RangeDataSeries.ScaleIt 
+
+get set 
+
+Gets or sets whether to scale the data series on the chart. 
+
+◆ this[int index] 
+
+override RangeValue ATAS.Indicators.RangeDataSeries.this[int index] 
+
+get set 
+
+◆ Visible 
+
+bool ATAS.Indicators.RangeDataSeries.Visible 
+
+get set 
+
+Gets or sets the visibility of the range data series. 
+
+The documentation for this class was generated from the following file: 
+RangeDataSeries.cs 
+
+ATAS 
+
+Indicators 
+
+RangeDataSeries 
+
+Generated by 1.9.7 
+
+Join our developers chat

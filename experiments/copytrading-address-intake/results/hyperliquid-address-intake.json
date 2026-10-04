@@ -1,0 +1,196 @@
+{
+  "generatedAt": "2026-08-27T16:38:18.399Z",
+  "source": "Hyperliquid public info endpoint",
+  "addressCount": 4,
+  "verdict": "The repeatable intake works for known addresses, but this sample produces no copy candidate: all sampled accounts are currently flat, all fill responses are capped, and discovery quality remains the binding risk.",
+  "rows": [
+    {
+      "address": "0x20c2d95a3dfdca9e9ad12794d5fa6fad99da44f5",
+      "source": "HypurrScan search result",
+      "initialStatus": "watch/sample-only",
+      "clearinghouse": {
+        "accountValue": 0,
+        "totalNtlPos": 0,
+        "withdrawable": 0,
+        "openPositionCount": 0,
+        "openPositions": []
+      },
+      "fills": {
+        "fillsReturned": 2000,
+        "responseIsCapped": true,
+        "earliestFillTime": "2026-05-18T16:02:28.246Z",
+        "latestFillTime": "2026-05-18T21:59:32.337Z",
+        "closeFillCount": 2000,
+        "positiveCloseFillCount": 2000,
+        "negativeCloseFillCount": 0,
+        "closedPnlSum": 1041128.354342,
+        "largestAbsClosedPnl": 16410.469838,
+        "topCoins": [
+          {
+            "coin": "ETH",
+            "count": 2000
+          }
+        ],
+        "dominantCoinShare": 1
+      },
+      "classification": {
+        "status": "watch/sample-only",
+        "reasons": [
+          "currently flat in clearinghouseState",
+          "stale or emptied account risk",
+          "userFills response is capped; full history not proven",
+          "returned fills are concentrated in one coin"
+        ]
+      }
+    },
+    {
+      "address": "0x1d52fe9bde2694f6172192381111a91e24304397",
+      "source": "HypurrScan search result",
+      "initialStatus": "rejected-as-copy/watch-as-evidence",
+      "clearinghouse": {
+        "accountValue": 0,
+        "totalNtlPos": 0,
+        "withdrawable": 0,
+        "openPositionCount": 0,
+        "openPositions": []
+      },
+      "fills": {
+        "fillsReturned": 2000,
+        "responseIsCapped": true,
+        "earliestFillTime": "2025-10-10T20:59:34.636Z",
+        "latestFillTime": "2026-01-07T00:00:00.119Z",
+        "closeFillCount": 1994,
+        "positiveCloseFillCount": 168,
+        "negativeCloseFillCount": 1826,
+        "closedPnlSum": -12948410.205726,
+        "largestAbsClosedPnl": -1100728.2744900002,
+        "topCoins": [
+          {
+            "coin": "APEX",
+            "count": 464
+          },
+          {
+            "coin": "XPL",
+            "count": 220
+          },
+          {
+            "coin": "DOGE",
+            "count": 186
+          },
+          {
+            "coin": "ZORA",
+            "count": 169
+          },
+          {
+            "coin": "kPEPE",
+            "count": 169
+          }
+        ],
+        "dominantCoinShare": 0.232
+      },
+      "classification": {
+        "status": "rejected-as-copy/watch-as-evidence",
+        "reasons": [
+          "currently flat in clearinghouseState",
+          "stale or emptied account risk",
+          "userFills response is capped; full history not proven",
+          "returned close-fill PnL sum is negative"
+        ]
+      }
+    },
+    {
+      "address": "0xc2a30212a8ddac9e123944d6e29faddce994e5f2",
+      "source": "HypurrScan search result",
+      "initialStatus": "watch/sample-only",
+      "clearinghouse": {
+        "accountValue": 0.000068,
+        "totalNtlPos": 0,
+        "withdrawable": 0.000068,
+        "openPositionCount": 0,
+        "openPositions": []
+      },
+      "fills": {
+        "fillsReturned": 2000,
+        "responseIsCapped": true,
+        "earliestFillTime": "2025-11-10T00:36:04.702Z",
+        "latestFillTime": "2025-11-11T21:21:02.841Z",
+        "closeFillCount": 900,
+        "positiveCloseFillCount": 290,
+        "negativeCloseFillCount": 610,
+        "closedPnlSum": -416143.727775,
+        "largestAbsClosedPnl": -18239.2274629999,
+        "topCoins": [
+          {
+            "coin": "ZEC",
+            "count": 876
+          },
+          {
+            "coin": "ETH",
+            "count": 868
+          },
+          {
+            "coin": "BTC",
+            "count": 228
+          },
+          {
+            "coin": "@156",
+            "count": 28
+          }
+        ],
+        "dominantCoinShare": 0.438
+      },
+      "classification": {
+        "status": "rejected-as-copy/watch-as-evidence",
+        "reasons": [
+          "currently flat in clearinghouseState",
+          "stale or emptied account risk",
+          "userFills response is capped; full history not proven",
+          "returned close-fill PnL sum is negative"
+        ]
+      }
+    },
+    {
+      "address": "0xb317d2bc2d3d2df5fa441b5bae0ab9d8b07283ae",
+      "source": "Existing local Trump-person radar address",
+      "initialStatus": "watch/radar-only",
+      "clearinghouse": {
+        "accountValue": 0,
+        "totalNtlPos": 0,
+        "withdrawable": 0,
+        "openPositionCount": 0,
+        "openPositions": []
+      },
+      "fills": {
+        "fillsReturned": 2000,
+        "responseIsCapped": true,
+        "earliestFillTime": "2026-01-31T18:43:33.193Z",
+        "latestFillTime": "2026-01-31T18:43:52.514Z",
+        "closeFillCount": 1999,
+        "positiveCloseFillCount": 0,
+        "negativeCloseFillCount": 1999,
+        "closedPnlSum": -36768308.936506,
+        "largestAbsClosedPnl": -7752471.226292001,
+        "topCoins": [
+          {
+            "coin": "ETH",
+            "count": 1266
+          },
+          {
+            "coin": "SOL",
+            "count": 734
+          }
+        ],
+        "dominantCoinShare": 0.633
+      },
+      "classification": {
+        "status": "watch/radar-only",
+        "reasons": [
+          "currently flat in clearinghouseState",
+          "stale or emptied account risk",
+          "userFills response is capped; full history not proven",
+          "returned close-fill PnL sum is negative"
+        ]
+      }
+    }
+  ]
+}

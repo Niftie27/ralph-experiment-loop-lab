@@ -1,0 +1,51 @@
+{
+  "status": "research-only-no-live-execution",
+  "data": {
+    "source": "binance-public-archive-rest-tail",
+    "symbols": [
+      { "symbol": "BTC", "binanceSpotSymbol": "BTCUSDT" },
+      { "symbol": "ETH", "binanceSpotSymbol": "ETHUSDT" },
+      { "symbol": "SOL", "binanceSpotSymbol": "SOLUSDT" },
+      { "symbol": "XRP", "binanceSpotSymbol": "XRPUSDT" },
+      { "symbol": "DOGE", "binanceSpotSymbol": "DOGEUSDT" },
+      { "symbol": "AVAX", "binanceSpotSymbol": "AVAXUSDT" },
+      { "symbol": "HYPE", "provider": "bybit-linear", "bybitSymbol": "HYPEUSDT", "features": ["funding", "openInterest"] }
+    ],
+    "timeframes": [
+      { "id": "1h", "binanceInterval": "1h", "bybitInterval": "60", "lookbackDays": 1825, "maxBars": 24 },
+      { "id": "4h", "binanceInterval": "4h", "bybitInterval": "240", "lookbackDays": 1825, "maxBars": 12 }
+    ]
+  },
+  "costs": {
+    "feeBpsPerSide": 4,
+    "slippageBpsPerSide": 3
+  },
+  "risk": {
+    "stopAtr": 1.2,
+    "targetR": 1.8
+  },
+  "gates": {
+    "minSample": 80,
+    "minOutOfSampleSample": 20,
+    "minDeflatedSharpe": 0.35,
+    "minProfitFactor": 1.15,
+    "minExpectancyR": 0.05,
+    "minOutOfSampleExpectancyR": 0.01,
+    "minBaselineExpectancyLiftR": 0.01,
+    "maxDrawdownR": 18,
+    "maxWorstSliceExpectancyR": -0.25
+  },
+  "evaluation": {
+    "split": {
+      "method": "purged_embargo_entry_time",
+      "inSampleRatio": 0.7
+    },
+    "baseline": {
+      "method": "time_matched_alternating_direction"
+    }
+  },
+  "multipleTesting": {
+    "enabled": true,
+    "familyPenaltyFloor": 1
+  }
+}

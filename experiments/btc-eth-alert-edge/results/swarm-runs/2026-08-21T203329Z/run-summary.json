@@ -1,0 +1,88 @@
+{
+  "run_id": "2026-08-21T203329Z",
+  "generated": "2026-08-21T20:33:29.292Z",
+  "status": "research-only-no-live-execution",
+  "mode": "local",
+  "manifest": "swarm-manifest.json",
+  "jobs_completed": [
+    "post_alert_dataset_audit",
+    "relative_context_review",
+    "orderflow_book_quality_audit",
+    "slice_watchlist_review",
+    "risk_governor_review",
+    "synthesis_report"
+  ],
+  "artifacts": [
+    {
+      "job_id": "post_alert_dataset_audit",
+      "path": "results/swarm-runs/2026-08-21T203329Z/artifacts/post-alert-dataset-audit.json",
+      "promotable": false
+    },
+    {
+      "job_id": "relative_context_review",
+      "path": "results/swarm-runs/2026-08-21T203329Z/artifacts/relative-context-review.json",
+      "promotable": false
+    },
+    {
+      "job_id": "orderflow_book_quality_audit",
+      "path": "results/swarm-runs/2026-08-21T203329Z/artifacts/orderflow-book-quality-audit.json",
+      "promotable": false
+    },
+    {
+      "job_id": "slice_watchlist_review",
+      "path": "results/swarm-runs/2026-08-21T203329Z/artifacts/slice-watchlist-review.json",
+      "promotable": false
+    },
+    {
+      "job_id": "risk_governor_review",
+      "path": "results/swarm-runs/2026-08-21T203329Z/artifacts/risk-governor-review.json",
+      "promotable": false
+    },
+    {
+      "job_id": "synthesis_report",
+      "path": "results/swarm-runs/2026-08-21T203329Z/artifacts/synthesis-report.json",
+      "promotable": false
+    }
+  ],
+  "dataset": {
+    "finalized_rows": 64,
+    "clean_rows": 6,
+    "tainted_rows": 58,
+    "label_counts": {
+      "noisy": 11,
+      "fade": 26,
+      "follow": 27
+    },
+    "quality_flag_counts": {
+      "book_not_fresh": 52,
+      "negative_book_age": 6,
+      "score_above_max": 1
+    },
+    "slice_count": 20
+  },
+  "best_agent": {
+    "agent_id": "book_pressure_scout",
+    "accuracy": 0.5,
+    "evaluated": 12,
+    "coverage": 0.1875
+  },
+  "promotion_decision": "blocked",
+  "risk_blockers": [
+    "Clean sample is far below a promotion threshold.",
+    "Book-quality flags dominate the current dataset.",
+    "No out-of-sample live-gate validation exists in this launcher.",
+    "No relative-context slice has enough clean, forward-confirmed evidence.",
+    "Relative matrix is scored against the same small finalized alert set.",
+    "Book freshness is too sparse.",
+    "Known negative-age and score-above-max quality flags remain in the historical row set.",
+    "Changing orderflow scoring would touch alert behavior and is outside this task.",
+    "Slice evidence is same-dataset and low-sample.",
+    "No slice has passed risk-governor promotion conditions.",
+    "clean_rows 6 < 30 minimum",
+    "top agent has fewer than 20 evaluated rows",
+    "top agent accuracy 50.0% < 58.0% watch threshold",
+    "quality flags remain present in the research dataset",
+    "no out-of-sample promotion test has been run",
+    "executor remains explicitly closed"
+  ]
+}

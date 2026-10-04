@@ -1,0 +1,25 @@
+document.addEventListener('DOMContentLoaded', function() {
+  // Находим элемент с id="titlearea"
+  var titleArea = document.getElementById("titlearea");
+
+  // Добавляем обработчик события click к этому элементу
+  titleArea.addEventListener('click', function(event) {
+    // Проверяем, был ли клик по ссылке
+    var clickedElement = event.target;
+    
+    // Проходим вверх по DOM-дереву, чтобы найти родительскую ссылку
+    while (clickedElement && clickedElement \!== titleArea) {
+      if (clickedElement.tagName === 'A') {
+        // Если кликнули по ссылке, не блокируем стандартное поведение
+        return;
+      }
+      clickedElement = clickedElement.parentElement;
+    }
+    
+    // Если клик был не по ссылке, переходим на index.html
+    window.location.href = 'index.html';
+  });
+
+  // Делаем курсор в виде руки, чтобы показать, что элемент кликабельный
+  titleArea.style.cursor = 'pointer';
+});

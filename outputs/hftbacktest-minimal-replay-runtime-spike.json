@@ -1,0 +1,106 @@
+{
+  "generated_at": "2026-08-22T10:43:59.686014+00:00",
+  "status": "research-only-no-live-execution",
+  "question": "Can hftbacktest ingest no-key capture-v2 hyperliquid BTC rows and run a trivial replay baseline?",
+  "verdict": "VALIDATED",
+  "source_run": "2026-08-22T08-39-ralph-hl-btc-2h",
+  "input": "crypto-updates/runtime/orderflow-spikes/2026-08-22T08-39-ralph-hl-btc-2h/raw-events.jsonl",
+  "runtime": {
+    "python": "3.12.3",
+    "hftbacktest": "2.4.4",
+    "numpy": "2.2.6"
+  },
+  "assumptions": {
+    "venue": "hyperliquid",
+    "symbol": "BTC",
+    "maker_fee": 0.0,
+    "taker_fee": 0.0,
+    "order_latency_entry_ns": 0,
+    "order_latency_response_ns": 0,
+    "tick_size": 0.01,
+    "lot_size": 1e-05,
+    "passive_order_qty_btc": 0.001,
+    "exchange_model": "no_partial_fill_exchange",
+    "queue_model": "risk_adverse_queue_model",
+    "asset_model": "linear_asset(contract_size=1.0)"
+  },
+  "conversion": {
+    "raw_events_total": 855975,
+    "selected_events": 57390,
+    "source_counts_after_snapshot": {
+      "l2_book": 13304,
+      "trade": 42627
+    },
+    "initial_snapshot_rows": 10,
+    "base_event_rows": 175667,
+    "replay_event_rows_after_order_correction": 176075,
+    "local_ts_min_ns": 1787387978808000000,
+    "local_ts_max_ns": 1787395178072000000,
+    "negative_feed_latency_rows": 0,
+    "minimum_feed_latency_ns": 266000000,
+    "missing_exchange_timestamp_events": 0,
+    "missing_local_receive_timestamp_events": 0
+  },
+  "baselines": {
+    "no_trade": {
+      "valid_book_observations": 20,
+      "state": {
+        "position": 0.0,
+        "balance": 0.0,
+        "fee": 0.0,
+        "num_trades": 0,
+        "trading_volume": 0.0,
+        "trading_value": 0.0
+      },
+      "ending_book": {
+        "timestamp_ns": 1787395177276000000,
+        "best_bid": 77122.0,
+        "best_ask": 77123.0,
+        "best_bid_qty": 4.46878,
+        "best_ask_qty": 0.83535
+      }
+    },
+    "passive_fixed_spread_single_quote": {
+      "starting_book": {
+        "timestamp_ns": 1787387978022000000,
+        "best_bid": 77168.0,
+        "best_ask": 77169.0,
+        "best_bid_qty": 20.71284,
+        "best_ask_qty": 0.00406
+      },
+      "submit_results": {
+        "buy": 0,
+        "sell": 0
+      },
+      "state": {
+        "position": 0.0,
+        "balance": 0.000999999999990564,
+        "fee": 0.0,
+        "num_trades": 2,
+        "trading_volume": 0.002,
+        "trading_value": 154.337
+      },
+      "open_orders": 0,
+      "ending_book": {
+        "timestamp_ns": 1787395177286000000,
+        "best_bid": 77122.0,
+        "best_ask": 77123.0,
+        "best_bid_qty": 4.46878,
+        "best_ask_qty": 0.83535
+      }
+    }
+  },
+  "interpretation": [
+    "Runtime/package path is available through an isolated uv venv; no global install is needed.",
+    "The capture needs an initial depth snapshot before replay rows, otherwise hftbacktest loads the array but best bid/ask remain NaN.",
+    "Fixture guards now reject crossed, locked, non-positive, and non-finite top-of-book rows before baseline claims.",
+    "Selected converted rows have separate local receive timestamps and native exchange timestamp evidence.",
+    "This is only a runtime smoke test over public no-key data, not evidence of trading edge.",
+    "Passive quote fills are sensitive to zero latency, zero fees, queue model, and short sample length."
+  ],
+  "next_steps": [
+    "Keep fixture tests in front of converter changes and add exchange-specific timestamp evidence checks before longer replay claims.",
+    "Run a longer bounded no-key capture before evaluating any edge-like metric.",
+    "Replace zero-fee/zero-latency assumptions with exchange-specific conservative assumptions before strategy work."
+  ]
+}

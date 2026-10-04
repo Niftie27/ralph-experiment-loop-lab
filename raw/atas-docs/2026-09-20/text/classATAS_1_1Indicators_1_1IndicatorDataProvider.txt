@@ -1,0 +1,588 @@
+ATAS: ATAS.Indicators.IndicatorDataProvider Class Reference 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Public Member Functions | Public Attributes | Static Public Attributes | Properties | List of all members 
+
+ATAS.Indicators.IndicatorDataProvider Class Reference 
+
+Implementation of the IIndicatorDataProvider interface that provides access to various data and services related to an indicator. More... 
+
+Inheritance diagram for ATAS.Indicators.IndicatorDataProvider: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Collaboration diagram for ATAS.Indicators.IndicatorDataProvider: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Public Member Functions 
+
+IndicatorDataProvider ( ITradingStatisticsProvider tradingStatisticsProvider, IIndicatorServiceProvider indicatorServiceProvider, IOnlineDataProvider onlineDataProvider, IPlatformSettings platformSettings, IInstrumentInfo instrumentInfo, ITradingManager tradingManager, ICandleCreator candleCreator, IChart chartInfo) 
+
+Initializes a new instance of the IndicatorDataProvider class. 
+
+T GetService< T > () 
+
+Resolves registered services. 
+
+DateTime GetCustomStartTime ( DateTime time, TimeSpan timeFrame) 
+
+Gets custom candle begin time with specified timeframe and current time. Parameters 
+
+time 
+
+timeFrame 
+
+Returns true if a new trading session has started; otherwise, false . 
+
+bool IsNewSession ( DateTime prevTime, DateTime newTime) 
+
+Checks whether a new trading session has started between the specified previous time and new time. Parameters 
+
+prevTime The previous time. 
+
+newTime The new time. 
+
+Returns true if a new trading session has started; otherwise, false . 
+
+bool IsNewWeek ( DateTime prevTime, DateTime newTime) 
+
+Checks whether a new trading week has started between the specified previous time and new time. Parameters 
+
+prevTime The previous time. 
+
+newTime The new time. 
+
+Returns true if a new trading week has started; otherwise, false . 
+
+bool IsNewMonth ( DateTime prevTime, DateTime newTime) 
+
+Checks whether a new trading month has started between the specified previous time and new time. Parameters 
+
+prevTime The previous time. 
+
+newTime The new time. 
+
+Returns true if a new trading month has started; otherwise, false . 
+
+void AddAlert (string soundFile, string instrument, string message, CrossColor background, CrossColor foreground, DateTime ? time=null) 
+
+Adds an alert with the specified details to the indicator. 
+
+void DoActionInGuiThread (Action action) 
+
+Executes the specified action on the GUI thread. 
+
+override string ToString () 
+
+Returns the name of the indicator data provider. 
+
+T GetService< T > () 
+
+Resolves registered services. 
+
+DateTime GetCustomStartTime ( DateTime time, TimeSpan timeFrame) 
+
+Gets custom candle begin time with specified timeframe and current time. 
+
+bool IsNewSession ( DateTime prevTime, DateTime newTime) 
+
+Checks whether a new trading session has started between the specified previous time and new time. 
+
+bool IsNewWeek ( DateTime prevTime, DateTime newTime) 
+
+Checks whether a new trading week has started between the specified previous time and new time. 
+
+bool IsNewMonth ( DateTime prevTime, DateTime newTime) 
+
+Checks whether a new trading month has started between the specified previous time and new time. 
+
+void AddAlert (string soundFile, string instrument, string message, CrossColor background, CrossColor foreground, DateTime ? time=null) 
+
+Adds an alert with the specified details to the indicator. 
+
+void DoActionInGuiThread (Action action) 
+
+Executes the specified action on the GUI thread. 
+
+Public Attributes 
+
+Action< Action >? OnNewGuiActionRequested 
+
+Gets or sets the action to request a new GUI action. 
+
+Static Public Attributes 
+
+const string NewPanel = "NewPanel" 
+
+Represents the name of a new panel. 
+
+const string CandlesPanel = "Chart" 
+
+Represents the name of the candles panel on the chart. 
+
+Properties 
+
+string Name [get] 
+
+Gets or sets the name of the indicator data provider. 
+
+IChart ChartInfo [get] 
+
+Gets the chart information associated with the indicator. 
+
+IPlatformSettings GlobalPlatformSettings [get] 
+
+Gets or sets the global platform settings used by the indicator. 
+
+IOnlineDataProvider OnlineDataProvider [get] 
+
+Gets or sets the online data provider used by the indicator to fetch real-time data. 
+
+ObservableCollection< CandlePartSeries > CandlesDataSeries [get] 
+
+Gets or sets the collection of candle part series used by the indicator. 
+
+ObservableCollection< string > Panels [get] 
+
+Gets or sets the collection of panels associated with the indicator. 
+
+MarketDepthInfoProvider MarketDepthInfoProvider [get] 
+
+Gets or sets the market depth information provider used by the indicator to access market depth data. 
+
+IInstrumentInfo InstrumentInfo [get, set] 
+
+Gets or sets the instrument information associated with the indicator's instrument. 
+
+ITradingManager TradingManager [get] 
+
+Gets the trading manager used by the indicator to manage trading-related tasks. 
+
+ITradingStatisticsProvider TradingStatisticsProvider [get] 
+
+Gets the trading statistics provider used by the indicator to access trading-related statistics. 
+
+IOptionsDataProvider ? OptionsDataProvider [get, set] 
+
+Gets the options data provider for the chart's security, or null when the host does not supply options data. See IOptionsDataProvider.IsAvailable . The default implementation keeps custom hosts source-compatible. 
+
+ICandlesDataProvider ? CandlesDataProvider [get, set] 
+
+Gets the candle series provider (other timeframes / other instruments), or null when the host does not supply candle series. See ICandlesDataProvider.IsAvailable . The default implementation keeps custom hosts source-compatible. 
+
+IInstrumentMarketDataProvider ? InstrumentMarketDataProvider [get, set] 
+
+Gets the live market-data provider (trades / best bid-ask / order book of other instruments), or null when the host does not supply it. See IInstrumentMarketDataProvider.IsAvailable . The default implementation keeps custom hosts source-compatible. 
+
+Properties inherited from ATAS.Indicators.IIndicatorDataProvider 
+
+string Name [get] 
+
+Gets the name of the indicator data provider. 
+
+IChart ChartInfo [get] 
+
+Gets the chart information associated with the indicator. 
+
+IPlatformSettings GlobalPlatformSettings [get] 
+
+Gets the global platform settings used by the indicator. 
+
+IOnlineDataProvider OnlineDataProvider [get] 
+
+Gets the online data provider used by the indicator to fetch real-time data. 
+
+ObservableCollection< CandlePartSeries > CandlesDataSeries [get] 
+
+Gets the collection of candle part series used by the indicator. 
+
+ObservableCollection< string > Panels [get] 
+
+Gets the collection of panels associated with the indicator. 
+
+MarketDepthInfoProvider MarketDepthInfoProvider [get] 
+
+Gets the market depth information provider used by the indicator to access market depth data. 
+
+IInstrumentInfo InstrumentInfo [get] 
+
+Gets the instrument information associated with the indicator's instrument. 
+
+ITradingManager TradingManager [get] 
+
+Gets the trading manager used by the indicator to manage trading-related tasks. 
+
+ITradingStatisticsProvider TradingStatisticsProvider [get] 
+
+Gets the trading statistics provider used by the indicator to access trading-related statistics. 
+
+IOptionsDataProvider ? OptionsDataProvider [get] 
+
+Gets the options data provider for the chart's security, or null when the host does not supply options data. See IOptionsDataProvider.IsAvailable. The default implementation keeps custom hosts source-compatible. 
+
+ICandlesDataProvider ? CandlesDataProvider [get] 
+
+Gets the candle series provider (other timeframes / other instruments), or null when the host does not supply candle series. See ICandlesDataProvider.IsAvailable. The default implementation keeps custom hosts source-compatible. 
+
+IInstrumentMarketDataProvider ? InstrumentMarketDataProvider [get] 
+
+Gets the live market-data provider (trades / best bid-ask / order book of other instruments), or null when the host does not supply it. See IInstrumentMarketDataProvider.IsAvailable. The default implementation keeps custom hosts source-compatible. 
+
+Detailed Description 
+
+Implementation of the IIndicatorDataProvider interface that provides access to various data and services related to an indicator. 
+
+Constructor & Destructor Documentation 
+
+◆ IndicatorDataProvider() 
+
+ATAS.Indicators.IndicatorDataProvider.IndicatorDataProvider ( ITradingStatisticsProvider tradingStatisticsProvider , 
+
+IIndicatorServiceProvider indicatorServiceProvider , 
+
+IOnlineDataProvider onlineDataProvider , 
+
+IPlatformSettings platformSettings , 
+
+IInstrumentInfo instrumentInfo , 
+
+ITradingManager tradingManager , 
+
+ICandleCreator candleCreator , 
+
+IChart chartInfo 
+
+) 
+
+Initializes a new instance of the IndicatorDataProvider class. 
+Parameters 
+
+candleCreator The candle creator instance associated with the indicator. 
+
+onlineDataProvider The online data provider instance used by the indicator. 
+
+platformSettings The global platform settings used by the indicator. 
+
+instrumentInfo The instrument information associated with the indicator's instrument. 
+
+tradingManager The trading manager used by the indicator. 
+
+chartInfo The chart information associated with the indicator. 
+
+tradingStatisticsProvider The trading statistics provider used by the indicator. 
+
+Member Function Documentation 
+
+◆ AddAlert() 
+
+void ATAS.Indicators.IndicatorDataProvider.AddAlert ( string soundFile , 
+
+string instrument , 
+
+string message , 
+
+CrossColor background , 
+
+CrossColor foreground , 
+
+DateTime ? time = null 
+
+) 
+
+Adds an alert with the specified details to the indicator. 
+Parameters 
+
+soundFile The sound file to play for the alert. 
+
+instrument The instrument associated with the alert. 
+
+message The alert message. 
+
+background The background color of the alert. 
+
+foreground The foreground color of the alert. 
+
+time Exact time for alert 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ DoActionInGuiThread() 
+
+void ATAS.Indicators.IndicatorDataProvider.DoActionInGuiThread ( Action action ) 
+
+Executes the specified action on the GUI thread. 
+Parameters 
+
+action The action to execute on the GUI thread. 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ GetCustomStartTime() 
+
+DateTime ATAS.Indicators.IndicatorDataProvider.GetCustomStartTime ( DateTime time , 
+
+TimeSpan timeFrame 
+
+) 
+
+Gets custom candle begin time with specified timeframe and current time. Parameters 
+
+time 
+
+timeFrame 
+
+Returns true if a new trading session has started; otherwise, false . 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ GetService< T >() 
+
+T ATAS.Indicators.IndicatorDataProvider.GetService< T > ( ) 
+
+Resolves registered services. 
+Template Parameters 
+
+T ype of the service 
+
+Returns Instance of the service 
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ IsNewMonth() 
+
+bool ATAS.Indicators.IndicatorDataProvider.IsNewMonth ( DateTime prevTime , 
+
+DateTime newTime 
+
+) 
+
+Checks whether a new trading month has started between the specified previous time and new time. Parameters 
+
+prevTime The previous time. 
+
+newTime The new time. 
+
+Returns true if a new trading month has started; otherwise, false . 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ IsNewSession() 
+
+bool ATAS.Indicators.IndicatorDataProvider.IsNewSession ( DateTime prevTime , 
+
+DateTime newTime 
+
+) 
+
+Checks whether a new trading session has started between the specified previous time and new time. Parameters 
+
+prevTime The previous time. 
+
+newTime The new time. 
+
+Returns true if a new trading session has started; otherwise, false . 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ IsNewWeek() 
+
+bool ATAS.Indicators.IndicatorDataProvider.IsNewWeek ( DateTime prevTime , 
+
+DateTime newTime 
+
+) 
+
+Checks whether a new trading week has started between the specified previous time and new time. Parameters 
+
+prevTime The previous time. 
+
+newTime The new time. 
+
+Returns true if a new trading week has started; otherwise, false . 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ ToString() 
+
+override string ATAS.Indicators.IndicatorDataProvider.ToString ( ) 
+
+Returns the name of the indicator data provider. 
+Returns The name of the indicator data provider. 
+
+Member Data Documentation 
+
+◆ CandlesPanel 
+
+const string ATAS.Indicators.IndicatorDataProvider.CandlesPanel = "Chart" 
+
+static 
+
+Represents the name of the candles panel on the chart. 
+
+◆ NewPanel 
+
+const string ATAS.Indicators.IndicatorDataProvider.NewPanel = "NewPanel" 
+
+static 
+
+Represents the name of a new panel. 
+
+◆ OnNewGuiActionRequested 
+
+Action<Action>? ATAS.Indicators.IndicatorDataProvider.OnNewGuiActionRequested 
+
+Gets or sets the action to request a new GUI action. 
+
+Property Documentation 
+
+◆ CandlesDataProvider 
+
+ICandlesDataProvider ? ATAS.Indicators.IndicatorDataProvider.CandlesDataProvider 
+
+get set 
+
+Gets the candle series provider (other timeframes / other instruments), or null when the host does not supply candle series. See ICandlesDataProvider.IsAvailable . The default implementation keeps custom hosts source-compatible. 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ CandlesDataSeries 
+
+ObservableCollection< CandlePartSeries > ATAS.Indicators.IndicatorDataProvider.CandlesDataSeries 
+
+get 
+
+Gets or sets the collection of candle part series used by the indicator. 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ ChartInfo 
+
+IChart ATAS.Indicators.IndicatorDataProvider.ChartInfo 
+
+get 
+
+Gets the chart information associated with the indicator. 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ GlobalPlatformSettings 
+
+IPlatformSettings ATAS.Indicators.IndicatorDataProvider.GlobalPlatformSettings 
+
+get 
+
+Gets or sets the global platform settings used by the indicator. 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ InstrumentInfo 
+
+IInstrumentInfo ATAS.Indicators.IndicatorDataProvider.InstrumentInfo 
+
+get set 
+
+Gets or sets the instrument information associated with the indicator's instrument. 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ InstrumentMarketDataProvider 
+
+IInstrumentMarketDataProvider ? ATAS.Indicators.IndicatorDataProvider.InstrumentMarketDataProvider 
+
+get set 
+
+Gets the live market-data provider (trades / best bid-ask / order book of other instruments), or null when the host does not supply it. See IInstrumentMarketDataProvider.IsAvailable . The default implementation keeps custom hosts source-compatible. 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ MarketDepthInfoProvider 
+
+MarketDepthInfoProvider ATAS.Indicators.IndicatorDataProvider.MarketDepthInfoProvider 
+
+get 
+
+Gets or sets the market depth information provider used by the indicator to access market depth data. 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ Name 
+
+string ATAS.Indicators.IndicatorDataProvider.Name 
+
+get 
+
+Gets or sets the name of the indicator data provider. 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ OnlineDataProvider 
+
+IOnlineDataProvider ATAS.Indicators.IndicatorDataProvider.OnlineDataProvider 
+
+get 
+
+Gets or sets the online data provider used by the indicator to fetch real-time data. 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ OptionsDataProvider 
+
+IOptionsDataProvider ? ATAS.Indicators.IndicatorDataProvider.OptionsDataProvider 
+
+get set 
+
+Gets the options data provider for the chart's security, or null when the host does not supply options data. See IOptionsDataProvider.IsAvailable . The default implementation keeps custom hosts source-compatible. 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ Panels 
+
+ObservableCollection<string> ATAS.Indicators.IndicatorDataProvider.Panels 
+
+get 
+
+Gets or sets the collection of panels associated with the indicator. 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ TradingManager 
+
+ITradingManager ATAS.Indicators.IndicatorDataProvider.TradingManager 
+
+get 
+
+Gets the trading manager used by the indicator to manage trading-related tasks. 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+◆ TradingStatisticsProvider 
+
+ITradingStatisticsProvider ATAS.Indicators.IndicatorDataProvider.TradingStatisticsProvider 
+
+get 
+
+Gets the trading statistics provider used by the indicator to access trading-related statistics. 
+
+Implements ATAS.Indicators.IIndicatorDataProvider . 
+
+The documentation for this class was generated from the following file: 
+IndicatorDataProvider.cs 
+
+ATAS 
+
+Indicators 
+
+IndicatorDataProvider 
+
+Generated by 1.9.7 
+
+Join our developers chat

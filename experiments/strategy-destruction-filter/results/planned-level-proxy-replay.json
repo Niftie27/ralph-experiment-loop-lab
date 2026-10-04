@@ -1,0 +1,922 @@
+{
+  "generatedAt": "2026-09-28T08:58:49.934Z",
+  "status": "research-only-no-live-execution",
+  "purpose": "planned-level public-orderflow proxy scaffold for Filip pdV/pdN Cluster Search lane",
+  "source": {
+    "candles": {
+      "source": "binance-public-archive-rest-tail",
+      "archiveFilesAttempted": 87,
+      "restTailStart": "2026-08-14T08:58:11.753Z",
+      "provider": "binance-spot",
+      "market": "spot"
+    },
+    "trades": {
+      "provider": "binance_spot_public_aggTrades",
+      "auth": "none",
+      "fetchEnabled": true,
+      "cacheDir": "data/planned-level-aggtrades-cache"
+    }
+  },
+  "schema": {
+    "eventFields": [
+      "event_id",
+      "symbol",
+      "level_source",
+      "level_price",
+      "level_side",
+      "setup_type",
+      "btc_gate_entry",
+      "classification",
+      "candle_time_utc",
+      "proxy_cluster_label",
+      "mfe_1c_3c_5c",
+      "mae_1c_3c_5c",
+      "fast_kill_label"
+    ],
+    "proxyFields": [
+      "trade_side_delta_notional",
+      "cvd_slope_notional_per_min",
+      "aggressive_volume_at_level",
+      "price_progress_per_aggressive_volume",
+      "opposing_absorption_candidate",
+      "fail_back_or_reclaim"
+    ]
+  },
+  "gates": {
+    "minFrozenEventsBeforeCandidate": 20,
+    "minFetchedTradeWindowsBeforeRule": 10,
+    "requiresBtcGate": true,
+    "requiresBaselineLift": true
+  },
+  "totals": {
+    "candidateEvents": 20,
+    "fetchedTradeWindows": 10,
+    "noFetchRows": 10,
+    "fetchFailedRows": 0
+  },
+  "rows": [
+    {
+      "eventId": "BTC-1h-previous_day_low-1788764400",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_low",
+      "levelPrice": 79233,
+      "levelSide": "down",
+      "setupType": "fade_long",
+      "direction": "long",
+      "btcGateEntry": {
+        "regime": "BTC_TRANSITION",
+        "reason": "BTC inside prior 24h range",
+        "high": 80559.99,
+        "low": 79233,
+        "price": 79397.83
+      },
+      "classification": "sweep_rejection",
+      "candleTimeUtc": "2026-09-07T07:00:00.000Z",
+      "proxyClusterLabel": "not_fetched",
+      "entryPriceProxy": 79397.83,
+      "atr": 350.06,
+      "mfeMae": {
+        "mfe1cPct": 0.1671,
+        "mae1cPct": 0,
+        "mfe3cPct": 0.1917,
+        "mae3cPct": 0.1344,
+        "mfe5cPct": 0.2892,
+        "mae5cPct": 0.1459
+      },
+      "fastKillLabel": "unscored_without_trade_window",
+      "tradeWindow": {
+        "status": "fetch_disabled",
+        "reason": "Set PLANNED_LEVEL_PROXY_FETCH=1 for bounded public/no-key aggTrades windows.",
+        "start": "2026-09-07T06:55:00.000Z",
+        "end": "2026-09-07T07:10:00.000Z"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_low-1788840000",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_low",
+      "levelPrice": 78680,
+      "levelSide": "down",
+      "setupType": "fade_long",
+      "direction": "long",
+      "btcGateEntry": {
+        "regime": "BTC_RISK_OFF",
+        "reason": "1h close below prior 24h low",
+        "keyLevel": 78680,
+        "price": 78678.71
+      },
+      "classification": "mixed_weak_break",
+      "candleTimeUtc": "2026-09-08T04:00:00.000Z",
+      "proxyClusterLabel": "not_fetched",
+      "entryPriceProxy": 78678.71,
+      "atr": 287.96,
+      "mfeMae": {
+        "mfe1cPct": 0.2584,
+        "mae1cPct": 0.1572,
+        "mfe3cPct": 0.2584,
+        "mae3cPct": 0.6339,
+        "mfe5cPct": 0.2584,
+        "mae5cPct": 0.6339
+      },
+      "fastKillLabel": "unscored_without_trade_window",
+      "tradeWindow": {
+        "status": "fetch_disabled",
+        "reason": "Set PLANNED_LEVEL_PROXY_FETCH=1 for bounded public/no-key aggTrades windows.",
+        "start": "2026-09-08T03:55:00.000Z",
+        "end": "2026-09-08T04:10:00.000Z"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1788940800",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_high",
+      "levelPrice": 79485,
+      "levelSide": "up",
+      "setupType": "continuation_long",
+      "direction": "long",
+      "btcGateEntry": {
+        "regime": "BTC_RISK_ON",
+        "reason": "1h close above prior 24h high",
+        "keyLevel": 79400,
+        "price": 79698.02
+      },
+      "classification": "accepted_break",
+      "candleTimeUtc": "2026-09-09T08:00:00.000Z",
+      "proxyClusterLabel": "not_fetched",
+      "entryPriceProxy": 79698.02,
+      "atr": 307.05,
+      "mfeMae": {
+        "mfe1cPct": 0.0226,
+        "mae1cPct": 1.0013,
+        "mfe3cPct": 0.0226,
+        "mae3cPct": 1.2205,
+        "mfe5cPct": 0.0226,
+        "mae5cPct": 1.2205
+      },
+      "fastKillLabel": "unscored_without_trade_window",
+      "tradeWindow": {
+        "status": "fetch_disabled",
+        "reason": "Set PLANNED_LEVEL_PROXY_FETCH=1 for bounded public/no-key aggTrades windows.",
+        "start": "2026-09-09T07:55:00.000Z",
+        "end": "2026-09-09T08:10:00.000Z"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_low-1789038000",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_low",
+      "levelPrice": 77770,
+      "levelSide": "down",
+      "setupType": "fade_long",
+      "direction": "long",
+      "btcGateEntry": {
+        "regime": "BTC_TRANSITION",
+        "reason": "BTC near edge of prior 24h range",
+        "high": 79678.84,
+        "low": 77770,
+        "price": 77840.8
+      },
+      "classification": "sweep_rejection",
+      "candleTimeUtc": "2026-09-10T11:00:00.000Z",
+      "proxyClusterLabel": "not_fetched",
+      "entryPriceProxy": 77840.8,
+      "atr": 338.51,
+      "mfeMae": {
+        "mfe1cPct": 0.1521,
+        "mae1cPct": 1.4963,
+        "mfe3cPct": 0.1521,
+        "mae3cPct": 1.4963,
+        "mfe5cPct": 0.1521,
+        "mae5cPct": 1.4963
+      },
+      "fastKillLabel": "unscored_without_trade_window",
+      "tradeWindow": {
+        "status": "fetch_disabled",
+        "reason": "Set PLANNED_LEVEL_PROXY_FETCH=1 for bounded public/no-key aggTrades windows.",
+        "start": "2026-09-10T10:55:00.000Z",
+        "end": "2026-09-10T11:10:00.000Z"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_low-1789128000",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_low",
+      "levelPrice": 76464,
+      "levelSide": "down",
+      "setupType": "fade_long",
+      "direction": "long",
+      "btcGateEntry": {
+        "regime": "BTC_RISK_ON",
+        "reason": "1h close above prior 24h high",
+        "keyLevel": 77959.2,
+        "price": 78032.99
+      },
+      "classification": "sweep_rejection",
+      "candleTimeUtc": "2026-09-11T12:00:00.000Z",
+      "proxyClusterLabel": "not_fetched",
+      "entryPriceProxy": 78032.99,
+      "atr": 425.6,
+      "mfeMae": {
+        "mfe1cPct": 1.666,
+        "mae1cPct": 0.9985,
+        "mfe3cPct": 2.3798,
+        "mae3cPct": 0.9985,
+        "mfe5cPct": 2.3798,
+        "mae5cPct": 0.9985
+      },
+      "fastKillLabel": "unscored_without_trade_window",
+      "tradeWindow": {
+        "status": "fetch_disabled",
+        "reason": "Set PLANNED_LEVEL_PROXY_FETCH=1 for bounded public/no-key aggTrades windows.",
+        "start": "2026-09-11T11:55:00.000Z",
+        "end": "2026-09-11T12:10:00.000Z"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1789131600",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_high",
+      "levelPrice": 78564.39,
+      "levelSide": "up",
+      "setupType": "continuation_long",
+      "direction": "long",
+      "btcGateEntry": {
+        "regime": "BTC_RISK_ON",
+        "reason": "1h close above prior 24h high",
+        "keyLevel": 78148.74,
+        "price": 79242.56
+      },
+      "classification": "accepted_break",
+      "candleTimeUtc": "2026-09-11T13:00:00.000Z",
+      "proxyClusterLabel": "not_fetched",
+      "entryPriceProxy": 79242.56,
+      "atr": 544.66,
+      "mfeMae": {
+        "mfe1cPct": 0.817,
+        "mae1cPct": 0.9256,
+        "mfe3cPct": 0.817,
+        "mae3cPct": 2.4476,
+        "mfe5cPct": 0.817,
+        "mae5cPct": 2.9776
+      },
+      "fastKillLabel": "unscored_without_trade_window",
+      "tradeWindow": {
+        "status": "fetch_disabled",
+        "reason": "Set PLANNED_LEVEL_PROXY_FETCH=1 for bounded public/no-key aggTrades windows.",
+        "start": "2026-09-11T12:55:00.000Z",
+        "end": "2026-09-11T13:10:00.000Z"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_low-1789279200",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_low",
+      "levelPrice": 77059.75,
+      "levelSide": "down",
+      "setupType": "fade_long",
+      "direction": "long",
+      "btcGateEntry": {
+        "regime": "BTC_TRANSITION",
+        "reason": "BTC inside prior 24h range",
+        "high": 77505.67,
+        "low": 77059.75,
+        "price": 77122.35
+      },
+      "classification": "sweep_rejection",
+      "candleTimeUtc": "2026-09-13T06:00:00.000Z",
+      "proxyClusterLabel": "not_fetched",
+      "entryPriceProxy": 77122.35,
+      "atr": 125.1,
+      "mfeMae": {
+        "mfe1cPct": 0.0748,
+        "mae1cPct": 0.0395,
+        "mfe3cPct": 0.0773,
+        "mae3cPct": 0.7162,
+        "mfe5cPct": 0.0773,
+        "mae5cPct": 0.807
+      },
+      "fastKillLabel": "unscored_without_trade_window",
+      "tradeWindow": {
+        "status": "fetch_disabled",
+        "reason": "Set PLANNED_LEVEL_PROXY_FETCH=1 for bounded public/no-key aggTrades windows.",
+        "start": "2026-09-13T05:55:00.000Z",
+        "end": "2026-09-13T06:10:00.000Z"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_low-1789344000",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_low",
+      "levelPrice": 76500,
+      "levelSide": "down",
+      "setupType": "fade_long",
+      "direction": "long",
+      "btcGateEntry": {
+        "regime": "BTC_TRANSITION",
+        "reason": "BTC inside prior 24h range",
+        "high": 77450,
+        "low": 76500,
+        "price": 76808
+      },
+      "classification": "sweep_rejection",
+      "candleTimeUtc": "2026-09-14T00:00:00.000Z",
+      "proxyClusterLabel": "not_fetched",
+      "entryPriceProxy": 76808,
+      "atr": 281.43,
+      "mfeMae": {
+        "mfe1cPct": 0.4723,
+        "mae1cPct": 0.2234,
+        "mfe3cPct": 1.3824,
+        "mae3cPct": 0.2234,
+        "mfe5cPct": 1.3824,
+        "mae5cPct": 0.2234
+      },
+      "fastKillLabel": "unscored_without_trade_window",
+      "tradeWindow": {
+        "status": "fetch_disabled",
+        "reason": "Set PLANNED_LEVEL_PROXY_FETCH=1 for bounded public/no-key aggTrades windows.",
+        "start": "2026-09-13T23:55:00.000Z",
+        "end": "2026-09-14T00:10:00.000Z"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1789351200",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_high",
+      "levelPrice": 77450,
+      "levelSide": "up",
+      "setupType": "continuation_long",
+      "direction": "long",
+      "btcGateEntry": {
+        "regime": "BTC_RISK_ON",
+        "reason": "1h close above prior 24h high",
+        "keyLevel": 77450,
+        "price": 77600
+      },
+      "classification": "accepted_break",
+      "candleTimeUtc": "2026-09-14T02:00:00.000Z",
+      "proxyClusterLabel": "not_fetched",
+      "entryPriceProxy": 77600,
+      "atr": 336.28,
+      "mfeMae": {
+        "mfe1cPct": 0.3477,
+        "mae1cPct": 0.1237,
+        "mfe3cPct": 0.3477,
+        "mae3cPct": 0.1362,
+        "mfe5cPct": 0.3806,
+        "mae5cPct": 0.2843
+      },
+      "fastKillLabel": "unscored_without_trade_window",
+      "tradeWindow": {
+        "status": "fetch_disabled",
+        "reason": "Set PLANNED_LEVEL_PROXY_FETCH=1 for bounded public/no-key aggTrades windows.",
+        "start": "2026-09-14T01:55:00.000Z",
+        "end": "2026-09-14T02:10:00.000Z"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_low-1789477200",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_low",
+      "levelPrice": 76388.72,
+      "levelSide": "down",
+      "setupType": "fade_long",
+      "direction": "long",
+      "btcGateEntry": {
+        "regime": "BTC_RISK_OFF",
+        "reason": "1h close below prior 24h low",
+        "keyLevel": 76703.59,
+        "price": 76618.77
+      },
+      "classification": "sweep_rejection",
+      "candleTimeUtc": "2026-09-15T13:00:00.000Z",
+      "proxyClusterLabel": "not_fetched",
+      "entryPriceProxy": 76618.77,
+      "atr": 366.29,
+      "mfeMae": {
+        "mfe1cPct": 0.1008,
+        "mae1cPct": 1.3231,
+        "mfe3cPct": 0.1008,
+        "mae3cPct": 1.3231,
+        "mfe5cPct": 0.9458,
+        "mae5cPct": 2.1546
+      },
+      "fastKillLabel": "unscored_without_trade_window",
+      "tradeWindow": {
+        "status": "fetch_disabled",
+        "reason": "Set PLANNED_LEVEL_PROXY_FETCH=1 for bounded public/no-key aggTrades windows.",
+        "start": "2026-09-15T12:55:00.000Z",
+        "end": "2026-09-15T13:10:00.000Z"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1789606800",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_high",
+      "levelPrice": 76560.76,
+      "levelSide": "up",
+      "setupType": "fade_short",
+      "direction": "short",
+      "btcGateEntry": {
+        "regime": "BTC_TRANSITION",
+        "reason": "BTC inside prior 24h range",
+        "high": 76560.76,
+        "low": 75064.82,
+        "price": 76374.21
+      },
+      "classification": "sweep_rejection",
+      "candleTimeUtc": "2026-09-17T01:00:00.000Z",
+      "proxyClusterLabel": "acceptance_proxy",
+      "entryPriceProxy": 76374.21,
+      "atr": 534.06,
+      "mfeMae": {
+        "mfe1cPct": 0.4175,
+        "mae1cPct": 0.1452,
+        "mfe3cPct": 0.4175,
+        "mae3cPct": 0.293,
+        "mfe5cPct": 0.4175,
+        "mae5cPct": 0.3377
+      },
+      "fastKillLabel": "hold_or_retest_candidate",
+      "tradeWindow": {
+        "status": "ok",
+        "start": "2026-09-17T00:55:00.000Z",
+        "end": "2026-09-17T01:10:00.000Z",
+        "trades": 4661,
+        "firstTradeTime": "2026-09-17T00:55:00.676Z",
+        "lastTradeTime": "2026-09-17T01:09:59.951Z",
+        "firstPrice": 76380.01,
+        "lastPrice": 76268.01,
+        "tradeSideDeltaNotional": -80848,
+        "cvdSlopeNotionalPerMin": -5390,
+        "aggressiveVolumeAtLevel": 0,
+        "priceProgress": 106.2,
+        "priceProgressPerAggressiveVolume": null,
+        "opposingAbsorptionCandidate": false,
+        "failBackOrReclaim": false,
+        "proxyClusterLabel": "acceptance_proxy",
+        "fastKillLabel": "hold_or_retest_candidate"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1789700400",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_high",
+      "levelPrice": 77179.47,
+      "levelSide": "up",
+      "setupType": "continuation_long",
+      "direction": "long",
+      "btcGateEntry": {
+        "regime": "BTC_RISK_ON",
+        "reason": "1h close above prior 24h high",
+        "keyLevel": 77179.47,
+        "price": 77383.47
+      },
+      "classification": "accepted_break",
+      "candleTimeUtc": "2026-09-18T03:00:00.000Z",
+      "proxyClusterLabel": "fail_back_or_reclaim",
+      "entryPriceProxy": 77383.47,
+      "atr": 340.72,
+      "mfeMae": {
+        "mfe1cPct": 0.2488,
+        "mae1cPct": 0.2154,
+        "mfe3cPct": 0.429,
+        "mae3cPct": 0.2154,
+        "mfe5cPct": 1.1583,
+        "mae5cPct": 0.2154
+      },
+      "fastKillLabel": "fast_kill_candidate",
+      "tradeWindow": {
+        "status": "ok",
+        "start": "2026-09-18T02:55:00.000Z",
+        "end": "2026-09-18T03:10:00.000Z",
+        "trades": 4264,
+        "firstTradeTime": "2026-09-18T02:55:00.231Z",
+        "lastTradeTime": "2026-09-18T03:09:59.785Z",
+        "firstPrice": 77038.01,
+        "lastPrice": 77045.02,
+        "tradeSideDeltaNotional": 503976,
+        "cvdSlopeNotionalPerMin": 33598,
+        "aggressiveVolumeAtLevel": 0,
+        "priceProgress": -338.45,
+        "priceProgressPerAggressiveVolume": null,
+        "opposingAbsorptionCandidate": false,
+        "failBackOrReclaim": true,
+        "proxyClusterLabel": "fail_back_or_reclaim",
+        "fastKillLabel": "fast_kill_candidate"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1789776000",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_high",
+      "levelPrice": 81400,
+      "levelSide": "up",
+      "setupType": "continuation_long",
+      "direction": "long",
+      "btcGateEntry": {
+        "regime": "BTC_RISK_ON",
+        "reason": "1h close above prior 24h high",
+        "keyLevel": 81400,
+        "price": 81668.98
+      },
+      "classification": "accepted_break",
+      "candleTimeUtc": "2026-09-19T00:00:00.000Z",
+      "proxyClusterLabel": "fail_back_or_reclaim",
+      "entryPriceProxy": 81668.98,
+      "atr": 611.9,
+      "mfeMae": {
+        "mfe1cPct": 0.0882,
+        "mae1cPct": 0.7579,
+        "mfe3cPct": 0.0882,
+        "mae3cPct": 0.7579,
+        "mfe5cPct": 0.0882,
+        "mae5cPct": 0.928
+      },
+      "fastKillLabel": "fast_kill_candidate",
+      "tradeWindow": {
+        "status": "ok",
+        "start": "2026-09-18T23:55:00.000Z",
+        "end": "2026-09-19T00:10:00.000Z",
+        "trades": 8365,
+        "firstTradeTime": "2026-09-18T23:55:00.387Z",
+        "lastTradeTime": "2026-09-19T00:09:59.950Z",
+        "firstPrice": 80912.7,
+        "lastPrice": 80860.21,
+        "tradeSideDeltaNotional": 3832783,
+        "cvdSlopeNotionalPerMin": 255519,
+        "aggressiveVolumeAtLevel": 0,
+        "priceProgress": -808.77,
+        "priceProgressPerAggressiveVolume": null,
+        "opposingAbsorptionCandidate": false,
+        "failBackOrReclaim": true,
+        "proxyClusterLabel": "fail_back_or_reclaim",
+        "fastKillLabel": "fast_kill_candidate"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_low-1789869600",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_low",
+      "levelPrice": 80844.58,
+      "levelSide": "down",
+      "setupType": "continuation_short",
+      "direction": "short",
+      "btcGateEntry": {
+        "regime": "BTC_RISK_OFF",
+        "reason": "1h close below prior 24h low",
+        "keyLevel": 80904.46,
+        "price": 80331.52
+      },
+      "classification": "accepted_break",
+      "candleTimeUtc": "2026-09-20T02:00:00.000Z",
+      "proxyClusterLabel": "fail_back_or_reclaim",
+      "entryPriceProxy": 80331.52,
+      "atr": 320.95,
+      "mfeMae": {
+        "mfe1cPct": 0.2558,
+        "mae1cPct": 0.2419,
+        "mfe3cPct": 0.2558,
+        "mae3cPct": 0.4191,
+        "mfe5cPct": 0.2558,
+        "mae5cPct": 0.4191
+      },
+      "fastKillLabel": "fast_kill_candidate",
+      "tradeWindow": {
+        "status": "ok",
+        "start": "2026-09-20T01:55:00.000Z",
+        "end": "2026-09-20T02:10:00.000Z",
+        "trades": 3364,
+        "firstTradeTime": "2026-09-20T01:55:00.258Z",
+        "lastTradeTime": "2026-09-20T02:09:58.416Z",
+        "firstPrice": 81080,
+        "lastPrice": 81109.4,
+        "tradeSideDeltaNotional": -238932,
+        "cvdSlopeNotionalPerMin": -15929,
+        "aggressiveVolumeAtLevel": 0,
+        "priceProgress": -777.88,
+        "priceProgressPerAggressiveVolume": null,
+        "opposingAbsorptionCandidate": false,
+        "failBackOrReclaim": true,
+        "proxyClusterLabel": "fail_back_or_reclaim",
+        "fastKillLabel": "fast_kill_candidate"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1789948800",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_high",
+      "levelPrice": 81497.33,
+      "levelSide": "up",
+      "setupType": "continuation_long",
+      "direction": "long",
+      "btcGateEntry": {
+        "regime": "BTC_RISK_ON",
+        "reason": "1h close above prior 24h high",
+        "keyLevel": 81497.33,
+        "price": 81607.72
+      },
+      "classification": "accepted_break",
+      "candleTimeUtc": "2026-09-21T00:00:00.000Z",
+      "proxyClusterLabel": "mixed_no_trade_proxy",
+      "entryPriceProxy": 81607.72,
+      "atr": 358.92,
+      "mfeMae": {
+        "mfe1cPct": 0.6032,
+        "mae1cPct": 0.9282,
+        "mfe3cPct": 0.6032,
+        "mae3cPct": 0.9282,
+        "mfe5cPct": 0.6032,
+        "mae5cPct": 0.9282
+      },
+      "fastKillLabel": "hold_or_retest_candidate",
+      "tradeWindow": {
+        "status": "ok",
+        "start": "2026-09-20T23:55:00.000Z",
+        "end": "2026-09-21T00:10:00.000Z",
+        "trades": 12000,
+        "firstTradeTime": "2026-09-20T23:55:00.009Z",
+        "lastTradeTime": "2026-09-21T00:07:10.555Z",
+        "firstPrice": 81188.01,
+        "lastPrice": 81513.85,
+        "tradeSideDeltaNotional": 1788292,
+        "cvdSlopeNotionalPerMin": 119219,
+        "aggressiveVolumeAtLevel": 1794135,
+        "priceProgress": -93.87,
+        "priceProgressPerAggressiveVolume": -0.00005232,
+        "opposingAbsorptionCandidate": false,
+        "failBackOrReclaim": false,
+        "proxyClusterLabel": "mixed_no_trade_proxy",
+        "fastKillLabel": "hold_or_retest_candidate"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1790125200",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_high",
+      "levelPrice": 86717.6,
+      "levelSide": "up",
+      "setupType": "fade_short",
+      "direction": "short",
+      "btcGateEntry": {
+        "regime": "BTC_TRANSITION",
+        "reason": "BTC inside prior 24h range",
+        "high": 86717.6,
+        "low": 85114,
+        "price": 86370
+      },
+      "classification": "sweep_rejection",
+      "candleTimeUtc": "2026-09-23T01:00:00.000Z",
+      "proxyClusterLabel": "mixed_no_trade_proxy",
+      "entryPriceProxy": 86370,
+      "atr": 489.89,
+      "mfeMae": {
+        "mfe1cPct": 0.1273,
+        "mae1cPct": 0.3105,
+        "mfe3cPct": 0.1273,
+        "mae3cPct": 1.0519,
+        "mfe5cPct": 0.1273,
+        "mae5cPct": 1.0519
+      },
+      "fastKillLabel": "hold_or_retest_candidate",
+      "tradeWindow": {
+        "status": "ok",
+        "start": "2026-09-23T00:55:00.000Z",
+        "end": "2026-09-23T01:10:00.000Z",
+        "trades": 9099,
+        "firstTradeTime": "2026-09-23T00:55:00.030Z",
+        "lastTradeTime": "2026-09-23T01:09:59.660Z",
+        "firstPrice": 86456.01,
+        "lastPrice": 86615.4,
+        "tradeSideDeltaNotional": -1624909,
+        "cvdSlopeNotionalPerMin": -108327,
+        "aggressiveVolumeAtLevel": 200921,
+        "priceProgress": -245.4,
+        "priceProgressPerAggressiveVolume": -0.00122138,
+        "opposingAbsorptionCandidate": false,
+        "failBackOrReclaim": false,
+        "proxyClusterLabel": "mixed_no_trade_proxy",
+        "fastKillLabel": "hold_or_retest_candidate"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_low-1790172000",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_low",
+      "levelPrice": 85114,
+      "levelSide": "down",
+      "setupType": "continuation_short",
+      "direction": "short",
+      "btcGateEntry": {
+        "regime": "BTC_RISK_OFF",
+        "reason": "1h close below prior 24h low",
+        "keyLevel": 85267.32,
+        "price": 84533.99
+      },
+      "classification": "accepted_break",
+      "candleTimeUtc": "2026-09-23T14:00:00.000Z",
+      "proxyClusterLabel": "fail_back_or_reclaim",
+      "entryPriceProxy": 84533.99,
+      "atr": 600.96,
+      "mfeMae": {
+        "mfe1cPct": 0.6908,
+        "mae1cPct": 0.3076,
+        "mfe3cPct": 1.2232,
+        "mae3cPct": 0.3076,
+        "mfe5cPct": 1.2232,
+        "mae5cPct": 0.3076
+      },
+      "fastKillLabel": "fast_kill_candidate",
+      "tradeWindow": {
+        "status": "ok",
+        "start": "2026-09-23T13:55:00.000Z",
+        "end": "2026-09-23T14:10:00.000Z",
+        "trades": 12000,
+        "firstTradeTime": "2026-09-23T13:55:00.476Z",
+        "lastTradeTime": "2026-09-23T14:05:46.995Z",
+        "firstPrice": 85698,
+        "lastPrice": 85742.28,
+        "tradeSideDeltaNotional": 1180050,
+        "cvdSlopeNotionalPerMin": 78670,
+        "aggressiveVolumeAtLevel": 0,
+        "priceProgress": -1208.29,
+        "priceProgressPerAggressiveVolume": null,
+        "opposingAbsorptionCandidate": false,
+        "failBackOrReclaim": true,
+        "proxyClusterLabel": "fail_back_or_reclaim",
+        "fastKillLabel": "fast_kill_candidate"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_low-1790236800",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_low",
+      "levelPrice": 83500.01,
+      "levelSide": "down",
+      "setupType": "fade_long",
+      "direction": "long",
+      "btcGateEntry": {
+        "regime": "BTC_TRANSITION",
+        "reason": "BTC near edge of prior 24h range",
+        "high": 86264.01,
+        "low": 83500.01,
+        "price": 83660
+      },
+      "classification": "sweep_rejection",
+      "candleTimeUtc": "2026-09-24T08:00:00.000Z",
+      "proxyClusterLabel": "acceptance_proxy",
+      "entryPriceProxy": 83660,
+      "atr": 462.3,
+      "mfeMae": {
+        "mfe1cPct": 0.0997,
+        "mae1cPct": 0.9384,
+        "mfe3cPct": 0.0997,
+        "mae3cPct": 0.9384,
+        "mfe5cPct": 0.8128,
+        "mae5cPct": 0.9384
+      },
+      "fastKillLabel": "hold_or_retest_candidate",
+      "tradeWindow": {
+        "status": "ok",
+        "start": "2026-09-24T07:55:00.000Z",
+        "end": "2026-09-24T08:10:00.000Z",
+        "trades": 11970,
+        "firstTradeTime": "2026-09-24T07:55:00.193Z",
+        "lastTradeTime": "2026-09-24T08:09:59.797Z",
+        "firstPrice": 84596.48,
+        "lastPrice": 84526.04,
+        "tradeSideDeltaNotional": 10245339,
+        "cvdSlopeNotionalPerMin": 683023,
+        "aggressiveVolumeAtLevel": 0,
+        "priceProgress": 866.04,
+        "priceProgressPerAggressiveVolume": null,
+        "opposingAbsorptionCandidate": false,
+        "failBackOrReclaim": false,
+        "proxyClusterLabel": "acceptance_proxy",
+        "fastKillLabel": "hold_or_retest_candidate"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1790334000",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_high",
+      "levelPrice": 84942.45,
+      "levelSide": "up",
+      "setupType": "fade_short",
+      "direction": "short",
+      "btcGateEntry": {
+        "regime": "BTC_TRANSITION",
+        "reason": "BTC inside prior 24h range",
+        "high": 84942.45,
+        "low": 83346.66,
+        "price": 84582.64
+      },
+      "classification": "sweep_rejection",
+      "candleTimeUtc": "2026-09-25T11:00:00.000Z",
+      "proxyClusterLabel": "fail_back_or_reclaim",
+      "entryPriceProxy": 84582.64,
+      "atr": 405.04,
+      "mfeMae": {
+        "mfe1cPct": 0.8071,
+        "mae1cPct": 0.1435,
+        "mfe3cPct": 1.6548,
+        "mae3cPct": 0.1435,
+        "mfe5cPct": 1.6548,
+        "mae5cPct": 0.1435
+      },
+      "fastKillLabel": "fast_kill_candidate",
+      "tradeWindow": {
+        "status": "ok",
+        "start": "2026-09-25T10:55:00.000Z",
+        "end": "2026-09-25T11:10:00.000Z",
+        "trades": 12000,
+        "firstTradeTime": "2026-09-25T10:55:00.281Z",
+        "lastTradeTime": "2026-09-25T11:08:59.553Z",
+        "firstPrice": 84839.93,
+        "lastPrice": 85102.86,
+        "tradeSideDeltaNotional": 26904750,
+        "cvdSlopeNotionalPerMin": 1793650,
+        "aggressiveVolumeAtLevel": 931299,
+        "priceProgress": -520.22,
+        "priceProgressPerAggressiveVolume": -0.0005586,
+        "opposingAbsorptionCandidate": false,
+        "failBackOrReclaim": true,
+        "proxyClusterLabel": "fail_back_or_reclaim",
+        "fastKillLabel": "fast_kill_candidate"
+      }
+    },
+    {
+      "eventId": "BTC-1h-previous_day_high-1790470800",
+      "symbol": "BTCUSDT",
+      "market": "binance_spot",
+      "levelSource": "previous_day_high",
+      "levelPrice": 84473.58,
+      "levelSide": "up",
+      "setupType": "continuation_long",
+      "direction": "long",
+      "btcGateEntry": {
+        "regime": "BTC_RISK_ON",
+        "reason": "1h close above prior 24h high",
+        "keyLevel": 84473.58,
+        "price": 84495.01
+      },
+      "classification": "accepted_break",
+      "candleTimeUtc": "2026-09-27T01:00:00.000Z",
+      "proxyClusterLabel": "fail_back_or_reclaim",
+      "entryPriceProxy": 84495.01,
+      "atr": 183.68,
+      "mfeMae": {
+        "mfe1cPct": 0.0533,
+        "mae1cPct": 0.0556,
+        "mfe3cPct": 0.0533,
+        "mae3cPct": 0.2245,
+        "mfe5cPct": 0.1882,
+        "mae5cPct": 0.2245
+      },
+      "fastKillLabel": "fast_kill_candidate",
+      "tradeWindow": {
+        "status": "ok",
+        "start": "2026-09-27T00:55:00.000Z",
+        "end": "2026-09-27T01:10:00.000Z",
+        "trades": 1717,
+        "firstTradeTime": "2026-09-27T00:55:01.722Z",
+        "lastTradeTime": "2026-09-27T01:09:59.876Z",
+        "firstPrice": 84306.01,
+        "lastPrice": 84341.28,
+        "tradeSideDeltaNotional": 49618,
+        "cvdSlopeNotionalPerMin": 3308,
+        "aggressiveVolumeAtLevel": 0,
+        "priceProgress": -153.73,
+        "priceProgressPerAggressiveVolume": null,
+        "opposingAbsorptionCandidate": false,
+        "failBackOrReclaim": true,
+        "proxyClusterLabel": "fail_back_or_reclaim",
+        "fastKillLabel": "fast_kill_candidate"
+      }
+    }
+  ],
+  "decision": {
+    "verdict": "proxy_replay_rows_ready_for_baseline_test",
+    "nextAction": "Compare proxy labels against candle-only hold/kill baselines with costs and false-kill rates.",
+    "noLiveChange": true
+  }
+}

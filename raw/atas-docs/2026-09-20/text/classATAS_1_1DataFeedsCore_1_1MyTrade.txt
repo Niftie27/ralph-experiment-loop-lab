@@ -1,0 +1,329 @@
+ATAS: ATAS.DataFeedsCore.MyTrade Class Reference 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Public Member Functions | Protected Member Functions | Properties | Events | List of all members 
+
+ATAS.DataFeedsCore.MyTrade Class Reference 
+
+Represents a trade entity in the system. More... 
+
+Inheritance diagram for ATAS.DataFeedsCore.MyTrade: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Collaboration diagram for ATAS.DataFeedsCore.MyTrade: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Public Member Functions 
+
+override string ToString () 
+
+string Display () 
+
+MyTrade Clone () 
+
+Protected Member Functions 
+
+void OnPropertyChanged (string name) 
+
+Notifies subscribers that a property value has changed. 
+
+Properties 
+
+EntityType EntityType [get] 
+
+string Route = null! [get, set] 
+
+Gets or sets the route associated with the trade. 
+
+string? AccountID [get, set] 
+
+Gets or sets the account ID associated with the trade. 
+
+string? SecurityId [get, set] 
+
+Gets or sets the security ID associated with the trade. 
+
+string Id = null! [get, set] 
+
+Gets or sets the unique ID of the trade. 
+
+string OrderId = null! [get, set] 
+
+Gets or sets the ID of the order associated with the trade. 
+
+OrderDirections OrderDirection [get, set] 
+
+Gets or sets the direction of the order (Buy or Sell) associated with the trade. 
+
+decimal Price [get, set] 
+
+Gets or sets the price at which the trade was executed. 
+
+DateTime Time [get, set] 
+
+Gets or sets the timestamp of the trade. 
+
+decimal Volume [get, set] 
+
+Gets or sets the volume of the trade. 
+
+decimal OpenVolume [get, set] 
+
+Gets or sets the open volume of the trade. 
+
+Order ? Order [get, set] 
+
+Gets or sets the order associated with the trade. 
+
+Security ? Security [get, set] 
+
+Gets or sets the security associated with the trade. 
+
+Portfolio ? Portfolio [get, set] 
+
+Gets or sets the portfolio associated with the trade. 
+
+object? Parent [get, set] 
+
+Gets or sets the parent object associated with the trade. 
+
+decimal? Commission [get, set] 
+
+Gets or sets the commission amount of the trade. 
+
+string? CommissionCurrency [get, set] 
+
+Gets or sets the currency of the commission for the trade. 
+
+bool? IsMaker [get, set] 
+
+Gets or sets whether the trade is a maker trade. 
+
+bool IsNew [get, set] 
+
+Gets or sets a flag indicating whether the trade is new. 
+
+Properties inherited from ATAS.DataFeedsCore.IEntity 
+
+EntityType EntityType [get] 
+
+Gets the type of the entity. 
+
+Events 
+
+PropertyChangedEventHandler? PropertyChanged 
+
+Detailed Description 
+
+Represents a trade entity in the system. 
+
+Member Function Documentation 
+
+◆ Clone() 
+
+MyTrade ATAS.DataFeedsCore.MyTrade.Clone ( ) 
+
+◆ Display() 
+
+string ATAS.DataFeedsCore.MyTrade.Display ( ) 
+
+◆ OnPropertyChanged() 
+
+void ATAS.DataFeedsCore.MyTrade.OnPropertyChanged ( string name ) 
+
+protected 
+
+Notifies subscribers that a property value has changed. 
+Parameters 
+
+name The name of the property that changed.</para 
+
+◆ ToString() 
+
+override string ATAS.DataFeedsCore.MyTrade.ToString ( ) 
+
+Property Documentation 
+
+◆ AccountID 
+
+string? ATAS.DataFeedsCore.MyTrade.AccountID 
+
+get set 
+
+Gets or sets the account ID associated with the trade. 
+
+◆ Commission 
+
+decimal? ATAS.DataFeedsCore.MyTrade.Commission 
+
+get set 
+
+Gets or sets the commission amount of the trade. 
+
+◆ CommissionCurrency 
+
+string? ATAS.DataFeedsCore.MyTrade.CommissionCurrency 
+
+get set 
+
+Gets or sets the currency of the commission for the trade. 
+
+◆ EntityType 
+
+EntityType ATAS.DataFeedsCore.MyTrade.EntityType 
+
+get 
+
+Gets the entity type, which is EntityType.MyTrade. 
+
+Implements ATAS.DataFeedsCore.IEntity . 
+
+◆ Id 
+
+string ATAS.DataFeedsCore.MyTrade.Id = null! 
+
+get set 
+
+Gets or sets the unique ID of the trade. 
+
+◆ IsMaker 
+
+bool? ATAS.DataFeedsCore.MyTrade.IsMaker 
+
+get set 
+
+Gets or sets whether the trade is a maker trade. 
+
+◆ IsNew 
+
+bool ATAS.DataFeedsCore.MyTrade.IsNew 
+
+get set 
+
+Gets or sets a flag indicating whether the trade is new. 
+
+◆ OpenVolume 
+
+decimal ATAS.DataFeedsCore.MyTrade.OpenVolume 
+
+get set 
+
+Gets or sets the open volume of the trade. 
+
+◆ Order 
+
+Order ? ATAS.DataFeedsCore.MyTrade.Order 
+
+get set 
+
+Gets or sets the order associated with the trade. 
+
+◆ OrderDirection 
+
+OrderDirections ATAS.DataFeedsCore.MyTrade.OrderDirection 
+
+get set 
+
+Gets or sets the direction of the order (Buy or Sell) associated with the trade. 
+
+◆ OrderId 
+
+string ATAS.DataFeedsCore.MyTrade.OrderId = null! 
+
+get set 
+
+Gets or sets the ID of the order associated with the trade. 
+
+◆ Parent 
+
+object? ATAS.DataFeedsCore.MyTrade.Parent 
+
+get set 
+
+Gets or sets the parent object associated with the trade. 
+
+◆ Portfolio 
+
+Portfolio ? ATAS.DataFeedsCore.MyTrade.Portfolio 
+
+get set 
+
+Gets or sets the portfolio associated with the trade. 
+
+◆ Price 
+
+decimal ATAS.DataFeedsCore.MyTrade.Price 
+
+get set 
+
+Gets or sets the price at which the trade was executed. 
+
+◆ Route 
+
+string ATAS.DataFeedsCore.MyTrade.Route = null! 
+
+get set 
+
+Gets or sets the route associated with the trade. 
+
+◆ Security 
+
+Security ? ATAS.DataFeedsCore.MyTrade.Security 
+
+get set 
+
+Gets or sets the security associated with the trade. 
+
+◆ SecurityId 
+
+string? ATAS.DataFeedsCore.MyTrade.SecurityId 
+
+get set 
+
+Gets or sets the security ID associated with the trade. 
+
+◆ Time 
+
+DateTime ATAS.DataFeedsCore.MyTrade.Time 
+
+get set 
+
+Gets or sets the timestamp of the trade. 
+
+◆ Volume 
+
+decimal ATAS.DataFeedsCore.MyTrade.Volume 
+
+get set 
+
+Gets or sets the volume of the trade. 
+
+Event Documentation 
+
+◆ PropertyChanged 
+
+PropertyChangedEventHandler? ATAS.DataFeedsCore.MyTrade.PropertyChanged 
+
+The documentation for this class was generated from the following file: 
+MyTrade.cs 
+
+ATAS 
+
+DataFeedsCore 
+
+MyTrade 
+
+Generated by 1.9.7 
+
+Join our developers chat

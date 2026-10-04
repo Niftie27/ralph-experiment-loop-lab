@@ -1,0 +1,14 @@
+{
+  "run_id": "2026-08-21T203357Z",
+  "status": "research-only-no-live-execution",
+  "mode": "openclaw",
+  "note": "Prepared prompts only; no child sessions were launched by this script.",
+  "prompt_files": [
+    "results/swarm-runs/2026-08-21T203357Z/openclaw-prompts/post_alert_dataset_audit.md",
+    "results/swarm-runs/2026-08-21T203357Z/openclaw-prompts/relative_context_review.md",
+    "results/swarm-runs/2026-08-21T203357Z/openclaw-prompts/orderflow_book_quality_audit.md",
+    "results/swarm-runs/2026-08-21T203357Z/openclaw-prompts/slice_watchlist_review.md",
+    "results/swarm-runs/2026-08-21T203357Z/openclaw-prompts/risk_governor_review.md",
+    "results/swarm-runs/2026-08-21T203357Z/openclaw-prompts/synthesis_report.md"
+  ]
+}

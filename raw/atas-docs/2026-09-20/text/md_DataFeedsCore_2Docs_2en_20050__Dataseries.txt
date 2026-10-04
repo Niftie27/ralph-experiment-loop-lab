@@ -1,0 +1,720 @@
+ATAS: Dataseries 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Dataseries 
+
+ValueDataSeries - numerical data 
+
+The ValueDataSeries is designed for storing the decimal data for each bar. 
+It is added to each indicator by default. 
+It has the following properties: 
+
+VisualType - visual layout. It could be, for example, a line, bar chart, arrow or something else. 
+
+Width - width of the line, point, bar chart and so on. 
+
+Color - color. 
+
+LineDashStyle - line style. 
+
+ScaleIt - a flag that regulates the indicator auto-scale. 
+
+ShowCurrentValue - a flag that regulates display of the most recent (current) value. 
+
+ShowZeroValue - a flag that regulates display of zero values. 
+
+Digits - a number of decimal places for displaying the DataSeries values in the price scale. 
+
+This DataSeries has next methods: 
+
+SetPointOfEndLine(int bar) - allows setting the line interruption point. 
+
+RemovePointOfEndLine(int bar) - removes the specified bar index as a point of end for a line in the value data series. 
+
+IsThisPointOfStartBar(int bar) - checks if the specified bar index is a point of start for a line in the value data series. 
+
+RangeDataSeries - ranges 
+
+The RangeDataSeries , each element of which represents RangeValue , where the minimum and maximum values are set. 
+
+Main properties: 
+
+RangeColor - range area color. 
+
+ScaleIt - a flag that regulates the indicator auto-scale. 
+
+Visible - a flag that regulates the DataSeries visibility. 
+
+Example of the Bollinger Bands indicator that uses RangeDataSeries . 
+
+using ATAS.Indicators ; 
+
+public class BollingerBands : Indicator 
+
+{ 
+
+private readonly RangeDataSeries _band = new RangeDataSeries ( "BackGround" ); 
+
+private readonly StdDev _dev = new StdDev(); 
+
+private readonly SMA _sma = new SMA(); 
+
+private decimal _width; 
+
+public int Period 
+
+{ 
+
+get => _sma.Period; 
+
+set 
+
+{ 
+
+if (value <= 0) 
+
+return ; 
+
+_sma.Period = _dev.Period = value; 
+
+RecalculateValues(); 
+
+} 
+
+} 
+
+public decimal Width 
+
+{ 
+
+get => _width; 
+
+set 
+
+{ 
+
+if (value <= 0) 
+
+return ; 
+
+_width = value; 
+
+RecalculateValues(); 
+
+} 
+
+} 
+
+public BollingerBands() 
+
+{ 
+
+(( ValueDataSeries )DataSeries[0]).Color = Colors.Green; 
+
+DataSeries.Add( new ValueDataSeries ( "Up" ) 
+
+{ 
+
+VisualType = VisualMode.Line 
+
+}); 
+
+DataSeries.Add( new ValueDataSeries ( "Down" ) 
+
+{ 
+
+VisualType = VisualMode.Line 
+
+}); 
+
+DataSeries.Add(_band); 
+
+Period = 10; 
+
+Width = 1; 
+
+} 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+var sma = _sma.Calculate(bar, value); 
+
+var dev = _dev.Calculate(bar, value); 
+
+this [bar] = sma; 
+
+DataSeries[1][bar] = sma + dev * Width; 
+
+DataSeries[2][bar] = sma - dev * Width; 
+
+_band[bar].Upper = sma + dev * Width; 
+
+_band[bar].Lower = sma - dev * Width; 
+
+} 
+
+} 
+
+ATAS.Indicators.Indicator 
+
+Base class for custom indicators. 
+
+Definition Indicator.cs:48 
+
+ATAS.Indicators.RangeDataSeries 
+
+Represents a data series of range values, each element is a RangeValue. 
+
+Definition RangeDataSeries.cs:23 
+
+ATAS.Indicators.ValueDataSeries 
+
+Represents a data series of decimal values, each element is a decimal. 
+
+Definition ValueDataSeries.cs:26 
+
+ATAS.Indicators 
+
+Definition FeatureId.cs:2 
+
+PaintbarsDataSeries - bar colours 
+
+The PaintbarsDataSeries which allows setting colour for each bar. Each element of this DataSeries is a nullable Color. 
+It has one property Visible which regulates the DataSeries visibility. 
+Example of the HeikenAshi indicator, which uses this DataSeries. The PaintbarsDataSeries performs here the function of hiding standard bars with the help of setting a transparent colour. 
+
+using ATAS.Indicators ; 
+
+public class HeikenAshi : Indicator 
+
+{ 
+
+readonly CandleDataSeries _candles = new CandleDataSeries ( "Heiken Ashi" ); 
+
+readonly PaintbarsDataSeries _bars = new PaintbarsDataSeries ( "Bars" ){ IsHidden = true }; 
+
+public HeikenAshi() : base(true) 
+
+{ 
+
+DenyToChangePanel = true ; 
+
+DataSeries[0] = _bars; 
+
+DataSeries.Add(_candles); 
+
+} 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+var candle = GetCandle(bar); 
+
+_bars[bar] = Colors.Transparent; 
+
+if (bar == 0) 
+
+{ 
+
+_candles[bar] = new Candle () 
+
+{ 
+
+Close = candle.Close, 
+
+High = candle.High, 
+
+Low = candle.Low, 
+
+Open = candle.Open 
+
+}; 
+
+} 
+
+else 
+
+{ 
+
+var prevCandle = _candles[bar - 1]; 
+
+var close = (candle.Open + candle.Close + candle.High + candle.Low) * 0.25m; 
+
+var open = (prevCandle.Open + prevCandle.Close) * 0.5m; 
+
+var high = Math.Max(Math.Max(close, open), candle.High); 
+
+var low = Math.Min(Math.Min(close, open), candle.Low); 
+
+_candles[bar] = new Candle () 
+
+{ 
+
+Close = close, 
+
+High = high, 
+
+Low = low, 
+
+Open = open, 
+
+}; 
+
+} 
+
+} 
+
+} 
+
+ATAS.Indicators.CandleDataSeries 
+
+Represents a data series of candles. Each element in the series is a Candle. 
+
+Definition CandleDataSeries.cs:19 
+
+ATAS.Indicators.Candle 
+
+Represents a candle in trading, which includes open, high, low, and close prices. 
+
+Definition Candle.cs:7 
+
+ATAS.Indicators.PaintbarsDataSeries 
+
+Represents a data series of paintbars, each element is a nullable CrossColor value. 
+
+Definition PaintbarsDataSeries.cs:19 
+
+ATAS.Indicators.DataSeriesType.Low 
+
+@ Low 
+
+Represents a data series containing low prices. 
+
+ATAS.Indicators.DataSeriesType.High 
+
+@ High 
+
+Represents a data series containing high prices. 
+
+ATAS.Indicators.DataSeriesType.Open 
+
+@ Open 
+
+Represents a data series containing open prices. 
+
+ATAS.Indicators.DataSeriesType.Close 
+
+@ Close 
+
+Represents a data series containing closing prices. 
+
+Example of the Bar’s volume filter indicator which colours bars depending on their volumes. 
+
+using ATAS.Indicators ; 
+
+[DisplayName( "Bar's volume filter" )] 
+
+public class BarVolumeFilter : Indicator 
+
+{ 
+
+#region Nested types 
+
+public enum VolumeType 
+
+{ 
+
+Volume, 
+
+Ticks, 
+
+Delta, 
+
+Bid, 
+
+Ask 
+
+} 
+
+#endregion 
+
+private readonly PaintbarsDataSeries _paintBars = new PaintbarsDataSeries ( "Paint bars" ); 
+
+private int _minFilter ; 
+
+private int _maxFilter = 100; 
+
+private System.Windows.Media.Color _color = System.Windows.Media.Colors.Orange; 
+
+private VolumeType _volumeType; 
+
+[Display(Name = "Type" , Order = 5)] 
+
+public VolumeType Type 
+
+{ 
+
+get => _volumeType; 
+
+set { _volumeType = value; RecalculateValues(); } 
+
+} 
+
+[Display(Name = "Minimum" , Order = 10)] 
+
+public int MinFilter 
+
+{ 
+
+get => _minFilter; 
+
+set { _minFilter = value;RecalculateValues(); } 
+
+} 
+
+[Display(Name = "Maximum" , Order = 20)] 
+
+public int MaxFilter 
+
+{ 
+
+get => _maxFilter; 
+
+set { _maxFilter = value; RecalculateValues(); } 
+
+} 
+
+[Name = "Color" , Order = 30)] 
+
+public System.Windows.Media.Color FilterColor 
+
+{ 
+
+get => _color; 
+
+set { _color = value; RecalculateValues(); } 
+
+} 
+
+public BarVolumeFilter() : base(true) 
+
+{ 
+
+DataSeries[0] = _paintBars; 
+
+_paintBars.IsHidden = true ; 
+
+DenyToChangePanel = true ; 
+
+} 
+
+#region Overrides of BaseIndicator 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+var candle = GetCandle(bar); 
+
+decimal volume = 0; 
+
+switch (Type) 
+
+{ 
+
+case VolumeType.Volume: 
+
+{ 
+
+volume = candle.Volume; 
+
+break ; 
+
+} 
+
+case VolumeType.Ticks: 
+
+{ 
+
+volume = candle.Ticks; 
+
+break ; 
+
+} 
+
+case VolumeType.Delta: 
+
+{ 
+
+volume = candle.Delta; 
+
+break ; 
+
+} 
+
+case VolumeType.Bid: 
+
+{ 
+
+volume = candle.Bid; 
+
+break ; 
+
+} 
+
+case VolumeType.Ask: 
+
+{ 
+
+volume = candle.Ask; 
+
+break ; 
+
+} 
+
+default : 
+
+throw new ArgumentOutOfRangeException(); 
+
+} 
+
+if (volume > _minFilter && volume <= _maxFilter) 
+
+{ 
+
+_paintBars[bar] = _color; 
+
+} 
+
+else 
+
+{ 
+
+_paintBars[bar] = null ; 
+
+} 
+
+} 
+
+#endregion 
+
+} 
+
+ATAS.DataFeedsCore.Order 
+
+Represents an order for trading on a financial exchange. 
+
+Definition Order.cs:13 
+
+ATAS.Indicators.FilterColor 
+
+Represents a filter with a value type of CrossColor. Inherits from Filter<TValue, TFilter> where TVal... 
+
+Definition FilterColor.cs:13 
+
+CandleDataSeries - candles 
+
+The CandleDataSeries designed for visualization of candles. Each element represents a Candle . 
+
+Example of the indicator which displays an inverted chart: 
+
+using ATAS.Indicators ; 
+
+public class ReversalChart : Indicator 
+
+{ 
+
+readonly CandleDataSeries _reversalCandles = new CandleDataSeries ( "Candles" ); 
+
+public ReversalChart() 
+
+{ 
+
+(( ValueDataSeries )DataSeries[0]).VisualType = VisualMode .Hide; 
+
+DataSeries.Add(_reversalCandles); 
+
+Panel = IndicatorDataProvider . NewPanel ; 
+
+} 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+var candle = GetCandle(bar); 
+
+_reversalCandles[bar].High = -candle.High; 
+
+_reversalCandles[bar].Low = -candle.Low; 
+
+_reversalCandles[bar].Open = -candle.Open; 
+
+_reversalCandles[bar].Close = -candle.Close; 
+
+} 
+
+} 
+
+ATAS.Indicators.IndicatorDataProvider 
+
+Implementation of the IIndicatorDataProvider interface that provides access to various data and servi... 
+
+Definition IndicatorDataProvider.cs:145 
+
+ATAS.Indicators.IndicatorDataProvider.NewPanel 
+
+const string NewPanel 
+
+Represents the name of a new panel. 
+
+Definition IndicatorDataProvider.cs:156 
+
+ATAS.Indicators.VisualMode 
+
+VisualMode 
+
+Represents the visual modes available for displaying data series on a chart. 
+
+Definition VisualMode.cs:11 
+
+CandlePartSeries 
+
+The CandlePartSeries represents a data series of decimal values derived from specific parts of an IndicatorCandle created by an ICandleCreator . 
+This DataSeries enables the creation of a data series for extracting a specific candle parameter. In other words, it allows the generation of a dataset containing values of a particular parameter (such as the Open ) based on a set of IndicatorCandle . Possible parameter types are represented in the DataSeriesType enum. 
+
+IndicatorSeries 
+
+The IndicatorSeries represents a custom data series for an indicator, derived from BaseDataSeries <decimal>. 
+This DataSeries serves as a wrapper for an indicator, allowing the retrieval of data from a specified indicator series through the IDataSeries interface. This feature is employed to use one indicator as a data source for another, facilitating the integration of indicators. 
+
+PriceSelectionDataSeries - price selection 
+
+The PriceSelectionDataSeries , which present the PriceSelectionValue list for each bar, should be used for selection of the price levels in clusters and bars (similarly to selection of the Cluster Search indicator). 
+
+Example of use (selection of the clusters, which volume is higher than the one set by the filter): 
+
+using ATAS.Indicators ; 
+
+public class SampleClusterSearch : Indicator 
+
+{ 
+
+private int _filter = 10; 
+
+readonly PriceSelectionDataSeries _priceSelectionSeries = new PriceSelectionDataSeries ( "Clusters Selection" ); 
+
+public int Filter 
+
+{ 
+
+get { return _filter; } 
+
+set 
+
+{ 
+
+_filter = value; 
+
+RecalculateValues(); 
+
+} 
+
+} 
+
+public SampleClusterSearch() 
+
+{ 
+
+DataSeries.Add(_priceSelectionSeries); 
+
+} 
+
+protected override void OnCalculate( int bar, decimal value) 
+
+{ 
+
+var candle = GetCandle(bar); 
+
+for (decimal price = candle.High; price >= candle.Low; price -= TickSize) 
+
+{ 
+
+var volumeinfo = candle.GetPriceVolumeInfo(price); 
+
+if (volumeinfo == null ) 
+
+continue ; 
+
+if (volumeinfo.Volume > _filter) 
+
+{ 
+
+var values = _priceSelectionSeries[bar]; 
+
+var priceSelection = values.FirstOrDefault(t => t.MinimumPrice == volumeinfo.Price); 
+
+if (priceSelection == null ) 
+
+values.Add( new PriceSelectionValue (volumeinfo.Price) 
+
+{ 
+
+VisualObject = ObjectType .Rectangle, 
+
+Size = 10 
+
+}); 
+
+} 
+
+} 
+
+} 
+
+} 
+
+ATAS.Indicators.Filter 
+
+Generic filter class that implements the IFilterValue interface. 
+
+Definition Filter.cs:261 
+
+ATAS.Indicators.PriceSelectionDataSeries 
+
+Represents a data series of price selection values, each element is a synchronized list of PriceSelec... 
+
+Definition PriceSelectionDataSeries.cs:20 
+
+ATAS.Indicators.PriceSelectionValue 
+
+Represents a class for defining price level selection in clusters and bars. Using in PriceSelectionDa... 
+
+Definition PriceSelectionValue.cs:12 
+
+ATAS.Indicators.ObjectType 
+
+ObjectType 
+
+Enumeration representing different types of graphic objects for PriceSelectionDataSeries. 
+
+Definition ObjectType.cs:13 
+
+ObjectDataSeries - any object 
+
+The ObjectDataSeries is designed to store any object. 
+It could be used for convenient linking of various objects to the bars. It could also be used for communicating complex objects between indicators. 
+
+Generated by 1.9.7 
+
+Join our developers chat

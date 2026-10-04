@@ -1,0 +1,276 @@
+{
+  "generatedAt": "2026-08-22T10:43:38.235Z",
+  "status": "research-only-no-live-execution",
+  "sourceRun": "2026-08-22T08-39-ralph-hl-btc-2h",
+  "input": "crypto-updates/runtime/orderflow-spikes/2026-08-22T08-39-ralph-hl-btc-2h/raw-events.jsonl",
+  "hftbacktestAccess": {
+    "localImportAvailable": false,
+    "systemPython": "python3 exists, but hftbacktest is not installed in the current interpreter",
+    "pipAvailable": false,
+    "actionTaken": "No package installation was attempted."
+  },
+  "hftbacktestDataContract": {
+    "fields": [
+      "ev",
+      "exch_ts",
+      "local_ts",
+      "px",
+      "qty",
+      "order_id",
+      "ival",
+      "fval"
+    ],
+    "requiredChecks": [
+      "events sortable by exchange/local timestamp",
+      "positive feed latency or explicit offset/correction",
+      "depth/trade event flags",
+      "price and quantity for each trade/depth row"
+    ],
+    "source": "https://hftbacktest.readthedocs.io/en/latest/data.html"
+  },
+  "stats": {
+    "totalRawEvents": 855975,
+    "convertibleRows": 1885667,
+    "tradeRows": 263961,
+    "depthRows": 550670,
+    "topOfBookRows": 1071036,
+    "missingSeparateLocalTs": 0,
+    "missingExchangeTs": 1488666,
+    "missingDepthLevels": 0,
+    "missingTradeSide": 0
+  },
+  "bySourceTypeSymbol": {
+    "binance:book_ticker:BTCUSDT": 535518,
+    "binance:depth5:BTCUSDT": 41763,
+    "binance:trade:BTCUSDT": 221304,
+    "hyperliquid:l2_book:BTC": 13304,
+    "hyperliquid:mid:BTC": 1429,
+    "hyperliquid:trade:BTC": 42657
+  },
+  "timestampEvidenceByRowKind": {
+    "binance:depth:BTCUSDT": {
+      "projectedRows": 417630,
+      "nativeExchangeTsRows": 0,
+      "fallbackExchangeTsRows": 417630,
+      "separateLocalTsRows": 417630
+    },
+    "binance:top_of_book:BTCUSDT": {
+      "projectedRows": 1071036,
+      "nativeExchangeTsRows": 0,
+      "fallbackExchangeTsRows": 1071036,
+      "separateLocalTsRows": 1071036
+    },
+    "binance:trade:BTCUSDT": {
+      "projectedRows": 221304,
+      "nativeExchangeTsRows": 221304,
+      "fallbackExchangeTsRows": 0,
+      "separateLocalTsRows": 221304
+    },
+    "hyperliquid:depth:BTC": {
+      "projectedRows": 133040,
+      "nativeExchangeTsRows": 133040,
+      "fallbackExchangeTsRows": 0,
+      "separateLocalTsRows": 133040
+    },
+    "hyperliquid:trade:BTC": {
+      "projectedRows": 42657,
+      "nativeExchangeTsRows": 42657,
+      "fallbackExchangeTsRows": 0,
+      "separateLocalTsRows": 42657
+    }
+  },
+  "samples": [
+    {
+      "kind": "trade",
+      "symbol": "BTC",
+      "source": "hyperliquid",
+      "ev": "BUY_EVENT|TRADE_EVENT|EXCH_EVENT|LOCAL_EVENT",
+      "exch_ts_ns": "1787387962198000000",
+      "local_ts_ns": "1787387978711000000",
+      "px": 77172,
+      "qty": 0.01461,
+      "order_id": 0,
+      "ival": 0,
+      "fval": 0,
+      "hasExchangeTs": true,
+      "hasSeparateLocalTs": true
+    },
+    {
+      "kind": "trade",
+      "symbol": "BTC",
+      "source": "hyperliquid",
+      "ev": "SELL_EVENT|TRADE_EVENT|EXCH_EVENT|LOCAL_EVENT",
+      "exch_ts_ns": "1787387962315000000",
+      "local_ts_ns": "1787387978711000000",
+      "px": 77171,
+      "qty": 0.00581,
+      "order_id": 0,
+      "ival": 0,
+      "fval": 0,
+      "hasExchangeTs": true,
+      "hasSeparateLocalTs": true
+    },
+    {
+      "kind": "trade",
+      "symbol": "BTC",
+      "source": "hyperliquid",
+      "ev": "BUY_EVENT|TRADE_EVENT|EXCH_EVENT|LOCAL_EVENT",
+      "exch_ts_ns": "1787387964372000000",
+      "local_ts_ns": "1787387978711000000",
+      "px": 77172,
+      "qty": 0.00067,
+      "order_id": 0,
+      "ival": 0,
+      "fval": 0,
+      "hasExchangeTs": true,
+      "hasSeparateLocalTs": true
+    },
+    {
+      "kind": "trade",
+      "symbol": "BTC",
+      "source": "hyperliquid",
+      "ev": "BUY_EVENT|TRADE_EVENT|EXCH_EVENT|LOCAL_EVENT",
+      "exch_ts_ns": "1787387965249000000",
+      "local_ts_ns": "1787387978711000000",
+      "px": 77172,
+      "qty": 0.0017,
+      "order_id": 0,
+      "ival": 0,
+      "fval": 0,
+      "hasExchangeTs": true,
+      "hasSeparateLocalTs": true
+    },
+    {
+      "kind": "trade",
+      "symbol": "BTC",
+      "source": "hyperliquid",
+      "ev": "SELL_EVENT|TRADE_EVENT|EXCH_EVENT|LOCAL_EVENT",
+      "exch_ts_ns": "1787387965446000000",
+      "local_ts_ns": "1787387978711000000",
+      "px": 77171,
+      "qty": 0.00325,
+      "order_id": 0,
+      "ival": 0,
+      "fval": 0,
+      "hasExchangeTs": true,
+      "hasSeparateLocalTs": true
+    },
+    {
+      "kind": "trade",
+      "symbol": "BTC",
+      "source": "hyperliquid",
+      "ev": "SELL_EVENT|TRADE_EVENT|EXCH_EVENT|LOCAL_EVENT",
+      "exch_ts_ns": "1787387965557000000",
+      "local_ts_ns": "1787387978711000000",
+      "px": 77170,
+      "qty": 0.00014,
+      "order_id": 0,
+      "ival": 0,
+      "fval": 0,
+      "hasExchangeTs": true,
+      "hasSeparateLocalTs": true
+    },
+    {
+      "kind": "trade",
+      "symbol": "BTC",
+      "source": "hyperliquid",
+      "ev": "SELL_EVENT|TRADE_EVENT|EXCH_EVENT|LOCAL_EVENT",
+      "exch_ts_ns": "1787387965557000000",
+      "local_ts_ns": "1787387978711000000",
+      "px": 77170,
+      "qty": 0.00003,
+      "order_id": 0,
+      "ival": 0,
+      "fval": 0,
+      "hasExchangeTs": true,
+      "hasSeparateLocalTs": true
+    },
+    {
+      "kind": "trade",
+      "symbol": "BTC",
+      "source": "hyperliquid",
+      "ev": "SELL_EVENT|TRADE_EVENT|EXCH_EVENT|LOCAL_EVENT",
+      "exch_ts_ns": "1787387965557000000",
+      "local_ts_ns": "1787387978711000000",
+      "px": 77170,
+      "qty": 0.00404,
+      "order_id": 0,
+      "ival": 0,
+      "fval": 0,
+      "hasExchangeTs": true,
+      "hasSeparateLocalTs": true
+    },
+    {
+      "kind": "trade",
+      "symbol": "BTC",
+      "source": "hyperliquid",
+      "ev": "SELL_EVENT|TRADE_EVENT|EXCH_EVENT|LOCAL_EVENT",
+      "exch_ts_ns": "1787387965557000000",
+      "local_ts_ns": "1787387978711000000",
+      "px": 77170,
+      "qty": 0.0003,
+      "order_id": 0,
+      "ival": 0,
+      "fval": 0,
+      "hasExchangeTs": true,
+      "hasSeparateLocalTs": true
+    },
+    {
+      "kind": "trade",
+      "symbol": "BTC",
+      "source": "hyperliquid",
+      "ev": "SELL_EVENT|TRADE_EVENT|EXCH_EVENT|LOCAL_EVENT",
+      "exch_ts_ns": "1787387965666000000",
+      "local_ts_ns": "1787387978711000000",
+      "px": 77170,
+      "qty": 0.0003,
+      "order_id": 0,
+      "ival": 0,
+      "fval": 0,
+      "hasExchangeTs": true,
+      "hasSeparateLocalTs": true
+    },
+    {
+      "kind": "trade",
+      "symbol": "BTC",
+      "source": "hyperliquid",
+      "ev": "SELL_EVENT|TRADE_EVENT|EXCH_EVENT|LOCAL_EVENT",
+      "exch_ts_ns": "1787387965794000000",
+      "local_ts_ns": "1787387978711000000",
+      "px": 77170,
+      "qty": 0.0003,
+      "order_id": 0,
+      "ival": 0,
+      "fval": 0,
+      "hasExchangeTs": true,
+      "hasSeparateLocalTs": true
+    },
+    {
+      "kind": "trade",
+      "symbol": "BTC",
+      "source": "hyperliquid",
+      "ev": "SELL_EVENT|TRADE_EVENT|EXCH_EVENT|LOCAL_EVENT",
+      "exch_ts_ns": "1787387965794000000",
+      "local_ts_ns": "1787387978711000000",
+      "px": 77170,
+      "qty": 0.00003,
+      "order_id": 0,
+      "ival": 0,
+      "fval": 0,
+      "hasExchangeTs": true,
+      "hasSeparateLocalTs": true
+    }
+  ],
+  "verdict": "Partial fit: capture-v2 stores separate local receive timestamps, but some projected rows still lack native exchange timestamp evidence and must use a fallback timestamp. Replay is usable for runtime smoke tests, not latency-sensitive edge claims.",
+  "nextTest": {
+    "recommended": "build a capture-v2 schema before installing hftbacktest",
+    "reason": "current captures can synthesize event rows, but cannot measure feed latency because they store one timestamp instead of exchange_ts and local_receive_ts separately",
+    "minimalCaptureV2": [
+      "exchange_ts_ms from raw event time when available",
+      "local_receive_ts_ms from Date.now at WebSocket receipt",
+      "source sequence/update id for depth continuity checks",
+      "full top-N bids/asks, not only L1 feature rows",
+      "fees/slippage/latency profile frozen before replay"
+    ]
+  }
+}

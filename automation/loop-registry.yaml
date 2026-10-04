@@ -1,0 +1,257 @@
+version: 1
+autonomy_level: A2
+approved_recurring_automation: true
+loops:
+  - id: ralph-autoresearch-loop
+    path: automation/ralph-autoresearch-loop.md
+    mode: scheduled
+    cadence: '30 9 * * * Europe/Prague'
+    purpose: Run bounded self-verified RALPH research in an isolated OpenClaw session.
+    writes:
+      - automation/retrieval-router.yaml
+      - wiki/notes/
+      - wiki/sources/
+      - decisions/candidates.md
+      - decisions/unknowns.md
+      - decisions/discarded.md
+      - automation/work-queues.yaml
+      - automation/loop-state.yaml
+      - log.md
+    forbidden:
+      - live trading
+      - wallet keys
+      - exchange-account setup
+      - paid APIs without approval
+      - public publishing
+      - automatic skill installation
+  - id: ralph-state-of-edge-daily
+    path: automation/state-of-edge-report.mjs
+    mode: scheduled
+    cadence: '15 19 * * * Europe/Prague'
+    purpose: Generate a deterministic daily promote/kill/watch state from paper, shadow, journal, and freshness outputs.
+    writes:
+      - outputs/state-of-edge-report.json
+      - outputs/state-of-edge-report.md
+      - log.md
+    forbidden:
+      - live trading
+      - wallet keys
+      - exchange-account setup
+      - paid APIs without approval
+      - public publishing
+      - financial advice language
+      - alert wording changes
+      - risk or sizing rule changes
+      - order execution changes
+  - id: ralph-adversarial-improvement-loop
+    path: automation/ralph-adversarial-improvement-loop.md
+    mode: scheduled
+    cadence: '30 19 * * * Europe/Prague'
+    purpose: Criticize RALPH outputs, produce proposal-only improvements, and gate notifications without live trading or execution changes.
+    writes:
+      - outputs/ralph-adversarial-improvement-report.json
+      - outputs/ralph-adversarial-improvement-report.md
+      - log.md
+    forbidden:
+      - live trading
+      - wallet keys
+      - exchange-account setup
+      - paid APIs without approval
+      - public publishing
+      - financial advice language
+      - alert wording changes
+      - risk or sizing rule changes
+      - order execution changes
+      - strategy promotion without HITL
+  - id: btc-eth-alert-edge
+    path: automation/btc-eth-alert-edge-loop.md
+    mode: scheduled
+    cadence: '0 */4 * * * UTC'
+    purpose: Refresh BTC/ETH setup backtests and forward paper-trade state for alert probability blocks.
+    writes:
+      - experiments/btc-eth-alert-edge/data/candles/
+      - experiments/btc-eth-alert-edge/results/edge-snapshot.json
+      - experiments/btc-eth-alert-edge/results/edge-summary.md
+      - experiments/btc-eth-alert-edge/paper/signals.json
+    forbidden:
+      - live trading
+      - wallet keys
+      - exchange-account setup
+      - paid APIs without approval
+      - public publishing
+      - financial advice language
+  - id: ta-learning-loop
+    path: automation/ta-learning-loop.md
+    mode: manual
+    purpose: Convert Crypto Updates alert/review history into compact research-only TA setup analysis and candidate recommendation rules.
+    writes:
+      - ../crypto-updates/setup-analysis-index.yaml
+      - ../crypto-updates/runtime/setup-analysis.json
+      - ../crypto-updates/wiki/setup-analysis/latest.md
+      - automation/retrieval-router.yaml
+      - automation/loop-state.yaml
+      - automation/work-queues.yaml
+      - log.md
+    forbidden:
+      - live trading
+      - order execution changes
+      - risk or sizing rule changes
+      - wallet keys
+      - exchange-account setup
+      - paid APIs without approval
+      - financial advice language
+  - id: source-intake
+    path: loops/source-intake-loop.md
+    mode: manual
+    purpose: Turn new sources into raw memory, wiki summaries, unknowns, and candidates.
+    writes:
+      - raw/
+      - wiki/sources/
+      - index.yaml
+      - index.md
+      - log.md
+      - decisions/unknowns.md
+      - decisions/candidates.md
+    forbidden:
+      - live trading
+      - paid APIs without approval
+      - source overwrite without approval
+  - id: unknowns
+    path: loops/unknowns-loop.md
+    mode: manual
+    purpose: Maintain prioritized answerable unknowns.
+    writes:
+      - decisions/unknowns.md
+      - wiki/open-questions.md
+      - log.md
+  - id: market-battlefield
+    path: loops/market-battlefield-loop.md
+    mode: manual
+    purpose: Collect public/free event, security, protocol, volatility, and ecosystem context.
+    writes:
+      - wiki/notes/
+      - decisions/unknowns.md
+      - decisions/candidates.md
+      - case-files/
+      - log.md
+    forbidden:
+      - alert-to-trade execution
+      - exchange API use
+  - id: discovery
+    path: loops/discovery-loop.md
+    mode: manual
+    purpose: Find source candidates, rails, signals, and investigation targets.
+    writes:
+      - decisions/candidates.md
+      - decisions/unknowns.md
+      - outputs/investigation-briefs/
+      - log.md
+  - id: investigation
+    path: loops/investigation-loop.md
+    mode: manual
+    purpose: Turn a candidate into a structured research brief.
+    writes:
+      - outputs/investigation-briefs/
+      - decisions/candidates.md
+      - decisions/unknowns.md
+      - log.md
+  - id: validation-benchmark
+    path: loops/validation-benchmark-loop.md
+    mode: manual
+    purpose: Test claims before prototypes using benchmark discipline.
+    writes:
+      - experiments/active/
+      - experiments/completed/
+      - outputs/decision-memos/
+      - decisions/decisions.md
+      - log.md
+    forbidden:
+      - live execution
+      - wallet keys
+      - exchange accounts
+  - id: decision
+    path: loops/decision-loop.md
+    mode: manual
+    purpose: Convert evidence into explicit investigate/benchmark/prototype/watch/discard decisions.
+    writes:
+      - decisions/decisions.md
+      - decisions/candidates.md
+      - decisions/discarded.md
+      - outputs/decision-memos/
+      - log.md
+  - id: portfolio-output
+    path: loops/portfolio-output-loop.md
+    mode: manual
+    purpose: Produce an orientation artifact only when explicitly requested; Tomas currently wants alerts, not periodic briefs.
+    writes:
+      - outputs/
+      - log.md
+  - id: self-improvement
+    path: loops/self-improvement-loop.md
+    mode: manual
+    purpose: Improve RALPH's own loops, templates, and scoring rules.
+    writes:
+      - loops/
+      - core/
+      - experiments/templates/
+      - log.md
+    forbidden:
+      - loosening hard rules without explicit approval
+  - id: strategy-research
+    path: loops/strategy-research-loop.md
+    mode: manual
+    purpose: Discover and compare strategy families before bot architecture.
+    writes:
+      - wiki/notes/
+      - decisions/candidates.md
+      - decisions/unknowns.md
+      - decisions/discarded.md
+      - automation/work-queues.yaml
+      - log.md
+    forbidden:
+      - live trading
+      - wallet keys
+      - exchange accounts
+      - paid APIs without approval
+  - id: framework-repo-discovery
+    path: loops/framework-repo-discovery-loop.md
+    mode: manual
+    purpose: Find public frameworks, repos, and architecture examples for trading-system design.
+    writes:
+      - wiki/notes/
+      - wiki/sources/
+      - decisions/candidates.md
+      - automation/work-queues.yaml
+      - log.md
+    forbidden:
+      - cloning or modifying large repos without approval
+      - live trading setup
+  - id: x-github-research
+    path: loops/x-github-research-loop.md
+    mode: manual
+    purpose: Find public strategy, architecture, repo, and failure-mode knowledge from GitHub and public discussion sources.
+    writes:
+      - wiki/notes/
+      - wiki/sources/
+      - decisions/candidates.md
+      - decisions/unknowns.md
+      - decisions/discarded.md
+      - automation/work-queues.yaml
+      - log.md
+    forbidden:
+      - login-only scraping
+      - paid APIs without approval
+      - live trading setup
+  - id: market-volatility-watch
+    path: loops/market-volatility-watch-loop.md
+    mode: manual
+    purpose: Track major market moves as research context and event samples.
+    writes:
+      - wiki/notes/
+      - decisions/unknowns.md
+      - decisions/candidates.md
+      - automation/work-queues.yaml
+      - log.md
+    forbidden:
+      - alert-to-trade execution
+      - financial advice

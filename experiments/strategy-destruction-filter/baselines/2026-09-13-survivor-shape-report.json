@@ -1,0 +1,31 @@
+{
+  "id": "2026-09-13-survivor-shape-report",
+  "source": "wiki/notes/2026-09-13-strategy-filter-survivor-shape-reporting.md",
+  "generatedAt": "2026-09-13T06:33:46.939Z",
+  "totals": {
+    "candidates": 13,
+    "variants": 131,
+    "survivors": 2,
+    "survivorShapes": 1,
+    "rejected": 129
+  },
+  "survivorShapes": [
+    {
+      "shapeId": "alert-edge-avax-range-breakdown-short-v0|shape-1",
+      "candidateId": "alert-edge-avax-range-breakdown-short-v0",
+      "representativeVariantId": "alert-edge-avax-range-breakdown-short-v0#1",
+      "status": "survived_research_gate",
+      "metrics": {
+        "sample": 217,
+        "expectancyR": 0.1815,
+        "profitFactor": 1.3052,
+        "deflatedSharpe": 1.5665,
+        "outOfSampleExpectancyR": 0.0761,
+        "outOfSampleBaselineLiftR": 0.2457,
+        "positiveOutOfSampleFolds": 1,
+        "foldCount": 5
+      }
+    }
+  ],
+  "note": "Frozen compact baseline extracted from the 2026-09-13 survivor-shape note so later reports can audit survivor -> rejected drift without loosening gates."
+}

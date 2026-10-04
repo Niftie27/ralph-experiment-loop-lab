@@ -1,0 +1,1126 @@
+ATAS: ATAS.Indicators Namespace Reference 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Namespaces | Classes | Typedefs | Enumerations | Functions 
+
+ATAS.Indicators Namespace Reference 
+
+Namespaces 
+
+namespace Attributies 
+
+namespace Drawing 
+
+namespace Filters 
+
+namespace Heatmap 
+
+namespace News 
+
+Classes 
+
+class BaseDataSeries 
+
+Base generic data series class providing common functionality. More... 
+
+class BaseIndicator 
+
+Base class for custom indicators in a chart. More... 
+
+class Candle 
+
+Represents a candle in trading, which includes open, high, low, and close prices. More... 
+
+class CandleDataSeries 
+
+Represents a data series of candles. Each element in the series is a Candle. More... 
+
+class CandlePartSeries 
+
+Represents a data series of decimal values derived from specific parts of an IndicatorCandle created by an ICandleCreator. More... 
+
+struct CandleSeriesInstrument 
+
+Identifies an instrument for a candle series request. Provide any one of the keys; they are tried most-specific first: ContractId, SecurityId, Code + Exchange, then Code alone. A plain string converts implicitly to a code-only descriptor. More... 
+
+class CandleSeriesRequest 
+
+Describes a candle series to request: the timeframe and, optionally, another instrument. More... 
+
+struct CandleSeriesTimeFrame 
+
+A candle series timeframe: aggregation type plus its numeric parameter (minutes, seconds, ticks, lots or price-range ticks depending on the type). Create instances via the factory methods. More... 
+
+class CandleSeriesTimeFrameJsonConverter 
+
+Round-trips CandleSeriesTimeFrame as a compact "PeriodType:Value" string (e.g. "Minutes:5"). The struct exposes only factory methods and a private constructor, so default Newtonsoft handling (parameter-name matching) would be fragile across refactorings; templates persist these values. Reading tolerates the legacy object form and returns the default (unset) value for anything unparsable. More... 
+
+class ChartObject 
+
+Base class for objects in a chart. More... 
+
+class Container 
+
+Represents a container with a defined region on the chart. More... 
+
+class CumulativeTrade 
+
+Represents a cumulative trade, which is a trade that includes multiple prints or executions. More... 
+
+class CumulativeTradesRequest 
+
+Represents a request to retrieve cumulative trade data within a specified time range or for a particular date. More... 
+
+class CustomValue 
+
+Represents a custom value with associated properties. More... 
+
+class CustomValueDataSeries 
+
+Represents a custom data series that holds CustomValue objects. More... 
+
+class DataSeriesTypeConverter 
+
+class ExoticCandleSeriesTimeFrame 
+
+An exotic candle series timeframe. Create instances via the factory methods. Kept separate from CandleSeriesTimeFrame: these types carry extra parameters, and the common struct stays two-field forever. More... 
+
+class ExoticCandleSeriesTimeFrameJsonConverter 
+
+Round-trips ExoticCandleSeriesTimeFrame as a compact "Kind:Value[:Value...]" string (e.g. "RangeUS:4:2:2"). More... 
+
+class ExtendedIndicator 
+
+An extended base class for custom indicators that provide additional functionality for drawing, alerts, market data handling, etc. More... 
+
+class Extensions 
+
+Contains extension methods for various types. 
+
+class FavoriteByDefaultAttribute 
+
+Adds the indicator to the user's favorites once, when it first appears in the indicators catalog. Honored only for indicators the platform installed as personal-account modules; any other custom indicator ignores it. Each indicator is seeded at most one time, so a user who removes the star afterwards is not overridden on later launches. More... 
+
+class Filter 
+
+Generic filter class that implements the IFilterValue interface. More... 
+
+class FilterBase 
+
+Base class for filters implementing the IFilter interface. More... 
+
+class FilterBool 
+
+Represents a filter with a boolean value type. Inherits from Filter<TValue, TFilter> where TValue is set to bool and TFilter is set to FilterBool. More... 
+
+class FilterColor 
+
+Represents a filter with a value type of CrossColor. Inherits from Filter<TValue, TFilter> where TValue is set to CrossColor and TFilter is set to FilterColor. More... 
+
+class FilterEnum 
+
+class FilterExtensions 
+
+Provides extension methods for working with filters. 
+
+class FilterHeatmapTypes 
+
+Represents a filter for heatmap types with custom JSON serialization/deserialization. More... 
+
+class FilterInt 
+
+Represents a filter for integer values with custom JSON serialization/deserialization. More... 
+
+class FilterKey 
+
+Represents a filter for key values with custom JSON serialization/deserialization. More... 
+
+class FilterRangeBase 
+
+Represents an abstract base class for filters that represent a range of values with custom JSON serialization/deserialization. More... 
+
+class FilterRangeInt 
+
+Represents a filter that represents a range of integer values with custom JSON serialization/deserialization. More... 
+
+class FilterRangeValue 
+
+Represents a range of values of type TValue with support for property change notifications. More... 
+
+class FilterRenderPen 
+
+Represents a filter for PenSettings objects with support for property change notifications. More... 
+
+class FilterString 
+
+Represents a filter for string values with support for property change notifications. More... 
+
+class FilterTimeSpan 
+
+Represents a filter for TimeSpan values with custom JSON serialization/deserialization. More... 
+
+class FixedProfileRequest 
+
+Represents a request for a fixed profile with a specific period. More... 
+
+interface ICalculationTimeFrameGate 
+
+Internal contract between the platform and the indicator core for the account feature that unlocks the indicator calculation timeframe (PLAT-4527). Implemented by the host's data provider; not part of the public SDK surface - custom hosts that do not implement it are treated as allowed. 
+
+interface ICandleCreator 
+
+Represents an interface for creating and managing indicator candles. More... 
+
+interface ICandlesDataProvider 
+
+Provides indicators with candle series of other timeframes and/or other instruments, with history and live updates. More... 
+
+interface ICandleSeriesSubscription 
+
+A live candle series: history plus live updates. Implements ICandleCreator, so it plugs directly into CandlePartSeries (and through it into nested indicators' SourceDataSeries). Dispose to release. More... 
+
+interface IChart 
+
+Interface for a chart containing various chart-related information and methods. More... 
+
+interface IChartColorsStore 
+
+Interface for accessing colors and pens used in a chart's rendering. More... 
+
+interface IChartContainer 
+
+Interface for a chart container that holds chart-related information and methods. More... 
+
+interface IChartCoordinatesManager 
+
+Interface for managing chart coordinates and scaling. More... 
+
+interface IContainer 
+
+Interface for defining a container that represents a rectangular region. More... 
+
+interface ICrossTradingIndicatorContext 
+
+Context for indicators that need to access cross-trading instrument data. Allows indicators to subscribe to cross-trading instrument changes and access market data for the selected cross-trading instrument without creating new subscriptions. More... 
+
+interface IDataSeries 
+
+Interface for data series, providing essential properties and methods. More... 
+
+interface IDrawingObjectsListInfo 
+
+Interface for providing information about the list of drawing objects on the chart. More... 
+
+interface IFilter 
+
+Represents a filter with common properties and functionality. More... 
+
+interface IFilterEnum 
+
+interface IFilterValue 
+
+Represents a filter with a flexible value that can hold data of any type. Inherits the properties of IFilter. More... 
+
+interface IIndicatorAlerts 
+
+interface IIndicatorContainer 
+
+Interface for an indicator container that holds indicator-related information and methods. More... 
+
+interface IIndicatorDataProvider 
+
+Represents a data provider for an indicator, providing access to various data and services related to the indicator. More... 
+
+interface IIndicatorServiceProvider 
+
+interface IInstrumentInfo 
+
+Interface representing instrument information. More... 
+
+interface IInstrumentMarketDataProvider 
+
+Provides indicators with live market data (trades, best bid/ask, order book) of other instruments, with the same lifecycle guarantees as the candle series API: subscriptions are disposable, and everything an indicator leaves behind is released when it detaches from the chart. More... 
+
+interface IIntCandle 
+
+Represents an interface for an integer-based candle. More... 
+
+interface IKeyboardInfo 
+
+Interface for providing information about the keyboard state. More... 
+
+interface IKnowFixedProfiles 
+
+Represents an interface for objects that know fixed profiles and can request them. More... 
+
+interface IMarketByOrdersCache 
+
+Interface for manager that provides access to market by orders cache. More... 
+
+interface IMarketByOrdersDataProvider 
+
+Interface for manager that provides access to market by order data. More... 
+
+interface IMarketByOrdersWithTradesCache 
+
+Interface for manager that provides access to market by orders and trades cache. More... 
+
+interface IMarketDataSubscription 
+
+A live market-data subscription for one instrument. Dispose to release. More... 
+
+interface IMarketDepthInfoProvider 
+
+Interface for providing market depth information. More... 
+
+interface IMarketTimeProvider 
+
+interface IMouseLocationInfo 
+
+Interface for providing information about the mouse location within the chart. More... 
+
+class Indicator 
+
+Base class for custom indicators. More... 
+
+class IndicatorCandle 
+
+Represents an Indicator Candle. More... 
+
+class IndicatorCategories 
+
+class IndicatorDataProvider 
+
+Implementation of the IIndicatorDataProvider interface that provides access to various data and services related to an indicator. More... 
+
+class IndicatorSeries 
+
+Represents a custom data series for an indicator, derived from BaseDataSeries<decimal>. More... 
+
+interface INotifyPanelPropertyChanged 
+
+Notifies clients that a panel property value has changed. More... 
+
+class InstrumentInfo 
+
+Implementation of the IInstrumentInfo interface representing instrument information. More... 
+
+interface IOnlineDataProvider 
+
+Interface for an online data provider that provides access to real-time market data. More... 
+
+interface IOptionQuoteSubscription 
+
+A live subscription to one option's quotes. Dispose to unsubscribe. More... 
+
+interface IOptionsDataProvider 
+
+Provides indicators with access to options data (series, chains and live quotes) whose underlying is the chart's security. More... 
+
+interface IPlatformSettings 
+
+Interface for accessing platform settings. More... 
+
+interface IPropertiesEditor 
+
+interface IPropertiesEditorOwner 
+
+interface ISupportedPriceInfo 
+
+Represents an interface for supporting price information. More... 
+
+interface ITimeMarketDataCache 
+
+Cache that holds recent items based on a specified amount of time. More... 
+
+interface ITradesCache 
+
+Interface for manager that provides access to trades cache. More... 
+
+interface ITradingManager 
+
+Interface representing a trading manager for handling trading-related operations. More... 
+
+interface ITradingVolumeInfo 
+
+Interface for providing information about the volume selector. More... 
+
+interface ITransientIndicator 
+
+Marker interface for indicators that are managed programmatically and should not be persisted in the chart template. Transient indicators are excluded from serialization and are added/removed at runtime by platform components (e.g. ChartTraderViewModel). More... 
+
+interface IVolumeSelectorItem 
+
+Interface representing the volume template. More... 
+
+class LineSeries 
+
+Represents a horizontal line with a single value. More... 
+
+class MarketDataArg 
+
+Represents a data point in the market. More... 
+
+class MarketDataSubscriptionRequest 
+
+Describes a live market-data subscription: the instrument and the data kinds. More... 
+
+class MarketDepthInfoProvider 
+
+A class that implements the IMarketDepthInfoProvider interface to provide market depth information. More... 
+
+class MarketDepthSnapshot 
+
+Represents the end state of market depth over a specified time period. More... 
+
+class MarketDepthSnapshotRequest 
+
+Represents a request to retrieve a snapshot of the market depth for a specified time range. More... 
+
+class MboAnalyticsDataProviderExtensions 
+
+Extension methods for optional MBO analytics support. 
+
+class MtfCalculationHost 
+
+PLAT-4527: computes an indicator on a different timeframe and projects the values onto the chart bars as steps. Owned by the visible Indicator (V): a hidden shadow clone of V calculates on the MTF candle series (obtained through V's ICandlesDataProvider); this host copies the shadow's output series into V's series. V itself runs in BaseIndicator.ExternalCalculation mode. Semantics: historical chart bars take the value of the last CLOSED MTF candle (no lookahead); the last chart bar tracks the forming MTF candle until it closes. The projection is deterministic, so live values match a post-reload chart exactly. 
+
+class NotifyPropertyChangedBase 
+
+Base class for implementing the INotifyPropertyChanged interface. More... 
+
+class ObjectDataSeries 
+
+Represents a data series of objects, allowing storing any type of data elements. More... 
+
+class PaintbarsDataSeries 
+
+Represents a data series of paintbars, each element is a nullable CrossColor value. More... 
+
+class ParameterAttribute 
+
+class PriceSelectionDataSeries 
+
+Represents a data series of price selection values, each element is a synchronized list of PriceSelectionValue. More... 
+
+class PriceSelectionValue 
+
+Represents a class for defining price level selection in clusters and bars. Using in PriceSelectionDataSeries. More... 
+
+class PriceVolumeInfo 
+
+Represents information on volumes at a specific price. More... 
+
+class RangeDataSeries 
+
+Represents a data series of range values, each element is a RangeValue. More... 
+
+class RangeValue 
+
+RangeDataSeries element. More... 
+
+class RedrawArg 
+
+Represents the arguments for requesting a redraw of a chart. More... 
+
+class ValueArea 
+
+Represents information on Value area high/low. More... 
+
+class ValueChangingEventArgs 
+
+Provides event arguments for a value changing event. More... 
+
+class ValueDataSeries 
+
+Represents a data series of decimal values, each element is a decimal. More... 
+
+Typedefs 
+
+using TimerSubscriptionKey = (System.TimeSpan period, System.Action callback) 
+
+using BindingFlags = System.Reflection.BindingFlags 
+
+Enumerations 
+
+enum DataSeriesType { 
+Bars , Open , High , Low , 
+Close , Volume , HL2 , HLC3 , 
+OHLC4 , HLCC4 , Indicator , Line , 
+Band , Value , Candle , PriceSelection , 
+PaintBars , CustomValue , Object 
+} 
+
+Enum representing different types of data series available. More... 
+
+enum CandleTooltipAnchor { Close , Top } 
+
+Determines which point of the candle is used as the tooltip anchor. More... 
+
+enum CandleSeriesPeriodType { 
+Minutes , Seconds , Ticks , Volume , 
+Delta , Range , Renko , Daily , 
+Weekly 
+} 
+
+Candle aggregation period types supported by ICandlesDataProvider. More... 
+
+enum CandleSeriesExoticType { 
+RangeX , RangeXV , RangeZ , RangeUS , 
+ReversalX 
+} 
+
+Parameter-heavy aggregation types served by ICandlesDataProvider through CandleSeriesRequest.ExoticTimeFrame. More... 
+
+enum MarketDataSubscriptionTypes { Trades = 1
+, BestBidAsk = 2
+, MarketDepth = 4
+ } 
+
+Kinds of live market data an IMarketDataSubscription delivers. More... 
+
+enum CandleVisualMode { Candles = 0
+, Bars = 1
+ } 
+
+Visualization mode in CandleDataSeries. More... 
+
+enum ChartVisualModes { 
+Candles = 0
+, Clusters = 1
+, TransparentCandles = 2
+, Line = 3
+, 
+Bars = 4
+, Hidden = 5 
+} 
+
+Enumerates the visual modes available for displaying price chart data on a chart. More... 
+
+enum ContractRolloverType { ExpirationDate , VolumeBasedCurrentEnd , VolumeBasedNextStart } 
+
+Specifies the type of contract rollover calculation to use. More... 
+
+enum CumulativeTradesMode : byte { 
+Strong = 0
+, Medium = 1
+, Weak = 2
+, Filter = 3
+, 
+FilterLimited = 4 
+} 
+
+Specifies the mode used to filter cumulative trades by their aggregated volume. More... 
+
+enum DrawingLayouts { None = 1
+, Historical = 2
+, LatestBar = 4
+, Final = 8
+ } 
+
+Enumerates the different drawing layouts available for chart drawings. More... 
+
+enum FootprintColorSchemes { 
+Delta = 0
+, Solid = 10
+, VolumeProportion = 20
+, TradesProportion = 30
+, 
+VolumeBasedBidAsk = 50
+, HeatMapVolume = 60
+, HeatMapTrades = 70
+, HeatMapDelta = 80
+, 
+None = 90 
+} 
+
+enum FootprintContentModes { 
+Volume = 0
+, Trades = 10
+, VolumeTrades = 30
+, VolumeDelta = 40
+, 
+Delta = 50
+, DeltaCentered = 51
+, BidXAsk = 60
+, BidAskCentered = 70
+, 
+BidAsk = 80
+, None = 100 
+} 
+
+enum FootprintVisualModes { 
+FullRow , BidAskHistogram , VolumeHistogram , TradesHistogram , 
+DeltaHistogram , BidAskLadder , PositiveNegativeDeltaProfile 
+} 
+
+enum MarketDataType { Bid = 0
+, Ask = 1
+, Trade = 2
+ } 
+
+Specifies the type of market data. More... 
+
+enum ObjectType { 
+Ellipse , Triangle , Rectangle , Diamond , 
+OnlyCluster 
+} 
+
+Enumeration representing different types of graphic objects for PriceSelectionDataSeries. More... 
+
+enum FixedProfilePeriods { 
+CurrentDay = 0
+, LastDay = 1
+, CurrentWeek = 2
+, LastWeek = 3
+, 
+CurrentMonth = 4
+, LastMonth = 5
+, Contract = 6 
+} 
+
+Enumeration representing fixed profile periods. More... 
+
+enum SelectionType { Full , Bid , Ask } 
+
+Enumeration representing different types of selection for a price level. More... 
+
+enum TradeDirection { Between = 0
+, Buy = 1
+, Sell = 2
+ } 
+
+Represents the possible trade directions. More... 
+
+enum VisualMode { 
+Line , Histogram , Hash , Block , 
+Cross , Square , Dots , UpArrow , 
+DownArrow , OnlyValueOnAxis , Hide 
+} 
+
+Represents the visual modes available for displaying data series on a chart. More... 
+
+Functions 
+
+record TradingSessionDescription (long? Id, string Name) 
+
+Representing a trading session description. 
+
+record struct FixedProfileResponse ( IndicatorCandle Scaled, IndicatorCandle Original) 
+
+readonly record struct SessionWorkingTime ( DateTime From, DateTime To) 
+
+A trading session working window. 
+
+Typedef Documentation 
+
+◆ BindingFlags 
+
+using ATAS.Indicators.BindingFlags = typedef System.Reflection.BindingFlags 
+
+◆ TimerSubscriptionKey 
+
+using ATAS.Indicators.TimerSubscriptionKey = typedef (System.TimeSpan period, System.Action callback) 
+
+Enumeration Type Documentation 
+
+◆ CandleSeriesExoticType 
+
+enum ATAS.Indicators.CandleSeriesExoticType 
+
+Parameter-heavy aggregation types served by ICandlesDataProvider through CandleSeriesRequest.ExoticTimeFrame. 
+
+Enumerator 
+
+RangeX 
+
+RangeXV 
+
+RangeZ 
+
+RangeUS 
+
+ReversalX 
+
+◆ CandleSeriesPeriodType 
+
+enum ATAS.Indicators.CandleSeriesPeriodType 
+
+Candle aggregation period types supported by ICandlesDataProvider. 
+
+Enumerator 
+
+Minutes 
+
+Seconds 
+
+Ticks 
+
+Volume 
+
+Delta 
+
+Range 
+
+Renko 
+
+Daily 
+
+Weekly 
+
+◆ CandleTooltipAnchor 
+
+enum ATAS.Indicators.CandleTooltipAnchor 
+
+Determines which point of the candle is used as the tooltip anchor. 
+
+Enumerator 
+
+Close 
+Tooltip is anchored to the Close value (default behavior). 
+
+Top 
+Tooltip is anchored to the top of the candle body — max(Open, Close). 
+
+◆ CandleVisualMode 
+
+enum ATAS.Indicators.CandleVisualMode 
+
+Visualization mode in CandleDataSeries. 
+
+Enumerator 
+
+Candles 
+Candle visual mode where candles are displayed. 
+
+Bars 
+Candle visual mode where bars are displayed. 
+
+◆ ChartVisualModes 
+
+enum ATAS.Indicators.ChartVisualModes 
+
+Enumerates the visual modes available for displaying price chart data on a chart. 
+
+Enumerator 
+
+Candles 
+Represents the candles visual mode where price data is displayed using candlestick charts. 
+
+Clusters 
+Represents the clusters visual mode where price data is displayed using clusters. 
+
+TransparentCandles 
+Represents the transparent candles visual mode where price data is displayed using transparent candlestick charts. 
+
+Line 
+Represents the line visual mode where price data is displayed using line charts. 
+
+Bars 
+Represents the bars visual mode where price data is displayed using bar charts. 
+
+Hidden 
+Represents the hidden visual mode where price data is hidden and not displayed on the chart. 
+
+◆ ContractRolloverType 
+
+enum ATAS.Indicators.ContractRolloverType 
+
+Specifies the type of contract rollover calculation to use. 
+
+Enumerator 
+
+ExpirationDate 
+Rollover based on predefined contract expiration dates, following standard futures market conventions. This method uses official exchange-mandated expiration dates for contract rollovers. 
+
+VolumeBasedCurrentEnd 
+Rollover determined when the current contract's activity ends, triggered by the next contract's daily trading volume exceeding the current contract's volume. This marks the end of effective trading period for the current contract. 
+
+VolumeBasedNextStart 
+Rollover determined when the new contract's activity begins, triggered by its daily trading volume exceeding the current contract's volume. This marks the start of effective trading period for the next contract. 
+
+◆ CumulativeTradesMode 
+
+enum ATAS.Indicators.CumulativeTradesMode : byte 
+
+Specifies the mode used to filter cumulative trades by their aggregated volume. 
+
+Enumerator 
+
+Strong 
+Strong filtering mode. 
+
+Medium 
+Medium filtering mode. 
+
+Weak 
+Weak filtering mode. 
+
+Filter 
+Custom volume filter. 
+
+FilterLimited 
+Custom volume filter with limited count of trades. 
+
+◆ DataSeriesType 
+
+enum ATAS.Indicators.DataSeriesType 
+
+Enum representing different types of data series available. 
+
+Enumerator 
+
+Bars 
+Represents a data series based on bars. 
+
+Open 
+Represents a data series containing open prices. 
+
+High 
+Represents a data series containing high prices. 
+
+Low 
+Represents a data series containing low prices. 
+
+Close 
+Represents a data series containing closing prices. 
+
+Volume 
+Represents a data series containing volume data. 
+
+HL2 
+Represents a data series containing the average of high and low prices. 
+
+HLC3 
+Represents a data series containing the average of high, low, and closing prices. 
+
+OHLC4 
+Represents a data series containing the open, high, low, and closing prices. 
+
+HLCC4 
+Represents a data series containing the average of high, low and double closing prices. 
+
+Indicator 
+Represents a data series sourced from an indicator. 
+
+Line 
+Represents a line-based data series. 
+
+Band 
+Represents a band-based data series. 
+
+Value 
+Represents a value-based data series. 
+
+Candle 
+Represents a data series containing candle information. 
+
+PriceSelection 
+Represents a data series used for selecting prices. 
+
+PaintBars 
+Represents a data series used for painting bars. 
+
+CustomValue 
+Represents a custom value-based data series. 
+
+Object 
+Represents a data series containing objects. 
+
+◆ DrawingLayouts 
+
+enum ATAS.Indicators.DrawingLayouts 
+
+Enumerates the different drawing layouts available for chart drawings. 
+
+Enumerator 
+
+None 
+No specific layout is applied. 
+
+Historical 
+Redrawing will be called on each new candle, when compressing, moving the chart. 
+
+LatestBar 
+Redraw is called when the most recent bar changes. As a rule, this happens on every new tick. 
+
+Final 
+The final layout that is drawn every time the chart is drawn. For example, when moving the mouse. 
+
+◆ FixedProfilePeriods 
+
+enum ATAS.Indicators.FixedProfilePeriods 
+
+Enumeration representing fixed profile periods. 
+
+Enumerator 
+
+CurrentDay 
+Current day profile. 
+
+LastDay 
+Previous day profile. 
+
+CurrentWeek 
+Current week profile. 
+
+LastWeek 
+Previous week profile. 
+
+CurrentMonth 
+Current month profile. 
+
+LastMonth 
+Previous month profile. 
+
+Contract 
+Contract profile. 
+
+◆ FootprintColorSchemes 
+
+enum ATAS.Indicators.FootprintColorSchemes 
+
+Enumerator 
+
+Delta 
+
+Solid 
+
+VolumeProportion 
+
+TradesProportion 
+
+VolumeBasedBidAsk 
+
+HeatMapVolume 
+
+HeatMapTrades 
+
+HeatMapDelta 
+
+None 
+
+◆ FootprintContentModes 
+
+enum ATAS.Indicators.FootprintContentModes 
+
+Enumerator 
+
+Volume 
+
+Trades 
+
+VolumeTrades 
+
+VolumeDelta 
+
+Delta 
+
+DeltaCentered 
+
+BidXAsk 
+
+BidAskCentered 
+
+BidAsk 
+
+None 
+
+◆ FootprintVisualModes 
+
+enum ATAS.Indicators.FootprintVisualModes 
+
+Enumerator 
+
+FullRow 
+
+BidAskHistogram 
+
+VolumeHistogram 
+
+TradesHistogram 
+
+DeltaHistogram 
+
+BidAskLadder 
+
+PositiveNegativeDeltaProfile 
+
+◆ MarketDataSubscriptionTypes 
+
+enum ATAS.Indicators.MarketDataSubscriptionTypes 
+
+Kinds of live market data an IMarketDataSubscription delivers. 
+
+Enumerator 
+
+Trades 
+
+BestBidAsk 
+
+MarketDepth 
+
+◆ MarketDataType 
+
+enum ATAS.Indicators.MarketDataType 
+
+Specifies the type of market data. 
+
+Enumerator 
+
+Bid 
+Represents the bid data type in the market. 
+
+Ask 
+Represents the ask data type in the market. 
+
+Trade 
+Represents the trade data type in the market. 
+
+◆ ObjectType 
+
+enum ATAS.Indicators.ObjectType 
+
+Enumeration representing different types of graphic objects for PriceSelectionDataSeries. 
+
+Enumerator 
+
+Ellipse 
+Ellipse graphic object. 
+
+Triangle 
+Triangle graphic object. 
+
+Rectangle 
+Rectangle graphic object. 
+
+Diamond 
+Diamond graphic object. 
+
+OnlyCluster 
+Graphic object used only for clustering. 
+
+◆ SelectionType 
+
+enum ATAS.Indicators.SelectionType 
+
+Enumeration representing different types of selection for a price level. 
+
+Enumerator 
+
+Full 
+Select the full level. 
+
+Bid 
+Select the bid side. 
+
+Ask 
+Select the ask side. 
+
+◆ TradeDirection 
+
+enum ATAS.Indicators.TradeDirection 
+
+Represents the possible trade directions. 
+
+Enumerator 
+
+Between 
+The volume of intra-spread transactions at the level. 
+
+Buy 
+Indicates a buy trade direction. 
+
+Sell 
+Indicates a sell trade direction. 
+
+◆ VisualMode 
+
+enum ATAS.Indicators.VisualMode 
+
+Represents the visual modes available for displaying data series on a chart. 
+
+Enumerator 
+
+Line 
+Data series is displayed as a line connecting data points. 
+
+Histogram 
+Data series is displayed as a vertical column on each bar. 
+
+Hash 
+Data series is displayed as a horizontal line on each bar. 
+
+Block 
+Data series is displayed as a square block on each bar. 
+
+Cross 
+Data series is displayed as a cross on each bar. 
+
+Square 
+The data series is displayed as a 90 degree polyline connecting the data points. 
+
+Dots 
+Data series is displayed as a circle on each bar. 
+
+UpArrow 
+Data series is displayed as a up arrow on each bar. 
+
+DownArrow 
+Data series is displayed as a down arrow on each bar. 
+
+OnlyValueOnAxis 
+Data series is displayed as values only on the axis without connecting lines or shapes. 
+
+Hide 
+Data series is hidden and not displayed on the chart. 
+
+Function Documentation 
+
+◆ FixedProfileResponse() 
+
+record struct ATAS.Indicators.FixedProfileResponse ( IndicatorCandle Scaled , 
+
+IndicatorCandle Original 
+
+) 
+
+◆ SessionWorkingTime() 
+
+readonly record struct ATAS.Indicators.SessionWorkingTime ( DateTime From , 
+
+DateTime To 
+
+) 
+
+A trading session working window. 
+Parameters 
+
+From The start time of the working window. 
+
+To The end time of the working window. 
+
+◆ TradingSessionDescription() 
+
+record ATAS.Indicators.TradingSessionDescription ( long? Id , 
+
+string Name 
+
+) 
+
+Representing a trading session description. 
+
+ATAS 
+
+Indicators 
+
+Generated by 1.9.7 
+
+Join our developers chat

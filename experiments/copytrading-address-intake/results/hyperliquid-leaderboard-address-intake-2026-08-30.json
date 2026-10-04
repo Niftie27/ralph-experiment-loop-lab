@@ -1,0 +1,590 @@
+{
+  "generatedAt": "2026-08-30T06:14:35.999Z",
+  "source": "Hyperliquid public info endpoint",
+  "addressCount": 6,
+  "rows": [
+    {
+      "address": "0x4ec8fe22a531a96c8a846aaf5cbef73202649a80",
+      "source": "Hyperliquid public stats leaderboard top all-time PnL row; inactive recent-volume risk",
+      "initialStatus": "watch/leaderboard-seed",
+      "clearinghouse": {
+        "accountValue": 0,
+        "totalNtlPos": 0,
+        "withdrawable": 0,
+        "openPositionCount": 0,
+        "openPositions": []
+      },
+      "fills": {
+        "fillsReturned": 9,
+        "responseIsCapped": false,
+        "earliestFillTime": "2026-03-05T08:49:08.663Z",
+        "latestFillTime": "2026-03-05T09:11:32.728Z",
+        "closeFillCount": 0,
+        "positiveCloseFillCount": 0,
+        "negativeCloseFillCount": 0,
+        "closedPnlSum": 0,
+        "largestAbsClosedPnl": null,
+        "topCoins": [
+          {
+            "coin": "@107",
+            "count": 9
+          }
+        ],
+        "dominantCoinShare": 1
+      },
+      "classification": {
+        "status": "watch/sample-only",
+        "reasons": [
+          "currently flat in clearinghouseState",
+          "stale or emptied account risk",
+          "returned fills are concentrated in one coin"
+        ]
+      }
+    },
+    {
+      "address": "0x393d0b87ed38fc779fd9611144ae649ba6082109",
+      "source": "Hyperliquid public stats leaderboard top all-time PnL row; recent-PnL concentration risk",
+      "initialStatus": "watch/leaderboard-seed",
+      "clearinghouse": {
+        "accountValue": 0,
+        "totalNtlPos": 0,
+        "withdrawable": 0,
+        "openPositionCount": 0,
+        "openPositions": []
+      },
+      "fills": {
+        "fillsReturned": 0,
+        "responseIsCapped": false,
+        "earliestFillTime": null,
+        "latestFillTime": null,
+        "closeFillCount": 0,
+        "positiveCloseFillCount": 0,
+        "negativeCloseFillCount": 0,
+        "closedPnlSum": 0,
+        "largestAbsClosedPnl": null,
+        "topCoins": [],
+        "dominantCoinShare": null
+      },
+      "classification": {
+        "status": "watch/sample-only",
+        "reasons": [
+          "currently flat in clearinghouseState",
+          "stale or emptied account risk"
+        ]
+      }
+    },
+    {
+      "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+      "source": "Hyperliquid public stats leaderboard top all-time PnL row; recent drawdown risk",
+      "initialStatus": "watch/leaderboard-seed",
+      "clearinghouse": {
+        "accountValue": 38010794.400255,
+        "totalNtlPos": 136128799.041125,
+        "withdrawable": 21198675.051223,
+        "openPositionCount": 32,
+        "openPositions": [
+          {
+            "coin": "BTC",
+            "szi": -138.85421,
+            "entryPx": 76694.7,
+            "positionValue": 10842430.98785,
+            "unrealizedPnl": -193044.304876,
+            "liquidationPx": 314346.3352049394
+          },
+          {
+            "coin": "ETH",
+            "szi": -28447.1644,
+            "entryPx": 2115.31,
+            "positionValue": 69832668.112408,
+            "unrealizedPnl": -9657961.195115,
+            "liquidationPx": 3598.4745168117
+          },
+          {
+            "coin": "SOL",
+            "szi": -17897.25,
+            "entryPx": 97.772,
+            "positionValue": 1877958.4425,
+            "unrealizedPnl": -128107.060546,
+            "liquidationPx": 1915.5885834842
+          },
+          {
+            "coin": "AVAX",
+            "szi": -87049.75,
+            "entryPx": 13.2086,
+            "positionValue": 635933.24365,
+            "unrealizedPnl": 513874.939497,
+            "liquidationPx": 364.302487135
+          },
+          {
+            "coin": "BNB",
+            "szi": -1287.536,
+            "entryPx": 759.069,
+            "positionValue": 892996.34352,
+            "unrealizedPnl": 84333.123774,
+            "liquidationPx": 24220.7531053614
+          },
+          {
+            "coin": "LTC",
+            "szi": 13.43,
+            "entryPx": 96.343,
+            "positionValue": 656.55241,
+            "unrealizedPnl": -637.335211,
+            "liquidationPx": 0
+          },
+          {
+            "coin": "DOGE",
+            "szi": -34097614,
+            "entryPx": 0.090109,
+            "positionValue": 2895057.91667,
+            "unrealizedPnl": 177475.123788,
+            "liquidationPx": 0.9932917188
+          },
+          {
+            "coin": "kPEPE",
+            "szi": -248510943,
+            "entryPx": 0.003908,
+            "positionValue": 903337.277805,
+            "unrealizedPnl": 67957.793725,
+            "liquidationPx": 0.1286369499
+          },
+          {
+            "coin": "XRP",
+            "szi": -2447671,
+            "entryPx": 1.339666,
+            "positionValue": 3412542.9082,
+            "unrealizedPnl": -133479.999541,
+            "liquidationPx": 14.6336465323
+          },
+          {
+            "coin": "WLD",
+            "szi": -1652818.9,
+            "entryPx": 0.40155,
+            "positionValue": 621724.357424,
+            "unrealizedPnl": 41969.656145,
+            "liquidationPx": 19.1786755353
+          },
+          {
+            "coin": "UNI",
+            "szi": -8970.6,
+            "entryPx": 4.35546,
+            "positionValue": 43704.7632,
+            "unrealizedPnl": -4633.61792,
+            "liquidationPx": 3472.1346872465
+          },
+          {
+            "coin": "ZRO",
+            "szi": -697522.1,
+            "entryPx": 1.19059,
+            "positionValue": 756392.96524,
+            "unrealizedPnl": 74071.81255,
+            "liquidationPx": 44.3752467463
+          },
+          {
+            "coin": "ADA",
+            "szi": -26179,
+            "entryPx": 0.549523,
+            "positionValue": 5247.31876,
+            "unrealizedPnl": 9138.662704,
+            "liquidationPx": 1188.3732016742
+          },
+          {
+            "coin": "NEAR",
+            "szi": -1653001.5,
+            "entryPx": 2.0068,
+            "positionValue": 3105989.8185,
+            "unrealizedPnl": 211260.34694,
+            "liquidationPx": 20.611125704
+          },
+          {
+            "coin": "WIF",
+            "szi": -1226,
+            "entryPx": 0.784313,
+            "positionValue": 244.43988,
+            "unrealizedPnl": 717.12884,
+            "liquidationPx": 25371.652994564
+          },
+          {
+            "coin": "ONDO",
+            "szi": -9870,
+            "entryPx": 0.367414,
+            "positionValue": 3492.4995,
+            "unrealizedPnl": 133.87785,
+            "liquidationPx": 3073.558228891
+          },
+          {
+            "coin": "TAO",
+            "szi": 21.89,
+            "entryPx": 212.759,
+            "positionValue": 5173.7015,
+            "unrealizedPnl": 516.386282,
+            "liquidationPx": 0
+          },
+          {
+            "coin": "ENA",
+            "szi": -14793454,
+            "entryPx": 0.164489,
+            "positionValue": 2364289.81828,
+            "unrealizedPnl": 69076.04081,
+            "liquidationPx": 2.2552025606
+          },
+          {
+            "coin": "POPCAT",
+            "szi": -4674,
+            "entryPx": 0.215958,
+            "positionValue": 253.101774,
+            "unrealizedPnl": 756.288527,
+            "liquidationPx": 6655.0395463214
+          },
+          {
+            "coin": "GOAT",
+            "szi": -327719,
+            "entryPx": 0.478596,
+            "positionValue": 5243.504,
+            "unrealizedPnl": 151601.618668,
+            "liquidationPx": 92.156896113
+          },
+          {
+            "coin": "HYPE",
+            "szi": -61029.6,
+            "entryPx": 82.945,
+            "positionValue": 5070949.464,
+            "unrealizedPnl": -8848.03352,
+            "liquidationPx": 588.9906701576
+          },
+          {
+            "coin": "PENGU",
+            "szi": 129017,
+            "entryPx": 0.028211,
+            "positionValue": 1162.44317,
+            "unrealizedPnl": -2477.255417,
+            "liquidationPx": 0
+          },
+          {
+            "coin": "FARTCOIN",
+            "szi": -4364801.6,
+            "entryPx": 0.20164,
+            "positionValue": 836557.874656,
+            "unrealizedPnl": 43577.431144,
+            "liquidationPx": 7.3093690579
+          },
+          {
+            "coin": "PUMP",
+            "szi": -495601059,
+            "entryPx": 0.004839,
+            "positionValue": 2420515.572156,
+            "unrealizedPnl": -21848.012984,
+            "liquidationPx": 0.067425008
+          },
+          {
+            "coin": "XPL",
+            "szi": -2035943,
+            "entryPx": 0.095085,
+            "positionValue": 176605.839592,
+            "unrealizedPnl": 16981.933283,
+            "liquidationPx": 14.981394013
+          },
+          {
+            "coin": "LINEA",
+            "szi": -126660,
+            "entryPx": 0.027679,
+            "positionValue": 316.77666,
+            "unrealizedPnl": 3189.117099,
+            "liquidationPx": 224.7839489705
+          },
+          {
+            "coin": "ASTER",
+            "szi": 852620,
+            "entryPx": 0.696768,
+            "positionValue": 595734.1202,
+            "unrealizedPnl": 1655.688855,
+            "liquidationPx": 0
+          },
+          {
+            "coin": "ZEC",
+            "szi": -21299.98,
+            "entryPx": 801.6069,
+            "positionValue": 17741392.3414,
+            "unrealizedPnl": -667179.505813,
+            "liquidationPx": 2255.418956222
+          },
+          {
+            "coin": "MON",
+            "szi": -12179320,
+            "entryPx": 0.028208,
+            "positionValue": 324615.41596,
+            "unrealizedPnl": 18948.719805,
+            "liquidationPx": 2.5059640234
+          },
+          {
+            "coin": "LIT",
+            "szi": -2387052,
+            "entryPx": 3.266083,
+            "positionValue": 8308134.486,
+            "unrealizedPnl": -511823.380838,
+            "liquidationPx": 16.1305479811
+          },
+          {
+            "coin": "XMR",
+            "szi": -4583.397,
+            "entryPx": 424.862,
+            "positionValue": 2173355.18946,
+            "unrealizedPnl": -226043.634112,
+            "liquidationPx": 7062.3769930312
+          },
+          {
+            "coin": "GRAM",
+            "szi": -200851,
+            "entryPx": 1.444397,
+            "positionValue": 274121.4448,
+            "unrealizedPnl": 15987.1461,
+            "liquidationPx": 151.7067068527
+          }
+        ]
+      },
+      "fills": {
+        "fillsReturned": 2000,
+        "responseIsCapped": true,
+        "earliestFillTime": "2026-08-30T01:09:25.885Z",
+        "latestFillTime": "2026-08-30T06:14:20.010Z",
+        "closeFillCount": 1631,
+        "positiveCloseFillCount": 184,
+        "negativeCloseFillCount": 1447,
+        "closedPnlSum": -28591.243331,
+        "largestAbsClosedPnl": -299.64658,
+        "topCoins": [
+          {
+            "coin": "ZEC",
+            "count": 951
+          },
+          {
+            "coin": "XMR",
+            "count": 319
+          },
+          {
+            "coin": "xyz:SNDK",
+            "count": 238
+          },
+          {
+            "coin": "FARTCOIN",
+            "count": 107
+          },
+          {
+            "coin": "xyz:SILVER",
+            "count": 91
+          }
+        ],
+        "dominantCoinShare": 0.4755
+      },
+      "classification": {
+        "status": "rejected-as-copy/watch-as-evidence",
+        "reasons": [
+          "currently has open positions; live-copy temptation and hidden-hedge risk",
+          "userFills response is capped; full history not proven",
+          "returned close-fill PnL sum is negative"
+        ]
+      }
+    },
+    {
+      "address": "0x9794bbbc222b6b93c1417d01aa1ff06d42e5333b",
+      "source": "Hyperliquid public stats leaderboard top all-time PnL row; small-account capacity risk",
+      "initialStatus": "watch/leaderboard-seed",
+      "clearinghouse": {
+        "accountValue": 0,
+        "totalNtlPos": 0,
+        "withdrawable": 0,
+        "openPositionCount": 0,
+        "openPositions": []
+      },
+      "fills": {
+        "fillsReturned": 2000,
+        "responseIsCapped": true,
+        "earliestFillTime": "2024-11-30T07:32:46.598Z",
+        "latestFillTime": "2026-01-09T00:00:00.020Z",
+        "closeFillCount": 0,
+        "positiveCloseFillCount": 0,
+        "negativeCloseFillCount": 0,
+        "closedPnlSum": 0,
+        "largestAbsClosedPnl": null,
+        "topCoins": [
+          {
+            "coin": "@107",
+            "count": 1893
+          },
+          {
+            "coin": "PURR/USDC",
+            "count": 30
+          },
+          {
+            "coin": "@113",
+            "count": 23
+          },
+          {
+            "coin": "@114",
+            "count": 19
+          },
+          {
+            "coin": "@195",
+            "count": 13
+          }
+        ],
+        "dominantCoinShare": 0.9465
+      },
+      "classification": {
+        "status": "watch/sample-only",
+        "reasons": [
+          "currently flat in clearinghouseState",
+          "stale or emptied account risk",
+          "userFills response is capped; full history not proven",
+          "returned fills are concentrated in one coin"
+        ]
+      }
+    },
+    {
+      "address": "0x20c2d95a3dfdca9e9ad12794d5fa6fad99da44f5",
+      "source": "Hyperliquid public stats leaderboard plus prior HypurrScan sample; tiny current account value risk",
+      "initialStatus": "watch/sample-only",
+      "clearinghouse": {
+        "accountValue": 0,
+        "totalNtlPos": 0,
+        "withdrawable": 0,
+        "openPositionCount": 0,
+        "openPositions": []
+      },
+      "fills": {
+        "fillsReturned": 2000,
+        "responseIsCapped": true,
+        "earliestFillTime": "2026-05-18T16:02:28.246Z",
+        "latestFillTime": "2026-05-18T21:59:32.337Z",
+        "closeFillCount": 2000,
+        "positiveCloseFillCount": 2000,
+        "negativeCloseFillCount": 0,
+        "closedPnlSum": 1041128.354342,
+        "largestAbsClosedPnl": 16410.469838,
+        "topCoins": [
+          {
+            "coin": "ETH",
+            "count": 2000
+          }
+        ],
+        "dominantCoinShare": 1
+      },
+      "classification": {
+        "status": "watch/sample-only",
+        "reasons": [
+          "currently flat in clearinghouseState",
+          "stale or emptied account risk",
+          "userFills response is capped; full history not proven",
+          "returned fills are concentrated in one coin"
+        ]
+      }
+    },
+    {
+      "address": "0x5b5d51203a0f9079f8aeb098a6523a13f298c060",
+      "source": "Hyperliquid public stats leaderboard top all-time PnL row; recent drawdown risk",
+      "initialStatus": "watch/leaderboard-seed",
+      "clearinghouse": {
+        "accountValue": 83405595.343122,
+        "totalNtlPos": 455146601.176084,
+        "withdrawable": 288417.284705,
+        "openPositionCount": 8,
+        "openPositions": [
+          {
+            "coin": "BTC",
+            "szi": -1694.09235,
+            "entryPx": 70491.1,
+            "positionValue": 132283201.14975,
+            "unrealizedPnl": -12864743.313228,
+            "liquidationPx": 126198.8185842494
+          },
+          {
+            "coin": "ETH",
+            "szi": -53612.5299,
+            "entryPx": 2115.1,
+            "positionValue": 131609110.649118,
+            "unrealizedPnl": -18213231.082971,
+            "liquidationPx": 3958.9012912725
+          },
+          {
+            "coin": "SOL",
+            "szi": -754040.04,
+            "entryPx": 93.1824,
+            "positionValue": 79121421.3972,
+            "unrealizedPnl": -8858119.628488,
+            "liquidationPx": 210.1732722867
+          },
+          {
+            "coin": "SUI",
+            "szi": -0.5,
+            "entryPx": 3.67761,
+            "positionValue": 0.37078,
+            "unrealizedPnl": 1.468026,
+            "liquidationPx": 153319133.99341452
+          },
+          {
+            "coin": "XRP",
+            "szi": -11065998,
+            "entryPx": 1.522613,
+            "positionValue": 15428214.4116,
+            "unrealizedPnl": 1421018.888025,
+            "liquidationPx": 8.6183729809
+          },
+          {
+            "coin": "HYPE",
+            "szi": -898825.43,
+            "entryPx": 68.1024,
+            "positionValue": 74689247.343995,
+            "unrealizedPnl": -13476997.236619,
+            "liquidationPx": 167.3736835391
+          },
+          {
+            "coin": "FARTCOIN",
+            "szi": -23636252.1,
+            "entryPx": 0.20186,
+            "positionValue": 4530360.440007,
+            "unrealizedPnl": 240881.634915,
+            "liquidationPx": 3.4262623899
+          },
+          {
+            "coin": "PUMP",
+            "szi": -3580799798,
+            "entryPx": 0.004607,
+            "positionValue": 17485045.413634,
+            "unrealizedPnl": -985281.022631,
+            "liquidationPx": 0.0260695494
+          }
+        ]
+      },
+      "fills": {
+        "fillsReturned": 2000,
+        "responseIsCapped": true,
+        "earliestFillTime": "2026-08-29T23:22:53.277Z",
+        "latestFillTime": "2026-08-30T05:12:15.088Z",
+        "closeFillCount": 0,
+        "positiveCloseFillCount": 0,
+        "negativeCloseFillCount": 0,
+        "closedPnlSum": 0,
+        "largestAbsClosedPnl": null,
+        "topCoins": [
+          {
+            "coin": "SOL",
+            "count": 1831
+          },
+          {
+            "coin": "ETH",
+            "count": 169
+          }
+        ],
+        "dominantCoinShare": 0.9155
+      },
+      "classification": {
+        "status": "watch/sample-only",
+        "reasons": [
+          "currently has open positions; live-copy temptation and hidden-hedge risk",
+          "userFills response is capped; full history not proven",
+          "returned fills are concentrated in one coin"
+        ]
+      }
+    }
+  ],
+  "verdict": "The repeatable intake works for known addresses, but this sample produces no copy candidate. 2/6 sampled accounts currently have open positions, which increases live-copy temptation and hidden-hedge risk. 4/6 fill responses are capped, so full history is not proven. 1/6 returned no fills from the latest public userFills response. 1/6 are rejected as copy candidates from returned evidence. Remaining non-rejected rows stay watch/sample-only until a frozen cohort and forward paper test exist."
+}

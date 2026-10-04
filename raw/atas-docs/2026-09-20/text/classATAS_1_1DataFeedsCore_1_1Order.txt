@@ -1,0 +1,551 @@
+ATAS: ATAS.DataFeedsCore.Order Class Reference 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Public Member Functions | Protected Member Functions | Properties | Events | List of all members 
+
+ATAS.DataFeedsCore.Order Class Reference 
+
+Represents an order for trading on a financial exchange. More... 
+
+Inheritance diagram for ATAS.DataFeedsCore.Order: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Collaboration diagram for ATAS.DataFeedsCore.Order: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Public Member Functions 
+
+Order Clone () 
+
+Creates a shallow copy of the current order. 
+
+override string ToString () 
+
+Returns a string that represents the current order. 
+
+Protected Member Functions 
+
+void OnPropertyChanged (string name) 
+
+Raises the PropertyChanged event with the specified property name. 
+
+Properties 
+
+EntityType EntityType [get] 
+
+Gets the type of the entity. 
+
+string? Id [get, set] 
+
+Gets or sets the ID of the order on the exchange. 
+
+long ExtId [get, set] 
+
+Gets or sets the additional identifier for the order. 
+
+long UserExtId [get, set] 
+
+Gets or sets the user's identifier associated with the order. 
+
+string? AccountID [get, set] 
+
+Gets or sets the ID of the account associated with this order. 
+
+string? RoutedAccountId [get, set] 
+
+Gets or sets the routed account ID for this order. 
+
+string? SecurityId [get, set] 
+
+Gets or sets the ID of the security associated with this order. 
+
+Security ? Security [get, set] 
+
+Gets or sets the security associated with this order. 
+
+Portfolio ? Portfolio [get, set] 
+
+Gets or sets the portfolio associated with this order. 
+
+OrderTypes Type [get, set] 
+
+Gets or sets the type of the order. 
+
+OrderDirections Direction [get, set] 
+
+Gets or sets the direction of the order. 
+
+decimal TriggerPrice [get, set] 
+
+Gets or sets the trigger price of the order. 
+
+decimal Price [get, set] 
+
+Gets or sets the price of the order. 
+
+decimal QuantityToFill [get, set] 
+
+Gets or sets the volume (quantity) to be filled for the order. 
+
+decimal Unfilled [get, set] 
+
+Gets the remaining unfilled volume of the order. 
+
+DateTime? ExpiryDate [get, set] 
+
+Gets or sets the expiry date of the order. 
+
+TimeInForce TimeInForce [get, set] 
+
+Gets or sets the time in force for the order. 
+
+string? Route [get, set] 
+
+Gets or sets the routing information for the order. 
+
+string? OCOGroup [get, set] 
+
+Gets or sets the OCO (One-Cancels-the-Other) group for the order. 
+
+string? Comment [get, set] 
+
+Gets or sets the comment for the order. 
+
+DateTime Time [get, set] 
+
+Gets or sets the timestamp of when the order was created or modified. 
+
+OrderStates State [get, set] 
+
+Gets or sets the current state of the order. 
+
+TriggerPriceType TriggerPriceType [get, set] 
+
+Gets or sets the type of trigger price associated with the order. 
+
+object? Parent [get, set] 
+
+Gets or sets the parent object associated with this order. 
+
+bool IsInPosition [get, set] 
+
+Gets or sets a value indicating whether the order is in a position. 
+
+bool WasActive [get, set] 
+
+Gets or sets a value indicating whether the order was active. 
+
+bool Canceled [get] 
+
+Gets a value indicating whether the order is canceled. 
+
+decimal AmountBefore [get, set] 
+
+Gets or sets the amount before the order. 
+
+bool? IsAttached [get, set] 
+
+Gets or sets a value indicating whether the order is attached to another order. 
+
+OrderExtendedOptions ? ExtendedOptions [get, set] 
+
+Allows setting special options for the order. Use ISecurityTradingOptions.CreateMarketOrderFlagsObject and similar methods obtained by calling the IDataFeedConnector.GetSecurityTradingOptions method to get the object that you can populate and pass here. 
+
+int? ExtendedOptionsFlags [get, set] 
+
+Gets or sets the flags representation of the ExtendedOptions. 
+
+decimal? QuoteVolume [get, set] 
+
+Gets or sets the quote volume associated with the order. 
+
+TimeSpan Latency [get, set] 
+
+Returns the time spent between sending the order to the server and receiving a response about it's registration or cancellation. 
+
+bool AutoCancel [get, set] 
+
+Gets or sets a value indicating whether the order must be cancelled on position closed or reverted. 
+
+Properties inherited from ATAS.DataFeedsCore.IEntity 
+
+EntityType EntityType [get] 
+
+Gets the type of the entity. 
+
+Events 
+
+PropertyChangedEventHandler? PropertyChanged 
+
+Detailed Description 
+
+Represents an order for trading on a financial exchange. 
+
+Member Function Documentation 
+
+◆ Clone() 
+
+Order ATAS.DataFeedsCore.Order.Clone ( ) 
+
+Creates a shallow copy of the current order. 
+Returns A new instance of the Order class that is a shallow copy of the current order. 
+
+◆ OnPropertyChanged() 
+
+void ATAS.DataFeedsCore.Order.OnPropertyChanged ( string name ) 
+
+protected 
+
+Raises the PropertyChanged event with the specified property name. 
+Parameters 
+
+name The name of the property that has changed. 
+
+◆ ToString() 
+
+override string ATAS.DataFeedsCore.Order.ToString ( ) 
+
+Returns a string that represents the current order. 
+Returns A string representation of the order. 
+
+Property Documentation 
+
+◆ AccountID 
+
+string? ATAS.DataFeedsCore.Order.AccountID 
+
+get set 
+
+Gets or sets the ID of the account associated with this order. 
+
+This property represents the ID of the account to which this order is associated. 
+
+◆ AmountBefore 
+
+decimal ATAS.DataFeedsCore.Order.AmountBefore 
+
+get set 
+
+Gets or sets the amount before the order. 
+
+◆ AutoCancel 
+
+bool ATAS.DataFeedsCore.Order.AutoCancel 
+
+get set 
+
+Gets or sets a value indicating whether the order must be cancelled on position closed or reverted. 
+
+◆ Canceled 
+
+bool ATAS.DataFeedsCore.Order.Canceled 
+
+get 
+
+Gets a value indicating whether the order is canceled. 
+
+◆ Comment 
+
+string? ATAS.DataFeedsCore.Order.Comment 
+
+get set 
+
+Gets or sets the comment for the order. 
+
+This property represents an optional comment or note associated with the order. 
+
+◆ Direction 
+
+OrderDirections ATAS.DataFeedsCore.Order.Direction 
+
+get set 
+
+Gets or sets the direction of the order. 
+
+This property represents the direction of the order, such as buy or sell. 
+
+◆ EntityType 
+
+EntityType ATAS.DataFeedsCore.Order.EntityType 
+
+get 
+
+Gets the type of the entity. 
+
+Implements ATAS.DataFeedsCore.IEntity . 
+
+◆ ExpiryDate 
+
+DateTime? ATAS.DataFeedsCore.Order.ExpiryDate 
+
+get set 
+
+Gets or sets the expiry date of the order. 
+
+If the value is null, the order will be valid until it is manually canceled. If the value is set to Today, the order will be valid for the current trading session. If the value is set to MinValue, the order will be of the FOK (Fill or Kill) type. 
+
+◆ ExtendedOptions 
+
+OrderExtendedOptions ? ATAS.DataFeedsCore.Order.ExtendedOptions 
+
+get set 
+
+Allows setting special options for the order. Use ISecurityTradingOptions.CreateMarketOrderFlagsObject and similar methods obtained by calling the IDataFeedConnector.GetSecurityTradingOptions method to get the object that you can populate and pass here. 
+
+◆ ExtendedOptionsFlags 
+
+int? ATAS.DataFeedsCore.Order.ExtendedOptionsFlags 
+
+get set 
+
+Gets or sets the flags representation of the ExtendedOptions. 
+
+◆ ExtId 
+
+long ATAS.DataFeedsCore.Order.ExtId 
+
+get set 
+
+Gets or sets the additional identifier for the order. 
+
+◆ Id 
+
+string? ATAS.DataFeedsCore.Order.Id 
+
+get set 
+
+Gets or sets the ID of the order on the exchange. 
+
+◆ IsAttached 
+
+bool? ATAS.DataFeedsCore.Order.IsAttached 
+
+get set 
+
+Gets or sets a value indicating whether the order is attached to another order. 
+
+◆ IsInPosition 
+
+bool ATAS.DataFeedsCore.Order.IsInPosition 
+
+get set 
+
+Gets or sets a value indicating whether the order is in a position. 
+
+◆ Latency 
+
+TimeSpan ATAS.DataFeedsCore.Order.Latency 
+
+get set 
+
+Returns the time spent between sending the order to the server and receiving a response about it's registration or cancellation. 
+
+◆ OCOGroup 
+
+string? ATAS.DataFeedsCore.Order.OCOGroup 
+
+get set 
+
+Gets or sets the OCO (One-Cancels-the-Other) group for the order. 
+
+This property represents the OCO group to which the order belongs, indicating that it is part of an OCO pair. 
+
+◆ Parent 
+
+object? ATAS.DataFeedsCore.Order.Parent 
+
+get set 
+
+Gets or sets the parent object associated with this order. 
+
+◆ Portfolio 
+
+Portfolio ? ATAS.DataFeedsCore.Order.Portfolio 
+
+get set 
+
+Gets or sets the portfolio associated with this order. 
+
+This property represents the portfolio to which this order belongs. 
+
+◆ Price 
+
+decimal ATAS.DataFeedsCore.Order.Price 
+
+get set 
+
+Gets or sets the price of the order. 
+
+This property represents the price at which the order will be executed. 
+
+◆ QuantityToFill 
+
+decimal ATAS.DataFeedsCore.Order.QuantityToFill 
+
+get set 
+
+Gets or sets the volume (quantity) to be filled for the order. 
+
+This property represents the quantity of the security to be bought or sold in the order. 
+
+◆ QuoteVolume 
+
+decimal? ATAS.DataFeedsCore.Order.QuoteVolume 
+
+get set 
+
+Gets or sets the quote volume associated with the order. 
+
+◆ Route 
+
+string? ATAS.DataFeedsCore.Order.Route 
+
+get set 
+
+Gets or sets the routing information for the order. 
+
+This property represents the routing information for the order, which specifies how the order will be sent to the exchange or market. 
+
+◆ RoutedAccountId 
+
+string? ATAS.DataFeedsCore.Order.RoutedAccountId 
+
+get set 
+
+Gets or sets the routed account ID for this order. 
+
+The routed account ID is used to track the specific account to which the order is routed. 
+
+◆ Security 
+
+Security ? ATAS.DataFeedsCore.Order.Security 
+
+get set 
+
+Gets or sets the security associated with this order. 
+
+This property represents the security (e.g., stock, bond, etc.) to which this order is related. 
+
+◆ SecurityId 
+
+string? ATAS.DataFeedsCore.Order.SecurityId 
+
+get set 
+
+Gets or sets the ID of the security associated with this order. 
+
+◆ State 
+
+OrderStates ATAS.DataFeedsCore.Order.State 
+
+get set 
+
+Gets or sets the current state of the order. 
+
+This property represents the current state of the order, such as active, done, failed, etc. 
+
+◆ Time 
+
+DateTime ATAS.DataFeedsCore.Order.Time 
+
+get set 
+
+Gets or sets the timestamp of when the order was created or modified. 
+
+This property represents the timestamp indicating when the order was created or last modified. 
+
+◆ TimeInForce 
+
+TimeInForce ATAS.DataFeedsCore.Order.TimeInForce 
+
+get set 
+
+Gets or sets the time in force for the order. 
+
+The time in force determines how long the order will remain active before it is executed or canceled. 
+
+◆ TriggerPrice 
+
+decimal ATAS.DataFeedsCore.Order.TriggerPrice 
+
+get set 
+
+Gets or sets the trigger price of the order. 
+
+This property represents the trigger price for the order, which is used in certain types of orders (e.g., stop-loss). 
+
+◆ TriggerPriceType 
+
+TriggerPriceType ATAS.DataFeedsCore.Order.TriggerPriceType 
+
+get set 
+
+Gets or sets the type of trigger price associated with the order. 
+
+This property represents the type of trigger price used in certain types of orders (e.g., stop-loss, stop-limit). 
+
+◆ Type 
+
+OrderTypes ATAS.DataFeedsCore.Order.Type 
+
+get set 
+
+Gets or sets the type of the order. 
+
+This property represents the type of the order, such as market order, limit order, etc. 
+
+◆ Unfilled 
+
+decimal ATAS.DataFeedsCore.Order.Unfilled 
+
+get set 
+
+Gets the remaining unfilled volume of the order. 
+
+This property represents the remaining quantity of the order that is yet to be executed. 
+
+◆ UserExtId 
+
+long ATAS.DataFeedsCore.Order.UserExtId 
+
+get set 
+
+Gets or sets the user's identifier associated with the order. 
+
+◆ WasActive 
+
+bool ATAS.DataFeedsCore.Order.WasActive 
+
+get set 
+
+Gets or sets a value indicating whether the order was active. 
+
+Event Documentation 
+
+◆ PropertyChanged 
+
+PropertyChangedEventHandler? ATAS.DataFeedsCore.Order.PropertyChanged 
+
+The documentation for this class was generated from the following file: 
+Order.cs 
+
+ATAS 
+
+DataFeedsCore 
+
+Order 
+
+Generated by 1.9.7 
+
+Join our developers chat

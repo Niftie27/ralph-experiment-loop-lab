@@ -1,0 +1,377 @@
+ATAS: ATAS.DataFeedsCore.HistoryMyTrade Class Reference 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Public Member Functions | Protected Member Functions | Properties | Events | List of all members 
+
+ATAS.DataFeedsCore.HistoryMyTrade Class Reference 
+
+Represents a historical trade record. More... 
+
+Inheritance diagram for ATAS.DataFeedsCore.HistoryMyTrade: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Collaboration diagram for ATAS.DataFeedsCore.HistoryMyTrade: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Public Member Functions 
+
+HistoryMyTrade Clone () 
+
+override string ToString () 
+
+Protected Member Functions 
+
+virtual void OnPropertyChanged (string propertyName) 
+
+Raises the PropertyChanged event for a specific property. 
+
+Properties 
+
+long Id [get, set] 
+
+Gets or sets the unique identifier of the historical trade. 
+
+string? AccountID [get, set] 
+
+Gets or sets the account ID associated with the historical trade. 
+
+string? SecurityId [get, set] 
+
+Gets or sets the security ID associated with the historical trade. 
+
+string? SecurityCode [get, set] 
+
+Gets or sets the security code associated with the historical trade. 
+
+Security ? Security [get, set] 
+
+Gets or sets the security object associated with the historical trade. 
+
+Portfolio ? Portfolio [get, set] 
+
+Gets or sets the portfolio object associated with the historical trade. 
+
+DateTime OpenTime [get, set] 
+
+Gets or sets the open time of the historical trade. 
+
+decimal OpenPrice [get, set] 
+
+Gets or sets the open price of the historical trade. 
+
+decimal OpenVolume [get, set] 
+
+Gets or sets the open volume of the historical trade. 
+
+DateTime CloseTime [get, set] 
+
+Gets or sets the close time of the historical trade. 
+
+decimal ClosePrice [get, set] 
+
+Gets or sets the close price of the historical trade. 
+
+decimal CloseVolume [get, set] 
+
+Gets or sets the close volume of the historical trade. 
+
+decimal PnL [get, set] 
+
+Gets or sets the profit and loss (PnL) of the historical trade. 
+
+decimal TicksPnL [get, set] 
+
+Gets or sets the PnL in ticks of the historical trade. 
+
+decimal PricePnL [get, set] 
+
+Gets or sets the PnL in price units of the historical trade. 
+
+decimal? Commission [get, set] 
+
+Gets or sets the commission associated with the historical trade. 
+
+string Comment [get, set] 
+
+Gets or sets the comment associated with the historical trade. 
+
+bool Reviewed [get, set] 
+
+string? EnterTradeId [get, set] 
+
+Gets or sets the ID of the trade that opened the position. Not a LinqToDB column: the legacy SQLite storage has no such field, and the file cache persists the property through an explicit registry configuration instead. 
+
+string? ExitTradeId [get, set] 
+
+Gets or sets the ID of the trade that closed the position. Not a LinqToDB column: see EnterTradeId. 
+
+MyTrade EnterTrade [get, set] 
+
+Gets or sets the enter trade associated with the historical trade. 
+
+MyTrade ExitTrade [get, set] 
+
+Gets or sets the exit trade associated with the historical trade. 
+
+MissingDataCases MissingDataCase [get, set] 
+
+Indicates what part of the trade is missing. 
+
+bool IsComplete [get] 
+
+List< Playbook > Playbooks = [] [get, set] 
+
+Events 
+
+PropertyChangedEventHandler? PropertyChanged 
+
+Detailed Description 
+
+Represents a historical trade record. 
+
+Member Function Documentation 
+
+◆ Clone() 
+
+HistoryMyTrade ATAS.DataFeedsCore.HistoryMyTrade.Clone ( ) 
+
+◆ OnPropertyChanged() 
+
+virtual void ATAS.DataFeedsCore.HistoryMyTrade.OnPropertyChanged ( string propertyName ) 
+
+protected virtual 
+
+Raises the PropertyChanged event for a specific property. 
+Parameters 
+
+propertyName The name of the property that changed. 
+
+◆ ToString() 
+
+override string ATAS.DataFeedsCore.HistoryMyTrade.ToString ( ) 
+
+Property Documentation 
+
+◆ AccountID 
+
+string? ATAS.DataFeedsCore.HistoryMyTrade.AccountID 
+
+get set 
+
+Gets or sets the account ID associated with the historical trade. 
+
+◆ ClosePrice 
+
+decimal ATAS.DataFeedsCore.HistoryMyTrade.ClosePrice 
+
+get set 
+
+Gets or sets the close price of the historical trade. 
+
+◆ CloseTime 
+
+DateTime ATAS.DataFeedsCore.HistoryMyTrade.CloseTime 
+
+get set 
+
+Gets or sets the close time of the historical trade. 
+
+◆ CloseVolume 
+
+decimal ATAS.DataFeedsCore.HistoryMyTrade.CloseVolume 
+
+get set 
+
+Gets or sets the close volume of the historical trade. 
+
+◆ Comment 
+
+string ATAS.DataFeedsCore.HistoryMyTrade.Comment 
+
+get set 
+
+Gets or sets the comment associated with the historical trade. 
+
+◆ Commission 
+
+decimal? ATAS.DataFeedsCore.HistoryMyTrade.Commission 
+
+get set 
+
+Gets or sets the commission associated with the historical trade. 
+
+◆ EnterTrade 
+
+MyTrade ATAS.DataFeedsCore.HistoryMyTrade.EnterTrade 
+
+get set 
+
+Gets or sets the enter trade associated with the historical trade. 
+
+◆ EnterTradeId 
+
+string? ATAS.DataFeedsCore.HistoryMyTrade.EnterTradeId 
+
+get set 
+
+Gets or sets the ID of the trade that opened the position. Not a LinqToDB column: the legacy SQLite storage has no such field, and the file cache persists the property through an explicit registry configuration instead. 
+
+◆ ExitTrade 
+
+MyTrade ATAS.DataFeedsCore.HistoryMyTrade.ExitTrade 
+
+get set 
+
+Gets or sets the exit trade associated with the historical trade. 
+
+◆ ExitTradeId 
+
+string? ATAS.DataFeedsCore.HistoryMyTrade.ExitTradeId 
+
+get set 
+
+Gets or sets the ID of the trade that closed the position. Not a LinqToDB column: see EnterTradeId. 
+
+◆ Id 
+
+long ATAS.DataFeedsCore.HistoryMyTrade.Id 
+
+get set 
+
+Gets or sets the unique identifier of the historical trade. 
+
+◆ IsComplete 
+
+bool ATAS.DataFeedsCore.HistoryMyTrade.IsComplete 
+
+get 
+
+◆ MissingDataCase 
+
+MissingDataCases ATAS.DataFeedsCore.HistoryMyTrade.MissingDataCase 
+
+get set 
+
+Indicates what part of the trade is missing. 
+
+◆ OpenPrice 
+
+decimal ATAS.DataFeedsCore.HistoryMyTrade.OpenPrice 
+
+get set 
+
+Gets or sets the open price of the historical trade. 
+
+◆ OpenTime 
+
+DateTime ATAS.DataFeedsCore.HistoryMyTrade.OpenTime 
+
+get set 
+
+Gets or sets the open time of the historical trade. 
+
+◆ OpenVolume 
+
+decimal ATAS.DataFeedsCore.HistoryMyTrade.OpenVolume 
+
+get set 
+
+Gets or sets the open volume of the historical trade. 
+
+◆ Playbooks 
+
+List< Playbook > ATAS.DataFeedsCore.HistoryMyTrade.Playbooks = [] 
+
+get set 
+
+◆ PnL 
+
+decimal ATAS.DataFeedsCore.HistoryMyTrade.PnL 
+
+get set 
+
+Gets or sets the profit and loss (PnL) of the historical trade. 
+
+◆ Portfolio 
+
+Portfolio ? ATAS.DataFeedsCore.HistoryMyTrade.Portfolio 
+
+get set 
+
+Gets or sets the portfolio object associated with the historical trade. 
+
+◆ PricePnL 
+
+decimal ATAS.DataFeedsCore.HistoryMyTrade.PricePnL 
+
+get set 
+
+Gets or sets the PnL in price units of the historical trade. 
+
+◆ Reviewed 
+
+bool ATAS.DataFeedsCore.HistoryMyTrade.Reviewed 
+
+get set 
+
+◆ Security 
+
+Security ? ATAS.DataFeedsCore.HistoryMyTrade.Security 
+
+get set 
+
+Gets or sets the security object associated with the historical trade. 
+
+◆ SecurityCode 
+
+string? ATAS.DataFeedsCore.HistoryMyTrade.SecurityCode 
+
+get set 
+
+Gets or sets the security code associated with the historical trade. 
+
+◆ SecurityId 
+
+string? ATAS.DataFeedsCore.HistoryMyTrade.SecurityId 
+
+get set 
+
+Gets or sets the security ID associated with the historical trade. 
+
+◆ TicksPnL 
+
+decimal ATAS.DataFeedsCore.HistoryMyTrade.TicksPnL 
+
+get set 
+
+Gets or sets the PnL in ticks of the historical trade. 
+
+Event Documentation 
+
+◆ PropertyChanged 
+
+PropertyChangedEventHandler? ATAS.DataFeedsCore.HistoryMyTrade.PropertyChanged 
+
+The documentation for this class was generated from the following file: 
+HistoryMyTrade.cs 
+
+ATAS 
+
+DataFeedsCore 
+
+HistoryMyTrade 
+
+Generated by 1.9.7 
+
+Join our developers chat

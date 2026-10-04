@@ -1,0 +1,4138 @@
+{
+  "generatedAt": "2026-08-26T08:22:39.675Z",
+  "status": "research-only-no-live-execution",
+  "purpose": "bounded feasibility check for replaying watcher volume-velocity alerts from public/no-key historical data",
+  "sources": {
+    "feedback": "crypto-updates/runtime/alert-feedback.jsonl",
+    "oneMinuteCandleCache": "crypto-updates/runtime/setup-candle-context-cache.json",
+    "watcherImplementation": "crypto-updates/realtime-market-watcher.mjs volumeVelocity(): 5s recent notional versus previous 5m split into 5s slots"
+  },
+  "strictExclusions": [
+    "missing_alert_record",
+    "delayed_or_untrusted_delivery",
+    "negative_bookAgeMs",
+    "score_gt_maxScore"
+  ],
+  "feasibility": {
+    "oneMinuteCandles": {
+      "status": "usable_for_coarse_price_context_only",
+      "canReconstructAlertDirection": "coarse_only",
+      "canReconstructVolumeVelocityRatio": false,
+      "reason": "Watcher volume velocity is a 5s notional burst metric; 1m OHLCV compresses twelve 5s slots and cannot replay the triggering slot or intraminute event ordering."
+    },
+    "binancePublicAggTrades": {
+      "status": "proposed_no_key_adapter",
+      "canReconstructAlertDirection": true,
+      "canReconstructVolumeVelocityRatio": true,
+      "assets": [
+        "BTC",
+        "ETH",
+        "SOL",
+        "XRP"
+      ],
+      "reason": "Binance aggTrades are public/no-key and include millisecond timestamps, trade price, quantity, and buyer-maker side, enough to rebuild 5s notional slots and 60s/5m price baselines around Binance alerts."
+    },
+    "hyperliquidHistoricalTrades": {
+      "status": "unverified_for_historical_replay",
+      "canReconstructAlertDirection": "unknown",
+      "canReconstructVolumeVelocityRatio": "unknown",
+      "assets": [
+        "HYPE"
+      ],
+      "reason": "Current HYPE alert rows are event-only allMids in this path. Treat them as movement taxonomy until Hyperliquid historical trades/book access is verified for the same windows."
+    },
+    "historicalOrderBook": {
+      "status": "not_reconstructable_from_1m_candles_or_aggTrades",
+      "canReconstructFreshBookEvidence": false,
+      "reason": "Fresh book state requires recorded alert evidence or a live depth capture. Public candle and aggTrade archives do not recreate top-of-book freshness, spread, or depth imbalance at alert time."
+    }
+  },
+  "totals": {
+    "velocityReviews": 146,
+    "includedAfterStrictQuality": 144,
+    "excludedByStrictQuality": 2,
+    "rowsWithOneMinuteCandleCoverage": 3,
+    "rowsWithCoarseMoveSameSign": 3,
+    "rowsWithRecordedVolumeVelocity": 54,
+    "rowsNeedingAggTradesForExactVolumeVelocity": 54
+  },
+  "rows": [
+    {
+      "id": "ETH-DOWN-1786374789722-rrlduq",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-10T15:13:09.722Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6513,
+      "recordedVolumeVelocityRatio": 2.8828,
+      "recordedVolumeRecentNotional": 462138,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "coarse_1m_replay",
+        "candleCacheKey": "binance_spot:ETHUSDT:1786353180000:1786378440000",
+        "baselineCandleTime": "2026-08-10T15:12:00.000Z",
+        "alertCandleTime": "2026-08-10T15:13:00.000Z",
+        "coarseMovePct": -0.169,
+        "recordedMovePct": -0.6513,
+        "sameSign": true,
+        "coarseRecentNotional": 7756490,
+        "notionalRatioToRecorded": 16.7839,
+        "limitations": [
+          "Candle close may be before or after the exact intraminute alert tick.",
+          "1m volume is a whole-minute aggregate and cannot isolate the watcher 5s recent slot.",
+          "1m candles cannot replay fresh book state."
+        ]
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1786381837992-iaia51",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-10T17:10:37.992Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1.0135,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "insufficient_candles",
+        "reason": "Could not locate candle-aligned alert and baseline prices."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1786411467173-1jqvyw",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-11T01:24:27.173Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.7533,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "insufficient_candles",
+        "reason": "Could not locate candle-aligned alert and baseline prices."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1786411527625-cv6dv9",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-11T01:25:27.625Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.7585,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "insufficient_candles",
+        "reason": "Could not locate candle-aligned alert and baseline prices."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1786462644866-k89vtm",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-11T15:37:24.866Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -0.9004,
+      "recordedVolumeVelocityRatio": 22.3757,
+      "recordedVolumeRecentNotional": 2849140,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "coarse_1m_replay",
+        "candleCacheKey": "binance_spot:ETHUSDT:1786441020000:1786466280000",
+        "baselineCandleTime": "2026-08-11T15:32:00.000Z",
+        "alertCandleTime": "2026-08-11T15:37:00.000Z",
+        "coarseMovePct": -0.8648,
+        "recordedMovePct": -0.9004,
+        "sameSign": true,
+        "coarseRecentNotional": 12368046,
+        "notionalRatioToRecorded": 4.341,
+        "limitations": [
+          "Candle close may be before or after the exact intraminute alert tick.",
+          "1m volume is a whole-minute aggregate and cannot isolate the watcher 5s recent slot.",
+          "1m candles cannot replay fresh book state."
+        ]
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1786614248771-feu2wd",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-13T09:44:08.771Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9543,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "insufficient_candles",
+        "reason": "Could not locate candle-aligned alert and baseline prices."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787069898591-m4pzur",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-18T16:18:18.591Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6504,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "coarse_1m_replay",
+        "candleCacheKey": "hyperliquid:HYPE:1787048280000:1787073540000",
+        "baselineCandleTime": "2026-08-18T16:17:00.000Z",
+        "alertCandleTime": "2026-08-18T16:18:00.000Z",
+        "coarseMovePct": -0.312,
+        "recordedMovePct": -0.6504,
+        "sameSign": true,
+        "coarseRecentNotional": 5182813,
+        "notionalRatioToRecorded": null,
+        "limitations": [
+          "Candle close may be before or after the exact intraminute alert tick.",
+          "1m volume is a whole-minute aggregate and cannot isolate the watcher 5s recent slot.",
+          "1m candles cannot replay fresh book state."
+        ]
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "SOL-UP-1787151268089-364skg",
+      "asset": "SOL",
+      "symbol": "solusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-19T14:54:28.089Z",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": 1.6502,
+      "recordedVolumeVelocityRatio": 0.5627,
+      "recordedVolumeRecentNotional": 44643,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787151269940-mkv63q",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T14:54:29.940Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.975,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-UP-1787151298775-bhrjsk",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-19T14:54:58.775Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9001,
+      "recordedVolumeVelocityRatio": 1.6716,
+      "recordedVolumeRecentNotional": 554973,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787151595654-yiizfv",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-19T14:59:55.654Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.679,
+      "recordedVolumeVelocityRatio": 6.881,
+      "recordedVolumeRecentNotional": 3761106,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "BTC-UP-1787152019278-xupw3o",
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-19T15:06:59.278Z",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": 1.2999,
+      "recordedVolumeVelocityRatio": 0.0061,
+      "recordedVolumeRecentNotional": 293,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "ETH-UP-1787153055182-ymjew4",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-19T15:24:15.182Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9005,
+      "recordedVolumeVelocityRatio": 3.0712,
+      "recordedVolumeRecentNotional": 1040737,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787153280193-j6hhm4",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T15:28:00.193Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.6615,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "SOL-UP-1787153364061-ic0w69",
+      "asset": "SOL",
+      "symbol": "solusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-19T15:29:24.061Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1.2591,
+      "recordedVolumeVelocityRatio": 0.1299,
+      "recordedVolumeRecentNotional": 1941,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787153436310-ime11e",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T15:30:36.310Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6635,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "BTC-UP-1787153434499-s85pic",
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-19T15:30:34.499Z",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": 1.7401,
+      "recordedVolumeVelocityRatio": 1.5769,
+      "recordedVolumeRecentNotional": 1506411,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787155175032-chovji",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T15:59:35.032Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9911,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787155789969-rq2hdh",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T16:09:49.969Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.652,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787157099316-6nqqwq",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T16:31:39.316Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.6557,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787159427781-dp5jd5",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T17:10:27.781Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.6552,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787166698402-y86jgn",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T19:11:38.402Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 1.7212,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787167811527-fqi9h7",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T19:30:11.527Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.1988,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787168551733-hw8vah",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T19:42:31.733Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.7181,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787169791681-6o54vf",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T20:03:11.681Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.7044,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787170395921-jws2ws",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T20:13:15.921Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.6797,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787172996271-7xxljj",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T20:56:36.271Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1.0317,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787173253101-1lqvpq",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T21:00:53.101Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.7016,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-UP-1787174375823-5yeu15",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-19T21:19:35.823Z",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": 2.0392,
+      "recordedVolumeVelocityRatio": 1.7578,
+      "recordedVolumeRecentNotional": 304136,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787174845459-1wfkyu",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T21:27:25.459Z",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": 1.8456,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787175526022-bp9hut",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T21:38:46.022Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.1726,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787176906667-6oyr2y",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-19T22:01:46.667Z",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": -1.3466,
+      "recordedVolumeVelocityRatio": 1.9104,
+      "recordedVolumeRecentNotional": 577446,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787177339775-xj9j7h",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T22:08:59.775Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.8485,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787178833331-szd94s",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-19T22:33:53.331Z",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": -1.2006,
+      "recordedVolumeVelocityRatio": 2.3149,
+      "recordedVolumeRecentNotional": 383022,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "ETH-UP-1787179272469-o4lvks",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-19T22:41:12.469Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9018,
+      "recordedVolumeVelocityRatio": 0.0698,
+      "recordedVolumeRecentNotional": 8686,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787179965360-emwbzq",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T22:52:45.360Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.0121,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787180237292-rn916w",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T22:57:17.292Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.6573,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787181834893-ow89v8",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T23:23:54.893Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -0.976,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787182902866-wwjwte",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T23:41:42.866Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9503,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787183950730-j1wylh",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-19T23:59:10.730Z",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": -1.7726,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787185094297-8h8imy",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T00:18:14.297Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9529,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787187114628-7ye9xq",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T00:51:54.628Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -0.9529,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787187119846-3vul1o",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-20T00:51:59.846Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6501,
+      "recordedVolumeVelocityRatio": 8.5258,
+      "recordedVolumeRecentNotional": 1722701,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787189422297-3tn7ud",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T01:30:22.297Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1.0004,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787195477083-sqogs3",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-20T03:11:17.083Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -0.9001,
+      "recordedVolumeVelocityRatio": 4.138,
+      "recordedVolumeRecentNotional": 1181915,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "BTC-UP-1787213359438-7qays5",
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-20T08:09:19.438Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1,
+      "recordedVolumeVelocityRatio": 4.6967,
+      "recordedVolumeRecentNotional": 2207125,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "ETH-UP-1787213450759-gcxdd2",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-20T08:10:50.759Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9004,
+      "recordedVolumeVelocityRatio": 4.2536,
+      "recordedVolumeRecentNotional": 789875,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787213668941-4y4uns",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T08:14:28.941Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9759,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787214006204-uxy5ss",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T08:20:06.204Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -0.9511,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787216198781-5d5nb8",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T08:56:38.781Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9508,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "BTC-UP-1787220936327-ke83bj",
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-20T10:15:36.327Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.6002,
+      "recordedVolumeVelocityRatio": 5.347,
+      "recordedVolumeRecentNotional": 3092958,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787221353305-83ip17",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T10:22:33.305Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -0.9603,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787226678803-u23vjf",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T11:51:18.803Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.0506,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787227447653-ai8ddk",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-20T12:04:07.653Z",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": -1.2,
+      "recordedVolumeVelocityRatio": 31.4204,
+      "recordedVolumeRecentNotional": 4471813,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787232648186-xk683x",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T13:30:48.186Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6771,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787232650136-ns43m6",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-20T13:30:50.136Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6514,
+      "recordedVolumeVelocityRatio": 5.3707,
+      "recordedVolumeRecentNotional": 600942,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787233515244-gyi5n2",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T13:45:15.244Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9844,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-UP-1787238219715-lur5og",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-20T15:03:39.715Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9001,
+      "recordedVolumeVelocityRatio": 1.7793,
+      "recordedVolumeRecentNotional": 235470,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "BTC-UP-1787238242568-s2y5k6",
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-20T15:04:02.568Z",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": 1.2501,
+      "recordedVolumeVelocityRatio": 4.5859,
+      "recordedVolumeRecentNotional": 1553338,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787239707189-31l7jc",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T15:28:27.189Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9951,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787240004271-h2msza",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T15:33:24.271Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6839,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-UP-1787241070259-ry3krz",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-20T15:51:10.259Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9,
+      "recordedVolumeVelocityRatio": 3.4066,
+      "recordedVolumeRecentNotional": 530782,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787242941847-jsrf3q",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T16:22:21.847Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9681,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787247480212-2syldz",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T17:38:00.212Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1.02,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787248981722-0t4k2w",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T18:03:01.722Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.1092,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787249994628-zs72ko",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T18:19:54.628Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.7745,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787263508105-5o6u1a",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-20T22:05:08.105Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.0162,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "BTC-UP-1787275902584-2j4z65",
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-21T01:31:42.584Z",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": 1.251,
+      "recordedVolumeVelocityRatio": 6.921,
+      "recordedVolumeRecentNotional": 1245710,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "ETH-UP-1787276849407-2ty74i",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-21T01:47:29.407Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.6508,
+      "recordedVolumeVelocityRatio": 34.7531,
+      "recordedVolumeRecentNotional": 2519547,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787278272591-lr9yuz",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T02:11:12.591Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.0185,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787279617750-809y4g",
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-21T02:33:37.750Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6,
+      "recordedVolumeVelocityRatio": 1.0746,
+      "recordedVolumeRecentNotional": 282560,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787281196203-j8pn1y",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T02:59:56.203Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -0.9909,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787301683281-px8r1i",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T08:41:23.281Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.954,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787306258369-ye0qup",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T09:57:38.369Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6787,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787306500196-7hxipb",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T10:01:40.196Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.6911,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787308511009-4lw9df",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T10:35:11.009Z",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": -1.7661,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787310763677-ofohli",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T11:12:43.677Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.8437,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787315983909-870dpd",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T12:39:43.909Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9771,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787317783934-98wzlq",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T13:09:43.934Z",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": 1.971,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787319007953-mbf7yq",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T13:30:07.953Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6766,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787319607433-9fydmv",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T13:40:07.433Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1.153,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787320976915-4x25um",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T14:02:56.915Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.0409,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787321104344-gtu8lf",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-21T14:05:04.344Z",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": -1.2007,
+      "recordedVolumeVelocityRatio": 4.0871,
+      "recordedVolumeRecentNotional": 266625,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787322302442-xd4wa0",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T14:25:02.442Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1.0074,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787324358038-zoo4pw",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T14:59:18.038Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.6663,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787332400274-7ozbwg",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T17:13:20.274Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -0.996,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787332843467-ouf5hw",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T17:20:43.467Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.7147,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787337938062-0bblsu",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T18:45:38.062Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.023,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787337935499-ypx996",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-21T18:45:35.499Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -0.9,
+      "recordedVolumeVelocityRatio": 2.1675,
+      "recordedVolumeRecentNotional": 297324,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787339792268-ppw9uz",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T19:16:32.268Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1.0047,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787341713001-xfq79b",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T19:48:33.001Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1.0006,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-UP-1787349130589-ptephm",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-21T21:52:10.589Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.6501,
+      "recordedVolumeVelocityRatio": 215.1398,
+      "recordedVolumeRecentNotional": 13922782,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787349281994-6tk8mi",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T21:54:41.994Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.7163,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787351462736-f5kvh3",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-21T22:31:02.736Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6502,
+      "recordedVolumeVelocityRatio": 7.6113,
+      "recordedVolumeRecentNotional": 922191,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "SOL-DOWN-1787351466713-opibm0",
+      "asset": "SOL",
+      "symbol": "solusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-21T22:31:06.713Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.902,
+      "recordedVolumeVelocityRatio": 9.7513,
+      "recordedVolumeRecentNotional": 174080,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787351553727-f93irh",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T22:32:33.727Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -0.9938,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787355741104-85jk17",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-21T23:42:21.104Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.1303,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787357205898-w0o15a",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-22T00:06:45.898Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -0.9002,
+      "recordedVolumeVelocityRatio": 2.5441,
+      "recordedVolumeRecentNotional": 370424,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787360286312-a5q83y",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T00:58:06.312Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9781,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787364017274-190mj4",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-22T02:00:17.274Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.651,
+      "recordedVolumeVelocityRatio": 3.5504,
+      "recordedVolumeRecentNotional": 455981,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787364589651-2p7454",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T02:09:49.651Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9616,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787365839292-cof6te",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T02:30:39.292Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6584,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787366393642-6hd800",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T02:39:53.642Z",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": 2.2108,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787368243649-onn52b",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T03:10:43.649Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6583,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787369170707-izc2gf",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T03:26:10.707Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9692,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787371384079-1lb676",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T04:03:04.079Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.0654,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787372583613-8yken6",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T04:23:03.613Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1.0582,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "SOL-UP-1787373085522-14v6kz",
+      "asset": "SOL",
+      "symbol": "solusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-22T04:31:25.522Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1.2031,
+      "recordedVolumeVelocityRatio": 3.9589,
+      "recordedVolumeRecentNotional": 403558,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "SOL-UP-1787374996149-2vjk44",
+      "asset": "SOL",
+      "symbol": "solusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-22T05:03:16.149Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1.2153,
+      "recordedVolumeVelocityRatio": 0.0663,
+      "recordedVolumeRecentNotional": 4716,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787375279370-f8zd73",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T05:07:59.370Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6693,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787375424400-z85x0h",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-22T05:10:24.400Z",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": -2.7872,
+      "recordedVolumeVelocityRatio": 0.0339,
+      "recordedVolumeRecentNotional": 4204,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787375424407-i6rob9",
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-22T05:10:24.407Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.1098,
+      "recordedVolumeVelocityRatio": 0.0426,
+      "recordedVolumeRecentNotional": 4976,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787375536353-v4jag6",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T05:12:16.353Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 5.1449,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "SOL-DOWN-1787375462566-d8vt9x",
+      "asset": "SOL",
+      "symbol": "solusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-22T05:11:02.566Z",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": -10.2597,
+      "recordedVolumeVelocityRatio": 4.4039,
+      "recordedVolumeRecentNotional": 1388065,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "ETH-UP-1787376354071-6tjhus",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-22T05:25:54.071Z",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": 1.2054,
+      "recordedVolumeVelocityRatio": 1.2598,
+      "recordedVolumeRecentNotional": 142280,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "SOL-UP-1787376953160-il5m3v",
+      "asset": "SOL",
+      "symbol": "solusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-22T05:35:53.160Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1.2095,
+      "recordedVolumeVelocityRatio": 7.4829,
+      "recordedVolumeRecentNotional": 457802,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787377083654-ozsa1n",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T05:38:03.654Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6504,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787377527247-1dkkwo",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T05:45:27.247Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.9233,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787379189713-wz9fip",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T06:13:09.713Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.0085,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787379365796-3i3ipt",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T06:16:05.796Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.7238,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "SOL-UP-1787380707958-c9h18r",
+      "asset": "SOL",
+      "symbol": "solusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-22T06:38:27.958Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1.2,
+      "recordedVolumeVelocityRatio": 2.5567,
+      "recordedVolumeRecentNotional": 114646,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "ETH-UP-1787380834476-2j4any",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-22T06:40:34.476Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9002,
+      "recordedVolumeVelocityRatio": 3.2975,
+      "recordedVolumeRecentNotional": 615297,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787381245319-vtc1hv",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T06:47:25.319Z",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": 1.8063,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787382519714-wvqpq9",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T07:08:39.714Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.9605,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787386761199-0iovxe",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T08:19:21.199Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -0.9505,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "SOL-DOWN-1787387436908-gaekvu",
+      "asset": "SOL",
+      "symbol": "solusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-22T08:30:36.908Z",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": -1.6525,
+      "recordedVolumeVelocityRatio": 6.5212,
+      "recordedVolumeRecentNotional": 388483,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787388247293-a177mb",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T08:44:07.293Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.7045,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787389431475-1gbhxb",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T09:03:51.475Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.4446,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787390050986-1eopy1",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T09:14:10.986Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 0.9965,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "SOL-DOWN-1787393034069-hgn807",
+      "asset": "SOL",
+      "symbol": "solusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-22T10:03:54.069Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.2038,
+      "recordedVolumeVelocityRatio": 12.6455,
+      "recordedVolumeRecentNotional": 551045,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787393300020-4ndbx1",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T10:08:20.020Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.1173,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787394489090-7wo5sg",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T10:28:09.090Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.6583,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "SOL-UP-1787395094474-0cyc5n",
+      "asset": "SOL",
+      "symbol": "solusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-22T10:38:14.474Z",
+      "direction": "UP",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": 1.673,
+      "recordedVolumeVelocityRatio": 0.2171,
+      "recordedVolumeRecentNotional": 5676,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-DOWN-1787396650576-f4keuv",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T11:04:10.576Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -0.9826,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "HYPE-UP-1787396716024-s8of5x",
+      "asset": "HYPE",
+      "symbol": "hype",
+      "source": "Hyperliquid allMids stream",
+      "alertTime": "2026-08-22T11:05:16.024Z",
+      "direction": "UP",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": 0.7992,
+      "recordedVolumeVelocityRatio": null,
+      "recordedVolumeRecentNotional": null,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_hyperliquid_historical_trade_access_verification",
+        "requiredData": [
+          "millisecond trades or mids around event",
+          "optional l2Book snapshots for book evidence"
+        ]
+      }
+    },
+    {
+      "id": "SOL-DOWN-1787617033673-kiu4zh",
+      "asset": "SOL",
+      "symbol": "solusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-25T00:17:13.673Z",
+      "direction": "DOWN",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": -1.2189,
+      "recordedVolumeVelocityRatio": 0.3445,
+      "recordedVolumeRecentNotional": 90750,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "SOL-DOWN-1787622780137-43xvxn",
+      "asset": "SOL",
+      "symbol": "solusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-25T01:53:00.137Z",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": -1.6593,
+      "recordedVolumeVelocityRatio": 2.121,
+      "recordedVolumeRecentNotional": 117492,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "SOL-UP-1787624418105-j69l2e",
+      "asset": "SOL",
+      "symbol": "solusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-25T02:20:18.105Z",
+      "direction": "UP",
+      "triggerLabel": "5m",
+      "windowMs": 300000,
+      "recordedTriggerMovePct": 1.7937,
+      "recordedVolumeVelocityRatio": 0.0004,
+      "recordedVolumeRecentNotional": 11,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787644182507-b3ihp1",
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-25T07:49:42.507Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6,
+      "recordedVolumeVelocityRatio": 4.8207,
+      "recordedVolumeRecentNotional": 1881305,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "SOL-DOWN-1787644183415-62on8x",
+      "asset": "SOL",
+      "symbol": "solusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-25T07:49:43.415Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.906,
+      "recordedVolumeVelocityRatio": 6.3892,
+      "recordedVolumeRecentNotional": 209689,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787644182524-q4d5qb",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-25T07:49:42.524Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6501,
+      "recordedVolumeVelocityRatio": 11.497,
+      "recordedVolumeRecentNotional": 1631352,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787665987752-p9ch0s",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-25T13:53:07.752Z",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": -1.2001,
+      "recordedVolumeVelocityRatio": 0.3892,
+      "recordedVolumeRecentNotional": 15379,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787665992179-dwp2cp",
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-25T13:53:12.179Z",
+      "direction": "DOWN",
+      "triggerLabel": "15m",
+      "windowMs": 900000,
+      "recordedTriggerMovePct": -1.2559,
+      "recordedVolumeVelocityRatio": 2.228,
+      "recordedVolumeRecentNotional": 207723,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787692087789-pk6bzs",
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "source": "Binance live trade stream",
+      "alertTime": "2026-08-25T21:08:07.789Z",
+      "direction": "DOWN",
+      "triggerLabel": "60s",
+      "windowMs": 60000,
+      "recordedTriggerMovePct": -0.6502,
+      "recordedVolumeVelocityRatio": 9.6511,
+      "recordedVolumeRecentNotional": 1670227,
+      "strictQuality": {
+        "exclude": false,
+        "reasons": []
+      },
+      "oneMinuteReplay": {
+        "status": "missing_cache_coverage",
+        "reason": "No cached public 1m candle context covers this alert timestamp."
+      },
+      "exactReplayRequirement": {
+        "status": "needs_binance_public_aggtrades",
+        "requiredData": [
+          "aggTrades from eventTime-5m through eventTime",
+          "optional recorded live depth evidence for book state"
+        ]
+      }
+    }
+  ],
+  "decision": {
+    "verdict": "build_public_aggtrades_adapter_before_any_new_strict_candidate",
+    "rationale": [
+      "A 1m-only adapter is useful for context and sanity checks but would overclaim exact 5s volume-velocity reconstruction.",
+      "The clean ETH bucket remains tiny, and the prior OHLCV proxy was killed by the destruction filter.",
+      "The next honest upgrade is a Binance public aggTrades replay for Binance assets plus explicit non-replay status for historical book/HYPE rows."
+    ],
+    "noLiveChange": true
+  }
+}

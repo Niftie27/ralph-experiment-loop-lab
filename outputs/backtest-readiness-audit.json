@@ -1,0 +1,95 @@
+{
+  "generatedAt": "2026-09-27T17:38:46.468Z",
+  "status": "research-only-backtest-readiness-audit",
+  "summary": {
+    "pass": 11,
+    "fail": 0,
+    "verdict": "ready_for_research_only_validation"
+  },
+  "checks": [
+    {
+      "id": "chronological-split",
+      "pass": true,
+      "required": true,
+      "description": "Uses a chronological entry-time split anchor."
+    },
+    {
+      "id": "walk-forward-diagnostics",
+      "pass": true,
+      "required": true,
+      "description": "Every variant has walk-forward diagnostics."
+    },
+    {
+      "id": "baseline-comparison",
+      "pass": true,
+      "required": true,
+      "description": "Uses deterministic time-matched baseline."
+    },
+    {
+      "id": "multiple-testing-penalty",
+      "pass": true,
+      "required": true,
+      "description": "Reports approximate multiple-testing deflated-Sharpe proxy."
+    },
+    {
+      "id": "gate-group-diagnostics",
+      "pass": true,
+      "required": true,
+      "description": "Reports grouped pass pressure."
+    },
+    {
+      "id": "survivor-shape-dedup",
+      "pass": true,
+      "required": true,
+      "description": "Deduplicates equivalent survivor shapes."
+    },
+    {
+      "id": "positive-oos-gate",
+      "pass": true,
+      "required": true,
+      "description": "Requires positive out-of-sample expectancy."
+    },
+    {
+      "id": "baseline-lift-gate",
+      "pass": true,
+      "required": true,
+      "description": "Requires lift over baseline."
+    },
+    {
+      "id": "planned-level-btc-gate",
+      "pass": true,
+      "required": true,
+      "description": "Orderflow/planned-level rows require explicit BTC gate."
+    },
+    {
+      "id": "planned-level-sample-gates",
+      "pass": true,
+      "required": true,
+      "description": "Orderflow proxy has frozen-event and trade-window sample gates."
+    },
+    {
+      "id": "purged-embargo-split",
+      "pass": true,
+      "required": true,
+      "description": "Implements explicit purged/embargo split accounting for overlapping labels."
+    }
+  ],
+  "nextActions": [
+    {
+      "id": "purged-embargo-split-design",
+      "action": "Keep explicit purged/embargo split accounting active before promoting overlapping intraday/orderflow labels.",
+      "status": "active_guard"
+    },
+    {
+      "id": "cost-assumption-surface",
+      "action": "Keep fees/slippage/funding/spread assumptions visible in every strategy report.",
+      "status": "active_guard"
+    },
+    {
+      "id": "baseline-always-on",
+      "action": "Every candidate must continue to beat a time-matched baseline and pass OOS baseline lift.",
+      "status": "active_guard"
+    }
+  ],
+  "boundary": "Audit only; no live trading, thresholds, scheduler, alert wording, risk, sizing, TP/SL, execution, public posting, or strategy promotion changed."
+}

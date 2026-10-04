@@ -1,0 +1,3986 @@
+{
+  "generatedAt": "2026-10-04T08:34:07.610Z",
+  "status": "research-only-strategy-spam-survivor-stress",
+  "purpose": "stress-test-the-single-strategy-spam-survivor-before-any-candidate-import-or-recurring-wiring",
+  "sourceReport": "results/strategy-spam-funnel-btc-first-pass.json",
+  "decision": {
+    "verdict": "watch_only_survivor_stress_failed",
+    "failures": [
+      "extra_20bps_round_trip_rejects",
+      "no_symbol_or_timeframe_transfer"
+    ],
+    "candidateImport": false,
+    "strategyPromotion": false,
+    "liveOrPaperBehaviorChange": false,
+    "schedulerOrCronChange": false,
+    "recurringLaneDecision": "do_not_wire_recurring_until_survivor_stress_is_reviewed",
+    "interpretation": "The spam survivor is still useful as a falsification target, but the stress pass found fragility. Keep it out of curated candidates and do not wire recurring promotion behavior around it."
+  },
+  "boundary": {
+    "candidateImport": false,
+    "strategyPromotion": false,
+    "liveOrPaperBehaviorChange": false,
+    "schedulerOrCronChange": false,
+    "note": "Stress output is research-only. It does not edit seed-strategies.json or any scheduler/autoresearch loop."
+  },
+  "survivor": {
+    "variantId": "spam-alt-btc-gated-ma-reclaim-v0#57",
+    "candidateId": "spam-alt-btc-gated-ma-reclaim-v0",
+    "family": "spam_alt_btc_gated_continuation",
+    "rule": "ma_reclaim",
+    "params": {
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "fast": 20,
+      "slow": 50,
+      "rsiFloorLong": 45,
+      "rsiCeilShort": 50
+    },
+    "originalStats": {
+      "sample": 262,
+      "winRate": 0.4466,
+      "expectancyR": 0.1391,
+      "profitFactor": 1.2595,
+      "sharpe": 1.7463,
+      "deflatedSharpe": 1.4066,
+      "probabilisticSharpe": 0.6654,
+      "deflatedSharpeCalibration": {
+        "label": "approximate_multiple_testing_deflated_sharpe",
+        "implementation": "approximate_proxy",
+        "trialCount": 390,
+        "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+        "sharpeStdErr": 0.0984,
+        "multipleTestingPenalty": 3.4543,
+        "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+      },
+      "probabilisticSharpeCalibration": {
+        "label": "diagnostic_probabilistic_sharpe_proxy",
+        "implementation": "psr_style_proxy",
+        "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+        "sample": 262,
+        "benchmarkSample": 262,
+        "observedTradeSharpe": 0.1079,
+        "benchmarkTradeSharpe": 0.0819,
+        "skewness": 0.3061,
+        "kurtosis": 1.2206,
+        "denominator": 0.9837,
+        "zScore": 0.4274,
+        "probability": 0.6654,
+        "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+      },
+      "maxDrawdownR": 15.2085,
+      "worstSliceExpectancyR": -0.1506,
+      "totalNetR": 36.4317,
+      "avgCostR": 0.049
+    },
+    "originalSplitStats": {
+      "inSample": {
+        "sample": 185,
+        "winRate": 0.4486,
+        "expectancyR": 0.1516,
+        "profitFactor": 1.2902,
+        "sharpe": 1.61,
+        "deflatedSharpe": 1.2241,
+        "probabilisticSharpe": 0.5429,
+        "deflatedSharpeCalibration": {
+          "label": "approximate_multiple_testing_deflated_sharpe",
+          "implementation": "approximate_proxy",
+          "trialCount": 390,
+          "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+          "sharpeStdErr": 0.1117,
+          "multipleTestingPenalty": 3.4543,
+          "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+        },
+        "probabilisticSharpeCalibration": {
+          "label": "diagnostic_probabilistic_sharpe_proxy",
+          "implementation": "psr_style_proxy",
+          "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+          "sample": 185,
+          "benchmarkSample": 185,
+          "observedTradeSharpe": 0.1184,
+          "benchmarkTradeSharpe": 0.1106,
+          "skewness": 0.2974,
+          "kurtosis": 1.2272,
+          "denominator": 0.9826,
+          "zScore": 0.1077,
+          "probability": 0.5429,
+          "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+        },
+        "maxDrawdownR": 15.2085,
+        "worstSliceExpectancyR": -0.0504,
+        "totalNetR": 28.0469,
+        "avgCostR": 0.0438
+      },
+      "outOfSample": {
+        "sample": 77,
+        "winRate": 0.4416,
+        "expectancyR": 0.1089,
+        "profitFactor": 1.1918,
+        "sharpe": 0.7261,
+        "deflatedSharpe": 0.2807,
+        "probabilisticSharpe": 0.7278,
+        "deflatedSharpeCalibration": {
+          "label": "approximate_multiple_testing_deflated_sharpe",
+          "implementation": "approximate_proxy",
+          "trialCount": 390,
+          "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+          "sharpeStdErr": 0.1289,
+          "multipleTestingPenalty": 3.4543,
+          "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+        },
+        "probabilisticSharpeCalibration": {
+          "label": "diagnostic_probabilistic_sharpe_proxy",
+          "implementation": "psr_style_proxy",
+          "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+          "sample": 77,
+          "benchmarkSample": 77,
+          "observedTradeSharpe": 0.0827,
+          "benchmarkTradeSharpe": 0.0141,
+          "skewness": 0.329,
+          "kurtosis": 1.2065,
+          "denominator": 0.9865,
+          "zScore": 0.6063,
+          "probability": 0.7278,
+          "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+        },
+        "maxDrawdownR": 8.6778,
+        "worstSliceExpectancyR": -0.537,
+        "totalNetR": 8.3848,
+        "avgCostR": 0.0615
+      }
+    },
+    "originalBaselineComparison": {
+      "method": "time_matched_alternating_direction",
+      "expectancyLiftR": 0.0357,
+      "outOfSampleExpectancyLiftR": 0.0907,
+      "deflatedSharpeLift": 0.3745,
+      "profitFactorLift": 0.0666,
+      "note": "Baseline reuses each strategy signal timestamp but alternates long/short direction deterministically; it checks whether rule direction adds value beyond matched opportunity timing."
+    }
+  },
+  "sources": [
+    {
+      "symbol": "BTC",
+      "timeframe": "1h",
+      "candles": 43790,
+      "firstCandleTime": "2021-10-05T09:00:00.000Z",
+      "lastCandleTime": "2026-10-03T23:00:00.000Z",
+      "source": "binance-public-archive-rest-tail",
+      "market": "spot"
+    },
+    {
+      "symbol": "BTC",
+      "timeframe": "4h",
+      "candles": 10950,
+      "firstCandleTime": "2021-10-05T12:00:00.000Z",
+      "lastCandleTime": "2026-10-04T08:00:00.000Z",
+      "source": "binance-public-archive-rest-tail",
+      "market": "spot"
+    },
+    {
+      "symbol": "SOL",
+      "timeframe": "1h",
+      "candles": 43790,
+      "firstCandleTime": "2021-10-05T09:00:00.000Z",
+      "lastCandleTime": "2026-10-03T23:00:00.000Z",
+      "source": "binance-public-archive-rest-tail",
+      "market": "spot"
+    },
+    {
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "candles": 10950,
+      "firstCandleTime": "2021-10-05T12:00:00.000Z",
+      "lastCandleTime": "2026-10-04T08:00:00.000Z",
+      "source": "binance-public-archive-rest-tail",
+      "market": "spot"
+    },
+    {
+      "symbol": "ETH",
+      "timeframe": "1h",
+      "candles": 43790,
+      "firstCandleTime": "2021-10-05T09:00:00.000Z",
+      "lastCandleTime": "2026-10-03T23:00:00.000Z",
+      "source": "binance-public-archive-rest-tail",
+      "market": "spot"
+    },
+    {
+      "symbol": "ETH",
+      "timeframe": "4h",
+      "candles": 10950,
+      "firstCandleTime": "2021-10-05T12:00:00.000Z",
+      "lastCandleTime": "2026-10-04T08:00:00.000Z",
+      "source": "binance-public-archive-rest-tail",
+      "market": "spot"
+    }
+  ],
+  "cases": [
+    {
+      "id": "base_survivor",
+      "description": "Original survivor with the same BTC gate used by the spam funnel.",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "gateMode": "base",
+      "gateDiagnostics": {
+        "symbol": "SOL",
+        "timeframe": "4h",
+        "mode": "base",
+        "checkedSignals": 456,
+        "passedSignals": 264,
+        "blockedSignals": 192,
+        "regimes": {
+          "BTC_RISK_ON": 168,
+          "BTC_RISK_OFF": 131,
+          "BTC_TRANSITION": 157,
+          "BTC_STALE": 0
+        },
+        "passByDirection": {
+          "long": 150,
+          "short": 114
+        },
+        "blockByDirection": {
+          "long": 94,
+          "short": 98
+        }
+      },
+      "summary": {
+        "status": "survived_research_gate",
+        "failures": [],
+        "stats": {
+          "sample": 262,
+          "winRate": 0.4466,
+          "expectancyR": 0.1391,
+          "profitFactor": 1.2595,
+          "sharpe": 1.7463,
+          "deflatedSharpe": 1.7463,
+          "probabilisticSharpe": 0.6654,
+          "deflatedSharpeCalibration": {
+            "label": "approximate_multiple_testing_deflated_sharpe",
+            "implementation": "approximate_proxy",
+            "trialCount": 1,
+            "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+            "sharpeStdErr": 0.0984,
+            "multipleTestingPenalty": 0,
+            "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+          },
+          "probabilisticSharpeCalibration": {
+            "label": "diagnostic_probabilistic_sharpe_proxy",
+            "implementation": "psr_style_proxy",
+            "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+            "sample": 262,
+            "benchmarkSample": 262,
+            "observedTradeSharpe": 0.1079,
+            "benchmarkTradeSharpe": 0.0819,
+            "skewness": 0.3061,
+            "kurtosis": 1.2206,
+            "denominator": 0.9837,
+            "zScore": 0.4274,
+            "probability": 0.6654,
+            "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+          },
+          "maxDrawdownR": 15.2085,
+          "worstSliceExpectancyR": -0.1506,
+          "totalNetR": 36.4317,
+          "avgCostR": 0.049
+        },
+        "splitStats": {
+          "inSample": {
+            "sample": 185,
+            "winRate": 0.4486,
+            "expectancyR": 0.1516,
+            "profitFactor": 1.2902,
+            "sharpe": 1.61,
+            "deflatedSharpe": 1.61,
+            "probabilisticSharpe": 0.5429,
+            "deflatedSharpeCalibration": {
+              "label": "approximate_multiple_testing_deflated_sharpe",
+              "implementation": "approximate_proxy",
+              "trialCount": 1,
+              "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+              "sharpeStdErr": 0.1117,
+              "multipleTestingPenalty": 0,
+              "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+            },
+            "probabilisticSharpeCalibration": {
+              "label": "diagnostic_probabilistic_sharpe_proxy",
+              "implementation": "psr_style_proxy",
+              "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+              "sample": 185,
+              "benchmarkSample": 185,
+              "observedTradeSharpe": 0.1184,
+              "benchmarkTradeSharpe": 0.1106,
+              "skewness": 0.2974,
+              "kurtosis": 1.2272,
+              "denominator": 0.9826,
+              "zScore": 0.1077,
+              "probability": 0.5429,
+              "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+            },
+            "maxDrawdownR": 15.2085,
+            "worstSliceExpectancyR": -0.0504,
+            "totalNetR": 28.0469,
+            "avgCostR": 0.0438
+          },
+          "outOfSample": {
+            "sample": 77,
+            "winRate": 0.4416,
+            "expectancyR": 0.1089,
+            "profitFactor": 1.1918,
+            "sharpe": 0.7261,
+            "deflatedSharpe": 0.7261,
+            "probabilisticSharpe": 0.7278,
+            "deflatedSharpeCalibration": {
+              "label": "approximate_multiple_testing_deflated_sharpe",
+              "implementation": "approximate_proxy",
+              "trialCount": 1,
+              "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+              "sharpeStdErr": 0.1289,
+              "multipleTestingPenalty": 0,
+              "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+            },
+            "probabilisticSharpeCalibration": {
+              "label": "diagnostic_probabilistic_sharpe_proxy",
+              "implementation": "psr_style_proxy",
+              "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+              "sample": 77,
+              "benchmarkSample": 77,
+              "observedTradeSharpe": 0.0827,
+              "benchmarkTradeSharpe": 0.0141,
+              "skewness": 0.329,
+              "kurtosis": 1.2065,
+              "denominator": 0.9865,
+              "zScore": 0.6063,
+              "probability": 0.7278,
+              "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+            },
+            "maxDrawdownR": 8.6778,
+            "worstSliceExpectancyR": -0.537,
+            "totalNetR": 8.3848,
+            "avgCostR": 0.0615
+          }
+        },
+        "baselineComparison": {
+          "method": "time_matched_alternating_direction",
+          "expectancyLiftR": 0.0357,
+          "outOfSampleExpectancyLiftR": 0.0907,
+          "deflatedSharpeLift": 0.4212,
+          "profitFactorLift": 0.0666,
+          "note": "Baseline reuses each strategy signal timestamp but alternates long/short direction deterministically; it checks whether rule direction adds value beyond matched opportunity timing."
+        },
+        "walkForward": {
+          "method": "equal_trade_count_chronological_folds",
+          "foldCount": 5,
+          "positiveFolds": 5,
+          "positiveBaselineLiftFolds": 3,
+          "positiveOutOfSampleFolds": 2,
+          "minFoldExpectancyR": 0.0077,
+          "folds": [
+            {
+              "fold": 1,
+              "sample": 52,
+              "firstEntryTime": 1634716800,
+              "lastEntryTime": 1663920000,
+              "expectancyR": 0.0077,
+              "profitFactor": 1.013,
+              "deflatedSharpe": 0.0431,
+              "probabilisticSharpe": 0.6466,
+              "maxDrawdownR": 13.5733,
+              "baselineExpectancyR": -0.0577,
+              "expectancyLiftR": 0.0654
+            },
+            {
+              "fold": 2,
+              "sample": 52,
+              "firstEntryTime": 1664380800,
+              "lastEntryTime": 1694001600,
+              "expectancyR": 0.2142,
+              "profitFactor": 1.4246,
+              "deflatedSharpe": 1.1912,
+              "probabilisticSharpe": 0.5956,
+              "maxDrawdownR": 8.3172,
+              "baselineExpectancyR": 0.1717,
+              "expectancyLiftR": 0.0425
+            },
+            {
+              "fold": 3,
+              "sample": 53,
+              "firstEntryTime": 1694995200,
+              "lastEntryTime": 1725796800,
+              "expectancyR": 0.1935,
+              "profitFactor": 1.3891,
+              "deflatedSharpe": 1.0922,
+              "probabilisticSharpe": 0.2034,
+              "maxDrawdownR": 4.9064,
+              "baselineExpectancyR": 0.339,
+              "expectancyLiftR": -0.1455
+            },
+            {
+              "fold": 4,
+              "sample": 52,
+              "firstEntryTime": 1726070400,
+              "lastEntryTime": 1759291200,
+              "expectancyR": 0.0834,
+              "profitFactor": 1.1489,
+              "deflatedSharpe": 0.4676,
+              "probabilisticSharpe": 0.1653,
+              "maxDrawdownR": 6.746,
+              "baselineExpectancyR": 0.2473,
+              "expectancyLiftR": -0.1639
+            },
+            {
+              "fold": 5,
+              "sample": 53,
+              "firstEntryTime": 1759622400,
+              "lastEntryTime": 1789444800,
+              "expectancyR": 0.1944,
+              "profitFactor": 1.3692,
+              "deflatedSharpe": 1.0692,
+              "probabilisticSharpe": 0.985,
+              "maxDrawdownR": 8.6778,
+              "baselineExpectancyR": -0.1822,
+              "expectancyLiftR": 0.3766
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "strict_btc_gate",
+      "description": "Same SOL 4h variant, but BTC_RISK_ON/OFF requires stronger RSI and MA separation.",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "gateMode": "strict",
+      "gateDiagnostics": {
+        "symbol": "SOL",
+        "timeframe": "4h",
+        "mode": "strict",
+        "checkedSignals": 456,
+        "passedSignals": 197,
+        "blockedSignals": 259,
+        "regimes": {
+          "BTC_RISK_ON": 130,
+          "BTC_RISK_OFF": 87,
+          "BTC_TRANSITION": 239,
+          "BTC_STALE": 0
+        },
+        "passByDirection": {
+          "long": 118,
+          "short": 79
+        },
+        "blockByDirection": {
+          "long": 126,
+          "short": 133
+        }
+      },
+      "summary": {
+        "status": "survived_research_gate",
+        "failures": [],
+        "stats": {
+          "sample": 196,
+          "winRate": 0.4541,
+          "expectancyR": 0.1582,
+          "profitFactor": 1.298,
+          "sharpe": 1.7081,
+          "deflatedSharpe": 1.7081,
+          "probabilisticSharpe": 0.9982,
+          "deflatedSharpeCalibration": {
+            "label": "approximate_multiple_testing_deflated_sharpe",
+            "implementation": "approximate_proxy",
+            "trialCount": 1,
+            "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+            "sharpeStdErr": 0.1123,
+            "multipleTestingPenalty": 0,
+            "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+          },
+          "probabilisticSharpeCalibration": {
+            "label": "diagnostic_probabilistic_sharpe_proxy",
+            "implementation": "psr_style_proxy",
+            "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+            "sample": 196,
+            "benchmarkSample": 196,
+            "observedTradeSharpe": 0.122,
+            "benchmarkTradeSharpe": -0.0827,
+            "skewness": 0.278,
+            "kurtosis": 1.1982,
+            "denominator": 0.9833,
+            "zScore": 2.9076,
+            "probability": 0.9982,
+            "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+          },
+          "maxDrawdownR": 12.7317,
+          "worstSliceExpectancyR": -0.1074,
+          "totalNetR": 31.0006,
+          "avgCostR": 0.0479
+        },
+        "splitStats": {
+          "inSample": {
+            "sample": 144,
+            "winRate": 0.4514,
+            "expectancyR": 0.164,
+            "profitFactor": 1.3114,
+            "sharpe": 1.5183,
+            "deflatedSharpe": 1.5183,
+            "probabilisticSharpe": 0.9978,
+            "deflatedSharpeCalibration": {
+              "label": "approximate_multiple_testing_deflated_sharpe",
+              "implementation": "approximate_proxy",
+              "trialCount": 1,
+              "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+              "sharpeStdErr": 0.1227,
+              "multipleTestingPenalty": 0,
+              "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+            },
+            "probabilisticSharpeCalibration": {
+              "label": "diagnostic_probabilistic_sharpe_proxy",
+              "implementation": "psr_style_proxy",
+              "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+              "sample": 144,
+              "benchmarkSample": 144,
+              "observedTradeSharpe": 0.1265,
+              "benchmarkTradeSharpe": -0.1076,
+              "skewness": 0.2772,
+              "kurtosis": 1.1955,
+              "denominator": 0.9827,
+              "zScore": 2.8492,
+              "probability": 0.9978,
+              "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+            },
+            "maxDrawdownR": 12.7317,
+            "worstSliceExpectancyR": -0.0517,
+            "totalNetR": 23.6175,
+            "avgCostR": 0.0431
+          },
+          "outOfSample": {
+            "sample": 52,
+            "winRate": 0.4615,
+            "expectancyR": 0.142,
+            "profitFactor": 1.2618,
+            "sharpe": 0.7821,
+            "deflatedSharpe": 0.7821,
+            "probabilisticSharpe": 0.8155,
+            "deflatedSharpeCalibration": {
+              "label": "approximate_multiple_testing_deflated_sharpe",
+              "implementation": "approximate_proxy",
+              "trialCount": 1,
+              "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+              "sharpeStdErr": 0.16,
+              "multipleTestingPenalty": 0,
+              "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+            },
+            "probabilisticSharpeCalibration": {
+              "label": "diagnostic_probabilistic_sharpe_proxy",
+              "implementation": "psr_style_proxy",
+              "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+              "sample": 52,
+              "benchmarkSample": 52,
+              "observedTradeSharpe": 0.1085,
+              "benchmarkTradeSharpe": -0.0155,
+              "skewness": 0.2805,
+              "kurtosis": 1.2052,
+              "denominator": 0.985,
+              "zScore": 0.8985,
+              "probability": 0.8155,
+              "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+            },
+            "maxDrawdownR": 6.4865,
+            "worstSliceExpectancyR": -0.3359,
+            "totalNetR": 7.3831,
+            "avgCostR": 0.0609
+          }
+        },
+        "baselineComparison": {
+          "method": "time_matched_alternating_direction",
+          "expectancyLiftR": 0.2607,
+          "outOfSampleExpectancyLiftR": 0.1616,
+          "deflatedSharpeLift": 2.8663,
+          "profitFactorLift": 0.4599,
+          "note": "Baseline reuses each strategy signal timestamp but alternates long/short direction deterministically; it checks whether rule direction adds value beyond matched opportunity timing."
+        },
+        "walkForward": {
+          "method": "equal_trade_count_chronological_folds",
+          "foldCount": 5,
+          "positiveFolds": 5,
+          "positiveBaselineLiftFolds": 4,
+          "positiveOutOfSampleFolds": 2,
+          "minFoldExpectancyR": 0.0657,
+          "folds": [
+            {
+              "fold": 1,
+              "sample": 39,
+              "firstEntryTime": 1634716800,
+              "lastEntryTime": 1663632000,
+              "expectancyR": 0.0657,
+              "profitFactor": 1.1109,
+              "deflatedSharpe": 0.3087,
+              "probabilisticSharpe": 0.9934,
+              "maxDrawdownR": 12.7317,
+              "baselineExpectancyR": -0.3959,
+              "expectancyLiftR": 0.4616
+            },
+            {
+              "fold": 2,
+              "sample": 39,
+              "firstEntryTime": 1663689600,
+              "lastEntryTime": 1696708800,
+              "expectancyR": 0.104,
+              "profitFactor": 1.2022,
+              "deflatedSharpe": 0.5213,
+              "probabilisticSharpe": 0.3551,
+              "maxDrawdownR": 7.271,
+              "baselineExpectancyR": 0.1861,
+              "expectancyLiftR": -0.0821
+            },
+            {
+              "fold": 3,
+              "sample": 39,
+              "firstEntryTime": 1696766400,
+              "lastEntryTime": 1724371200,
+              "expectancyR": 0.3043,
+              "profitFactor": 1.631,
+              "deflatedSharpe": 1.4277,
+              "probabilisticSharpe": 0.9876,
+              "maxDrawdownR": 3.8518,
+              "baselineExpectancyR": -0.1672,
+              "expectancyLiftR": 0.4715
+            },
+            {
+              "fold": 4,
+              "sample": 39,
+              "firstEntryTime": 1725364800,
+              "lastEntryTime": 1755000000,
+              "expectancyR": 0.1412,
+              "profitFactor": 1.2593,
+              "deflatedSharpe": 0.6676,
+              "probabilisticSharpe": 0.9111,
+              "maxDrawdownR": 5.3358,
+              "baselineExpectancyR": -0.1283,
+              "expectancyLiftR": 0.2695
+            },
+            {
+              "fold": 5,
+              "sample": 40,
+              "firstEntryTime": 1755849600,
+              "lastEntryTime": 1789329600,
+              "expectancyR": 0.1752,
+              "profitFactor": 1.3364,
+              "deflatedSharpe": 0.8474,
+              "probabilisticSharpe": 0.815,
+              "maxDrawdownR": 5.4215,
+              "baselineExpectancyR": -0.0094,
+              "expectancyLiftR": 0.1846
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "double_costs",
+      "description": "Double fee and slippage bps",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "gateMode": "base",
+      "gateDiagnostics": {
+        "symbol": "SOL",
+        "timeframe": "4h",
+        "mode": "base",
+        "checkedSignals": 456,
+        "passedSignals": 264,
+        "blockedSignals": 192,
+        "regimes": {
+          "BTC_RISK_ON": 168,
+          "BTC_RISK_OFF": 131,
+          "BTC_TRANSITION": 157,
+          "BTC_STALE": 0
+        },
+        "passByDirection": {
+          "long": 150,
+          "short": 114
+        },
+        "blockByDirection": {
+          "long": 94,
+          "short": 98
+        }
+      },
+      "summary": {
+        "status": "survived_research_gate",
+        "failures": [],
+        "stats": {
+          "sample": 262,
+          "winRate": 0.4466,
+          "expectancyR": 0.0901,
+          "profitFactor": 1.1602,
+          "sharpe": 1.1325,
+          "deflatedSharpe": 1.1325,
+          "probabilisticSharpe": 0.6699,
+          "deflatedSharpeCalibration": {
+            "label": "approximate_multiple_testing_deflated_sharpe",
+            "implementation": "approximate_proxy",
+            "trialCount": 1,
+            "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+            "sharpeStdErr": 0.0793,
+            "multipleTestingPenalty": 0,
+            "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+          },
+          "probabilisticSharpeCalibration": {
+            "label": "diagnostic_probabilistic_sharpe_proxy",
+            "implementation": "psr_style_proxy",
+            "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+            "sample": 262,
+            "benchmarkSample": 262,
+            "observedTradeSharpe": 0.07,
+            "benchmarkTradeSharpe": 0.043,
+            "skewness": 0.3021,
+            "kurtosis": 1.2213,
+            "denominator": 0.9895,
+            "zScore": 0.4396,
+            "probability": 0.6699,
+            "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+          },
+          "maxDrawdownR": 16.1325,
+          "worstSliceExpectancyR": -0.1849,
+          "totalNetR": 23.5942,
+          "avgCostR": 0.098
+        },
+        "splitStats": {
+          "inSample": {
+            "sample": 185,
+            "winRate": 0.4486,
+            "expectancyR": 0.1078,
+            "profitFactor": 1.1975,
+            "sharpe": 1.1465,
+            "deflatedSharpe": 1.1465,
+            "probabilisticSharpe": 0.5468,
+            "deflatedSharpeCalibration": {
+              "label": "approximate_multiple_testing_deflated_sharpe",
+              "implementation": "approximate_proxy",
+              "trialCount": 1,
+              "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+              "sharpeStdErr": 0.0949,
+              "multipleTestingPenalty": 0,
+              "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+            },
+            "probabilisticSharpeCalibration": {
+              "label": "diagnostic_probabilistic_sharpe_proxy",
+              "implementation": "psr_style_proxy",
+              "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+              "sample": 185,
+              "benchmarkSample": 185,
+              "observedTradeSharpe": 0.0843,
+              "benchmarkTradeSharpe": 0.0757,
+              "skewness": 0.2938,
+              "kurtosis": 1.2275,
+              "denominator": 0.9877,
+              "zScore": 0.1175,
+              "probability": 0.5468,
+              "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+            },
+            "maxDrawdownR": 16.1325,
+            "worstSliceExpectancyR": -0.084,
+            "totalNetR": 19.9479,
+            "avgCostR": 0.0876
+          },
+          "outOfSample": {
+            "sample": 77,
+            "winRate": 0.4416,
+            "expectancyR": 0.0474,
+            "profitFactor": 1.0788,
+            "sharpe": 0.3164,
+            "deflatedSharpe": 0.3164,
+            "probabilisticSharpe": 0.7296,
+            "deflatedSharpeCalibration": {
+              "label": "approximate_multiple_testing_deflated_sharpe",
+              "implementation": "approximate_proxy",
+              "trialCount": 1,
+              "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+              "sharpeStdErr": 0.1175,
+              "multipleTestingPenalty": 0,
+              "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+            },
+            "probabilisticSharpeCalibration": {
+              "label": "diagnostic_probabilistic_sharpe_proxy",
+              "implementation": "psr_style_proxy",
+              "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+              "sample": 77,
+              "benchmarkSample": 77,
+              "observedTradeSharpe": 0.0361,
+              "benchmarkTradeSharpe": -0.0337,
+              "skewness": 0.3256,
+              "kurtosis": 1.2072,
+              "denominator": 0.9941,
+              "zScore": 0.6117,
+              "probability": 0.7296,
+              "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+            },
+            "maxDrawdownR": 9.3556,
+            "worstSliceExpectancyR": -0.5743,
+            "totalNetR": 3.6462,
+            "avgCostR": 0.1231
+          }
+        },
+        "baselineComparison": {
+          "method": "time_matched_alternating_direction",
+          "expectancyLiftR": 0.0357,
+          "outOfSampleExpectancyLiftR": 0.0908,
+          "deflatedSharpeLift": 0.4358,
+          "profitFactorLift": 0.0637,
+          "note": "Baseline reuses each strategy signal timestamp but alternates long/short direction deterministically; it checks whether rule direction adds value beyond matched opportunity timing."
+        },
+        "walkForward": {
+          "method": "equal_trade_count_chronological_folds",
+          "foldCount": 5,
+          "positiveFolds": 4,
+          "positiveBaselineLiftFolds": 3,
+          "positiveOutOfSampleFolds": 2,
+          "minFoldExpectancyR": -0.0311,
+          "folds": [
+            {
+              "fold": 1,
+              "sample": 52,
+              "firstEntryTime": 1634716800,
+              "lastEntryTime": 1663920000,
+              "expectancyR": -0.0311,
+              "profitFactor": 0.9492,
+              "deflatedSharpe": -0.1752,
+              "probabilisticSharpe": 0.6486,
+              "maxDrawdownR": 14.3125,
+              "baselineExpectancyR": -0.0965,
+              "expectancyLiftR": 0.0654
+            },
+            {
+              "fold": 2,
+              "sample": 52,
+              "firstEntryTime": 1664380800,
+              "lastEntryTime": 1694001600,
+              "expectancyR": 0.1656,
+              "profitFactor": 1.312,
+              "deflatedSharpe": 0.9194,
+              "probabilisticSharpe": 0.5944,
+              "maxDrawdownR": 9.2584,
+              "baselineExpectancyR": 0.1231,
+              "expectancyLiftR": 0.0425
+            },
+            {
+              "fold": 3,
+              "sample": 53,
+              "firstEntryTime": 1694995200,
+              "lastEntryTime": 1725796800,
+              "expectancyR": 0.1497,
+              "profitFactor": 1.2868,
+              "deflatedSharpe": 0.8445,
+              "probabilisticSharpe": 0.2042,
+              "maxDrawdownR": 5.2324,
+              "baselineExpectancyR": 0.2952,
+              "expectancyLiftR": -0.1455
+            },
+            {
+              "fold": 4,
+              "sample": 52,
+              "firstEntryTime": 1726070400,
+              "lastEntryTime": 1759291200,
+              "expectancyR": 0.0346,
+              "profitFactor": 1.059,
+              "deflatedSharpe": 0.1946,
+              "probabilisticSharpe": 0.1692,
+              "maxDrawdownR": 8.0778,
+              "baselineExpectancyR": 0.1985,
+              "expectancyLiftR": -0.1639
+            },
+            {
+              "fold": 5,
+              "sample": 53,
+              "firstEntryTime": 1759622400,
+              "lastEntryTime": 1789444800,
+              "expectancyR": 0.1297,
+              "profitFactor": 1.232,
+              "deflatedSharpe": 0.7147,
+              "probabilisticSharpe": 0.9856,
+              "maxDrawdownR": 9.3556,
+              "baselineExpectancyR": -0.247,
+              "expectancyLiftR": 0.3767
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "extra_10bps_round_trip",
+      "description": "Extra 10 bps round trip",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "gateMode": "base",
+      "gateDiagnostics": {
+        "symbol": "SOL",
+        "timeframe": "4h",
+        "mode": "base",
+        "checkedSignals": 456,
+        "passedSignals": 264,
+        "blockedSignals": 192,
+        "regimes": {
+          "BTC_RISK_ON": 168,
+          "BTC_RISK_OFF": 131,
+          "BTC_TRANSITION": 157,
+          "BTC_STALE": 0
+        },
+        "passByDirection": {
+          "long": 150,
+          "short": 114
+        },
+        "blockByDirection": {
+          "long": 94,
+          "short": 98
+        }
+      },
+      "summary": {
+        "status": "survived_research_gate",
+        "failures": [],
+        "stats": {
+          "sample": 262,
+          "winRate": 0.4466,
+          "expectancyR": 0.1041,
+          "profitFactor": 1.1876,
+          "sharpe": 1.3081,
+          "deflatedSharpe": 1.3081,
+          "probabilisticSharpe": 0.6687,
+          "deflatedSharpeCalibration": {
+            "label": "approximate_multiple_testing_deflated_sharpe",
+            "implementation": "approximate_proxy",
+            "trialCount": 1,
+            "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+            "sharpeStdErr": 0.0843,
+            "multipleTestingPenalty": 0,
+            "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+          },
+          "probabilisticSharpeCalibration": {
+            "label": "diagnostic_probabilistic_sharpe_proxy",
+            "implementation": "psr_style_proxy",
+            "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+            "sample": 262,
+            "benchmarkSample": 262,
+            "observedTradeSharpe": 0.0808,
+            "benchmarkTradeSharpe": 0.0541,
+            "skewness": 0.3033,
+            "kurtosis": 1.2209,
+            "denominator": 0.9879,
+            "zScore": 0.4364,
+            "probability": 0.6687,
+            "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+          },
+          "maxDrawdownR": 15.8685,
+          "worstSliceExpectancyR": -0.1751,
+          "totalNetR": 27.262,
+          "avgCostR": 0.084
+        },
+        "splitStats": {
+          "inSample": {
+            "sample": 185,
+            "winRate": 0.4486,
+            "expectancyR": 0.1203,
+            "profitFactor": 1.2232,
+            "sharpe": 1.2791,
+            "deflatedSharpe": 1.2791,
+            "probabilisticSharpe": 0.5457,
+            "deflatedSharpeCalibration": {
+              "label": "approximate_multiple_testing_deflated_sharpe",
+              "implementation": "approximate_proxy",
+              "trialCount": 1,
+              "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+              "sharpeStdErr": 0.0994,
+              "multipleTestingPenalty": 0,
+              "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+            },
+            "probabilisticSharpeCalibration": {
+              "label": "diagnostic_probabilistic_sharpe_proxy",
+              "implementation": "psr_style_proxy",
+              "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+              "sample": 185,
+              "benchmarkSample": 185,
+              "observedTradeSharpe": 0.094,
+              "benchmarkTradeSharpe": 0.0857,
+              "skewness": 0.2949,
+              "kurtosis": 1.2273,
+              "denominator": 0.9863,
+              "zScore": 0.1148,
+              "probability": 0.5457,
+              "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+            },
+            "maxDrawdownR": 15.8685,
+            "worstSliceExpectancyR": -0.0744,
+            "totalNetR": 22.2619,
+            "avgCostR": 0.075
+          },
+          "outOfSample": {
+            "sample": 77,
+            "winRate": 0.4416,
+            "expectancyR": 0.0649,
+            "profitFactor": 1.1098,
+            "sharpe": 0.4336,
+            "deflatedSharpe": 0.4336,
+            "probabilisticSharpe": 0.7293,
+            "deflatedSharpeCalibration": {
+              "label": "approximate_multiple_testing_deflated_sharpe",
+              "implementation": "approximate_proxy",
+              "trialCount": 1,
+              "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+              "sharpeStdErr": 0.12,
+              "multipleTestingPenalty": 0,
+              "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+            },
+            "probabilisticSharpeCalibration": {
+              "label": "diagnostic_probabilistic_sharpe_proxy",
+              "implementation": "psr_style_proxy",
+              "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+              "sample": 77,
+              "benchmarkSample": 77,
+              "observedTradeSharpe": 0.0494,
+              "benchmarkTradeSharpe": -0.0201,
+              "skewness": 0.3266,
+              "kurtosis": 1.2068,
+              "denominator": 0.992,
+              "zScore": 0.6106,
+              "probability": 0.7293,
+              "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+            },
+            "maxDrawdownR": 9.1619,
+            "worstSliceExpectancyR": -0.5637,
+            "totalNetR": 5.0001,
+            "avgCostR": 0.1055
+          }
+        },
+        "baselineComparison": {
+          "method": "time_matched_alternating_direction",
+          "expectancyLiftR": 0.0357,
+          "outOfSampleExpectancyLiftR": 0.0907,
+          "deflatedSharpeLift": 0.4319,
+          "profitFactorLift": 0.0646,
+          "note": "Baseline reuses each strategy signal timestamp but alternates long/short direction deterministically; it checks whether rule direction adds value beyond matched opportunity timing."
+        },
+        "walkForward": {
+          "method": "equal_trade_count_chronological_folds",
+          "foldCount": 5,
+          "positiveFolds": 4,
+          "positiveBaselineLiftFolds": 3,
+          "positiveOutOfSampleFolds": 2,
+          "minFoldExpectancyR": -0.02,
+          "folds": [
+            {
+              "fold": 1,
+              "sample": 52,
+              "firstEntryTime": 1634716800,
+              "lastEntryTime": 1663920000,
+              "expectancyR": -0.02,
+              "profitFactor": 0.967,
+              "deflatedSharpe": -0.1127,
+              "probabilisticSharpe": 0.6481,
+              "maxDrawdownR": 14.1013,
+              "baselineExpectancyR": -0.0854,
+              "expectancyLiftR": 0.0654
+            },
+            {
+              "fold": 2,
+              "sample": 52,
+              "firstEntryTime": 1664380800,
+              "lastEntryTime": 1694001600,
+              "expectancyR": 0.1795,
+              "profitFactor": 1.3431,
+              "deflatedSharpe": 0.997,
+              "probabilisticSharpe": 0.5948,
+              "maxDrawdownR": 8.9895,
+              "baselineExpectancyR": 0.1369,
+              "expectancyLiftR": 0.0426
+            },
+            {
+              "fold": 3,
+              "sample": 53,
+              "firstEntryTime": 1694995200,
+              "lastEntryTime": 1725796800,
+              "expectancyR": 0.1622,
+              "profitFactor": 1.3151,
+              "deflatedSharpe": 0.9153,
+              "probabilisticSharpe": 0.2039,
+              "maxDrawdownR": 5.1393,
+              "baselineExpectancyR": 0.3077,
+              "expectancyLiftR": -0.1455
+            },
+            {
+              "fold": 4,
+              "sample": 52,
+              "firstEntryTime": 1726070400,
+              "lastEntryTime": 1759291200,
+              "expectancyR": 0.0485,
+              "profitFactor": 1.0838,
+              "deflatedSharpe": 0.2727,
+              "probabilisticSharpe": 0.1681,
+              "maxDrawdownR": 7.6973,
+              "baselineExpectancyR": 0.2124,
+              "expectancyLiftR": -0.1639
+            },
+            {
+              "fold": 5,
+              "sample": 53,
+              "firstEntryTime": 1759622400,
+              "lastEntryTime": 1789444800,
+              "expectancyR": 0.1482,
+              "profitFactor": 1.2695,
+              "deflatedSharpe": 0.8161,
+              "probabilisticSharpe": 0.9854,
+              "maxDrawdownR": 9.1619,
+              "baselineExpectancyR": -0.2285,
+              "expectancyLiftR": 0.3767
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "extra_20bps_round_trip",
+      "description": "Extra 20 bps round trip",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "gateMode": "base",
+      "gateDiagnostics": {
+        "symbol": "SOL",
+        "timeframe": "4h",
+        "mode": "base",
+        "checkedSignals": 456,
+        "passedSignals": 264,
+        "blockedSignals": 192,
+        "regimes": {
+          "BTC_RISK_ON": 168,
+          "BTC_RISK_OFF": 131,
+          "BTC_TRANSITION": 157,
+          "BTC_STALE": 0
+        },
+        "passByDirection": {
+          "long": 150,
+          "short": 114
+        },
+        "blockByDirection": {
+          "long": 94,
+          "short": 98
+        }
+      },
+      "summary": {
+        "status": "rejected",
+        "failures": [
+          "weak_profit_factor"
+        ],
+        "stats": {
+          "sample": 262,
+          "winRate": 0.4466,
+          "expectancyR": 0.0691,
+          "profitFactor": 1.1205,
+          "sharpe": 0.8689,
+          "deflatedSharpe": 0.8689,
+          "probabilisticSharpe": 0.6714,
+          "deflatedSharpeCalibration": {
+            "label": "approximate_multiple_testing_deflated_sharpe",
+            "implementation": "approximate_proxy",
+            "trialCount": 1,
+            "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+            "sharpeStdErr": 0.0726,
+            "multipleTestingPenalty": 0,
+            "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+          },
+          "probabilisticSharpeCalibration": {
+            "label": "diagnostic_probabilistic_sharpe_proxy",
+            "implementation": "psr_style_proxy",
+            "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+            "sample": 262,
+            "benchmarkSample": 262,
+            "observedTradeSharpe": 0.0537,
+            "benchmarkTradeSharpe": 0.0264,
+            "skewness": 0.3003,
+            "kurtosis": 1.2221,
+            "denominator": 0.992,
+            "zScore": 0.4439,
+            "probability": 0.6714,
+            "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+          },
+          "maxDrawdownR": 16.5285,
+          "worstSliceExpectancyR": -0.1997,
+          "totalNetR": 18.0924,
+          "avgCostR": 0.119
+        },
+        "splitStats": {
+          "inSample": {
+            "sample": 185,
+            "winRate": 0.4486,
+            "expectancyR": 0.0891,
+            "profitFactor": 1.1602,
+            "sharpe": 0.9474,
+            "deflatedSharpe": 0.9474,
+            "probabilisticSharpe": 0.5483,
+            "deflatedSharpeCalibration": {
+              "label": "approximate_multiple_testing_deflated_sharpe",
+              "implementation": "approximate_proxy",
+              "trialCount": 1,
+              "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+              "sharpeStdErr": 0.0887,
+              "multipleTestingPenalty": 0,
+              "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+            },
+            "probabilisticSharpeCalibration": {
+              "label": "diagnostic_probabilistic_sharpe_proxy",
+              "implementation": "psr_style_proxy",
+              "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+              "sample": 185,
+              "benchmarkSample": 185,
+              "observedTradeSharpe": 0.0697,
+              "benchmarkTradeSharpe": 0.0608,
+              "skewness": 0.2922,
+              "kurtosis": 1.228,
+              "denominator": 0.9899,
+              "zScore": 0.1213,
+              "probability": 0.5483,
+              "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+            },
+            "maxDrawdownR": 16.5285,
+            "worstSliceExpectancyR": -0.0984,
+            "totalNetR": 16.477,
+            "avgCostR": 0.1063
+          },
+          "outOfSample": {
+            "sample": 77,
+            "winRate": 0.4416,
+            "expectancyR": 0.021,
+            "profitFactor": 1.0341,
+            "sharpe": 0.1403,
+            "deflatedSharpe": 0.1403,
+            "probabilisticSharpe": 0.73,
+            "deflatedSharpeCalibration": {
+              "label": "approximate_multiple_testing_deflated_sharpe",
+              "implementation": "approximate_proxy",
+              "trialCount": 1,
+              "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+              "sharpeStdErr": 0.1153,
+              "multipleTestingPenalty": 0,
+              "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+            },
+            "probabilisticSharpeCalibration": {
+              "label": "diagnostic_probabilistic_sharpe_proxy",
+              "implementation": "psr_style_proxy",
+              "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+              "sample": 77,
+              "benchmarkSample": 77,
+              "observedTradeSharpe": 0.016,
+              "benchmarkTradeSharpe": -0.0541,
+              "skewness": 0.324,
+              "kurtosis": 1.208,
+              "denominator": 0.9974,
+              "zScore": 0.6128,
+              "probability": 0.73,
+              "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+            },
+            "maxDrawdownR": 9.9443,
+            "worstSliceExpectancyR": -0.5903,
+            "totalNetR": 1.6154,
+            "avgCostR": 0.1495
+          }
+        },
+        "baselineComparison": {
+          "method": "time_matched_alternating_direction",
+          "expectancyLiftR": 0.0357,
+          "outOfSampleExpectancyLiftR": 0.0908,
+          "deflatedSharpeLift": 0.4412,
+          "profitFactorLift": 0.0625,
+          "note": "Baseline reuses each strategy signal timestamp but alternates long/short direction deterministically; it checks whether rule direction adds value beyond matched opportunity timing."
+        },
+        "walkForward": {
+          "method": "equal_trade_count_chronological_folds",
+          "foldCount": 5,
+          "positiveFolds": 4,
+          "positiveBaselineLiftFolds": 3,
+          "positiveOutOfSampleFolds": 2,
+          "minFoldExpectancyR": -0.0478,
+          "folds": [
+            {
+              "fold": 1,
+              "sample": 52,
+              "firstEntryTime": 1634716800,
+              "lastEntryTime": 1663920000,
+              "expectancyR": -0.0478,
+              "profitFactor": 0.9232,
+              "deflatedSharpe": -0.2692,
+              "probabilisticSharpe": 0.6493,
+              "maxDrawdownR": 14.6293,
+              "baselineExpectancyR": -0.1131,
+              "expectancyLiftR": 0.0653
+            },
+            {
+              "fold": 2,
+              "sample": 52,
+              "firstEntryTime": 1664380800,
+              "lastEntryTime": 1694001600,
+              "expectancyR": 0.1448,
+              "profitFactor": 1.2671,
+              "deflatedSharpe": 0.8031,
+              "probabilisticSharpe": 0.594,
+              "maxDrawdownR": 9.6617,
+              "baselineExpectancyR": 0.1022,
+              "expectancyLiftR": 0.0426
+            },
+            {
+              "fold": 3,
+              "sample": 53,
+              "firstEntryTime": 1694995200,
+              "lastEntryTime": 1725796800,
+              "expectancyR": 0.1309,
+              "profitFactor": 1.2459,
+              "deflatedSharpe": 0.7384,
+              "probabilisticSharpe": 0.2045,
+              "maxDrawdownR": 5.3722,
+              "baselineExpectancyR": 0.2764,
+              "expectancyLiftR": -0.1455
+            },
+            {
+              "fold": 4,
+              "sample": 52,
+              "firstEntryTime": 1726070400,
+              "lastEntryTime": 1759291200,
+              "expectancyR": 0.0137,
+              "profitFactor": 1.0229,
+              "deflatedSharpe": 0.0771,
+              "probabilisticSharpe": 0.1709,
+              "maxDrawdownR": 8.6485,
+              "baselineExpectancyR": 0.1776,
+              "expectancyLiftR": -0.1639
+            },
+            {
+              "fold": 5,
+              "sample": 53,
+              "firstEntryTime": 1759622400,
+              "lastEntryTime": 1789444800,
+              "expectancyR": 0.1019,
+              "profitFactor": 1.1779,
+              "deflatedSharpe": 0.5622,
+              "probabilisticSharpe": 0.9857,
+              "maxDrawdownR": 9.6461,
+              "baselineExpectancyR": -0.2747,
+              "expectancyLiftR": 0.3766
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "transfer_ETH_4h",
+      "description": "Same MA reclaim/reject params on ETH 4h.",
+      "symbol": "ETH",
+      "timeframe": "4h",
+      "gateMode": "base",
+      "gateDiagnostics": {
+        "symbol": "ETH",
+        "timeframe": "4h",
+        "mode": "base",
+        "checkedSignals": 483,
+        "passedSignals": 276,
+        "blockedSignals": 207,
+        "regimes": {
+          "BTC_RISK_ON": 158,
+          "BTC_RISK_OFF": 152,
+          "BTC_TRANSITION": 173,
+          "BTC_STALE": 0
+        },
+        "passByDirection": {
+          "long": 140,
+          "short": 136
+        },
+        "blockByDirection": {
+          "long": 122,
+          "short": 85
+        }
+      },
+      "summary": {
+        "status": "rejected",
+        "failures": [
+          "weak_expectancy_after_costs",
+          "weak_profit_factor",
+          "deflated_sharpe_fail",
+          "drawdown_too_high",
+          "bad_failure_slice",
+          "weak_out_of_sample_expectancy",
+          "weak_baseline_lift",
+          "weak_out_of_sample_baseline_lift",
+          "weak_walk_forward_expectancy",
+          "weak_walk_forward_baseline_lift",
+          "weak_walk_forward_out_of_sample"
+        ],
+        "stats": {
+          "sample": 274,
+          "winRate": 0.3613,
+          "expectancyR": -0.1271,
+          "profitFactor": 0.8057,
+          "sharpe": -1.6908,
+          "deflatedSharpe": -1.6908,
+          "probabilisticSharpe": 0.1574,
+          "deflatedSharpeCalibration": {
+            "label": "approximate_multiple_testing_deflated_sharpe",
+            "implementation": "approximate_proxy",
+            "trialCount": 1,
+            "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+            "sharpeStdErr": 0.0943,
+            "multipleTestingPenalty": 0,
+            "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+          },
+          "probabilisticSharpeCalibration": {
+            "label": "diagnostic_probabilistic_sharpe_proxy",
+            "implementation": "psr_style_proxy",
+            "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+            "sample": 274,
+            "benchmarkSample": 274,
+            "observedTradeSharpe": -0.1021,
+            "benchmarkTradeSharpe": -0.0392,
+            "skewness": 0.6707,
+            "kurtosis": 1.5904,
+            "denominator": 1.0344,
+            "zScore": -1.0052,
+            "probability": 0.1574,
+            "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+          },
+          "maxDrawdownR": 47.3175,
+          "worstSliceExpectancyR": -0.4372,
+          "totalNetR": -34.8245,
+          "avgCostR": 0.0767
+        },
+        "splitStats": {
+          "inSample": {
+            "sample": 199,
+            "winRate": 0.3518,
+            "expectancyR": -0.1661,
+            "profitFactor": 0.7503,
+            "sharpe": -1.9172,
+            "deflatedSharpe": -1.9172,
+            "probabilisticSharpe": 0.129,
+            "deflatedSharpeCalibration": {
+              "label": "approximate_multiple_testing_deflated_sharpe",
+              "implementation": "approximate_proxy",
+              "trialCount": 1,
+              "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+              "sharpeStdErr": 0.1197,
+              "multipleTestingPenalty": 0,
+              "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+            },
+            "probabilisticSharpeCalibration": {
+              "label": "diagnostic_probabilistic_sharpe_proxy",
+              "implementation": "psr_style_proxy",
+              "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+              "sample": 199,
+              "benchmarkSample": 199,
+              "observedTradeSharpe": -0.1359,
+              "benchmarkTradeSharpe": -0.0515,
+              "skewness": 0.7303,
+              "kurtosis": 1.6917,
+              "denominator": 1.05,
+              "zScore": -1.1311,
+              "probability": 0.129,
+              "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+            },
+            "maxDrawdownR": 38.7112,
+            "worstSliceExpectancyR": -0.4178,
+            "totalNetR": -33.0479,
+            "avgCostR": 0.0757
+          },
+          "outOfSample": {
+            "sample": 75,
+            "winRate": 0.3867,
+            "expectancyR": -0.0237,
+            "profitFactor": 0.9621,
+            "sharpe": -0.1573,
+            "deflatedSharpe": -0.1573,
+            "probabilisticSharpe": 0.4626,
+            "deflatedSharpeCalibration": {
+              "label": "approximate_multiple_testing_deflated_sharpe",
+              "implementation": "approximate_proxy",
+              "trialCount": 1,
+              "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+              "sharpeStdErr": 0.117,
+              "multipleTestingPenalty": 0,
+              "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+            },
+            "probabilisticSharpeCalibration": {
+              "label": "diagnostic_probabilistic_sharpe_proxy",
+              "implementation": "psr_style_proxy",
+              "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+              "sample": 75,
+              "benchmarkSample": 75,
+              "observedTradeSharpe": -0.0182,
+              "benchmarkTradeSharpe": -0.0072,
+              "skewness": 0.5171,
+              "kurtosis": 1.3682,
+              "denominator": 1.0047,
+              "zScore": -0.0938,
+              "probability": 0.4626,
+              "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+            },
+            "maxDrawdownR": 10.6066,
+            "worstSliceExpectancyR": -0.5097,
+            "totalNetR": -1.7766,
+            "avgCostR": 0.0794
+          }
+        },
+        "baselineComparison": {
+          "method": "time_matched_alternating_direction",
+          "expectancyLiftR": -0.0779,
+          "outOfSampleExpectancyLiftR": -0.0145,
+          "deflatedSharpeLift": -1.0417,
+          "profitFactorLift": -0.1142,
+          "note": "Baseline reuses each strategy signal timestamp but alternates long/short direction deterministically; it checks whether rule direction adds value beyond matched opportunity timing."
+        },
+        "walkForward": {
+          "method": "equal_trade_count_chronological_folds",
+          "foldCount": 5,
+          "positiveFolds": 1,
+          "positiveBaselineLiftFolds": 2,
+          "positiveOutOfSampleFolds": 1,
+          "minFoldExpectancyR": -0.2746,
+          "folds": [
+            {
+              "fold": 1,
+              "sample": 54,
+              "firstEntryTime": 1634500800,
+              "lastEntryTime": 1660521600,
+              "expectancyR": -0.1703,
+              "profitFactor": 0.7403,
+              "deflatedSharpe": -1.0367,
+              "probabilisticSharpe": 0.0262,
+              "maxDrawdownR": 12.86,
+              "baselineExpectancyR": 0.1858,
+              "expectancyLiftR": -0.3561
+            },
+            {
+              "fold": 2,
+              "sample": 55,
+              "firstEntryTime": 1661486400,
+              "lastEntryTime": 1692878400,
+              "expectancyR": -0.2499,
+              "profitFactor": 0.6439,
+              "deflatedSharpe": -1.5362,
+              "probabilisticSharpe": 0.3295,
+              "maxDrawdownR": 15.0607,
+              "baselineExpectancyR": -0.1686,
+              "expectancyLiftR": -0.0813
+            },
+            {
+              "fold": 3,
+              "sample": 55,
+              "firstEntryTime": 1693929600,
+              "lastEntryTime": 1719115200,
+              "expectancyR": -0.0294,
+              "profitFactor": 0.9548,
+              "deflatedSharpe": -0.1644,
+              "probabilisticSharpe": 0.9586,
+              "maxDrawdownR": 12.1045,
+              "baselineExpectancyR": -0.3126,
+              "expectancyLiftR": 0.2832
+            },
+            {
+              "fold": 4,
+              "sample": 55,
+              "firstEntryTime": 1719331200,
+              "lastEntryTime": 1759694400,
+              "expectancyR": -0.2746,
+              "profitFactor": 0.5999,
+              "deflatedSharpe": -1.7661,
+              "probabilisticSharpe": 0.0151,
+              "maxDrawdownR": 23.5763,
+              "baselineExpectancyR": 0.1149,
+              "expectancyLiftR": -0.3895
+            },
+            {
+              "fold": 5,
+              "sample": 55,
+              "firstEntryTime": 1760529600,
+              "lastEntryTime": 1790827200,
+              "expectancyR": 0.0879,
+              "profitFactor": 1.1521,
+              "deflatedSharpe": 0.4912,
+              "probabilisticSharpe": 0.8023,
+              "maxDrawdownR": 8.9724,
+              "baselineExpectancyR": -0.0613,
+              "expectancyLiftR": 0.1492
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "transfer_SOL_1h",
+      "description": "Same MA reclaim/reject params on SOL 1h.",
+      "symbol": "SOL",
+      "timeframe": "1h",
+      "gateMode": "base",
+      "gateDiagnostics": {
+        "symbol": "SOL",
+        "timeframe": "1h",
+        "mode": "base",
+        "checkedSignals": 1942,
+        "passedSignals": 1028,
+        "blockedSignals": 914,
+        "regimes": {
+          "BTC_RISK_ON": 659,
+          "BTC_RISK_OFF": 556,
+          "BTC_TRANSITION": 727,
+          "BTC_STALE": 0
+        },
+        "passByDirection": {
+          "long": 569,
+          "short": 459
+        },
+        "blockByDirection": {
+          "long": 508,
+          "short": 406
+        }
+      },
+      "summary": {
+        "status": "rejected",
+        "failures": [
+          "weak_expectancy_after_costs",
+          "weak_profit_factor",
+          "deflated_sharpe_fail",
+          "drawdown_too_high",
+          "bad_failure_slice",
+          "weak_out_of_sample_expectancy",
+          "weak_walk_forward_expectancy",
+          "weak_walk_forward_out_of_sample"
+        ],
+        "stats": {
+          "sample": 1027,
+          "winRate": 0.372,
+          "expectancyR": -0.0769,
+          "profitFactor": 0.8878,
+          "sharpe": -1.85,
+          "deflatedSharpe": -1.85,
+          "probabilisticSharpe": 0.9902,
+          "deflatedSharpeCalibration": {
+            "label": "approximate_multiple_testing_deflated_sharpe",
+            "implementation": "approximate_proxy",
+            "trialCount": 1,
+            "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+            "sharpeStdErr": 0.0514,
+            "multipleTestingPenalty": 0,
+            "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+          },
+          "probabilisticSharpeCalibration": {
+            "label": "diagnostic_probabilistic_sharpe_proxy",
+            "implementation": "psr_style_proxy",
+            "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+            "sample": 1027,
+            "benchmarkSample": 1027,
+            "observedTradeSharpe": -0.0577,
+            "benchmarkTradeSharpe": -0.1317,
+            "skewness": 0.5458,
+            "kurtosis": 1.3308,
+            "denominator": 1.0158,
+            "zScore": 2.3336,
+            "probability": 0.9902,
+            "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+          },
+          "maxDrawdownR": 99.2511,
+          "worstSliceExpectancyR": -0.3092,
+          "totalNetR": -78.9621,
+          "avgCostR": 0.1099
+        },
+        "splitStats": {
+          "inSample": {
+            "sample": 715,
+            "winRate": 0.3594,
+            "expectancyR": -0.1059,
+            "profitFactor": 0.8475,
+            "sharpe": -2.1423,
+            "deflatedSharpe": -2.1423,
+            "probabilisticSharpe": 0.9913,
+            "deflatedSharpeCalibration": {
+              "label": "approximate_multiple_testing_deflated_sharpe",
+              "implementation": "approximate_proxy",
+              "trialCount": 1,
+              "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+              "sharpeStdErr": 0.0679,
+              "multipleTestingPenalty": 0,
+              "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+            },
+            "probabilisticSharpeCalibration": {
+              "label": "diagnostic_probabilistic_sharpe_proxy",
+              "implementation": "psr_style_proxy",
+              "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+              "sample": 715,
+              "benchmarkSample": 715,
+              "observedTradeSharpe": -0.0801,
+              "benchmarkTradeSharpe": -0.1713,
+              "skewness": 0.6081,
+              "kurtosis": 1.4049,
+              "denominator": 1.0244,
+              "zScore": 2.3778,
+              "probability": 0.9913,
+              "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+            },
+            "maxDrawdownR": 95.8106,
+            "worstSliceExpectancyR": -0.3536,
+            "totalNetR": -75.7247,
+            "avgCostR": 0.0983
+          },
+          "outOfSample": {
+            "sample": 312,
+            "winRate": 0.4006,
+            "expectancyR": -0.0104,
+            "profitFactor": 0.9844,
+            "sharpe": -0.1353,
+            "deflatedSharpe": -0.1353,
+            "probabilisticSharpe": 0.7502,
+            "deflatedSharpeCalibration": {
+              "label": "approximate_multiple_testing_deflated_sharpe",
+              "implementation": "approximate_proxy",
+              "trialCount": 1,
+              "note": "Research-only proxy: subtracts a trial-count penalty from observed trade Sharpe; useful for rejecting overfit variants, not a full institutional Deflated Sharpe Ratio implementation.",
+              "sharpeStdErr": 0.057,
+              "multipleTestingPenalty": 0,
+              "formula": "observedSharpe - sqrt(2*ln(trialCount))*sqrt((1+0.5*observedSharpe^2)/(sample-1))"
+            },
+            "probabilisticSharpeCalibration": {
+              "label": "diagnostic_probabilistic_sharpe_proxy",
+              "implementation": "psr_style_proxy",
+              "note": "Diagnostic-only PSR-style proxy: estimates probability that trade Sharpe exceeds the matched baseline Sharpe while accounting for sample length, skew, and kurtosis; not a survival gate.",
+              "sample": 312,
+              "benchmarkSample": 312,
+              "observedTradeSharpe": -0.0077,
+              "benchmarkTradeSharpe": -0.046,
+              "skewness": 0.4083,
+              "kurtosis": 1.1938,
+              "denominator": 1.0016,
+              "zScore": 0.675,
+              "probability": 0.7502,
+              "formula": "normal_cdf(((SR - SR*) * sqrt(sample - 1)) / sqrt(1 - skew*SR + ((kurtosis - 1)/4)*SR^2))"
+            },
+            "maxDrawdownR": 28.7047,
+            "worstSliceExpectancyR": -0.1669,
+            "totalNetR": -3.2374,
+            "avgCostR": 0.1364
+          }
+        },
+        "baselineComparison": {
+          "method": "time_matched_alternating_direction",
+          "expectancyLiftR": 0.0942,
+          "outOfSampleExpectancyLiftR": 0.0513,
+          "deflatedSharpeLift": 2.3715,
+          "profitFactorLift": 0.1254,
+          "note": "Baseline reuses each strategy signal timestamp but alternates long/short direction deterministically; it checks whether rule direction adds value beyond matched opportunity timing."
+        },
+        "walkForward": {
+          "method": "equal_trade_count_chronological_folds",
+          "foldCount": 5,
+          "positiveFolds": 1,
+          "positiveBaselineLiftFolds": 4,
+          "positiveOutOfSampleFolds": 0,
+          "minFoldExpectancyR": -0.1653,
+          "folds": [
+            {
+              "fold": 1,
+              "sample": 205,
+              "firstEntryTime": 1634270400,
+              "lastEntryTime": 1666195200,
+              "expectancyR": 0.0685,
+              "profitFactor": 1.1116,
+              "deflatedSharpe": 0.7261,
+              "probabilisticSharpe": 0.9733,
+              "maxDrawdownR": 13.5063,
+              "baselineExpectancyR": -0.1094,
+              "expectancyLiftR": 0.1779
+            },
+            {
+              "fold": 2,
+              "sample": 205,
+              "firstEntryTime": 1666267200,
+              "lastEntryTime": 1696053600,
+              "expectancyR": -0.1536,
+              "profitFactor": 0.7882,
+              "deflatedSharpe": -1.6597,
+              "probabilisticSharpe": 0.7883,
+              "maxDrawdownR": 39.1282,
+              "baselineExpectancyR": -0.2226,
+              "expectancyLiftR": 0.069
+            },
+            {
+              "fold": 3,
+              "sample": 206,
+              "firstEntryTime": 1696057200,
+              "lastEntryTime": 1728446400,
+              "expectancyR": -0.1653,
+              "profitFactor": 0.7712,
+              "deflatedSharpe": -1.8092,
+              "probabilisticSharpe": 0.8263,
+              "maxDrawdownR": 42.2776,
+              "baselineExpectancyR": -0.2478,
+              "expectancyLiftR": 0.0825
+            },
+            {
+              "fold": 4,
+              "sample": 205,
+              "firstEntryTime": 1728453600,
+              "lastEntryTime": 1760061600,
+              "expectancyR": -0.0475,
+              "profitFactor": 0.9292,
+              "deflatedSharpe": -0.5092,
+              "probabilisticSharpe": 0.9698,
+              "maxDrawdownR": 35.1334,
+              "baselineExpectancyR": -0.2167,
+              "expectancyLiftR": 0.1692
+            },
+            {
+              "fold": 5,
+              "sample": 206,
+              "firstEntryTime": 1760104800,
+              "lastEntryTime": 1790784000,
+              "expectancyR": -0.086,
+              "profitFactor": 0.8759,
+              "deflatedSharpe": -0.9246,
+              "probabilisticSharpe": 0.3872,
+              "maxDrawdownR": 28.7047,
+              "baselineExpectancyR": -0.0591,
+              "expectancyLiftR": -0.0269
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "stress": {
+    "byDirection": [
+      {
+        "key": "long",
+        "sample": 150,
+        "winRate": 0.4733,
+        "expectancyR": 0.2302,
+        "totalNetR": 34.5347,
+        "profitFactor": 1.452,
+        "maxDrawdownR": 11.4036
+      },
+      {
+        "key": "short",
+        "sample": 112,
+        "winRate": 0.4107,
+        "expectancyR": 0.0169,
+        "totalNetR": 1.897,
+        "profitFactor": 1.0296,
+        "maxDrawdownR": 13.3404
+      }
+    ],
+    "byMonth": [
+      {
+        "key": "2026-05",
+        "sample": 4,
+        "winRate": 1,
+        "expectancyR": 1.5145,
+        "totalNetR": 6.0581,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2026-04",
+        "sample": 4,
+        "winRate": 1,
+        "expectancyR": 1.3932,
+        "totalNetR": 5.5727,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-02",
+        "sample": 7,
+        "winRate": 0.7143,
+        "expectancyR": 0.7477,
+        "totalNetR": 5.2341,
+        "profitFactor": 3.5273,
+        "maxDrawdownR": 2.071
+      },
+      {
+        "key": "2022-03",
+        "sample": 6,
+        "winRate": 0.6667,
+        "expectancyR": 0.8171,
+        "totalNetR": 4.9029,
+        "profitFactor": 3.3326,
+        "maxDrawdownR": 1.0522
+      },
+      {
+        "key": "2024-04",
+        "sample": 3,
+        "winRate": 1,
+        "expectancyR": 1.555,
+        "totalNetR": 4.6649,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-01",
+        "sample": 6,
+        "winRate": 0.6667,
+        "expectancyR": 0.7768,
+        "totalNetR": 4.6606,
+        "profitFactor": 3.265,
+        "maxDrawdownR": 1.0316
+      },
+      {
+        "key": "2024-06",
+        "sample": 6,
+        "winRate": 0.6667,
+        "expectancyR": 0.7177,
+        "totalNetR": 4.3061,
+        "profitFactor": 4.3233,
+        "maxDrawdownR": 1.0804
+      },
+      {
+        "key": "2022-04",
+        "sample": 5,
+        "winRate": 0.8,
+        "expectancyR": 0.8521,
+        "totalNetR": 4.2605,
+        "profitFactor": 5.0784,
+        "maxDrawdownR": 1.0447
+      },
+      {
+        "key": "2023-11",
+        "sample": 5,
+        "winRate": 0.6,
+        "expectancyR": 0.843,
+        "totalNetR": 4.2152,
+        "profitFactor": 4.9455,
+        "maxDrawdownR": 1.0426
+      },
+      {
+        "key": "2025-01",
+        "sample": 5,
+        "winRate": 0.8,
+        "expectancyR": 0.8401,
+        "totalNetR": 4.2007,
+        "profitFactor": 5.1427,
+        "maxDrawdownR": 1.014
+      },
+      {
+        "key": "2023-05",
+        "sample": 4,
+        "winRate": 0.75,
+        "expectancyR": 1.0434,
+        "totalNetR": 4.1737,
+        "profitFactor": 4.9059,
+        "maxDrawdownR": 1.0686
+      },
+      {
+        "key": "2026-03",
+        "sample": 7,
+        "winRate": 0.5714,
+        "expectancyR": 0.5458,
+        "totalNetR": 3.8209,
+        "profitFactor": 2.2053,
+        "maxDrawdownR": 2.1312
+      },
+      {
+        "key": "2025-06",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.7443,
+        "totalNetR": 3.4885,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2024-10",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.7363,
+        "totalNetR": 3.4726,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2025-02",
+        "sample": 3,
+        "winRate": 1,
+        "expectancyR": 0.8202,
+        "totalNetR": 2.4605,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2024-07",
+        "sample": 3,
+        "winRate": 0.6667,
+        "expectancyR": 0.8196,
+        "totalNetR": 2.4587,
+        "profitFactor": 3.36,
+        "maxDrawdownR": 1.0418
+      },
+      {
+        "key": "2022-10",
+        "sample": 3,
+        "winRate": 0.6667,
+        "expectancyR": 0.7777,
+        "totalNetR": 2.3331,
+        "profitFactor": 3.1087,
+        "maxDrawdownR": 1.1064
+      },
+      {
+        "key": "2025-11",
+        "sample": 6,
+        "winRate": 0.5,
+        "expectancyR": 0.3538,
+        "totalNetR": 2.1227,
+        "profitFactor": 1.6773,
+        "maxDrawdownR": 1.0585
+      },
+      {
+        "key": "2022-01",
+        "sample": 4,
+        "winRate": 0.75,
+        "expectancyR": 0.4461,
+        "totalNetR": 1.7845,
+        "profitFactor": 2.6979,
+        "maxDrawdownR": 1.051
+      },
+      {
+        "key": "2021-10",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7382,
+        "totalNetR": 1.7382,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-12",
+        "sample": 4,
+        "winRate": 0.5,
+        "expectancyR": 0.3634,
+        "totalNetR": 1.4535,
+        "profitFactor": 1.7027,
+        "maxDrawdownR": 1.037
+      },
+      {
+        "key": "2021-12",
+        "sample": 4,
+        "winRate": 0.5,
+        "expectancyR": 0.3617,
+        "totalNetR": 1.4468,
+        "profitFactor": 1.6985,
+        "maxDrawdownR": 1.0465
+      },
+      {
+        "key": "2026-06",
+        "sample": 7,
+        "winRate": 0.4286,
+        "expectancyR": 0.2033,
+        "totalNetR": 1.4228,
+        "profitFactor": 1.3818,
+        "maxDrawdownR": 2.6774
+      },
+      {
+        "key": "2023-04",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.7015,
+        "totalNetR": 1.403,
+        "profitFactor": 54.6822,
+        "maxDrawdownR": 0.0261
+      },
+      {
+        "key": "2024-11",
+        "sample": 7,
+        "winRate": 0.4286,
+        "expectancyR": 0.1681,
+        "totalNetR": 1.1766,
+        "profitFactor": 1.2857,
+        "maxDrawdownR": 4.1181
+      },
+      {
+        "key": "2024-03",
+        "sample": 8,
+        "winRate": 0.5,
+        "expectancyR": 0.1452,
+        "totalNetR": 1.1612,
+        "profitFactor": 1.279,
+        "maxDrawdownR": 2.0835
+      },
+      {
+        "key": "2022-05",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.3687,
+        "totalNetR": 0.7375,
+        "profitFactor": 1.7194,
+        "maxDrawdownR": 1.0252
+      },
+      {
+        "key": "2024-02",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.3541,
+        "totalNetR": 0.7082,
+        "profitFactor": 1.683,
+        "maxDrawdownR": 1.0369
+      },
+      {
+        "key": "2025-08",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.346,
+        "totalNetR": 0.692,
+        "profitFactor": 1.6563,
+        "maxDrawdownR": 1.0544
+      },
+      {
+        "key": "2022-11",
+        "sample": 3,
+        "winRate": 0.6667,
+        "expectancyR": 0.215,
+        "totalNetR": 0.6449,
+        "profitFactor": 1.6162,
+        "maxDrawdownR": 1.0466
+      },
+      {
+        "key": "2026-09",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.3144,
+        "totalNetR": 0.6287,
+        "profitFactor": 1.5732,
+        "maxDrawdownR": 1.0969
+      },
+      {
+        "key": "2022-02",
+        "sample": 5,
+        "winRate": 0.4,
+        "expectancyR": 0.0885,
+        "totalNetR": 0.4427,
+        "profitFactor": 1.1427,
+        "maxDrawdownR": 2.0697
+      },
+      {
+        "key": "2024-08",
+        "sample": 5,
+        "winRate": 0.4,
+        "expectancyR": 0.0701,
+        "totalNetR": 0.3504,
+        "profitFactor": 1.1122,
+        "maxDrawdownR": 3.122
+      },
+      {
+        "key": "2023-03",
+        "sample": 8,
+        "winRate": 0.375,
+        "expectancyR": 0.017,
+        "totalNetR": 0.1363,
+        "profitFactor": 1.0265,
+        "maxDrawdownR": 5.1471
+      },
+      {
+        "key": "2025-10",
+        "sample": 4,
+        "winRate": 0.5,
+        "expectancyR": 0.034,
+        "totalNetR": 0.1358,
+        "profitFactor": 1.0645,
+        "maxDrawdownR": 2.1074
+      },
+      {
+        "key": "2026-01",
+        "sample": 4,
+        "winRate": 0.5,
+        "expectancyR": 0.0317,
+        "totalNetR": 0.1269,
+        "profitFactor": 1.0736,
+        "maxDrawdownR": 1.6034
+      },
+      {
+        "key": "2026-08",
+        "sample": 5,
+        "winRate": 0.4,
+        "expectancyR": 0.0136,
+        "totalNetR": 0.0679,
+        "profitFactor": 1.0205,
+        "maxDrawdownR": 3.3155
+      },
+      {
+        "key": "2022-12",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -0.3307,
+        "totalNetR": -0.3307,
+        "profitFactor": 0,
+        "maxDrawdownR": 0.3307
+      },
+      {
+        "key": "2023-07",
+        "sample": 3,
+        "winRate": 0.3333,
+        "expectancyR": -0.1237,
+        "totalNetR": -0.3711,
+        "profitFactor": 0.8246,
+        "maxDrawdownR": 2.1161
+      },
+      {
+        "key": "2024-12",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -0.5047,
+        "totalNetR": -0.5047,
+        "profitFactor": 0,
+        "maxDrawdownR": 0.5047
+      },
+      {
+        "key": "2026-02",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -0.5487,
+        "totalNetR": -1.0973,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0973
+      },
+      {
+        "key": "2023-06",
+        "sample": 4,
+        "winRate": 0.25,
+        "expectancyR": -0.3504,
+        "totalNetR": -1.4018,
+        "profitFactor": 0.5523,
+        "maxDrawdownR": 3.1312
+      },
+      {
+        "key": "2025-09",
+        "sample": 4,
+        "winRate": 0.25,
+        "expectancyR": -0.355,
+        "totalNetR": -1.4199,
+        "profitFactor": 0.5498,
+        "maxDrawdownR": 2.0855
+      },
+      {
+        "key": "2023-09",
+        "sample": 4,
+        "winRate": 0.25,
+        "expectancyR": -0.3759,
+        "totalNetR": -1.5035,
+        "profitFactor": 0.5355,
+        "maxDrawdownR": 2.1276
+      },
+      {
+        "key": "2025-04",
+        "sample": 6,
+        "winRate": 0.3333,
+        "expectancyR": -0.2533,
+        "totalNetR": -1.5197,
+        "profitFactor": 0.6381,
+        "maxDrawdownR": 3.1782
+      },
+      {
+        "key": "2024-09",
+        "sample": 10,
+        "winRate": 0.3,
+        "expectancyR": -0.1792,
+        "totalNetR": -1.7915,
+        "profitFactor": 0.7314,
+        "maxDrawdownR": 3.5124
+      },
+      {
+        "key": "2025-05",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -1.0582,
+        "totalNetR": -2.1163,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.1163
+      },
+      {
+        "key": "2024-01",
+        "sample": 3,
+        "winRate": 0,
+        "expectancyR": -0.7484,
+        "totalNetR": -2.2452,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.2452
+      },
+      {
+        "key": "2021-11",
+        "sample": 5,
+        "winRate": 0.2,
+        "expectancyR": -0.473,
+        "totalNetR": -2.3652,
+        "profitFactor": 0.4259,
+        "maxDrawdownR": 3.0798
+      },
+      {
+        "key": "2025-12",
+        "sample": 5,
+        "winRate": 0.2,
+        "expectancyR": -0.5001,
+        "totalNetR": -2.5006,
+        "profitFactor": 0.4081,
+        "maxDrawdownR": 4.2248
+      },
+      {
+        "key": "2022-09",
+        "sample": 7,
+        "winRate": 0.2857,
+        "expectancyR": -0.369,
+        "totalNetR": -2.5833,
+        "profitFactor": 0.4153,
+        "maxDrawdownR": 2.6023
+      },
+      {
+        "key": "2022-08",
+        "sample": 7,
+        "winRate": 0.2857,
+        "expectancyR": -0.3739,
+        "totalNetR": -2.6173,
+        "profitFactor": 0.4258,
+        "maxDrawdownR": 4.5583
+      },
+      {
+        "key": "2023-08",
+        "sample": 7,
+        "winRate": 0.2857,
+        "expectancyR": -0.3839,
+        "totalNetR": -2.6872,
+        "profitFactor": 0.5022,
+        "maxDrawdownR": 3.2307
+      },
+      {
+        "key": "2025-07",
+        "sample": 7,
+        "winRate": 0.2857,
+        "expectancyR": -0.398,
+        "totalNetR": -2.7857,
+        "profitFactor": 0.4736,
+        "maxDrawdownR": 3.1782
+      },
+      {
+        "key": "2023-10",
+        "sample": 5,
+        "winRate": 0,
+        "expectancyR": -0.5901,
+        "totalNetR": -2.9503,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.9503
+      },
+      {
+        "key": "2025-03",
+        "sample": 3,
+        "winRate": 0,
+        "expectancyR": -1.0283,
+        "totalNetR": -3.0848,
+        "profitFactor": 0,
+        "maxDrawdownR": 3.0848
+      },
+      {
+        "key": "2022-07",
+        "sample": 3,
+        "winRate": 0,
+        "expectancyR": -1.0337,
+        "totalNetR": -3.1012,
+        "profitFactor": 0,
+        "maxDrawdownR": 3.1012
+      },
+      {
+        "key": "2024-05",
+        "sample": 4,
+        "winRate": 0,
+        "expectancyR": -1.0419,
+        "totalNetR": -4.1675,
+        "profitFactor": 0,
+        "maxDrawdownR": 4.1675
+      },
+      {
+        "key": "2026-07",
+        "sample": 4,
+        "winRate": 0,
+        "expectancyR": -1.0782,
+        "totalNetR": -4.3127,
+        "profitFactor": 0,
+        "maxDrawdownR": 4.3127
+      },
+      {
+        "key": "2022-06",
+        "sample": 5,
+        "winRate": 0,
+        "expectancyR": -0.955,
+        "totalNetR": -4.7751,
+        "profitFactor": 0,
+        "maxDrawdownR": 4.7751
+      }
+    ],
+    "byWeek": [
+      {
+        "key": "2023-W07",
+        "sample": 4,
+        "winRate": 1,
+        "expectancyR": 1.388,
+        "totalNetR": 5.552,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-W11",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.7674,
+        "totalNetR": 3.5349,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2024-W24",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.7621,
+        "totalNetR": 3.5242,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2021-W51",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.7591,
+        "totalNetR": 3.5182,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-W48",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.7557,
+        "totalNetR": 3.5114,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2024-W17",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.7533,
+        "totalNetR": 3.5065,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-W19",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.7521,
+        "totalNetR": 3.5041,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2024-W42",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.7363,
+        "totalNetR": 3.4726,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2024-W34",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.7362,
+        "totalNetR": 3.4724,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2026-W11",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.7319,
+        "totalNetR": 3.4638,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2026-W16",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.7303,
+        "totalNetR": 3.4605,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2026-W01",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.7273,
+        "totalNetR": 3.4546,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2025-W02",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.7161,
+        "totalNetR": 3.4321,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-W02",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.5966,
+        "totalNetR": 3.1933,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2026-W22",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.3111,
+        "totalNetR": 2.6221,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2022-W08",
+        "sample": 3,
+        "winRate": 0.6667,
+        "expectancyR": 0.8375,
+        "totalNetR": 2.5124,
+        "profitFactor": 3.4344,
+        "maxDrawdownR": 1.032
+      },
+      {
+        "key": "2026-W10",
+        "sample": 3,
+        "winRate": 0.6667,
+        "expectancyR": 0.8295,
+        "totalNetR": 2.4884,
+        "profitFactor": 3.3954,
+        "maxDrawdownR": 1.0388
+      },
+      {
+        "key": "2025-W47",
+        "sample": 3,
+        "winRate": 0.6667,
+        "expectancyR": 0.8274,
+        "totalNetR": 2.4822,
+        "profitFactor": 3.394,
+        "maxDrawdownR": 1.0368
+      },
+      {
+        "key": "2022-W12",
+        "sample": 3,
+        "winRate": 0.6667,
+        "expectancyR": 0.8171,
+        "totalNetR": 2.4512,
+        "profitFactor": 3.3353,
+        "maxDrawdownR": 1.0496
+      },
+      {
+        "key": "2025-W40",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.1216,
+        "totalNetR": 2.2432,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2026-W15",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 1.0561,
+        "totalNetR": 2.1121,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2026-W24",
+        "sample": 4,
+        "winRate": 0.5,
+        "expectancyR": 0.4509,
+        "totalNetR": 1.8034,
+        "profitFactor": 2.0969,
+        "maxDrawdownR": 1.6441
+      },
+      {
+        "key": "2022-W15",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 0.8948,
+        "totalNetR": 1.7895,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2022-W03",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7673,
+        "totalNetR": 1.7673,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2022-W18",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7626,
+        "totalNetR": 1.7626,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2022-W14",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7603,
+        "totalNetR": 1.7603,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2024-W47",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7587,
+        "totalNetR": 1.7587,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2022-W32",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7557,
+        "totalNetR": 1.7557,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2024-W29",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7552,
+        "totalNetR": 1.7552,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2022-W43",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7543,
+        "totalNetR": 1.7543,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-W06",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7531,
+        "totalNetR": 1.7531,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-W01",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7516,
+        "totalNetR": 1.7516,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-W09",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7485,
+        "totalNetR": 1.7485,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2025-W33",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7463,
+        "totalNetR": 1.7463,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2022-W10",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7454,
+        "totalNetR": 1.7454,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2024-W28",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7453,
+        "totalNetR": 1.7453,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2025-W26",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7453,
+        "totalNetR": 1.7453,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2024-W07",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7452,
+        "totalNetR": 1.7452,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-W28",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.745,
+        "totalNetR": 1.745,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2025-W25",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7433,
+        "totalNetR": 1.7433,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2021-W42",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7382,
+        "totalNetR": 1.7382,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-W21",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7381,
+        "totalNetR": 1.7381,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-W44",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.8687,
+        "totalNetR": 1.7373,
+        "profitFactor": 68.351,
+        "maxDrawdownR": 0.0258
+      },
+      {
+        "key": "2025-W38",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7338,
+        "totalNetR": 1.7338,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2025-W03",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7329,
+        "totalNetR": 1.7329,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2026-W21",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.73,
+        "totalNetR": 1.73,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2026-W38",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7256,
+        "totalNetR": 1.7256,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2026-W19",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.7059,
+        "totalNetR": 1.7059,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2022-W46",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 0.8457,
+        "totalNetR": 1.6915,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2022-W41",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.6852,
+        "totalNetR": 1.6852,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2024-W10",
+        "sample": 6,
+        "winRate": 0.5,
+        "expectancyR": 0.258,
+        "totalNetR": 1.5482,
+        "profitFactor": 1.4962,
+        "maxDrawdownR": 2.0835
+      },
+      {
+        "key": "2024-W25",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.7604,
+        "totalNetR": 1.5208,
+        "profitFactor": 8.0632,
+        "maxDrawdownR": 0.2153
+      },
+      {
+        "key": "2025-W28",
+        "sample": 3,
+        "winRate": 0.6667,
+        "expectancyR": 0.4817,
+        "totalNetR": 1.4451,
+        "profitFactor": 2.3611,
+        "maxDrawdownR": 1.0617
+      },
+      {
+        "key": "2023-W16",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.4291,
+        "totalNetR": 1.4291,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2025-W06",
+        "sample": 2,
+        "winRate": 1,
+        "expectancyR": 0.6743,
+        "totalNetR": 1.3485,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2026-W32",
+        "sample": 4,
+        "winRate": 0.5,
+        "expectancyR": 0.2942,
+        "totalNetR": 1.1767,
+        "profitFactor": 1.5332,
+        "maxDrawdownR": 2.2068
+      },
+      {
+        "key": "2024-W16",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.1584,
+        "totalNetR": 1.1584,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2025-W07",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 1.112,
+        "totalNetR": 1.112,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-W34",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 0.9783,
+        "totalNetR": 0.9783,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2025-W16",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 0.9318,
+        "totalNetR": 0.9318,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-W03",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.3737,
+        "totalNetR": 0.7474,
+        "profitFactor": 1.7284,
+        "maxDrawdownR": 1.0261
+      },
+      {
+        "key": "2021-W46",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.3644,
+        "totalNetR": 0.7287,
+        "profitFactor": 1.7105,
+        "maxDrawdownR": 1.0256
+      },
+      {
+        "key": "2023-W45",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.361,
+        "totalNetR": 0.722,
+        "profitFactor": 1.6925,
+        "maxDrawdownR": 1.0426
+      },
+      {
+        "key": "2022-W17",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.3553,
+        "totalNetR": 0.7106,
+        "profitFactor": 1.6802,
+        "maxDrawdownR": 1.0447
+      },
+      {
+        "key": "2022-W11",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.3531,
+        "totalNetR": 0.7063,
+        "profitFactor": 1.6712,
+        "maxDrawdownR": 1.0522
+      },
+      {
+        "key": "2025-W45",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.3495,
+        "totalNetR": 0.699,
+        "profitFactor": 1.673,
+        "maxDrawdownR": 1.0385
+      },
+      {
+        "key": "2025-W17",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.3464,
+        "totalNetR": 0.6928,
+        "profitFactor": 1.6565,
+        "maxDrawdownR": 1.0553
+      },
+      {
+        "key": "2022-W01",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 0.6748,
+        "totalNetR": 0.6748,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2026-W23",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.3345,
+        "totalNetR": 0.669,
+        "profitFactor": 1.6474,
+        "maxDrawdownR": 1.0333
+      },
+      {
+        "key": "2024-W13",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 0.6546,
+        "totalNetR": 0.6546,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-W33",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.3182,
+        "totalNetR": 0.6365,
+        "profitFactor": 1.5807,
+        "maxDrawdownR": 1.0961
+      },
+      {
+        "key": "2023-W38",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": 0.3121,
+        "totalNetR": 0.6241,
+        "profitFactor": 1.5629,
+        "maxDrawdownR": 1.1089
+      },
+      {
+        "key": "2026-W04",
+        "sample": 1,
+        "winRate": 1,
+        "expectancyR": 0.1205,
+        "totalNetR": 0.1205,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "2023-W15",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -0.0261,
+        "totalNetR": -0.0261,
+        "profitFactor": 0,
+        "maxDrawdownR": 0.0261
+      },
+      {
+        "key": "2026-W06",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -0.0556,
+        "totalNetR": -0.0556,
+        "profitFactor": 0,
+        "maxDrawdownR": 0.0556
+      },
+      {
+        "key": "2023-W49",
+        "sample": 3,
+        "winRate": 0.3333,
+        "expectancyR": -0.1006,
+        "totalNetR": -0.3019,
+        "profitFactor": 0.854,
+        "maxDrawdownR": 1.037
+      },
+      {
+        "key": "2022-W38",
+        "sample": 3,
+        "winRate": 0.3333,
+        "expectancyR": -0.1046,
+        "totalNetR": -0.3138,
+        "profitFactor": 0.8487,
+        "maxDrawdownR": 2.0734
+      },
+      {
+        "key": "2024-W36",
+        "sample": 3,
+        "winRate": 0.3333,
+        "expectancyR": -0.1086,
+        "totalNetR": -0.3258,
+        "profitFactor": 0.8438,
+        "maxDrawdownR": 1.0471
+      },
+      {
+        "key": "2022-W52",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -0.3307,
+        "totalNetR": -0.3307,
+        "profitFactor": 0,
+        "maxDrawdownR": 0.3307
+      },
+      {
+        "key": "2024-W39",
+        "sample": 3,
+        "winRate": 0.3333,
+        "expectancyR": -0.1264,
+        "totalNetR": -0.3793,
+        "profitFactor": 0.8217,
+        "maxDrawdownR": 1.0721
+      },
+      {
+        "key": "2024-W49",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -0.5047,
+        "totalNetR": -0.5047,
+        "profitFactor": 0,
+        "maxDrawdownR": 0.5047
+      },
+      {
+        "key": "2022-W39",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": -0.2644,
+        "totalNetR": -0.5289,
+        "profitFactor": 0.1245,
+        "maxDrawdownR": 0.604
+      },
+      {
+        "key": "2024-W46",
+        "sample": 6,
+        "winRate": 0.3333,
+        "expectancyR": -0.097,
+        "totalNetR": -0.5821,
+        "profitFactor": 0.8587,
+        "maxDrawdownR": 4.1181
+      },
+      {
+        "key": "2022-W02",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": -0.3288,
+        "totalNetR": -0.6576,
+        "profitFactor": 0.3744,
+        "maxDrawdownR": 1.051
+      },
+      {
+        "key": "2026-W03",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -0.6621,
+        "totalNetR": -0.6621,
+        "profitFactor": 0,
+        "maxDrawdownR": 0.6621
+      },
+      {
+        "key": "2023-W43",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -0.6998,
+        "totalNetR": -0.6998,
+        "profitFactor": 0,
+        "maxDrawdownR": 0.6998
+      },
+      {
+        "key": "2025-W04",
+        "sample": 2,
+        "winRate": 0.5,
+        "expectancyR": -0.4822,
+        "totalNetR": -0.9644,
+        "profitFactor": 0.0489,
+        "maxDrawdownR": 1.014
+      },
+      {
+        "key": "2025-W15",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0214,
+        "totalNetR": -1.0214,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0214
+      },
+      {
+        "key": "2021-W50",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0249,
+        "totalNetR": -1.0249,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0249
+      },
+      {
+        "key": "2022-W21",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0252,
+        "totalNetR": -1.0252,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0252
+      },
+      {
+        "key": "2025-W10",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0256,
+        "totalNetR": -1.0256,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0256
+      },
+      {
+        "key": "2024-W18",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0261,
+        "totalNetR": -1.0261,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0261
+      },
+      {
+        "key": "2022-W23",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0289,
+        "totalNetR": -1.0289,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0289
+      },
+      {
+        "key": "2022-W29",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0289,
+        "totalNetR": -1.0289,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0289
+      },
+      {
+        "key": "2022-W22",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0312,
+        "totalNetR": -1.0312,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0312
+      },
+      {
+        "key": "2023-W04",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0316,
+        "totalNetR": -1.0316,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0316
+      },
+      {
+        "key": "2022-W26",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0347,
+        "totalNetR": -1.0347,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0347
+      },
+      {
+        "key": "2022-W33",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0372,
+        "totalNetR": -1.0372,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0372
+      },
+      {
+        "key": "2022-W27",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0376,
+        "totalNetR": -1.0376,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0376
+      },
+      {
+        "key": "2021-W45",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0398,
+        "totalNetR": -1.0398,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0398
+      },
+      {
+        "key": "2024-W21",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0401,
+        "totalNetR": -1.0401,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0401
+      },
+      {
+        "key": "2024-W33",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0409,
+        "totalNetR": -1.0409,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0409
+      },
+      {
+        "key": "2024-W11",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0415,
+        "totalNetR": -1.0415,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0415
+      },
+      {
+        "key": "2026-W07",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0417,
+        "totalNetR": -1.0417,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0417
+      },
+      {
+        "key": "2024-W27",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0418,
+        "totalNetR": -1.0418,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0418
+      },
+      {
+        "key": "2025-W43",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0424,
+        "totalNetR": -1.0424,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0424
+      },
+      {
+        "key": "2021-W52",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0465,
+        "totalNetR": -1.0465,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0465
+      },
+      {
+        "key": "2022-W47",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0466,
+        "totalNetR": -1.0466,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0466
+      },
+      {
+        "key": "2026-W25",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0496,
+        "totalNetR": -1.0496,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0496
+      },
+      {
+        "key": "2025-W30",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0503,
+        "totalNetR": -1.0503,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0503
+      },
+      {
+        "key": "2025-W49",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0515,
+        "totalNetR": -1.0515,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0515
+      },
+      {
+        "key": "2026-W14",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0533,
+        "totalNetR": -1.0533,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0533
+      },
+      {
+        "key": "2025-W34",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0544,
+        "totalNetR": -1.0544,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0544
+      },
+      {
+        "key": "2025-W48",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0585,
+        "totalNetR": -1.0585,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0585
+      },
+      {
+        "key": "2026-W05",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0618,
+        "totalNetR": -1.0618,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0618
+      },
+      {
+        "key": "2025-W41",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.065,
+        "totalNetR": -1.065,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.065
+      },
+      {
+        "key": "2025-W29",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0662,
+        "totalNetR": -1.0662,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0662
+      },
+      {
+        "key": "2025-W36",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0681,
+        "totalNetR": -1.0681,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0681
+      },
+      {
+        "key": "2023-W20",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0686,
+        "totalNetR": -1.0686,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0686
+      },
+      {
+        "key": "2023-W32",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0712,
+        "totalNetR": -1.0712,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0712
+      },
+      {
+        "key": "2025-W52",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0741,
+        "totalNetR": -1.0741,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0741
+      },
+      {
+        "key": "2026-W27",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0766,
+        "totalNetR": -1.0766,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0766
+      },
+      {
+        "key": "2026-W12",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.078,
+        "totalNetR": -1.078,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.078
+      },
+      {
+        "key": "2024-W23",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0804,
+        "totalNetR": -1.0804,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0804
+      },
+      {
+        "key": "2024-W37",
+        "sample": 4,
+        "winRate": 0.25,
+        "expectancyR": -0.2716,
+        "totalNetR": -1.0864,
+        "profitFactor": 0.5578,
+        "maxDrawdownR": 2.4568
+      },
+      {
+        "key": "2026-W30",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0911,
+        "totalNetR": -1.0911,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0911
+      },
+      {
+        "key": "2026-W37",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.0969,
+        "totalNetR": -1.0969,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.0969
+      },
+      {
+        "key": "2022-W40",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.1064,
+        "totalNetR": -1.1064,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.1064
+      },
+      {
+        "key": "2026-W31",
+        "sample": 1,
+        "winRate": 0,
+        "expectancyR": -1.1088,
+        "totalNetR": -1.1088,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.1088
+      },
+      {
+        "key": "2024-W02",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -0.6035,
+        "totalNetR": -1.2071,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.2071
+      },
+      {
+        "key": "2023-W25",
+        "sample": 4,
+        "winRate": 0.25,
+        "expectancyR": -0.3504,
+        "totalNetR": -1.4018,
+        "profitFactor": 0.5523,
+        "maxDrawdownR": 3.1312
+      },
+      {
+        "key": "2022-W34",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -0.7177,
+        "totalNetR": -1.4354,
+        "profitFactor": 0,
+        "maxDrawdownR": 1.4354
+      },
+      {
+        "key": "2024-W22",
+        "sample": 3,
+        "winRate": 0.3333,
+        "expectancyR": -0.5866,
+        "totalNetR": -1.7597,
+        "profitFactor": 0.1625,
+        "maxDrawdownR": 2.1012
+      },
+      {
+        "key": "2021-W47",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -1.0271,
+        "totalNetR": -2.0541,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.0541
+      },
+      {
+        "key": "2025-W11",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -1.0296,
+        "totalNetR": -2.0592,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.0592
+      },
+      {
+        "key": "2022-W07",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -1.0348,
+        "totalNetR": -2.0697,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.0697
+      },
+      {
+        "key": "2023-W05",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -1.0355,
+        "totalNetR": -2.071,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.071
+      },
+      {
+        "key": "2024-W05",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -1.0375,
+        "totalNetR": -2.0751,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.0751
+      },
+      {
+        "key": "2024-W32",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -1.0405,
+        "totalNetR": -2.0811,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.0811
+      },
+      {
+        "key": "2025-W39",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -1.0428,
+        "totalNetR": -2.0855,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.0855
+      },
+      {
+        "key": "2025-W51",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -1.0496,
+        "totalNetR": -2.0992,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.0992
+      },
+      {
+        "key": "2025-W27",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -1.0572,
+        "totalNetR": -2.1143,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.1143
+      },
+      {
+        "key": "2023-W27",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -1.058,
+        "totalNetR": -2.1161,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.1161
+      },
+      {
+        "key": "2025-W22",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -1.0582,
+        "totalNetR": -2.1163,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.1163
+      },
+      {
+        "key": "2025-W18",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -1.0614,
+        "totalNetR": -2.1229,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.1229
+      },
+      {
+        "key": "2023-W36",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -1.0638,
+        "totalNetR": -2.1276,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.1276
+      },
+      {
+        "key": "2026-W28",
+        "sample": 2,
+        "winRate": 0,
+        "expectancyR": -1.0725,
+        "totalNetR": -2.145,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.145
+      },
+      {
+        "key": "2023-W40",
+        "sample": 4,
+        "winRate": 0,
+        "expectancyR": -0.5626,
+        "totalNetR": -2.2505,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.2505
+      },
+      {
+        "key": "2022-W24",
+        "sample": 3,
+        "winRate": 0,
+        "expectancyR": -0.905,
+        "totalNetR": -2.715,
+        "profitFactor": 0,
+        "maxDrawdownR": 2.715
+      },
+      {
+        "key": "2023-W35",
+        "sample": 3,
+        "winRate": 0,
+        "expectancyR": -1.0769,
+        "totalNetR": -3.2307,
+        "profitFactor": 0,
+        "maxDrawdownR": 3.2307
+      },
+      {
+        "key": "2022-W35",
+        "sample": 5,
+        "winRate": 0.2,
+        "expectancyR": -0.7282,
+        "totalNetR": -3.6412,
+        "profitFactor": 0.0484,
+        "maxDrawdownR": 3.6412
+      },
+      {
+        "key": "2023-W12",
+        "sample": 5,
+        "winRate": 0,
+        "expectancyR": -1.0294,
+        "totalNetR": -5.1471,
+        "profitFactor": 0,
+        "maxDrawdownR": 5.1471
+      }
+    ],
+    "byExitReason": [
+      {
+        "key": "target",
+        "sample": 90,
+        "winRate": 1,
+        "expectancyR": 1.7459,
+        "totalNetR": 157.1302,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      {
+        "key": "horizon",
+        "sample": 44,
+        "winRate": 0.6136,
+        "expectancyR": 0.3079,
+        "totalNetR": 13.5474,
+        "profitFactor": 3.2084,
+        "maxDrawdownR": 2.099
+      },
+      {
+        "key": "stop",
+        "sample": 128,
+        "winRate": 0,
+        "expectancyR": -1.0488,
+        "totalNetR": -134.2459,
+        "profitFactor": 0,
+        "maxDrawdownR": 134.2459
+      }
+    ],
+    "byRegime": [
+      {
+        "key": "up|mid-vol",
+        "sample": 73,
+        "winRate": 0.5205,
+        "expectancyR": 0.3537,
+        "totalNetR": 25.821,
+        "profitFactor": 1.715,
+        "maxDrawdownR": 6.4622
+      },
+      {
+        "key": "down|mid-vol",
+        "sample": 44,
+        "winRate": 0.5227,
+        "expectancyR": 0.2758,
+        "totalNetR": 12.1351,
+        "profitFactor": 1.5379,
+        "maxDrawdownR": 5.7877
+      },
+      {
+        "key": "up|high-vol",
+        "sample": 77,
+        "winRate": 0.4286,
+        "expectancyR": 0.1132,
+        "totalNetR": 8.7137,
+        "profitFactor": 1.2163,
+        "maxDrawdownR": 9.8693
+      },
+      {
+        "key": "down|high-vol",
+        "sample": 68,
+        "winRate": 0.3382,
+        "expectancyR": -0.1506,
+        "totalNetR": -10.2381,
+        "profitFactor": 0.7528,
+        "maxDrawdownR": 14.368
+      }
+    ],
+    "removeBestDirection": {
+      "label": "remove_best_direction",
+      "removedKey": "long",
+      "removed": {
+        "key": "long",
+        "sample": 150,
+        "winRate": 0.4733,
+        "expectancyR": 0.2302,
+        "totalNetR": 34.5347,
+        "profitFactor": 1.452,
+        "maxDrawdownR": 11.4036
+      },
+      "remainder": {
+        "sample": 112,
+        "winRate": 0.4107,
+        "expectancyR": 0.0169,
+        "totalNetR": 1.897,
+        "profitFactor": 1.0296,
+        "maxDrawdownR": 13.3404
+      }
+    },
+    "removeBestMonth": {
+      "label": "remove_best_month",
+      "removedKey": "2026-05",
+      "removed": {
+        "key": "2026-05",
+        "sample": 4,
+        "winRate": 1,
+        "expectancyR": 1.5145,
+        "totalNetR": 6.0581,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      "remainder": {
+        "sample": 258,
+        "winRate": 0.438,
+        "expectancyR": 0.1177,
+        "totalNetR": 30.3736,
+        "profitFactor": 1.2164,
+        "maxDrawdownR": 15.2085
+      }
+    },
+    "removeBestWeek": {
+      "label": "remove_best_week",
+      "removedKey": "2023-W07",
+      "removed": {
+        "key": "2023-W07",
+        "sample": 4,
+        "winRate": 1,
+        "expectancyR": 1.388,
+        "totalNetR": 5.552,
+        "profitFactor": null,
+        "maxDrawdownR": 0
+      },
+      "remainder": {
+        "sample": 258,
+        "winRate": 0.438,
+        "expectancyR": 0.1197,
+        "totalNetR": 30.8797,
+        "profitFactor": 1.22,
+        "maxDrawdownR": 15.2085
+      }
+    },
+    "worstLossRuns": [
+      {
+        "start": "2022-05-29T00:00:00.000Z",
+        "end": "2022-07-22T12:00:00.000Z",
+        "trades": 9,
+        "netR": -8.9015,
+        "directions": [
+          "long",
+          "short"
+        ],
+        "regimes": [
+          "down|high-vol",
+          "up|high-vol"
+        ]
+      },
+      {
+        "start": "2026-06-17T12:00:00.000Z",
+        "end": "2026-08-06T16:00:00.000Z",
+        "trades": 8,
+        "netR": -8.6778,
+        "directions": [
+          "long",
+          "short"
+        ],
+        "regimes": [
+          "down|mid-vol",
+          "up|mid-vol"
+        ]
+      },
+      {
+        "start": "2023-08-28T04:00:00.000Z",
+        "end": "2023-09-07T20:00:00.000Z",
+        "trades": 5,
+        "netR": -5.3584,
+        "directions": [
+          "long",
+          "short"
+        ],
+        "regimes": [
+          "down|mid-vol",
+          "up|mid-vol"
+        ]
+      },
+      {
+        "start": "2025-04-26T00:00:00.000Z",
+        "end": "2025-05-28T12:00:00.000Z",
+        "trades": 5,
+        "netR": -5.2945,
+        "directions": [
+          "long"
+        ],
+        "regimes": [
+          "up|mid-vol"
+        ]
+      },
+      {
+        "start": "2025-11-28T08:00:00.000Z",
+        "end": "2025-12-26T00:00:00.000Z",
+        "trades": 5,
+        "netR": -5.2833,
+        "directions": [
+          "long",
+          "short"
+        ],
+        "regimes": [
+          "down|high-vol",
+          "down|mid-vol",
+          "up|mid-vol"
+        ]
+      }
+    ]
+  },
+  "limitations": [
+    "This reruns candle-level public OHLCV backtests only; it does not model order book queueing, funding, margin, live fills, or exchange outages.",
+    "The survivor came from a spam search, so multiple-testing and selection bias remain material even when a stress row passes.",
+    "Symbol-transfer checks use the same simple MA reclaim/reject params, not a newly optimized symbol-specific strategy.",
+    "BTC gate classification is a coarse candle-level regime proxy, not full TA/orderflow confirmation."
+  ]
+}

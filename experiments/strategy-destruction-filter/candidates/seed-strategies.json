@@ -1,0 +1,406 @@
+[
+  {
+    "id": "alert-edge-xrp-range-breakout-v0",
+    "idea": "Retest the strongest current liquid alert-edge B-tier bucket: XRP 4h range breakout long in an up/mid-vol regime.",
+    "family": "alert_edge_breakout",
+    "rule": "breakout",
+    "directions": ["long"],
+    "thesis": {
+      "mechanism": "The liquid alert-edge backtest currently shows XRP 4h range_breakout_long in up/mid-vol as the strongest B-tier bucket, suggesting participation-backed breakouts may persist when symbol, timeframe, and regime align.",
+      "edgeSpeed": "hours",
+      "expectedBehavior": "XRP 4h up/mid-vol long breakouts should keep positive expectancy, beat a matched timestamp baseline, and survive out-of-sample after fees and slippage.",
+      "falsifiableClaim": "Reject if the alert-edge bucket does not survive the stricter destruction filter, especially out-of-sample, baseline lift, drawdown, and walk-forward stability."
+    },
+    "dataRequirements": {
+      "markets": ["spot"],
+      "requiredFeatures": ["ohlcv", "volume", "rsi", "trend", "volatility"],
+      "minLookbackDays": 365
+    },
+    "validation": {
+      "baseline": "time_matched_alternating_direction",
+      "gates": ["minSample", "expectancy", "profitFactor", "drawdown", "worstSlice", "outOfSample", "baselineLift", "deflatedSharpe"],
+      "killCriteria": ["low_sample", "weak_out_of_sample_expectancy", "weak_baseline_lift", "bad_failure_slice", "deflated_sharpe_fail"]
+    },
+    "parameters": {
+      "symbol": ["XRP"],
+      "timeframe": ["4h"],
+      "trend": ["up"],
+      "volatility": ["mid-vol"],
+      "lookback": [20, 40],
+      "volumeZ": [0.4, 0.8],
+      "rsiMinLong": [54],
+      "rsiMaxShort": [46]
+    }
+  },
+  {
+    "id": "alert-feedback-eth-velocity-fade-v0",
+    "idea": "Retest the cleanest local volume-velocity feedback bucket: ETH 60s DOWN alerts with 5/5 evidence and fresh public book state, where finalized reviews all favored a fade.",
+    "family": "alert_feedback_velocity",
+    "rule": "volume_velocity_fade",
+    "directions": ["long"],
+    "thesis": {
+      "mechanism": "Clean ETH velocity-down alerts with high evidence may mark short-term exhaustion when the move is already crowded and public book/trade-flow evidence is fresh.",
+      "edgeSpeed": "hours",
+      "expectedBehavior": "A coarse ETH 1h OHLCV proxy for high-volume down shocks should produce positive contrarian expectancy, beat matched timestamps, and survive out-of-sample after costs.",
+      "falsifiableClaim": "Reject if the historical proxy cannot survive strict gates; also reject any promotion claim because the source alert bucket has only four clean finalized reviews and 60s row-level shocks are not fully reconstructed from hourly candles."
+    },
+    "dataRequirements": {
+      "markets": ["spot"],
+      "requiredFeatures": ["ohlcv", "volume", "rsi", "fresh alert-feedback book evidence for source bucket"],
+      "minLookbackDays": 365
+    },
+    "validation": {
+      "baseline": "time_matched_alternating_direction",
+      "gates": ["minSample", "expectancy", "profitFactor", "drawdown", "worstSlice", "outOfSample", "baselineLift", "deflatedSharpe"],
+      "killCriteria": ["low_source_bucket_sample", "proxy_not_row_level_velocity", "weak_out_of_sample_expectancy", "weak_baseline_lift", "bad_failure_slice", "deflated_sharpe_fail"]
+    },
+    "parameters": {
+      "symbol": ["ETH"],
+      "timeframe": ["1h"],
+      "returnLookback": [1, 2],
+      "minMovePct": [0.65, 1.0, 1.2],
+      "volumeZ": [1.0, 1.5, 2.0],
+      "rsiLow": [35, 45],
+      "rsiHigh": [55]
+    }
+  },
+  {
+    "id": "alert-edge-doge-momentum-reversal-long-v0",
+    "idea": "Retest the next untested liquid alert-edge B-tier bucket: DOGE 1h momentum reversal long in a range/low-vol regime.",
+    "family": "alert_edge_reversion",
+    "rule": "volume_velocity_fade",
+    "directions": ["long"],
+    "thesis": {
+      "mechanism": "The liquid alert-edge backtest shows DOGE 1h momentum_reversal_long in range/low-vol as a positive B-tier paper bucket, suggesting some short-horizon downside shocks may revert when symbol, timeframe, and regime align.",
+      "edgeSpeed": "hours",
+      "expectedBehavior": "DOGE 1h range/low-vol downside velocity fades should keep positive expectancy, beat matched timestamp baselines, and survive out-of-sample after fees and slippage.",
+      "falsifiableClaim": "Reject if the DOGE bucket fails the strict destruction filter, especially minimum sample, out-of-sample expectancy, baseline lift, drawdown, worst-slice, or deflated-Sharpe gates."
+    },
+    "dataRequirements": {
+      "markets": ["spot"],
+      "requiredFeatures": ["ohlcv", "volume", "rsi", "trend", "volatility"],
+      "minLookbackDays": 365
+    },
+    "validation": {
+      "baseline": "time_matched_alternating_direction",
+      "gates": ["minSample", "expectancy", "profitFactor", "drawdown", "worstSlice", "outOfSample", "baselineLift", "deflatedSharpe"],
+      "killCriteria": ["low_sample", "weak_expectancy_after_costs", "weak_out_of_sample_expectancy", "weak_baseline_lift", "bad_failure_slice", "deflated_sharpe_fail"]
+    },
+    "parameters": {
+      "symbol": ["DOGE"],
+      "timeframe": ["1h"],
+      "trend": ["range"],
+      "volatility": ["low-vol"],
+      "returnLookback": [1, 2],
+      "minMovePct": [0.65, 1.0],
+      "volumeZ": [0.8, 1.2],
+      "rsiLow": [35, 45],
+      "rsiHigh": [55]
+    }
+  },
+  {
+    "id": "alert-edge-sol-trend-pullback-reclaim-long-v0",
+    "idea": "Retest the next untested liquid alert-edge B-tier bucket: SOL 1h trend pullback reclaim long in an up/low-vol regime.",
+    "family": "alert_edge_trend_pullback",
+    "rule": "ma_reclaim",
+    "directions": ["long"],
+    "thesis": {
+      "mechanism": "The liquid alert-edge backtest shows SOL 1h trend_pullback_reclaim_long in up/low-vol as the remaining B-tier bucket with the largest historical sample and positive lift versus its matched baseline, suggesting low-vol trend pullbacks may continue when the fast moving average is reclaimed.",
+      "edgeSpeed": "hours",
+      "expectedBehavior": "SOL 1h up/low-vol pullback reclaims should keep positive expectancy, beat matched timestamp baselines, and survive out-of-sample after fees and slippage.",
+      "falsifiableClaim": "Reject if the SOL bucket fails the strict destruction filter, especially minimum sample, profit factor, out-of-sample expectancy, baseline lift, drawdown, worst-slice, or deflated-Sharpe gates. Do not paper-qualify without forward paper support."
+    },
+    "dataRequirements": {
+      "markets": ["spot"],
+      "requiredFeatures": ["ohlcv", "movingAverages", "rsi", "trend", "volatility"],
+      "minLookbackDays": 365
+    },
+    "validation": {
+      "baseline": "time_matched_alternating_direction",
+      "gates": ["minSample", "expectancy", "profitFactor", "drawdown", "worstSlice", "outOfSample", "baselineLift", "deflatedSharpe"],
+      "killCriteria": ["no_forward_paper_support", "low_sample", "weak_expectancy_after_costs", "weak_profit_factor", "weak_out_of_sample_expectancy", "weak_baseline_lift", "bad_failure_slice", "deflated_sharpe_fail"]
+    },
+    "parameters": {
+      "symbol": ["SOL"],
+      "timeframe": ["1h"],
+      "trend": ["up"],
+      "volatility": ["low-vol"],
+      "fast": [20],
+      "slow": [50],
+      "rsiFloorLong": [45],
+      "rsiCeilShort": [55]
+    }
+  },
+  {
+    "id": "alert-edge-avax-range-breakdown-short-v0",
+    "idea": "Retest the strongest remaining AVAX liquid alert-edge B-tier bucket: AVAX 1h range breakdown short in a down/low-vol regime.",
+    "family": "alert_edge_breakdown",
+    "rule": "breakout",
+    "directions": ["short"],
+    "thesis": {
+      "mechanism": "The liquid alert-edge backtest shows AVAX 1h range_breakdown_short in down/low-vol as a positive B-tier bucket, suggesting participation-backed downside breaks may continue when symbol, timeframe, direction, and regime align.",
+      "edgeSpeed": "hours",
+      "expectedBehavior": "AVAX 1h down/low-vol range breakdown shorts should keep positive expectancy, beat matched timestamp baselines, and survive out-of-sample after fees and slippage.",
+      "falsifiableClaim": "Reject if the AVAX bucket fails the strict destruction filter, especially minimum sample, profit factor, out-of-sample expectancy, baseline lift, drawdown, worst-slice, or deflated-Sharpe gates. Do not paper-qualify without matching regime-specific forward paper support."
+    },
+    "dataRequirements": {
+      "markets": ["spot"],
+      "requiredFeatures": ["ohlcv", "volume", "rsi", "trend", "volatility"],
+      "minLookbackDays": 365
+    },
+    "validation": {
+      "baseline": "time_matched_alternating_direction",
+      "gates": ["minSample", "expectancy", "profitFactor", "drawdown", "worstSlice", "outOfSample", "baselineLift", "deflatedSharpe"],
+      "killCriteria": ["no_matching_regime_forward_paper_support", "low_sample", "weak_expectancy_after_costs", "weak_profit_factor", "weak_out_of_sample_expectancy", "weak_baseline_lift", "bad_failure_slice", "deflated_sharpe_fail"]
+    },
+    "parameters": {
+      "symbol": ["AVAX"],
+      "timeframe": ["1h"],
+      "trend": ["down"],
+      "volatility": ["low-vol"],
+      "lookback": [20, 40],
+      "volumeZ": [0.4, 0.8],
+      "rsiMinLong": [54],
+      "rsiMaxShort": [45, 50]
+    }
+  },
+  {
+    "id": "alert-edge-avax-trend-pullback-reclaim-long-v0",
+    "idea": "Retest the remaining AVAX liquid alert-edge B-tier bucket: AVAX 1h trend pullback reclaim long in an up/mid-vol regime.",
+    "family": "alert_edge_trend_pullback",
+    "rule": "ma_reclaim",
+    "directions": ["long"],
+    "thesis": {
+      "mechanism": "The liquid alert-edge backtest shows AVAX 1h trend_pullback_reclaim_long in up/mid-vol as a positive B-tier bucket, suggesting continuation after fast moving-average reclaim can persist when symbol, timeframe, direction, and regime align.",
+      "edgeSpeed": "hours",
+      "expectedBehavior": "AVAX 1h up/mid-vol pullback reclaims should keep positive expectancy, beat matched timestamp baselines, and survive out-of-sample after fees and slippage.",
+      "falsifiableClaim": "Reject if the AVAX pullback bucket fails the strict destruction filter, especially minimum sample, profit factor, out-of-sample expectancy, baseline lift, drawdown, worst-slice, or deflated-Sharpe gates. Do not paper-qualify without matching regime-specific forward paper support."
+    },
+    "dataRequirements": {
+      "markets": ["spot"],
+      "requiredFeatures": ["ohlcv", "movingAverages", "rsi", "trend", "volatility"],
+      "minLookbackDays": 365
+    },
+    "validation": {
+      "baseline": "time_matched_alternating_direction",
+      "gates": ["minSample", "expectancy", "profitFactor", "drawdown", "worstSlice", "outOfSample", "baselineLift", "deflatedSharpe"],
+      "killCriteria": ["no_matching_regime_forward_paper_support", "low_sample", "weak_expectancy_after_costs", "weak_profit_factor", "weak_out_of_sample_expectancy", "weak_baseline_lift", "bad_failure_slice", "deflated_sharpe_fail"]
+    },
+    "parameters": {
+      "symbol": ["AVAX"],
+      "timeframe": ["1h"],
+      "trend": ["up"],
+      "volatility": ["mid-vol"],
+      "fast": [20],
+      "slow": [50],
+      "rsiFloorLong": [45],
+      "rsiCeilShort": [55]
+    }
+  },
+  {
+    "id": "trend-breakout-volume-v0",
+    "idea": "Trade breakouts only when price clears the recent range with above-normal volume.",
+    "family": "trend_breakout",
+    "rule": "breakout",
+    "directions": ["long", "short"],
+    "thesis": {
+      "mechanism": "Breakouts can persist when range compression resolves with above-normal participation.",
+      "edgeSpeed": "hours",
+      "expectedBehavior": "Signal direction should outperform a time-matched alternating-direction baseline after costs.",
+      "falsifiableClaim": "Reject if breakout direction does not add expectancy versus matched timestamps or fails out-of-sample."
+    },
+    "dataRequirements": {
+      "markets": ["spot", "linear_perpetual"],
+      "requiredFeatures": ["ohlcv", "volume"],
+      "minLookbackDays": 1825
+    },
+    "validation": {
+      "baseline": "time_matched_alternating_direction",
+      "gates": ["minSample", "expectancy", "profitFactor", "drawdown", "worstSlice", "outOfSample", "baselineLift", "deflatedSharpe"],
+      "killCriteria": ["weak_out_of_sample_expectancy", "weak_baseline_lift", "bad_failure_slice", "deflated_sharpe_fail"]
+    },
+    "parameters": {
+      "lookback": [20, 40],
+      "volumeZ": [0.4, 0.8],
+      "rsiMinLong": [54],
+      "rsiMaxShort": [46]
+    }
+  },
+  {
+    "id": "wick-fade-reversion-v0",
+    "idea": "Fade sharp exhaustion moves when RSI is stretched and the market is not in strong trend expansion.",
+    "family": "mean_reversion",
+    "rule": "rsi_reversion",
+    "directions": ["long", "short"],
+    "thesis": {
+      "mechanism": "Sharp stretched candles can mean-revert when RSI is extended and broader trend strength is muted.",
+      "edgeSpeed": "hours",
+      "expectedBehavior": "Contrarian direction should beat price-only timing after fees and slippage.",
+      "falsifiableClaim": "Reject if stretched RSI buckets are not better than baseline or break in strong adverse regimes."
+    },
+    "dataRequirements": {
+      "markets": ["spot", "linear_perpetual"],
+      "requiredFeatures": ["ohlcv", "rsi", "trendStrength"],
+      "minLookbackDays": 1825
+    },
+    "validation": {
+      "baseline": "time_matched_alternating_direction",
+      "gates": ["minSample", "expectancy", "profitFactor", "drawdown", "worstSlice", "outOfSample", "baselineLift", "deflatedSharpe"],
+      "killCriteria": ["weak_expectancy_after_costs", "weak_out_of_sample_expectancy", "bad_failure_slice"]
+    },
+    "parameters": {
+      "rsiLow": [28, 34],
+      "rsiHigh": [66, 72],
+      "maxTrendStrength": [0.018]
+    }
+  },
+  {
+    "id": "ma-regime-continuation-v0",
+    "idea": "Follow the dominant moving-average regime after a pullback reclaims the fast average.",
+    "family": "trend_pullback",
+    "rule": "ma_reclaim",
+    "directions": ["long", "short"],
+    "thesis": {
+      "mechanism": "A fast moving-average reclaim inside a dominant regime can mark continuation after a pullback.",
+      "edgeSpeed": "hours",
+      "expectedBehavior": "Regime-continuation entries should survive across symbols and avoid low-quality range slices.",
+      "falsifiableClaim": "Reject if continuation signals depend on one market slice or fail the chronological out-of-sample split."
+    },
+    "dataRequirements": {
+      "markets": ["spot", "linear_perpetual"],
+      "requiredFeatures": ["ohlcv", "movingAverages", "rsi"],
+      "minLookbackDays": 1825
+    },
+    "validation": {
+      "baseline": "time_matched_alternating_direction",
+      "gates": ["minSample", "expectancy", "profitFactor", "drawdown", "worstSlice", "outOfSample", "baselineLift", "deflatedSharpe"],
+      "killCriteria": ["low_sample", "weak_profit_factor", "weak_out_of_sample_expectancy", "bad_failure_slice"]
+    },
+    "parameters": {
+      "fast": [20],
+      "slow": [50],
+      "rsiFloorLong": [45],
+      "rsiCeilShort": [55]
+    }
+  },
+  {
+    "id": "perp-funding-oi-fade-v0",
+    "idea": "Fade crowded perp moves when funding is stretched, open interest expands, and RSI is extended.",
+    "family": "perp_context_reversion",
+    "rule": "funding_oi_reversion",
+    "directions": ["long", "short"],
+    "thesis": {
+      "mechanism": "Stretched funding plus expanding open interest can mark crowded perp positioning vulnerable to a fade.",
+      "edgeSpeed": "hours",
+      "expectedBehavior": "Crowded positive funding should favor short fades and crowded negative funding should favor long fades after costs.",
+      "falsifiableClaim": "Reject if funding/OI conditions only work in-sample or do not beat price-only and matched-timestamp baselines."
+    },
+    "dataRequirements": {
+      "markets": ["linear_perpetual"],
+      "requiredFeatures": ["ohlcv", "fundingRate", "openInterestChangePct", "rsi"],
+      "minLookbackDays": 365
+    },
+    "validation": {
+      "baseline": "time_matched_alternating_direction",
+      "gates": ["minSample", "expectancy", "profitFactor", "drawdown", "worstSlice", "outOfSample", "baselineLift", "deflatedSharpe"],
+      "killCriteria": ["weak_out_of_sample_expectancy", "weak_baseline_lift", "bad_failure_slice", "deflated_sharpe_fail"]
+    },
+    "parameters": {
+      "minPositiveFunding": [0.00008, 0.00012],
+      "maxNegativeFunding": [-0.00002],
+      "minOpenInterestChangePct": [0.5, 1.0],
+      "rsiLow": [32],
+      "rsiHigh": [68]
+    }
+  },
+  {
+    "id": "perp-funding-only-fade-v0",
+    "idea": "Fade HYPE perp moves when funding is stretched and RSI confirms positioning stress, without requiring open-interest expansion.",
+    "family": "perp_context_reversion",
+    "rule": "funding_reversion",
+    "directions": ["long", "short"],
+    "thesis": {
+      "mechanism": "Stretched funding can mark one-sided perp positioning vulnerable to mean reversion even when open-interest change is not elevated.",
+      "edgeSpeed": "hours",
+      "expectedBehavior": "High positive funding should favor short fades and negative funding should favor long fades after costs.",
+      "falsifiableClaim": "Reject if funding-only fades fail chronological out-of-sample, matched baseline, deflated-Sharpe, or failure-slice gates."
+    },
+    "dataRequirements": {
+      "markets": ["linear_perpetual"],
+      "requiredFeatures": ["ohlcv", "fundingRate", "rsi"],
+      "minLookbackDays": 365
+    },
+    "validation": {
+      "baseline": "time_matched_alternating_direction",
+      "gates": ["minSample", "expectancy", "profitFactor", "drawdown", "worstSlice", "outOfSample", "baselineLift", "deflatedSharpe"],
+      "killCriteria": ["weak_out_of_sample_expectancy", "weak_baseline_lift", "bad_failure_slice", "deflated_sharpe_fail"]
+    },
+    "parameters": {
+      "minPositiveFunding": [0.00016, 0.00025, 0.00035],
+      "maxNegativeFunding": [-0.00002, -0.00008],
+      "rsiLow": [30, 35],
+      "rsiHigh": [65, 70]
+    }
+  },
+  {
+    "id": "perp-funding-trend-filter-fade-v0",
+    "idea": "Fade stretched HYPE funding only inside one explicit market trend regime to test whether funding edge is regime-dependent.",
+    "family": "perp_context_reversion",
+    "rule": "funding_reversion_trend",
+    "directions": ["long", "short"],
+    "thesis": {
+      "mechanism": "Funding-only fades may have positive expectancy in specific trend regimes while failing in range or adverse-trend slices.",
+      "edgeSpeed": "hours",
+      "expectedBehavior": "A single trend-regime filter should improve out-of-sample expectancy and reduce worst-slice failures versus funding-only fade.",
+      "falsifiableClaim": "Reject if trend-filtered funding fades still fail out-of-sample, drawdown, failure-slice, or matched-baseline gates."
+    },
+    "dataRequirements": {
+      "markets": ["linear_perpetual"],
+      "requiredFeatures": ["ohlcv", "fundingRate", "rsi", "trend"],
+      "minLookbackDays": 365
+    },
+    "validation": {
+      "baseline": "time_matched_alternating_direction",
+      "gates": ["minSample", "expectancy", "profitFactor", "drawdown", "worstSlice", "outOfSample", "baselineLift", "deflatedSharpe"],
+      "killCriteria": ["weak_out_of_sample_expectancy", "weak_baseline_lift", "bad_failure_slice", "drawdown_too_high"]
+    },
+    "parameters": {
+      "minPositiveFunding": [0.00016, 0.00025],
+      "maxNegativeFunding": [-0.00008],
+      "rsiLow": [35],
+      "rsiHigh": [65, 70],
+      "trend": ["up", "down", "range"]
+    }
+  },
+  {
+    "id": "perp-funding-regime-timeframe-fade-v0",
+    "idea": "Fade stretched HYPE funding only on one timeframe and one trend regime after trend-filter results suggested 4h/range slices may be unstable.",
+    "family": "perp_context_reversion",
+    "rule": "funding_reversion_trend_timeframe",
+    "directions": ["long", "short"],
+    "thesis": {
+      "mechanism": "Funding fade expectancy may live in a narrow intraday regime; timeframe filtering should remove incompatible 4h failure slices if the effect is real.",
+      "edgeSpeed": "hours",
+      "expectedBehavior": "The 1h trend-filtered variant should keep positive expectancy while improving out-of-sample and drawdown versus all-timeframe funding fade.",
+      "falsifiableClaim": "Reject if the 1h/timeframe-filtered variant still fails out-of-sample or only improves in-sample headline metrics."
+    },
+    "dataRequirements": {
+      "markets": ["linear_perpetual"],
+      "requiredFeatures": ["ohlcv", "fundingRate", "rsi", "trend", "timeframe"],
+      "minLookbackDays": 365
+    },
+    "validation": {
+      "baseline": "time_matched_alternating_direction",
+      "gates": ["minSample", "expectancy", "profitFactor", "drawdown", "worstSlice", "outOfSample", "baselineLift", "deflatedSharpe"],
+      "killCriteria": ["weak_out_of_sample_expectancy", "weak_baseline_lift", "bad_failure_slice", "drawdown_too_high"]
+    },
+    "parameters": {
+      "minPositiveFunding": [0.00016, 0.00025],
+      "maxNegativeFunding": [-0.00008],
+      "rsiLow": [35],
+      "rsiHigh": [65, 70],
+      "trend": ["up", "range"],
+      "timeframe": ["1h", "4h"]
+    }
+  }
+]

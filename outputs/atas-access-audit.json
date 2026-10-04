@@ -1,0 +1,112 @@
+{
+  "generatedAt": "2026-09-20T10:34:00Z",
+  "status": "research-only-access-audit",
+  "product": "ATAS",
+  "officialSources": [
+    {
+      "id": "atas-docs",
+      "url": "https://docs.atas.net/",
+      "observed": "Official ATAS developer documentation is available for custom indicators and strategy/bot development."
+    },
+    {
+      "id": "atas-x-indicators",
+      "url": "https://docs.atas.net/en/md_DataFeedsCore_2Docs_2en_20200__ATASX__Indicator.html",
+      "observed": "ATAS X supports custom indicator DLL loading and watches its indicators folder."
+    },
+    {
+      "id": "atas-data-api",
+      "url": "https://docs.atas.net/en/md_DataFeedsCore_2Docs_2en_20025__ReceivingProcessingData.html",
+      "observed": "In-platform indicator API exposes candles, footprint price levels, online ticks, cumulative trades, market depth, provider-supported MBO, and statistics."
+    },
+    {
+      "id": "atas-github-indicators",
+      "url": "https://github.com/AtasPlatform/Indicators",
+      "observed": "Public GitHub indicator examples exist for ATAS Platform."
+    }
+  ],
+  "localAccess": {
+    "dotnet": {
+      "status": "available",
+      "value": "/home/coder/.openclaw/npm/projects/openclaw-codex-8902d781d4/node_modules/@openclaw/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path/dotnet"
+    },
+    "wine": {
+      "status": "available",
+      "value": "/home/coder/.openclaw/npm/projects/openclaw-codex-8902d781d4/node_modules/@openclaw/codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path/wine"
+    },
+    "windowsInstallPath": {
+      "status": "missing",
+      "value": "/mnt/c/Program Files/ATAS Platform"
+    },
+    "homeAtasPath": {
+      "status": "missing",
+      "value": "/home/coder/ATAS"
+    },
+    "wineInstallPath": {
+      "status": "missing",
+      "value": "/home/coder/.wine/drive_c/Program Files/ATAS Platform"
+    }
+  },
+  "accessVerdict": {
+    "status": "manual_csv_active__automatic_access_unproven",
+    "canUseManualCsvNow": true,
+    "canPullDirectlyNow": false
+  },
+  "manualCsvEvidence": {
+    "confirmedPath": "+ -> New Widget -> Bid/Ask Tape -> export/save CSV",
+    "primarySchema": "Time;Bids;;;;Ask;Delta",
+    "supplementalSchema": "Time;Price;Volume",
+    "primaryUse": "Bid/Ask Tape for bid/ask-side size and delta rows",
+    "supplementalUse": "Smart Tape for compact prints unless settings expose side/aggressor/delta"
+  },
+  "proposedExportPath": {
+    "mode": "read_only_custom_indicator_exporter",
+    "language": "C# inside ATAS API surface",
+    "transport": [
+      "append-only jsonl file",
+      "append-only csv file",
+      "watched manual export folder"
+    ],
+    "preferredTransport": "append-only jsonl file watched by RALPH importer",
+    "eventSchema": "experiments/strategy-destruction-filter/schemas/atas-orderflow-event.schema.json",
+    "firstStrategyLane": "research_only_absorption_exhaustion_breakout_quality_windows"
+  },
+  "metricBridge": [
+    "volume_velocity",
+    "delta_velocity",
+    "bid_side_velocity",
+    "ask_side_velocity",
+    "volume_per_price_progress",
+    "absorption_score",
+    "exhaustion_score",
+    "breakout_quality_score"
+  ],
+  "requiredHumanInputs": [
+    "Confirm whether ATAS is installed on a machine OpenClaw can reach or whether a synced export folder can be shared.",
+    "Confirm market/data feed and instrument mapping used by the ATAS widgets.",
+    "Confirm that a custom indicator/exporter can run with no trading permissions enabled.",
+    "Later, allow a minimal read-only exporter DLL proof or continue with manual CSV packets."
+  ],
+  "blockers": [
+    "No credentials, cookies, exchange keys, broker keys, or paid feed secrets should be stored in RALPH.",
+    "Do not enable ATAS strategy order placement; exporter must be read-only.",
+    "Do not promote absorption/cluster strategy before public/proxy and ATAS rows pass sample, BTC-gate, baseline, and walk-forward gates."
+  ],
+  "nextActions": [
+    {
+      "id": "atas-csv-importer",
+      "action": "Parse Bid/Ask Tape and Smart Tape by header, preserve original row index, and output compact feature windows.",
+      "gate": "manual CSV sample validates; no filename assumptions"
+    },
+    {
+      "id": "feature-window-generator",
+      "action": "Compute delta velocity, side velocity, volume-per-price-progress, absorption, exhaustion, and breakout quality windows.",
+      "gate": "feature windows align with manual review examples"
+    },
+    {
+      "id": "public-proxy-parity",
+      "action": "Compare ATAS windows against Binance/Bybit/Hyperliquid public trade/orderflow windows around the same UTC interval.",
+      "gate": "parity note before any candidate is added"
+    }
+  ],
+  "boundary": "Audit/spec only; no ATAS install, account setup, paid feed, credentials, live trading, order placement, strategy promotion, alert wording, thresholds, risk, sizing, TP/SL, execution, scheduler change, or automated capture enabled."
+}

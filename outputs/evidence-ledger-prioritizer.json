@@ -1,0 +1,173 @@
+{
+  "generatedAt": "2026-10-03T16:10:20.832Z",
+  "status": "research-only-router",
+  "note": "Ranks pending RALPH work by evidence readiness and cheap kill-test value. It does not promote strategies, change live alerts, change schedules, or authorize execution.",
+  "inputs": {
+    "queues": "automation/work-queues.yaml",
+    "setupAnalysis": "../crypto-updates/runtime/setup-analysis.json",
+    "paperDashboard": "experiments/btc-eth-alert-edge/results/paper-dashboard.json",
+    "filterReport": "experiments/strategy-destruction-filter/results/filter-report.json",
+    "strategyRubric": "outputs/strategy-score-rubric-dry-run.json"
+  },
+  "evidence": {
+    "setupAnalysis": {
+      "generatedAt": "2026-08-29T16:31:04.037Z",
+      "reviewedSetups": 240,
+      "candleContextReady": 149,
+      "maxCallCandidateSample": 9,
+      "callCandidateThreshold": 20,
+      "callCandidates": [
+        {
+          "key": "velocity-shock-60s|DOWN|evidence-high",
+          "sample": 9,
+          "verdicts": {
+            "fade": 7,
+            "follow": 2
+          }
+        },
+        {
+          "key": "wick-shock|UP|evidence-medium",
+          "sample": 5,
+          "verdicts": {
+            "fade": 1,
+            "follow": 4
+          }
+        }
+      ]
+    },
+    "paperDashboard": {
+      "generatedAt": "2026-10-03T16:03:57.220Z",
+      "totalSignals": 500,
+      "openSignals": 16,
+      "closedSignals": 484,
+      "avaxRangeBreakdownDownLowVolRows": 0,
+      "avaxForwardThreshold": 20
+    },
+    "strategyFilter": {
+      "generatedAt": "2026-09-28T14:55:22.006Z",
+      "candidates": 13,
+      "variants": 131,
+      "survivors": 0,
+      "rejected": 131
+    },
+    "strategyRubric": {
+      "generatedAt": "2026-08-22T06:23:36.884Z",
+      "rubricBenchmark": 3,
+      "rubricInvestigate": 20,
+      "topAccepted": [
+        {
+          "id": "C-015",
+          "candidate": "X/GitHub strategy knowledge loop",
+          "rubricState": "benchmark",
+          "nextLoop": "framework-repo-discovery-loop"
+        },
+        {
+          "id": "C-036",
+          "candidate": "Public orderflow data rail",
+          "rubricState": "benchmark",
+          "nextLoop": "validation-benchmark-loop"
+        },
+        {
+          "id": "C-009",
+          "candidate": "Trading bot framework/repo map",
+          "rubricState": "benchmark",
+          "nextLoop": "framework-repo-discovery-loop"
+        },
+        {
+          "id": "C-003",
+          "candidate": "Zela benchmark discipline",
+          "rubricState": "investigate",
+          "nextLoop": "investigation-loop"
+        },
+        {
+          "id": "C-025",
+          "candidate": "Funding/basis structural baseline monitor",
+          "rubricState": "investigate",
+          "nextLoop": "strategy-research-loop"
+        }
+      ]
+    }
+  },
+  "totals": {
+    "pendingItems": 0,
+    "watchItems": 3,
+    "readyNow": 0,
+    "watchUntilThreshold": 1,
+    "needsWheelGate": 0,
+    "blockedOrLowValue": 0
+  },
+  "topReady": [],
+  "thresholdWatch": [
+    {
+      "lane": "watch",
+      "item": "ta-call-candidates-20-row-threshold",
+      "queueState": "watch",
+      "score": 44,
+      "decision": "watch-until-threshold",
+      "reasons": [
+        "largest TA call bucket is 9/20 reviewed rows"
+      ],
+      "nextAction": "Keep in Watch until more finalized reviewed alert rows arrive."
+    }
+  ],
+  "watchGates": [
+    {
+      "lane": "watch",
+      "item": "arkham-material-value-tiny-export-gate",
+      "queueState": "watch",
+      "score": 45,
+      "decision": "blocked-or-low-value",
+      "reasons": [
+        "approval-gated account/API/export sample; no active no-key route"
+      ],
+      "nextAction": "Stay Watch until Tomas explicitly approves account/API-plan-or-trial/API-key access, spend cap, endpoint scope, and local export path."
+    },
+    {
+      "lane": "watch",
+      "item": "wallet-shadow-independent-event-window-gate",
+      "queueState": "watch",
+      "score": 45,
+      "decision": "blocked-or-low-value",
+      "reasons": [
+        "named independent event/source/account trigger required before sampling"
+      ],
+      "nextAction": "Stay Watch until Tomas names a trigger or a source-ranked event record creates a precise independent window."
+    }
+  ],
+  "topNeedsWheelGate": [],
+  "ranked": [
+    {
+      "lane": "watch",
+      "item": "arkham-material-value-tiny-export-gate",
+      "queueState": "watch",
+      "score": 45,
+      "decision": "blocked-or-low-value",
+      "reasons": [
+        "approval-gated account/API/export sample; no active no-key route"
+      ],
+      "nextAction": "Stay Watch until Tomas explicitly approves account/API-plan-or-trial/API-key access, spend cap, endpoint scope, and local export path."
+    },
+    {
+      "lane": "watch",
+      "item": "wallet-shadow-independent-event-window-gate",
+      "queueState": "watch",
+      "score": 45,
+      "decision": "blocked-or-low-value",
+      "reasons": [
+        "named independent event/source/account trigger required before sampling"
+      ],
+      "nextAction": "Stay Watch until Tomas names a trigger or a source-ranked event record creates a precise independent window."
+    },
+    {
+      "lane": "watch",
+      "item": "ta-call-candidates-20-row-threshold",
+      "queueState": "watch",
+      "score": 44,
+      "decision": "watch-until-threshold",
+      "reasons": [
+        "largest TA call bucket is 9/20 reviewed rows"
+      ],
+      "nextAction": "Keep in Watch until more finalized reviewed alert rows arrive."
+    }
+  ]
+}

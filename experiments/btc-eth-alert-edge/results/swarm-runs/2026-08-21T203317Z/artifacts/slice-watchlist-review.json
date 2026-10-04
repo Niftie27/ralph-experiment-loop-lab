@@ -1,0 +1,179 @@
+{
+  "job_id": "slice_watchlist_review",
+  "agent_id": "slice_watchlist_reviewer",
+  "generated": "2026-08-21T20:33:17.519Z",
+  "run_id": "2026-08-21T203317Z",
+  "status": "research-only-no-live-execution",
+  "source_files_used": [
+    "results/agent-scoreboard-slices.json"
+  ],
+  "forbidden_actions": [
+    "place_live_orders",
+    "modify_live_alert_runtime",
+    "modify_alert_wording",
+    "modify_alert_thresholds",
+    "modify_risk_or_sizing",
+    "read_exchange_account_or_wallet_credentials",
+    "use_exchange_account_or_wallet_access",
+    "use_paid_apis",
+    "claim_live_promotion",
+    "promote_slice_to_live_gate",
+    "change_alert_thresholds"
+  ],
+  "sample_counts": {
+    "scored_rows": 64,
+    "min_slice_rows": 5,
+    "slice_count": 20
+  },
+  "watchlist": [
+    {
+      "dimension": "trigger",
+      "value": "VELOCITY:5m",
+      "row_count": 12,
+      "label_counts": {
+        "fade": 5,
+        "follow": 6,
+        "noisy": 1
+      },
+      "top_agent": "book_pressure_scout",
+      "top_accuracy": 1,
+      "top_evaluated": 2,
+      "read": "research-watch"
+    },
+    {
+      "dimension": "relativeAlignment",
+      "value": "mixed",
+      "row_count": 26,
+      "label_counts": {
+        "follow": 11,
+        "noisy": 3,
+        "fade": 12
+      },
+      "top_agent": "book_pressure_scout",
+      "top_accuracy": 0.8,
+      "top_evaluated": 5,
+      "read": "research-watch"
+    },
+    {
+      "dimension": "asset",
+      "value": "ETH",
+      "row_count": 32,
+      "label_counts": {
+        "noisy": 6,
+        "fade": 16,
+        "follow": 10
+      },
+      "top_agent": "book_pressure_scout",
+      "top_accuracy": 0.6667,
+      "top_evaluated": 6,
+      "read": "research-watch"
+    },
+    {
+      "dimension": "asset",
+      "value": "SOL",
+      "row_count": 14,
+      "label_counts": {
+        "follow": 7,
+        "fade": 6,
+        "noisy": 1
+      },
+      "top_agent": "velocity_continuation_scout",
+      "top_accuracy": 0.6667,
+      "top_evaluated": 3,
+      "read": "research-watch"
+    },
+    {
+      "dimension": "dataQuality",
+      "value": "clean",
+      "row_count": 6,
+      "label_counts": {
+        "noisy": 1,
+        "follow": 1,
+        "fade": 4
+      },
+      "top_agent": "trigger_fade_scout",
+      "top_accuracy": 0.6667,
+      "top_evaluated": 6,
+      "read": "research-watch"
+    },
+    {
+      "dimension": "betaBucket",
+      "value": "idiosyncratic-weakness",
+      "row_count": 27,
+      "label_counts": {
+        "noisy": 7,
+        "follow": 8,
+        "fade": 12
+      },
+      "top_agent": "wick_exhaustion_scout",
+      "top_accuracy": 0.6,
+      "top_evaluated": 15,
+      "read": "research-watch"
+    },
+    {
+      "dimension": "betaBucket",
+      "value": "cross-pair-divergence",
+      "row_count": 12,
+      "label_counts": {
+        "follow": 7,
+        "noisy": 2,
+        "fade": 3
+      },
+      "top_agent": "trigger_follow_scout",
+      "top_accuracy": 0.5833,
+      "top_evaluated": 12,
+      "read": "research-watch"
+    },
+    {
+      "dimension": "asset",
+      "value": "BTC",
+      "row_count": 18,
+      "label_counts": {
+        "follow": 10,
+        "noisy": 4,
+        "fade": 4
+      },
+      "top_agent": "velocity_continuation_scout",
+      "top_accuracy": 0.5714,
+      "top_evaluated": 7,
+      "read": "learning-or-weak"
+    },
+    {
+      "dimension": "betaBucket",
+      "value": "market-beta",
+      "row_count": 7,
+      "label_counts": {
+        "fade": 3,
+        "follow": 4
+      },
+      "top_agent": "trigger_follow_scout",
+      "top_accuracy": 0.5714,
+      "top_evaluated": 7,
+      "read": "learning-or-weak"
+    },
+    {
+      "dimension": "betaBucket",
+      "value": "idiosyncratic-strength",
+      "row_count": 18,
+      "label_counts": {
+        "fade": 8,
+        "follow": 8,
+        "noisy": 2
+      },
+      "top_agent": "relative_strength_scout",
+      "top_accuracy": 0.5556,
+      "top_evaluated": 18,
+      "read": "learning-or-weak"
+    }
+  ],
+  "top_findings": [
+    "20 grouped slices meet the minimum row filter.",
+    "Some slices are useful watchlist leads, but all are small-sample and research-only.",
+    "The watchlist should guide targeted data collection, not alert routing."
+  ],
+  "blocked": [
+    "Slice evidence is same-dataset and low-sample.",
+    "No slice has passed risk-governor promotion conditions."
+  ],
+  "promotable": false
+}

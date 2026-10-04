@@ -1,0 +1,138 @@
+{
+  "generatedAt": "2026-10-03T17:30:27.176Z",
+  "status": "research-only-adversarial-improvement-loop",
+  "boundaries": {
+    "liveTrading": false,
+    "orderPlacement": false,
+    "walletKeys": false,
+    "exchangeKeys": false,
+    "paidApis": false,
+    "alertWordingChanges": false,
+    "riskSizingTpSlChanges": false,
+    "executionChanges": false
+  },
+  "phases": [
+    "critic",
+    "proposal",
+    "validation_gate",
+    "memory_route",
+    "telegram_gate"
+  ],
+  "inputs": {
+    "filter": {
+      "path": "experiments/strategy-destruction-filter/results/filter-report.json",
+      "status": "read",
+      "error": null
+    },
+    "walkForwardNearMissSidecar": {
+      "path": "experiments/strategy-destruction-filter/results/walk-forward-near-miss-sidecar.json",
+      "status": "read",
+      "error": null
+    },
+    "watchRowAgingLedger": {
+      "path": "outputs/watch-row-aging-ledger.json",
+      "status": "read",
+      "error": null
+    },
+    "drift": {
+      "path": "experiments/strategy-destruction-filter/results/filter-drift-report.json",
+      "status": "read",
+      "error": null
+    },
+    "plannedLevel": {
+      "path": "experiments/strategy-destruction-filter/results/planned-level-proxy-replay.json",
+      "status": "read",
+      "error": null
+    },
+    "shadowPnl": {
+      "path": "experiments/strategy-destruction-filter/results/shadow-pnl-ledger.json",
+      "status": "read",
+      "error": null
+    },
+    "stateOfEdge": {
+      "path": "outputs/state-of-edge-report.json",
+      "status": "read",
+      "error": null
+    },
+    "serviceHealth": {
+      "path": "../crypto-updates/runtime/service-health-report.json",
+      "status": "read",
+      "error": null
+    },
+    "queues": {
+      "path": "automation/work-queues.yaml",
+      "status": "read",
+      "error": null
+    }
+  },
+  "summary": {
+    "verdict": "proposals_ready_internal",
+    "bySeverity": {
+      "medium": 2,
+      "info": 1
+    },
+    "findingCount": 3,
+    "proposalCount": 1
+  },
+  "findings": [
+    {
+      "id": "walk-forward-near-miss-pressure",
+      "severity": "medium",
+      "lane": "validation",
+      "message": "6 variants fail only walk-forward OOS; fresh sidecar keeps the pressure visible without relaxing gates.",
+      "proposals": []
+    },
+    {
+      "id": "watch-low-sample-roster",
+      "severity": "medium",
+      "lane": "paper",
+      "message": "4 watch rows exist but remain low-sample or unproven; do not upgrade without forward-paper support.",
+      "proposals": [
+        {
+          "id": "watch-row-aging-ledger",
+          "lane": "paper",
+          "action": "Track how long watch rows survive and whether they decay before reaching sample gates.",
+          "validation": [
+            "state-of-edge-report.json",
+            "paper/signals.json"
+          ],
+          "promotionGate": "proposal_only_until_validated",
+          "noLiveChange": true
+        }
+      ]
+    },
+    {
+      "id": "zero-survivor-state",
+      "severity": "info",
+      "lane": "validation",
+      "message": "Current destruction filter has zero survivors; this is acceptable and should block promotion pressure.",
+      "proposals": []
+    }
+  ],
+  "proposals": [
+    {
+      "id": "watch-row-aging-ledger",
+      "lane": "paper",
+      "action": "Track how long watch rows survive and whether they decay before reaching sample gates.",
+      "validation": [
+        "state-of-edge-report.json",
+        "paper/signals.json"
+      ],
+      "promotionGate": "proposal_only_until_validated",
+      "noLiveChange": true
+    }
+  ],
+  "telegramGate": {
+    "notifyTomas": false,
+    "reason": "No Telegram notification needed; keep normal loop internal.",
+    "proposalIds": [
+      "watch-row-aging-ledger"
+    ]
+  },
+  "nextRun": {
+    "mode": "scheduled_light_pass_candidate",
+    "cadence": "daily after state-of-edge refresh, isolated session",
+    "deepPass": "weekly after maintenance",
+    "note": "Scheduler activation requires explicit Tomas approval if not already granted for this exact loop."
+  }
+}

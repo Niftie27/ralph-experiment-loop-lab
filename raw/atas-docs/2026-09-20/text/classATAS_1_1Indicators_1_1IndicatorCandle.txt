@@ -1,0 +1,533 @@
+ATAS: ATAS.Indicators.IndicatorCandle Class Reference 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Public Member Functions | Properties | List of all members 
+
+ATAS.Indicators.IndicatorCandle Class Reference 
+
+Represents an Indicator Candle. More... 
+
+Inheritance diagram for ATAS.Indicators.IndicatorCandle: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Collaboration diagram for ATAS.Indicators.IndicatorCandle: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Public Member Functions 
+
+IndicatorCandle ( ISupportedPriceInfo dataprovider, IIntCandle parentCandle, decimal tickSize) 
+
+Constructor for the IndicatorCandle class. 
+
+IEnumerable< PriceVolumeInfo > GetAllPriceLevels () 
+
+Gets all available price levels with associated volume information. Returns An enumerable collection of PriceVolumeInfo objects representing all price levels. 
+
+IEnumerable< PriceVolumeInfo > GetAllPriceLevels ( PriceVolumeInfo cacheItem) 
+
+Gets all available price levels with associated volume information and caches the data of the last element in the specified cacheItem. Parameters 
+
+cacheItem A PriceVolumeInfo object to caching. 
+
+Returns An enumerable collection of PriceVolumeInfo objects representing all price levels. 
+
+PriceVolumeInfo GetPriceVolumeInfo (decimal price) 
+
+Gets the PriceVolumeInfo object associated with the specified price. Parameters 
+
+price The price for which the PriceVolumeInfo object is to be retrieved. 
+
+Returns The PriceVolumeInfo object representing the specified price. 
+
+PriceVolumeInfo GetPriceVolumeInfo (decimal price, PriceVolumeInfo cacheItem) 
+
+Gets the PriceVolumeInfo object associated with the specified price. Parameters 
+
+price The price for which the PriceVolumeInfo object is to be retrieved. 
+
+cacheItem A PriceVolumeInfo object to caching. 
+
+Returns The PriceVolumeInfo object representing the specified price. 
+
+IEnumerable< PriceVolumeInfo > GetAllPriceLevels () 
+
+Gets all available price levels with associated volume information. 
+
+IEnumerable< PriceVolumeInfo > GetAllPriceLevels ( PriceVolumeInfo cacheItem) 
+
+Gets all available price levels with associated volume information and caches the data of the last element in the specified cacheItem. 
+
+PriceVolumeInfo GetPriceVolumeInfo (decimal price) 
+
+Gets the PriceVolumeInfo object associated with the specified price. 
+
+PriceVolumeInfo GetPriceVolumeInfo (decimal price, PriceVolumeInfo cacheItem) 
+
+Gets the PriceVolumeInfo object associated with the specified price. 
+
+Properties 
+
+decimal Open [get] 
+
+The opening price of the candle. 
+
+decimal High [get] 
+
+The highest price in the candle. 
+
+decimal Low [get] 
+
+The lowest price in the candle. 
+
+decimal Close [get] 
+
+The closing price of the candle. 
+
+decimal Volume [get] 
+
+The total number of traded lots in the candle. 
+
+decimal Bid [get] 
+
+The number of traded lots at the best bid price in the candle. 
+
+decimal Ask [get] 
+
+The number of traded lots at the best offer price in the candle. 
+
+decimal Betweens [get] 
+
+The number of traded lots at the price between bids and asks in the candle. 
+
+decimal Ticks [get] 
+
+The number of price changes in the candle. 
+
+decimal Delta [get] 
+
+The difference between the number of buys and the number of sales in the candle. 
+
+DateTime Time [get] 
+
+Candle opening time. 
+
+DateTime LastTime [get] 
+
+The time when the last trade in the candle occurred. 
+
+decimal MaxDelta [get] 
+
+The maximum value of the delta that was during the period of the candle. 
+
+decimal MinDelta [get] 
+
+The minimum value of the delta that was during the period of the candle. 
+
+decimal MaxOI [get] 
+
+The maximum value of open positions that was during the period of the candle. 
+
+decimal MinOI [get] 
+
+The minimum value of open positions that was during the period of the candle. 
+
+decimal OI [get] 
+
+The number of open positions in the candle. 
+
+decimal VWAP [get] 
+
+Volume-weighted average price of the candle. 
+
+PriceVolumeInfo MaxVolumePriceInfo [get] 
+
+Gets the PriceVolumeInfo object with the maximum volume. 
+
+PriceVolumeInfo MaxTickPriceInfo [get] 
+
+Gets the PriceVolumeInfo object with the maximum tick count. 
+
+PriceVolumeInfo MaxAskPriceInfo [get] 
+
+Gets the PriceVolumeInfo object with the maximum ask price. 
+
+PriceVolumeInfo MaxBidPriceInfo [get] 
+
+Gets the PriceVolumeInfo object with the maximum bid price. 
+
+PriceVolumeInfo MaxTimePriceInfo [get] 
+
+Gets the PriceVolumeInfo object with the maximum time. 
+
+PriceVolumeInfo MaxPositiveDeltaPriceInfo [get] 
+
+Gets the PriceVolumeInfo object with the maximum positive delta. 
+
+PriceVolumeInfo MaxNegativeDeltaPriceInfo [get] 
+
+Gets the PriceVolumeInfo object with the maximum negative delta. 
+
+ValueArea ValueArea [get] 
+
+Gets the ValueArea object which represents value are of candle. 
+
+Properties inherited from ATAS.Indicators.ISupportedPriceInfo 
+
+PriceVolumeInfo MaxVolumePriceInfo [get] 
+
+Gets the PriceVolumeInfo object with the maximum volume. 
+
+PriceVolumeInfo MaxTickPriceInfo [get] 
+
+Gets the PriceVolumeInfo object with the maximum tick count. 
+
+PriceVolumeInfo MaxAskPriceInfo [get] 
+
+Gets the PriceVolumeInfo object with the maximum ask price. 
+
+PriceVolumeInfo MaxBidPriceInfo [get] 
+
+Gets the PriceVolumeInfo object with the maximum bid price. 
+
+PriceVolumeInfo MaxTimePriceInfo [get] 
+
+Gets the PriceVolumeInfo object with the maximum time. 
+
+PriceVolumeInfo MaxPositiveDeltaPriceInfo [get] 
+
+Gets the PriceVolumeInfo object with the maximum positive delta. 
+
+PriceVolumeInfo MaxNegativeDeltaPriceInfo [get] 
+
+Gets the PriceVolumeInfo object with the maximum negative delta. 
+
+ValueArea ValueArea [get] 
+
+Gets the ValueArea object which represents value are of candle. 
+
+Detailed Description 
+
+Represents an Indicator Candle. 
+
+Constructor & Destructor Documentation 
+
+◆ IndicatorCandle() 
+
+ATAS.Indicators.IndicatorCandle.IndicatorCandle ( ISupportedPriceInfo dataprovider , 
+
+IIntCandle parentCandle , 
+
+decimal tickSize 
+
+) 
+
+Constructor for the IndicatorCandle class. 
+Parameters 
+
+dataprovider An object that provides price information. 
+
+parentCandle An object that provides information about candle data. 
+
+tickSize Minimum minimum price step. 
+
+Member Function Documentation 
+
+◆ GetAllPriceLevels() [1/2] 
+
+IEnumerable< PriceVolumeInfo > ATAS.Indicators.IndicatorCandle.GetAllPriceLevels ( ) 
+
+Gets all available price levels with associated volume information. Returns An enumerable collection of PriceVolumeInfo objects representing all price levels. 
+
+Implements ATAS.Indicators.ISupportedPriceInfo . 
+
+◆ GetAllPriceLevels() [2/2] 
+
+IEnumerable< PriceVolumeInfo > ATAS.Indicators.IndicatorCandle.GetAllPriceLevels ( PriceVolumeInfo cacheItem ) 
+
+Gets all available price levels with associated volume information and caches the data of the last element in the specified cacheItem. Parameters 
+
+cacheItem A PriceVolumeInfo object to caching. 
+
+Returns An enumerable collection of PriceVolumeInfo objects representing all price levels. 
+
+Implements ATAS.Indicators.ISupportedPriceInfo . 
+
+◆ GetPriceVolumeInfo() [1/2] 
+
+PriceVolumeInfo ATAS.Indicators.IndicatorCandle.GetPriceVolumeInfo ( decimal price ) 
+
+Gets the PriceVolumeInfo object associated with the specified price. Parameters 
+
+price The price for which the PriceVolumeInfo object is to be retrieved. 
+
+Returns The PriceVolumeInfo object representing the specified price. 
+
+Implements ATAS.Indicators.ISupportedPriceInfo . 
+
+◆ GetPriceVolumeInfo() [2/2] 
+
+PriceVolumeInfo ATAS.Indicators.IndicatorCandle.GetPriceVolumeInfo ( decimal price , 
+
+PriceVolumeInfo cacheItem 
+
+) 
+
+Gets the PriceVolumeInfo object associated with the specified price. Parameters 
+
+price The price for which the PriceVolumeInfo object is to be retrieved. 
+
+cacheItem A PriceVolumeInfo object to caching. 
+
+Returns The PriceVolumeInfo object representing the specified price. 
+
+Implements ATAS.Indicators.ISupportedPriceInfo . 
+
+Property Documentation 
+
+◆ Ask 
+
+decimal ATAS.Indicators.IndicatorCandle.Ask 
+
+get 
+
+The number of traded lots at the best offer price in the candle. 
+
+◆ Betweens 
+
+decimal ATAS.Indicators.IndicatorCandle.Betweens 
+
+get 
+
+The number of traded lots at the price between bids and asks in the candle. 
+
+◆ Bid 
+
+decimal ATAS.Indicators.IndicatorCandle.Bid 
+
+get 
+
+The number of traded lots at the best bid price in the candle. 
+
+◆ Close 
+
+decimal ATAS.Indicators.IndicatorCandle.Close 
+
+get 
+
+The closing price of the candle. 
+
+◆ Delta 
+
+decimal ATAS.Indicators.IndicatorCandle.Delta 
+
+get 
+
+The difference between the number of buys and the number of sales in the candle. 
+
+◆ High 
+
+decimal ATAS.Indicators.IndicatorCandle.High 
+
+get 
+
+The highest price in the candle. 
+
+◆ LastTime 
+
+DateTime ATAS.Indicators.IndicatorCandle.LastTime 
+
+get 
+
+The time when the last trade in the candle occurred. 
+
+◆ Low 
+
+decimal ATAS.Indicators.IndicatorCandle.Low 
+
+get 
+
+The lowest price in the candle. 
+
+◆ MaxAskPriceInfo 
+
+PriceVolumeInfo ATAS.Indicators.IndicatorCandle.MaxAskPriceInfo 
+
+get 
+
+Gets the PriceVolumeInfo object with the maximum ask price. 
+
+Implements ATAS.Indicators.ISupportedPriceInfo . 
+
+◆ MaxBidPriceInfo 
+
+PriceVolumeInfo ATAS.Indicators.IndicatorCandle.MaxBidPriceInfo 
+
+get 
+
+Gets the PriceVolumeInfo object with the maximum bid price. 
+
+Implements ATAS.Indicators.ISupportedPriceInfo . 
+
+◆ MaxDelta 
+
+decimal ATAS.Indicators.IndicatorCandle.MaxDelta 
+
+get 
+
+The maximum value of the delta that was during the period of the candle. 
+
+◆ MaxNegativeDeltaPriceInfo 
+
+PriceVolumeInfo ATAS.Indicators.IndicatorCandle.MaxNegativeDeltaPriceInfo 
+
+get 
+
+Gets the PriceVolumeInfo object with the maximum negative delta. 
+
+Implements ATAS.Indicators.ISupportedPriceInfo . 
+
+◆ MaxOI 
+
+decimal ATAS.Indicators.IndicatorCandle.MaxOI 
+
+get 
+
+The maximum value of open positions that was during the period of the candle. 
+
+◆ MaxPositiveDeltaPriceInfo 
+
+PriceVolumeInfo ATAS.Indicators.IndicatorCandle.MaxPositiveDeltaPriceInfo 
+
+get 
+
+Gets the PriceVolumeInfo object with the maximum positive delta. 
+
+Implements ATAS.Indicators.ISupportedPriceInfo . 
+
+◆ MaxTickPriceInfo 
+
+PriceVolumeInfo ATAS.Indicators.IndicatorCandle.MaxTickPriceInfo 
+
+get 
+
+Gets the PriceVolumeInfo object with the maximum tick count. 
+
+Implements ATAS.Indicators.ISupportedPriceInfo . 
+
+◆ MaxTimePriceInfo 
+
+PriceVolumeInfo ATAS.Indicators.IndicatorCandle.MaxTimePriceInfo 
+
+get 
+
+Gets the PriceVolumeInfo object with the maximum time. 
+
+Implements ATAS.Indicators.ISupportedPriceInfo . 
+
+◆ MaxVolumePriceInfo 
+
+PriceVolumeInfo ATAS.Indicators.IndicatorCandle.MaxVolumePriceInfo 
+
+get 
+
+Gets the PriceVolumeInfo object with the maximum volume. 
+
+Implements ATAS.Indicators.ISupportedPriceInfo . 
+
+◆ MinDelta 
+
+decimal ATAS.Indicators.IndicatorCandle.MinDelta 
+
+get 
+
+The minimum value of the delta that was during the period of the candle. 
+
+◆ MinOI 
+
+decimal ATAS.Indicators.IndicatorCandle.MinOI 
+
+get 
+
+The minimum value of open positions that was during the period of the candle. 
+
+◆ OI 
+
+decimal ATAS.Indicators.IndicatorCandle.OI 
+
+get 
+
+The number of open positions in the candle. 
+
+◆ Open 
+
+decimal ATAS.Indicators.IndicatorCandle.Open 
+
+get 
+
+The opening price of the candle. 
+
+◆ Ticks 
+
+decimal ATAS.Indicators.IndicatorCandle.Ticks 
+
+get 
+
+The number of price changes in the candle. 
+
+◆ Time 
+
+DateTime ATAS.Indicators.IndicatorCandle.Time 
+
+get 
+
+Candle opening time. 
+
+◆ ValueArea 
+
+ValueArea ATAS.Indicators.IndicatorCandle.ValueArea 
+
+get 
+
+Gets the ValueArea object which represents value are of candle. 
+
+Implements ATAS.Indicators.ISupportedPriceInfo . 
+
+◆ Volume 
+
+decimal ATAS.Indicators.IndicatorCandle.Volume 
+
+get 
+
+The total number of traded lots in the candle. 
+
+◆ VWAP 
+
+decimal ATAS.Indicators.IndicatorCandle.VWAP 
+
+get 
+
+Volume-weighted average price of the candle. 
+
+The documentation for this class was generated from the following file: 
+IndicatorCandle.cs 
+
+ATAS 
+
+Indicators 
+
+IndicatorCandle 
+
+Generated by 1.9.7 
+
+Join our developers chat

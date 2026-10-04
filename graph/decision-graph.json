@@ -1,0 +1,185 @@
+{
+  "schema": "openclaw.decision_graph.v1",
+  "updated_at": "2026-08-17T11:45:00Z",
+  "nodes": [
+    {
+      "id": "vault/ralph-research-os",
+      "type": "vault",
+      "label": "RALPH Research OS",
+      "state": "active",
+      "scope": "ralph",
+      "path": "ralph-research-os/",
+      "summary": "Crypto research-memory and decision system for strategy discovery, validation, and portfolio outputs."
+    },
+    {
+      "id": "system/crypto-updates-watcher",
+      "type": "system",
+      "label": "Crypto Updates Watcher",
+      "state": "active",
+      "scope": "ralph",
+      "path": "crypto-updates/realtime-market-watcher.mjs",
+      "summary": "Realtime BTC/ETH/SOL/HYPE market watcher that emits live alerts and writes post-alert evidence."
+    },
+    {
+      "id": "dataset/crypto-alert-feedback",
+      "type": "dataset",
+      "label": "Crypto Alert Feedback",
+      "state": "active",
+      "scope": "ralph",
+      "path": "crypto-updates/runtime/alert-feedback.jsonl",
+      "summary": "Raw alert_sent and review_finalized records, including post-alert checkpoints and entry timing research."
+    },
+    {
+      "id": "index/crypto-monitor",
+      "type": "index",
+      "label": "Crypto Monitor Index",
+      "state": "active",
+      "scope": "ralph",
+      "path": "crypto-updates/monitor-index.yaml",
+      "summary": "Compact agent-facing index rebuilt from alert feedback records."
+    },
+    {
+      "id": "loop/ralph-autoresearch",
+      "type": "loop",
+      "label": "RALPH Autoresearch Loop",
+      "state": "active",
+      "scope": "ralph",
+      "path": "ralph-research-os/automation/ralph-autoresearch-loop.md",
+      "summary": "Bounded background research loop for routing RALPH questions, validations, and outputs."
+    },
+    {
+      "id": "loop/btc-eth-alert-edge",
+      "type": "loop",
+      "label": "BTC/ETH Alert Edge Loop",
+      "state": "active",
+      "scope": "ralph",
+      "path": "ralph-research-os/automation/btc-eth-alert-edge-loop.md",
+      "summary": "Loop focused on BTC/ETH alert edge validation and paper evidence."
+    },
+    {
+      "id": "experiment/btc-eth-alert-edge",
+      "type": "experiment",
+      "label": "BTC/ETH Alert Edge Experiment",
+      "state": "active",
+      "scope": "ralph",
+      "path": "ralph-research-os/experiments/btc-eth-alert-edge/README.md",
+      "summary": "Experiment workspace for BTC/ETH alert edge snapshots, universe scans, and framework benchmarking."
+    },
+    {
+      "id": "concept/decision-layer",
+      "type": "concept",
+      "label": "Decision Layer",
+      "state": "active",
+      "scope": "ralph",
+      "path": "ralph-research-os/wiki/concepts/decision-layer.md",
+      "summary": "RALPH layer that turns research, experiments, and evidence into decisions or proposals."
+    },
+    {
+      "id": "concept/tool-first-not-build-first",
+      "type": "concept",
+      "label": "Tool First, Not Build First",
+      "state": "active",
+      "scope": "ralph",
+      "path": "ralph-research-os/wiki/concepts/tool-first-not-build-first.md",
+      "summary": "RALPH should search existing tools and frameworks before building custom infrastructure."
+    },
+    {
+      "id": "concept/forward-paper-trade-gate",
+      "type": "concept",
+      "label": "Forward Paper Trade Gate",
+      "state": "active",
+      "scope": "ralph",
+      "path": "ralph-research-os/wiki/concepts/forward-paper-trade-gate.md",
+      "summary": "Strategy changes need forward paper/shadow evidence before promotion."
+    },
+    {
+      "id": "hypothesis/btc-eth-wick-fade",
+      "type": "hypothesis",
+      "label": "BTC/ETH Wick Fade",
+      "state": "candidate",
+      "scope": "ralph",
+      "path": "crypto-updates/strategy-notes.md",
+      "summary": "Violent BTC/ETH move alerts may be useful as short-horizon contrarian fade prompts under strict entry, TP, SL, and time-exit rules."
+    },
+    {
+      "id": "evidence/entry-timing-research",
+      "type": "evidence",
+      "label": "Entry Timing Research",
+      "state": "active",
+      "scope": "ralph",
+      "path": "crypto-updates/runtime/alert-feedback.jsonl",
+      "summary": "Research-only fields compare live 2-minute entry against approximate 1-minute and 5-minute price status."
+    },
+    {
+      "id": "decision/live-alert-rules-approval-required",
+      "type": "decision",
+      "label": "Live Alert Rules Approval Required",
+      "state": "active",
+      "scope": "ralph",
+      "path": "openclaw-research-os/log.md",
+      "summary": "The graph may prepare strategy proposals, but loosening or changing live alert rules requires human approval."
+    }
+  ],
+  "edges": [
+    {
+      "from": "system/crypto-updates-watcher",
+      "to": "dataset/crypto-alert-feedback",
+      "type": "writes"
+    },
+    {
+      "from": "dataset/crypto-alert-feedback",
+      "to": "index/crypto-monitor",
+      "type": "indexes_to"
+    },
+    {
+      "from": "dataset/crypto-alert-feedback",
+      "to": "evidence/entry-timing-research",
+      "type": "contains"
+    },
+    {
+      "from": "evidence/entry-timing-research",
+      "to": "hypothesis/btc-eth-wick-fade",
+      "type": "tests"
+    },
+    {
+      "from": "loop/btc-eth-alert-edge",
+      "to": "experiment/btc-eth-alert-edge",
+      "type": "runs"
+    },
+    {
+      "from": "experiment/btc-eth-alert-edge",
+      "to": "hypothesis/btc-eth-wick-fade",
+      "type": "tests"
+    },
+    {
+      "from": "loop/ralph-autoresearch",
+      "to": "loop/btc-eth-alert-edge",
+      "type": "routes_to"
+    },
+    {
+      "from": "loop/ralph-autoresearch",
+      "to": "concept/decision-layer",
+      "type": "feeds"
+    },
+    {
+      "from": "concept/tool-first-not-build-first",
+      "to": "experiment/btc-eth-alert-edge",
+      "type": "constrains"
+    },
+    {
+      "from": "concept/forward-paper-trade-gate",
+      "to": "hypothesis/btc-eth-wick-fade",
+      "type": "guards"
+    },
+    {
+      "from": "decision/live-alert-rules-approval-required",
+      "to": "hypothesis/btc-eth-wick-fade",
+      "type": "guards"
+    },
+    {
+      "from": "vault/ralph-research-os",
+      "to": "loop/ralph-autoresearch",
+      "type": "owns"
+    }
+  ]
+}

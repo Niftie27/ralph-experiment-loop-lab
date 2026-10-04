@@ -1,0 +1,178 @@
+{
+  "manifest_version": 1,
+  "name": "ralph-local-file-backed-swarm",
+  "status": "research-only-no-live-execution",
+  "description": "Explicit fan-out/fan-in research launcher for RALPH alert-edge analysis.",
+  "default_mode": "dry-run",
+  "run_output_dir": "results/swarm-runs/{run_id}",
+  "global_forbidden_actions": [
+    "place_live_orders",
+    "modify_live_alert_runtime",
+    "modify_alert_wording",
+    "modify_alert_thresholds",
+    "modify_risk_or_sizing",
+    "read_exchange_account_or_wallet_credentials",
+    "use_exchange_account_or_wallet_access",
+    "use_paid_apis",
+    "claim_live_promotion"
+  ],
+  "inputs": [
+    "results/agent-swarm-feature-table.json",
+    "results/agent-scoreboard.json",
+    "results/agent-scoreboard-slices.json"
+  ],
+  "jobs": [
+    {
+      "job_id": "post_alert_dataset_audit",
+      "agent_id": "dataset_auditor",
+      "description": "Audit finalized alert rows, labels, source coverage, and quality flags.",
+      "scope": "Read existing research-only feature and scoreboard files; summarize dataset fitness for future swarm research.",
+      "inputs": [
+        "results/agent-swarm-feature-table.json",
+        "results/agent-scoreboard.json"
+      ],
+      "forbidden_actions": [
+        "modify_source_data",
+        "modify_live_watcher_or_alerts"
+      ],
+      "output_schema": {
+        "job_id": "string",
+        "source_files_used": "string[]",
+        "sample_counts": "object",
+        "quality_flags": "object",
+        "top_findings": "string[]",
+        "blocked": "string[]",
+        "promotable": "boolean"
+      },
+      "artifact_path": "results/swarm-runs/{run_id}/artifacts/post-alert-dataset-audit.json",
+      "enabled": true
+    },
+    {
+      "job_id": "relative_context_review",
+      "agent_id": "relative_matrix_reviewer",
+      "description": "Review relative-pair alignment and beta-bucket behavior in finalized alert rows.",
+      "scope": "Use only cached feature rows and grouped scoreboards to identify relative-context research hypotheses.",
+      "inputs": [
+        "results/agent-swarm-feature-table.json",
+        "results/agent-scoreboard-slices.json"
+      ],
+      "forbidden_actions": [
+        "change_alert_filters",
+        "promote_relative_matrix_to_live_gate"
+      ],
+      "output_schema": {
+        "job_id": "string",
+        "source_files_used": "string[]",
+        "sample_counts": "object",
+        "alignment_counts": "object",
+        "top_findings": "string[]",
+        "blocked": "string[]",
+        "promotable": "boolean"
+      },
+      "artifact_path": "results/swarm-runs/{run_id}/artifacts/relative-context-review.json",
+      "enabled": true
+    },
+    {
+      "job_id": "orderflow_book_quality_audit",
+      "agent_id": "orderflow_quality_auditor",
+      "description": "Audit public CVD and book-quality reliability before any orderflow agent is trusted.",
+      "scope": "Measure freshness, missingness, negative ages, and score anomalies from existing artifacts.",
+      "inputs": [
+        "results/agent-swarm-feature-table.json",
+        "results/agent-scoreboard.json"
+      ],
+      "forbidden_actions": [
+        "change_book_freshness_rules",
+        "change_orderflow_scoring",
+        "touch_live_connectors"
+      ],
+      "output_schema": {
+        "job_id": "string",
+        "source_files_used": "string[]",
+        "sample_counts": "object",
+        "orderflow_quality": "object",
+        "top_findings": "string[]",
+        "blocked": "string[]",
+        "promotable": "boolean"
+      },
+      "artifact_path": "results/swarm-runs/{run_id}/artifacts/orderflow-book-quality-audit.json",
+      "enabled": true
+    },
+    {
+      "job_id": "slice_watchlist_review",
+      "agent_id": "slice_watchlist_reviewer",
+      "description": "Review grouped scoreboard slices for research watchlist candidates.",
+      "scope": "Rank slices as research watchlist only; do not convert them to live gates.",
+      "inputs": [
+        "results/agent-scoreboard-slices.json"
+      ],
+      "forbidden_actions": [
+        "promote_slice_to_live_gate",
+        "change_alert_thresholds"
+      ],
+      "output_schema": {
+        "job_id": "string",
+        "source_files_used": "string[]",
+        "sample_counts": "object",
+        "watchlist": "object[]",
+        "top_findings": "string[]",
+        "blocked": "string[]",
+        "promotable": "boolean"
+      },
+      "artifact_path": "results/swarm-runs/{run_id}/artifacts/slice-watchlist-review.json",
+      "enabled": true
+    },
+    {
+      "job_id": "risk_governor_review",
+      "agent_id": "risk_governor",
+      "description": "Apply research promotion blockers across dataset, agent, slice, and quality evidence.",
+      "scope": "Block promotion unless clean sample, out-of-sample evidence, and risk conditions are satisfied.",
+      "inputs": [
+        "results/agent-scoreboard.json",
+        "results/agent-scoreboard-slices.json"
+      ],
+      "forbidden_actions": [
+        "approve_live_execution",
+        "set_trade_size",
+        "open_executor"
+      ],
+      "output_schema": {
+        "job_id": "string",
+        "source_files_used": "string[]",
+        "promotion_decision": "string",
+        "risk_blockers": "string[]",
+        "top_findings": "string[]",
+        "blocked": "string[]",
+        "promotable": "boolean"
+      },
+      "artifact_path": "results/swarm-runs/{run_id}/artifacts/risk-governor-review.json",
+      "enabled": true
+    },
+    {
+      "job_id": "synthesis_report",
+      "agent_id": "synthesis_reporter",
+      "description": "Fan in specialist artifacts into a concise research run report.",
+      "scope": "Summarize what was learned, what is blocked, and next research-only steps.",
+      "inputs": [
+        "results/agent-swarm-feature-table.json",
+        "results/agent-scoreboard.json",
+        "results/agent-scoreboard-slices.json",
+        "results/swarm-runs/{run_id}/artifacts/*.json"
+      ],
+      "forbidden_actions": [
+        "claim_deployment",
+        "modify_live_systems"
+      ],
+      "output_schema": {
+        "job_id": "string",
+        "source_files_used": "string[]",
+        "run_summary": "object",
+        "top_findings": "string[]",
+        "blocked": "string[]",
+        "promotable": "boolean"
+      },
+      "artifact_path": "results/swarm-runs/{run_id}/artifacts/synthesis-report.json",
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,1425 @@
+ATAS: ATAS.Indicators.ExtendedIndicator Class Reference 
+
+ATAS 
+
+Loading... 
+
+Searching... 
+
+No Matches 
+
+Classes | Public Member Functions | Protected Member Functions | Properties | List of all members 
+
+ATAS.Indicators.ExtendedIndicator Class Reference 
+
+An extended base class for custom indicators that provide additional functionality for drawing, alerts, market data handling, etc. More... 
+
+Inheritance diagram for ATAS.Indicators.ExtendedIndicator: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Collaboration diagram for ATAS.Indicators.ExtendedIndicator: 
+
+<p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p> 
+[ legend ] 
+
+Public Member Functions 
+
+void Draw (RenderContext context, DrawingLayouts layout) 
+
+override void Dispose () 
+
+void ApplyDefaultColors () 
+
+Applies default colors to the drawing elements. 
+
+void SubscribeToTimer ( TimeSpan period, Action callback) 
+
+Registers the callback and periodically calls it with specified period. Parameters 
+
+period A period of market data time used to repeatedly invoke the callback. 
+
+callback A method that is called each time a specified period of market data time passes. 
+
+void UnsubscribeFromTimer ( TimeSpan period, Action callback) 
+
+Unregister the callback from periodic invocations. Parameters 
+
+period Subscribed period of invocations. 
+
+callback A method to be unregistered. 
+
+Public Member Functions inherited from ATAS.Indicators.BaseIndicator 
+
+virtual void Dispose () 
+
+override string ToString () 
+
+Converts the current instance of the indicator to its string representation. 
+
+Public Member Functions inherited from ATAS.Indicators.ChartObject 
+
+virtual bool ProcessMouseClick (RenderControlMouseEventArgs e) 
+
+Processes a mouse click event on the chart object. 
+
+virtual bool ProcessMouseWheel (int delta) 
+
+Processes a mouse wheel event on the chart object. 
+
+virtual bool ProcessMouseDown (RenderControlMouseEventArgs e) 
+
+Processes a mouse down event on the chart object. 
+
+virtual bool ProcessMouseUp (RenderControlMouseEventArgs e) 
+
+Processes a mouse up event on the chart object. 
+
+virtual bool ProcessMouseMove (RenderControlMouseEventArgs e) 
+
+Processes a mouse move event on the chart object. 
+
+virtual bool ProcessMouseDoubleClick (RenderControlMouseEventArgs e) 
+
+Processes a mouse double click event on the chart object. 
+
+virtual StdCursor GetCursor (RenderControlMouseEventArgs e) 
+
+Gets the cursor to display when the mouse is over the chart object. 
+
+virtual bool ProcessKeyDown ( CrossKeyEventArgs e) 
+
+Processes a key down event on the chart object. 
+
+virtual bool ProcessKeyUp ( CrossKeyEventArgs e) 
+
+Processes a key up event on the chart object. 
+
+void SubscribeToTimer ( TimeSpan period, Action callback) 
+
+Registers the callback and periodically calls it with specified period. 
+
+void UnsubscribeFromTimer ( TimeSpan period, Action callback) 
+
+Unregister the callback from periodic invocations. 
+
+Protected Member Functions 
+
+virtual void OnDenyCalculationTimeFrameChangeChanged () 
+
+Called when DenyCalculationTimeFrameChange changes - lets Indicator reconcile a running MTF calculation with the new deny state. 
+
+ExtendedIndicator (bool useCandles=false) 
+
+ExtendedIndicator ( DataSeriesType seriesType) 
+
+virtual void OnContainerChanged ( IIndicatorContainer ? container) 
+
+This method is called when the value of the Container property changes. 
+
+virtual void OnDataProviderChanged ( IIndicatorDataProvider ? oldDataProvider, IIndicatorDataProvider ? newDataProvider) 
+
+This method is called when the value of the DataProvider property changes. 
+
+bool TryGetService< T > ([NotNullWhen(true)] out T? service) 
+
+virtual void OnPortfolioChanged ( Portfolio portfolio) 
+
+This method is called when the value of the Portfolio changes. 
+
+virtual void OnPositionChanged ( Position position) 
+
+This method is called when the value of the Position changes. 
+
+virtual void OnNewOrder ( Order order) 
+
+This method is called when a new order is received. 
+
+virtual void OnOrderChanged ( Order order) 
+
+Called when an existing order is modified (changed). 
+
+virtual void OnNewMyTrade ( MyTrade myTrade) 
+
+Called when a new trade executed by the indicator's own strategy is received. 
+
+virtual void OnOrderRegisterFailed ( Order order, string message) 
+
+Called when an attempt to register (place) a new order fails. 
+
+virtual void OnOrderCancelFailed ( Order order, string message) 
+
+Called when an attempt to cancel an existing order fails. 
+
+virtual void OnOrderModifyFailed ( Order order, Order newOrder, string error) 
+
+Called when an attempt to modify an existing order fails. 
+
+virtual void OnRender (RenderContext context, DrawingLayouts layout) 
+
+Override this method for implementing your own data rendering logic. 
+
+void SubscribeToDrawingEvents ( DrawingLayouts flags) 
+
+Method for specifying the list of layouts in which rendering will be performed. 
+
+void RedrawChart ( RedrawArg ? redrawArg=null) 
+
+Call to redraw chart. 
+
+void AddAlert (string soundFile, string instrument, string message, CrossColor background, CrossColor foreground) 
+
+Adds an alert for a specific instrument with custom properties. 
+
+void AddAlert (string soundFile, string instrument, string message, CrossColor background, CrossColor foreground, DateTime time) 
+
+Adds an alert for a specific instrument with custom properties. 
+
+void AddAlert (string soundFile, string message) 
+
+Adds an alert with the specified sound file and message to the chart. 
+
+DrawingText AddText (string tag, string text, bool isAbovePrice, int bar, decimal price, int yOffset, int xOffset, Color textColor, Color outlineColor, Color fillColor, float fontSize, DrawingText.TextAlign align, bool autoSize=false) 
+
+Adds a drawing text element to the chart at the specified position. 
+
+override void RecalculateValues () 
+
+Recalculate the indicator values on each bar. 
+
+IndicatorCandle GetCandle (int bar) 
+
+Gets the IndicatorCandle object at the specified bar index. 
+
+override void Calculate (int bar, decimal value) 
+
+Performs the calculation for the indicator at the specified bar and value. Parameters 
+
+bar The bar number for which the calculation is performed. 
+
+value The input value from the data series at the specified bar. 
+
+virtual void OnNewTrades (IEnumerable< MarketDataArg > trades) 
+
+Handles a collection of new trade data represented by MarketDataArg objects. 
+
+virtual void OnNewTrade ( MarketDataArg trade) 
+
+Handles an individual trade represented by a MarketDataArg object. 
+
+virtual void OnBestBidAskChanged ( MarketDataArg depth) 
+
+Handles changes in the best bid or ask prices in the market depth represented by a MarketDataArg object. 
+
+virtual void MarketDepthsChanged (IEnumerable< MarketDataArg > depths) 
+
+Handles changes in multiple market depths represented by an IEnumerable<MarketDataArg>. 
+
+virtual void MarketDepthChanged ( MarketDataArg depth) 
+
+Handles changes in a single market depth represented by a MarketDataArg object. 
+
+virtual void OnCumulativeTrade ( CumulativeTrade trade) 
+
+Handles a cumulative trade event represented by a CumulativeTrade object. 
+
+virtual void OnUpdateCumulativeTrade ( CumulativeTrade trade) 
+
+Handles an update event for a cumulative trade represented by a CumulativeTrade object. 
+
+virtual void OnCumulativeTradesResponse ( CumulativeTradesRequest request, IEnumerable< CumulativeTrade > cumulativeTrades) 
+
+Called when a response for a cumulative trades request is received. 
+
+void RequestForCumulativeTrades ( CumulativeTradesRequest request) 
+
+Sends a request for cumulative trades data to the online data provider. 
+
+override void OnVisibleChanged () 
+
+Called when the Visible property changes. 
+
+virtual void OnFixedProfilesResponse ( IndicatorCandle fixedProfile, FixedProfilePeriods period) 
+
+virtual void OnFixedProfilesResponse ( IndicatorCandle fixedProfileScaled, IndicatorCandle fixedProfileOriginScale, FixedProfilePeriods period) 
+
+This method is called when the online data provider responds with fixed profile data. Override this method in derived classes to handle the received fixed profile data. 
+
+void GetFixedProfile ( FixedProfileRequest request) 
+
+Requests fixed profile data from the online data provider. 
+
+async Task< FixedProfileResponse ?> RequestFixedProfileAsync ( FixedProfileRequest request) 
+
+Asynchronously requests a fixed market profile parameterized with FixedProfileRequest. 
+
+Task SubscribeMarketByOrderData () 
+
+Subscribes to the market by order data. 
+
+ITradesCache GetTradesCache ( TimeSpan period) 
+
+Returns a trades cache. 
+
+IMarketByOrdersCache GetMarketByOrdersCache ( TimeSpan period) 
+
+Returns a market by order data cache. 
+
+IMarketByOrdersWithTradesCache GetMarketByOrdersWithTradesCache ( TimeSpan period) 
+
+Returns a market by order data and trades cache. 
+
+virtual void OnMarketByOrdersChanged (IEnumerable< MarketByOrder > values) 
+
+Handles a collection of market by order data represented by MarketByOrder objects. 
+
+virtual void OnApplyDefaultColors () 
+
+Invoked to apply default colors to the drawing elements. 
+
+Protected Member Functions inherited from ATAS.Indicators.BaseIndicator 
+
+BaseIndicator (bool useCandles=false) 
+
+virtual void RecalculateValues () 
+
+Recalculate the indicator values on each bar. 
+
+virtual void OnInitialize () 
+
+The method is executed before the first calculation. 
+
+virtual void OnRecalculate () 
+
+The method is executed before a new calculation. 
+
+virtual void OnFinishRecalculate () 
+
+The method is executed after the end of the calculation. 
+
+virtual void Calculate (int bar, decimal value) 
+
+Performs the calculation for the indicator at the specified bar and value. 
+
+abstract void OnCalculate (int bar, decimal value) 
+
+The main indicator calculation method is called for each bar on the history, then it is called on each tick. 
+
+void Add ( Indicator indicator) 
+
+Adds an indicator to the list of used indicators by this indicator. 
+
+void Clear () 
+
+Clear all data series. 
+
+virtual void OnSourceChanged () 
+
+This method is called when the SourceDataSeries property is changed. 
+
+virtual void OnPropertiesEditorChanged ( IPropertiesEditor ? oldValue, IPropertiesEditor ? newValue) 
+
+Called when the PropertiesEditor property changes. 
+
+void RaisePropertyChanged (string propertyName) 
+
+Raises the PropertyChanged event for the specified property name. 
+
+void RaisePropertyChanged (object? sender, PropertyChangedEventArgs e) 
+
+Raises the PropertyChanged event with the specified event arguments. 
+
+void RaisePanelPropertyChanged (string name) 
+
+Raises the PanelPropertyChanged event with the specified property name. 
+
+void RaiseBarValueChanged (int bar) 
+
+Raises the BarValueChanged event with the specified bar value. 
+
+virtual void OnDispose () 
+
+Called when the indicator is being disposed. 
+
+override void OnVisibleChanged () 
+
+Called when the Visible property changes. 
+
+Protected Member Functions inherited from ATAS.Indicators.ChartObject 
+
+virtual void OnVisibleChanged () 
+
+Called when the Visible property changes. 
+
+virtual void LockedOnChanged () 
+
+Called when the Locked property changes. 
+
+Protected Member Functions inherited from ATAS.Indicators.Filters.TrackedPropertyBase 
+
+void SetProperty< TProperty > (ref TProperty store, TProperty value, Action? onChanged=null, Func< TProperty, bool >? onChanging=null, [CallerMemberName] string propertyName="") 
+
+Sets the value of a property and notifies subscribers if the value has changed. 
+
+void SetTrackedProperty< TProperty > (ref TProperty store, TProperty value, Action< string >? onChanged=null, [CallerMemberName] string propertyName="") 
+
+Sets the value of a property that implements the INotifyPropertyChanged interface and notifies subscribers if the value has changed. 
+
+virtual void OnChangeProperty ([CallerMemberName] string propertyName="") 
+
+Notifies subscribers when a property value changes. 
+
+Properties 
+
+virtual bool AlertsEnabled = false [get, set] 
+
+bool FullScreenMode [get, set] 
+
+Gets or sets full screen mode for the indicator. Could be applied only to the vertical indicators('IsVerticalIndicator = true') 
+
+bool DenyToChangePanel [get, set] 
+
+Gets or sets a value indicating whether changing the indicator's panel is denied. For vertical indicators, it is always denied. 
+
+bool DenyCalculationTimeFrameChange [get, set] 
+
+Gets or sets a value indicating whether changing the indicator's calculation timeframe (Indicator.CalculationTimeFrame) is denied. Set it to true in indicators bound to the chart's bar structure (cluster/footprint style) - the "Timeframe" parameter is then hidden from the settings dialog (PLAT-4527). 
+
+bool DrawAbovePrice [get, set] 
+
+Gets or sets a value indicating whether custom painting should be performed on top of rendered bars. 
+
+bool EnableCustomDrawing [get, protected set] 
+
+Gets or sets a value indicating whether custom drawing is enabled for the indicator. 
+
+bool IsLoading [get, set] 
+
+Indicates that the indicator is still loading its data. While set, the chart indicators legend shows a loading marker next to the indicator name. 
+
+bool ShowDescription [get, set] 
+
+Gets or sets a value indicating whether the description of the indicator should be shown. 
+
+IIndicatorContainer ? Container [get, set] 
+
+Gets or sets the container in which the indicator is hosted. 
+
+IIndicatorDataProvider ? DataProvider [get, set] 
+
+Gets or sets the data provider for the indicator. 
+
+List< LineTillTouch > HorizontalLinesTillTouch = new() [get] 
+
+Gets the collection of horizontal lines used to track touch points on the chart. 
+
+List< TrendLine > TrendLines = new() [get] 
+
+Gets the collection of trend lines on the chart. 
+
+List< DrawingRectangle > Rectangles = new() [get] 
+
+Gets the collection of rectangles on the chart. 
+
+SyncDictionary< string, DrawingText > Labels = new() [get, set] 
+
+Gets or sets the collection of named drawing text elements. 
+
+IEnumerable< MarketByOrder > MarketByOrders [get] 
+
+Gets a snapshot of the current market by order data. 
+
+DateTime MarketTime [get] 
+
+Current market time. 
+
+DateTime UtcTime [get] 
+
+Current UTC time. 
+
+Properties inherited from ATAS.Indicators.BaseIndicator 
+
+static ? PerformanceDiagnoser PerformanceDiagnoser [get] 
+
+Indicator performance tracker. 
+
+static bool UseProfiling [get, set] 
+
+Set to true to measure the performance of all indicators. 
+
+IPropertiesEditor ? PropertiesEditor [get, set] 
+
+string Name [get, set] 
+
+Name of the indicator. 
+
+string? CustomName [get, set] 
+
+User-defined display name of this indicator instance. It is independent from other instances of the same indicator type and is used purely as a label. When null or empty, the auto-generated name (see ToString) is shown instead. 
+
+bool IsDisposed [get, set] 
+
+Gets or sets a value indicating whether the indicator object has been disposed of. 
+
+List< IDataSeries > DataSeries [get] 
+
+List of data series used by the indicator. 
+
+bool SupportsExtendedSeries [get] 
+
+Gets value indicating whether the data series can be drawn out of chart bars. 
+
+List< LineSeries > LineSeries [get] 
+
+List of line series used by the indicator. 
+
+string Panel [get, set] 
+
+The name of the panel where the indicator is placed. 
+
+bool IsVerticalIndicator [get, set] 
+
+Gets or sets a value indicating whether the indicator is intended to be displayed as a vertical indicator. 
+
+bool UseCandles [get] 
+
+Gets a value indicating whether the indicator uses candle data series. 
+
+bool ExternalCalculation [get, set] 
+
+When true the indicator's own OnCalculate pipeline is suppressed and its data series are filled by an external calculation service (the platform's multi-timeframe projection host, PLAT-4527). The host listens to ExternalCalculateBarRequested / ExternalRecalculateRequested to keep the series in sync. Not persisted; set by the host only. 
+
+int CurrentBar [get] 
+
+Bars number. All bars and the values of the corresponding data series have a serial number. The earliest bar of the chart is assigned the number 0; the next bar is assigned the number 1, and so on. 
+
+IDataSeries < decimal >? SourceDataSeries [get, set] 
+
+Gets or sets the data series used as the source for the indicator's calculations. 
+
+decimal this[int index] [get, protected set] 
+
+Gets or sets the value of the first data series of the indicator at the specified index. 
+
+Properties inherited from ATAS.Indicators.ChartObject 
+
+bool Visible [get, set] 
+
+Gets or sets a value indicating whether the chart object is visible. 
+
+bool Locked [get, set] 
+
+Gets or sets a value indicating whether the chart object is locked. 
+
+bool AllowedInteraction [get] 
+
+Gets a value indicating whether interaction with the chart object is allowed. 
+
+Properties inherited from ATAS.Indicators.IPropertiesEditorOwner 
+
+IPropertiesEditor ? PropertiesEditor [get, set] 
+
+Properties inherited from ATAS.Indicators.IMarketTimeProvider 
+
+DateTime MarketTime [get] 
+
+Current market time. 
+
+DateTime UtcTime [get] 
+
+Current UTC time. 
+
+Additional Inherited Members 
+
+Static Public Attributes inherited from ATAS.Indicators.BaseIndicator 
+
+const int MaxCustomNameLength = 50 
+
+Maximum allowed length of the user-defined CustomName. 
+
+Static Protected Member Functions inherited from ATAS.Indicators.BaseIndicator 
+
+static PerfCounter MeasurePerformance (string name) 
+
+Measures the performance of a specific operation with the given name. If a performance diagnoser is available, it will be used to measure the performance; otherwise, a default performance counter will be returned. 
+
+Protected Attributes inherited from ATAS.Indicators.BaseIndicator 
+
+readonly List< Indicator > UsedIndicators = new() 
+
+The list of indicators that are being used by this indicator. 
+
+Events inherited from ATAS.Indicators.BaseIndicator 
+
+Action< int >? ExternalCalculateBarRequested 
+
+Raised instead of a single-bar calculation when ExternalCalculation is on (a source data series tick arrived for the given bar). 
+
+Action? ExternalRecalculateRequested 
+
+Raised instead of a full recalculation when ExternalCalculation is on (the data series were cleared and must be re-projected in full). 
+
+new? PropertyChangedEventHandler PropertyChanged 
+
+PropertyChangedEventHandler? PanelPropertyChanged 
+
+Action< int >? BarValueChanged 
+
+Event that is raised when the value of a bar in the indicator changes. 
+
+Events inherited from ATAS.Indicators.Filters.TrackedPropertyBase 
+
+PropertyChangedEventHandler? PropertyChanged 
+
+Events inherited from ATAS.Indicators.INotifyPanelPropertyChanged 
+
+PropertyChangedEventHandler PanelPropertyChanged 
+
+Occurs when a panel property value changes. 
+
+Detailed Description 
+
+An extended base class for custom indicators that provide additional functionality for drawing, alerts, market data handling, etc. 
+
+Constructor & Destructor Documentation 
+
+◆ ExtendedIndicator() [1/2] 
+
+ATAS.Indicators.ExtendedIndicator.ExtendedIndicator ( bool useCandles = false ) 
+
+protected 
+
+◆ ExtendedIndicator() [2/2] 
+
+ATAS.Indicators.ExtendedIndicator.ExtendedIndicator ( DataSeriesType seriesType ) 
+
+protected 
+
+Member Function Documentation 
+
+◆ AddAlert() [1/3] 
+
+void ATAS.Indicators.ExtendedIndicator.AddAlert ( string soundFile , 
+
+string instrument , 
+
+string message , 
+
+CrossColor background , 
+
+CrossColor foreground 
+
+) 
+
+protected 
+
+Adds an alert for a specific instrument with custom properties. 
+Parameters 
+
+soundFile The file path or name of the sound file to be played for the alert. 
+
+instrument The name of the instrument or symbol associated with the alert. 
+
+message The message or description of the alert. 
+
+background The background color to be used for the alert visualization. 
+
+foreground The foreground color to be used for the alert visualization. 
+
+◆ AddAlert() [2/3] 
+
+void ATAS.Indicators.ExtendedIndicator.AddAlert ( string soundFile , 
+
+string instrument , 
+
+string message , 
+
+CrossColor background , 
+
+CrossColor foreground , 
+
+DateTime time 
+
+) 
+
+protected 
+
+Adds an alert for a specific instrument with custom properties. 
+Parameters 
+
+soundFile The file path or name of the sound file to be played for the alert. 
+
+instrument The name of the instrument or symbol associated with the alert. 
+
+message The message or description of the alert. 
+
+background The background color to be used for the alert visualization. 
+
+foreground The foreground color to be used for the alert visualization. 
+
+time Exact time for alert 
+
+◆ AddAlert() [3/3] 
+
+void ATAS.Indicators.ExtendedIndicator.AddAlert ( string soundFile , 
+
+string message 
+
+) 
+
+protected 
+
+Adds an alert with the specified sound file and message to the chart. 
+Parameters 
+
+soundFile The file path of the sound to be played when the alert is triggered. 
+
+message The message to be displayed in the alert. 
+
+◆ AddText() 
+
+DrawingText ATAS.Indicators.ExtendedIndicator.AddText ( string tag , 
+
+string text , 
+
+bool isAbovePrice , 
+
+int bar , 
+
+decimal price , 
+
+int yOffset , 
+
+int xOffset , 
+
+Color textColor , 
+
+Color outlineColor , 
+
+Color fillColor , 
+
+float fontSize , 
+
+DrawingText::TextAlign align , 
+
+bool autoSize = false 
+
+) 
+
+protected 
+
+Adds a drawing text element to the chart at the specified position. 
+Parameters 
+
+tag A unique tag or identifier for the text element. 
+
+text The actual text to be displayed. 
+
+isAbovePrice A boolean flag indicating whether the text should be displayed above the price or not. 
+
+bar The index of the bar where the text should be displayed. 
+
+price The price at which the text should be displayed. 
+
+yOffset The vertical offset of the text from its default position. 
+
+xOffset The horizontal offset of the text from its default position. 
+
+textColor The color of the text. 
+
+outlineColor The color used for the outline of the text. 
+
+fillColor The fill color of the text background. 
+
+fontSize The font size of the text. 
+
+align The text alignment within its bounding box. 
+
+autoSize A boolean flag indicating whether the text should be auto-sized or not. 
+
+Returns The created DrawingText object. 
+
+◆ ApplyDefaultColors() 
+
+void ATAS.Indicators.ExtendedIndicator.ApplyDefaultColors ( ) 
+
+Applies default colors to the drawing elements. 
+
+This method triggers the OnApplyDefaultColors virtual method, which can be overridden in derived classes to customize the default color settings for the drawing elements. 
+
+◆ Calculate() 
+
+override void ATAS.Indicators.ExtendedIndicator.Calculate ( int bar , 
+
+decimal value 
+
+) 
+
+protected virtual 
+
+Performs the calculation for the indicator at the specified bar and value. Parameters 
+
+bar The bar number for which the calculation is performed. 
+
+value The input value from the data series at the specified bar. 
+
+Reimplemented from ATAS.Indicators.BaseIndicator . 
+
+◆ Dispose() 
+
+override void ATAS.Indicators.ExtendedIndicator.Dispose ( ) 
+
+virtual 
+
+Reimplemented from ATAS.Indicators.BaseIndicator . 
+
+◆ Draw() 
+
+void ATAS.Indicators.ExtendedIndicator.Draw ( RenderContext context , 
+
+DrawingLayouts layout 
+
+) 
+
+◆ GetCandle() 
+
+IndicatorCandle ATAS.Indicators.ExtendedIndicator.GetCandle ( int bar ) 
+
+protected 
+
+Gets the IndicatorCandle object at the specified bar index. 
+Parameters 
+
+bar The index of the bar for which to retrieve the IndicatorCandle. 
+
+Returns The IndicatorCandle object at the specified bar index. 
+
+◆ GetFixedProfile() 
+
+void ATAS.Indicators.ExtendedIndicator.GetFixedProfile ( FixedProfileRequest request ) 
+
+protected 
+
+Requests fixed profile data from the online data provider. 
+Parameters 
+
+request The request object containing information about the fixed profile data to be fetched. 
+
+◆ GetMarketByOrdersCache() 
+
+IMarketByOrdersCache ATAS.Indicators.ExtendedIndicator.GetMarketByOrdersCache ( TimeSpan period ) 
+
+protected 
+
+Returns a market by order data cache. 
+Parameters 
+
+period Specifies the time period for which Market-by-Order updates are stored in IMarketByOrdersCache. 
+
+Returns The IMarketByOrdersCache object representing the current state and allowing to receive real-time updates. 
+
+◆ GetMarketByOrdersWithTradesCache() 
+
+IMarketByOrdersWithTradesCache ATAS.Indicators.ExtendedIndicator.GetMarketByOrdersWithTradesCache ( TimeSpan period ) 
+
+protected 
+
+Returns a market by order data and trades cache. 
+Parameters 
+
+period Specifies the time period for which trades are stored in IMarketByOrdersWithTradesCache. 
+
+Returns The IMarketByOrdersWithTradesCache object representing the cache. 
+
+◆ GetTradesCache() 
+
+ITradesCache ATAS.Indicators.ExtendedIndicator.GetTradesCache ( TimeSpan period ) 
+
+protected 
+
+Returns a trades cache. 
+Parameters 
+
+period Specifies the time period for which trades are stored in ITradesCache. 
+
+Returns The ITradesCache object representing the trades cache. 
+
+◆ MarketDepthChanged() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.MarketDepthChanged ( MarketDataArg depth ) 
+
+protected virtual 
+
+Handles changes in a single market depth represented by a MarketDataArg object. 
+Parameters 
+
+depth The MarketDataArg representing the market depth data. 
+
+◆ MarketDepthsChanged() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.MarketDepthsChanged ( IEnumerable< MarketDataArg > depths ) 
+
+protected virtual 
+
+Handles changes in multiple market depths represented by an IEnumerable<MarketDataArg>. 
+Parameters 
+
+depths The collection of MarketDataArg representing the market depth data. 
+
+◆ OnApplyDefaultColors() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnApplyDefaultColors ( ) 
+
+protected virtual 
+
+Invoked to apply default colors to the drawing elements. 
+
+This method can be overridden in derived classes to customize or set default color values for the drawing elements. When this method is called, it is an opportunity for the derived class to apply its own default color scheme to the drawing elements used in the specific implementation. 
+
+Reimplemented in ATAS.Indicators.Indicator . 
+
+◆ OnBestBidAskChanged() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnBestBidAskChanged ( MarketDataArg depth ) 
+
+protected virtual 
+
+Handles changes in the best bid or ask prices in the market depth represented by a MarketDataArg object. 
+Parameters 
+
+depth The MarketDataArg representing the market depth data. 
+
+Reimplemented in ATAS.Strategies.Chart.ChartStrategy . 
+
+◆ OnContainerChanged() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnContainerChanged ( IIndicatorContainer ? container ) 
+
+protected virtual 
+
+This method is called when the value of the Container property changes. 
+Parameters 
+
+container The new value of the IIndicatorContainer that the indicator is attached to. 
+
+◆ OnCumulativeTrade() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnCumulativeTrade ( CumulativeTrade trade ) 
+
+protected virtual 
+
+Handles a cumulative trade event represented by a CumulativeTrade object. 
+Parameters 
+
+trade The CumulativeTrade representing the cumulative trade data. 
+
+◆ OnCumulativeTradesResponse() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnCumulativeTradesResponse ( CumulativeTradesRequest request , 
+
+IEnumerable< CumulativeTrade > cumulativeTrades 
+
+) 
+
+protected virtual 
+
+Called when a response for a cumulative trades request is received. 
+Parameters 
+
+request The CumulativeTradesRequest object representing the original request. 
+
+cumulativeTrades The collection of CumulativeTrade representing cumulative trades data. 
+
+◆ OnDataProviderChanged() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnDataProviderChanged ( IIndicatorDataProvider ? oldDataProvider , 
+
+IIndicatorDataProvider ? newDataProvider 
+
+) 
+
+protected virtual 
+
+This method is called when the value of the DataProvider property changes. 
+Parameters 
+
+oldDataProvider The old IIndicatorDataProvider value. 
+
+newDataProvider The new IIndicatorDataProvider value. 
+
+Reimplemented in ATAS.Indicators.Indicator . 
+
+◆ OnDenyCalculationTimeFrameChangeChanged() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnDenyCalculationTimeFrameChangeChanged ( ) 
+
+protected virtual 
+
+Called when DenyCalculationTimeFrameChange changes - lets Indicator reconcile a running MTF calculation with the new deny state. 
+
+Reimplemented in ATAS.Indicators.Indicator . 
+
+◆ OnFixedProfilesResponse() [1/2] 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnFixedProfilesResponse ( IndicatorCandle fixedProfile , 
+
+FixedProfilePeriods period 
+
+) 
+
+protected virtual 
+
+◆ OnFixedProfilesResponse() [2/2] 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnFixedProfilesResponse ( IndicatorCandle fixedProfileScaled , 
+
+IndicatorCandle fixedProfileOriginScale , 
+
+FixedProfilePeriods period 
+
+) 
+
+protected virtual 
+
+This method is called when the online data provider responds with fixed profile data. Override this method in derived classes to handle the received fixed profile data. 
+Parameters 
+
+fixedProfileScaled The fixed profile data scaled to a specific period. 
+
+fixedProfileOriginScale The fixed profile data without scaling. 
+
+period The period of the fixed profile data (e.g., daily, weekly, monthly, etc.). 
+
+◆ OnMarketByOrdersChanged() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnMarketByOrdersChanged ( IEnumerable< MarketByOrder > values ) 
+
+protected virtual 
+
+Handles a collection of market by order data represented by MarketByOrder objects. 
+Parameters 
+
+values An IEnumerable of MarketByOrder representing the market by order data. 
+
+◆ OnNewMyTrade() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnNewMyTrade ( MyTrade myTrade ) 
+
+protected virtual 
+
+Called when a new trade executed by the indicator's own strategy is received. 
+Parameters 
+
+myTrade The new trade executed by the indicator's own strategy. 
+
+Reimplemented in ATAS.Strategies.Chart.ChartStrategy . 
+
+◆ OnNewOrder() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnNewOrder ( Order order ) 
+
+protected virtual 
+
+This method is called when a new order is received. 
+Parameters 
+
+order The new order that was received. 
+
+◆ OnNewTrade() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnNewTrade ( MarketDataArg trade ) 
+
+protected virtual 
+
+Handles an individual trade represented by a MarketDataArg object. 
+Parameters 
+
+trade The MarketDataArg representing the trade data. 
+
+◆ OnNewTrades() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnNewTrades ( IEnumerable< MarketDataArg > trades ) 
+
+protected virtual 
+
+Handles a collection of new trade data represented by MarketDataArg objects. 
+Parameters 
+
+trades An IEnumerable of MarketDataArg representing the new trade data. 
+
+◆ OnOrderCancelFailed() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnOrderCancelFailed ( Order order , 
+
+string message 
+
+) 
+
+protected virtual 
+
+Called when an attempt to cancel an existing order fails. 
+Parameters 
+
+order The order that failed to be canceled. 
+
+message The error message indicating the reason for the failure. 
+
+◆ OnOrderChanged() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnOrderChanged ( Order order ) 
+
+protected virtual 
+
+Called when an existing order is modified (changed). 
+Parameters 
+
+order The modified order. 
+
+◆ OnOrderModifyFailed() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnOrderModifyFailed ( Order order , 
+
+Order newOrder , 
+
+string error 
+
+) 
+
+protected virtual 
+
+Called when an attempt to modify an existing order fails. 
+Parameters 
+
+order The order that failed to be modified. 
+
+newOrder The new order with the modifications that failed to be applied. 
+
+error The error message indicating the reason for the failure. 
+
+◆ OnOrderRegisterFailed() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnOrderRegisterFailed ( Order order , 
+
+string message 
+
+) 
+
+protected virtual 
+
+Called when an attempt to register (place) a new order fails. 
+Parameters 
+
+order The order that failed to be registered. 
+
+message The error message indicating the reason for the failure. 
+
+◆ OnPortfolioChanged() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnPortfolioChanged ( Portfolio portfolio ) 
+
+protected virtual 
+
+This method is called when the value of the Portfolio changes. 
+Parameters 
+
+portfolio The new Portfolio value. 
+
+◆ OnPositionChanged() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnPositionChanged ( Position position ) 
+
+protected virtual 
+
+This method is called when the value of the Position changes. 
+Parameters 
+
+position The new Position value. 
+
+◆ OnRender() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnRender ( RenderContext context , 
+
+DrawingLayouts layout 
+
+) 
+
+protected virtual 
+
+Override this method for implementing your own data rendering logic. 
+Parameters 
+
+context The rendering context used to draw on the chart. 
+
+layout The layout information for the drawing. 
+
+◆ OnUpdateCumulativeTrade() 
+
+virtual void ATAS.Indicators.ExtendedIndicator.OnUpdateCumulativeTrade ( CumulativeTrade trade ) 
+
+protected virtual 
+
+Handles an update event for a cumulative trade represented by a CumulativeTrade object. 
+Parameters 
+
+trade The CumulativeTrade representing the updated cumulative trade data. 
+
+◆ OnVisibleChanged() 
+
+override void ATAS.Indicators.ExtendedIndicator.OnVisibleChanged ( ) 
+
+protected virtual 
+
+Called when the Visible property changes. 
+
+Reimplemented from ATAS.Indicators.BaseIndicator . 
+
+◆ RecalculateValues() 
+
+override void ATAS.Indicators.ExtendedIndicator.RecalculateValues ( ) 
+
+protected virtual 
+
+Recalculate the indicator values on each bar. 
+
+Reimplemented from ATAS.Indicators.BaseIndicator . 
+
+◆ RedrawChart() 
+
+void ATAS.Indicators.ExtendedIndicator.RedrawChart ( RedrawArg ? redrawArg = null ) 
+
+protected 
+
+Call to redraw chart. 
+
+◆ RequestFixedProfileAsync() 
+
+async Task< FixedProfileResponse ?> ATAS.Indicators.ExtendedIndicator.RequestFixedProfileAsync ( FixedProfileRequest request ) 
+
+protected 
+
+Asynchronously requests a fixed market profile parameterized with FixedProfileRequest. 
+Parameters 
+
+request The request containing the fixed profile period. 
+
+◆ RequestForCumulativeTrades() 
+
+void ATAS.Indicators.ExtendedIndicator.RequestForCumulativeTrades ( CumulativeTradesRequest request ) 
+
+protected 
+
+Sends a request for cumulative trades data to the online data provider. 
+Parameters 
+
+request The CumulativeTradesRequest object representing the request to be sent. 
+
+◆ SubscribeMarketByOrderData() 
+
+Task ATAS.Indicators.ExtendedIndicator.SubscribeMarketByOrderData ( ) 
+
+protected 
+
+Subscribes to the market by order data. 
+
+◆ SubscribeToDrawingEvents() 
+
+void ATAS.Indicators.ExtendedIndicator.SubscribeToDrawingEvents ( DrawingLayouts flags ) 
+
+protected 
+
+Method for specifying the list of layouts in which rendering will be performed. 
+Parameters 
+
+flags The drawing layout flags indicating which events to subscribe to. 
+
+◆ SubscribeToTimer() 
+
+void ATAS.Indicators.ExtendedIndicator.SubscribeToTimer ( TimeSpan period , 
+
+Action callback 
+
+) 
+
+Registers the callback and periodically calls it with specified period. Parameters 
+
+period A period of market data time used to repeatedly invoke the callback. 
+
+callback A method that is called each time a specified period of market data time passes. 
+
+Implements ATAS.Indicators.IMarketTimeProvider . 
+
+◆ TryGetService< T >() 
+
+bool ATAS.Indicators.ExtendedIndicator.TryGetService< T > ( [NotNullWhen(true)] out T? service ) 
+
+protected 
+
+◆ UnsubscribeFromTimer() 
+
+void ATAS.Indicators.ExtendedIndicator.UnsubscribeFromTimer ( TimeSpan period , 
+
+Action callback 
+
+) 
+
+Unregister the callback from periodic invocations. Parameters 
+
+period Subscribed period of invocations. 
+
+callback A method to be unregistered. 
+
+Implements ATAS.Indicators.IMarketTimeProvider . 
+
+Property Documentation 
+
+◆ AlertsEnabled 
+
+virtual bool ATAS.Indicators.ExtendedIndicator.AlertsEnabled = false 
+
+get set 
+
+◆ Container 
+
+IIndicatorContainer ? ATAS.Indicators.ExtendedIndicator.Container 
+
+get set 
+
+Gets or sets the container in which the indicator is hosted. 
+
+◆ DataProvider 
+
+IIndicatorDataProvider ? ATAS.Indicators.ExtendedIndicator.DataProvider 
+
+get set 
+
+Gets or sets the data provider for the indicator. 
+
+◆ DenyCalculationTimeFrameChange 
+
+bool ATAS.Indicators.ExtendedIndicator.DenyCalculationTimeFrameChange 
+
+get set 
+
+Gets or sets a value indicating whether changing the indicator's calculation timeframe (Indicator.CalculationTimeFrame) is denied. Set it to true in indicators bound to the chart's bar structure (cluster/footprint style) - the "Timeframe" parameter is then hidden from the settings dialog (PLAT-4527). 
+
+◆ DenyToChangePanel 
+
+bool ATAS.Indicators.ExtendedIndicator.DenyToChangePanel 
+
+get set 
+
+Gets or sets a value indicating whether changing the indicator's panel is denied. For vertical indicators, it is always denied. 
+
+◆ DrawAbovePrice 
+
+bool ATAS.Indicators.ExtendedIndicator.DrawAbovePrice 
+
+get set 
+
+Gets or sets a value indicating whether custom painting should be performed on top of rendered bars. 
+
+◆ EnableCustomDrawing 
+
+bool ATAS.Indicators.ExtendedIndicator.EnableCustomDrawing 
+
+get protected set 
+
+Gets or sets a value indicating whether custom drawing is enabled for the indicator. 
+
+◆ FullScreenMode 
+
+bool ATAS.Indicators.ExtendedIndicator.FullScreenMode 
+
+get set 
+
+Gets or sets full screen mode for the indicator. Could be applied only to the vertical indicators('IsVerticalIndicator = true') 
+
+◆ HorizontalLinesTillTouch 
+
+List< LineTillTouch > ATAS.Indicators.ExtendedIndicator.HorizontalLinesTillTouch = new() 
+
+get 
+
+Gets the collection of horizontal lines used to track touch points on the chart. 
+
+◆ IsLoading 
+
+bool ATAS.Indicators.ExtendedIndicator.IsLoading 
+
+get set 
+
+Indicates that the indicator is still loading its data. While set, the chart indicators legend shows a loading marker next to the indicator name. 
+
+◆ Labels 
+
+SyncDictionary<string, DrawingText > ATAS.Indicators.ExtendedIndicator.Labels = new() 
+
+get set 
+
+Gets or sets the collection of named drawing text elements. 
+
+◆ MarketByOrders 
+
+IEnumerable< MarketByOrder > ATAS.Indicators.ExtendedIndicator.MarketByOrders 
+
+get protected 
+
+Gets a snapshot of the current market by order data. 
+
+◆ MarketTime 
+
+DateTime ATAS.Indicators.ExtendedIndicator.MarketTime 
+
+get 
+
+Current market time. 
+
+Implements ATAS.Indicators.IMarketTimeProvider . 
+
+◆ Rectangles 
+
+List< DrawingRectangle > ATAS.Indicators.ExtendedIndicator.Rectangles = new() 
+
+get 
+
+Gets the collection of rectangles on the chart. 
+
+◆ ShowDescription 
+
+bool ATAS.Indicators.ExtendedIndicator.ShowDescription 
+
+get set 
+
+Gets or sets a value indicating whether the description of the indicator should be shown. 
+
+◆ TrendLines 
+
+List< TrendLine > ATAS.Indicators.ExtendedIndicator.TrendLines = new() 
+
+get 
+
+Gets the collection of trend lines on the chart. 
+
+◆ UtcTime 
+
+DateTime ATAS.Indicators.ExtendedIndicator.UtcTime 
+
+get 
+
+Current UTC time. 
+
+Implements ATAS.Indicators.IMarketTimeProvider . 
+
+The documentation for this class was generated from the following file: 
+BaseIndicator.cs 
+
+ATAS 
+
+Indicators 
+
+ExtendedIndicator 
+
+Generated by 1.9.7 
+
+Join our developers chat

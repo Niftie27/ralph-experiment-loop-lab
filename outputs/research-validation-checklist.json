@@ -1,0 +1,94 @@
+{
+  "generatedAt": "2026-10-04T08:40:14.250Z",
+  "status": "maintenance-only",
+  "note": "Research-validation checklist report. It does not promote strategies, change alerts, alter schedules, or authorize trading.",
+  "checks": {
+    "retrieval": {
+      "verdict": "pass",
+      "summary": "wiki count index=258 actual=258; indexing_and_evals route present",
+      "expectedWikiPages": 258,
+      "actualWikiPages": 258,
+      "missingRouterEntries": []
+    },
+    "pathRefs": {
+      "verdict": "pass",
+      "summary": "442 simple local path refs checked; 0 missing",
+      "checkedRefs": 442,
+      "missingRefs": []
+    },
+    "queues": {
+      "verdict": "pass",
+      "summary": "0 pending/done duplicates; 0 active queue entries; maintenance cron state present",
+      "duplicatePendingDoneItems": [],
+      "activeQueueLines": []
+    },
+    "subsystemRegistry": {
+      "verdict": "pass",
+      "summary": "9 subsystem contracts; 0 missing fields; 0 missing active outputs; 0 stale active outputs; 0 unowned pending queue items",
+      "subsystemCount": 9,
+      "missingFields": [],
+      "missingOutputs": [],
+      "staleOutputs": [],
+      "unownedPendingQueueItems": []
+    },
+    "cron": {
+      "verdict": "warn",
+      "summary": "weekly maintenance is documented locally; ralph-autoresearch-loop has 0 timeout/gateway-restart error(s)",
+      "requiresRuntimeCronTool": true,
+      "weeklyMaintenanceInLoopState": true,
+      "weeklyMaintenanceInCurrentMap": true,
+      "knownAutoresearchIssue": true,
+      "autoresearchConsecutiveErrors": 0,
+      "autoresearchNextRunAt": "2026-10-05T07:30:00Z",
+      "autoresearchLastError": null
+    },
+    "delivery": {
+      "verdict": "pass",
+      "summary": "weekly maintenance is silent by default; promised visible output still needs source-chat verification",
+      "maintenanceDeliveryNone": true
+    },
+    "hitlQuality": {
+      "verdict": "pass",
+      "summary": "scheduler remediation HITL ask exists and is narrow",
+      "hasBoundaryDeltaProtocol": true,
+      "hasSchedulerAsk": true,
+      "missingScopeTerms": []
+    },
+    "loopQuality": {
+      "verdict": "pass",
+      "summary": "autoresearch loop contract has bounded-run and verification guardrails",
+      "missingGuardrails": []
+    },
+    "handoffReadiness": {
+      "verdict": "pass",
+      "summary": "handoff protocol present; latest RALPH handoff 2026-10-03-1628-ralph-roadmap-backlog-loops-handoff.md",
+      "hasProtocolRule": true,
+      "latestRalphHandoff": "../continuation-prompts/2026-10-03-1628-ralph-roadmap-backlog-loops-handoff.md"
+    },
+    "noteFrontmatter": {
+      "verdict": "pass",
+      "summary": "197 wiki/notes files checked; 0 frontmatter/tag issue(s)",
+      "checkedNotes": 197,
+      "missingFrontmatter": [],
+      "malformedFrontmatter": [],
+      "missingTags": [],
+      "emptyTags": []
+    },
+    "paperDemo": {
+      "verdict": "not-ready",
+      "summary": "AVAX range_breakdown_short down/low-vol exact forward-paper rows 0/20",
+      "avaxRangeBreakdownForwardRows": 0,
+      "threshold": 20,
+      "dashboardGeneratedAt": "2026-10-04T08:04:18.917Z"
+    },
+    "boundaryDelta": {
+      "verdict": "pass",
+      "summary": "Report generation changed outputs only; no live or external behavior changed.",
+      "changed": [
+        "outputs/research-validation-checklist.json",
+        "outputs/research-validation-checklist.md"
+      ]
+    }
+  },
+  "verdict": "warn"
+}

@@ -1,0 +1,4734 @@
+{
+  "generatedAt": "2026-09-29T16:35:43.413Z",
+  "status": "research-only-no-live-execution",
+  "purpose": "balanced Binance USD-M archive validation batch aligning futures trades and coarse bookDepth to frozen DEMO-SIM rows before any orderflow feature promotion",
+  "source": {
+    "replay": "../btc-eth-alert-edge/results/historical-demo-sim-replay.json",
+    "manifest": "results/usdm-orderflow-balanced-manifest.json",
+    "archiveProvider": "binance-usdm-public-daily-archives",
+    "archiveTypes": [
+      "trades",
+      "bookDepth"
+    ],
+    "auth": "none",
+    "selectedRows": "frozen balanced DEMO-SIM manifest diversified by date/week, symbol, setup, direction, timeframe, BTC gate, and outcome while preserving existing replay labels and outcomes",
+    "originalClusterDefinition": "first 30 chronological closed DEMO-SIM rows from the previous broader sample"
+  },
+  "parameters": {
+    "maxWindows": 60,
+    "sampleMode": "balanced",
+    "windowMinutesBefore": 15,
+    "windowMinutesAfter": 15,
+    "bookDepthNearPct": 1,
+    "comparableBucketMinRows": 4
+  },
+  "manifest": {
+    "selectedRows": 60,
+    "dateRange": {
+      "first": "2026-08-18",
+      "last": "2026-09-08"
+    },
+    "dates": [
+      {
+        "key": "2026-08-18",
+        "count": 3
+      },
+      {
+        "key": "2026-08-19",
+        "count": 3
+      },
+      {
+        "key": "2026-08-20",
+        "count": 3
+      },
+      {
+        "key": "2026-08-21",
+        "count": 3
+      },
+      {
+        "key": "2026-08-23",
+        "count": 3
+      },
+      {
+        "key": "2026-08-25",
+        "count": 3
+      },
+      {
+        "key": "2026-08-26",
+        "count": 3
+      },
+      {
+        "key": "2026-08-27",
+        "count": 3
+      },
+      {
+        "key": "2026-08-28",
+        "count": 3
+      },
+      {
+        "key": "2026-08-29",
+        "count": 3
+      },
+      {
+        "key": "2026-08-30",
+        "count": 3
+      },
+      {
+        "key": "2026-09-01",
+        "count": 3
+      },
+      {
+        "key": "2026-09-02",
+        "count": 3
+      },
+      {
+        "key": "2026-09-03",
+        "count": 3
+      },
+      {
+        "key": "2026-09-04",
+        "count": 3
+      },
+      {
+        "key": "2026-09-05",
+        "count": 3
+      },
+      {
+        "key": "2026-09-08",
+        "count": 3
+      },
+      {
+        "key": "2026-08-22",
+        "count": 2
+      },
+      {
+        "key": "2026-08-24",
+        "count": 2
+      },
+      {
+        "key": "2026-08-31",
+        "count": 2
+      },
+      {
+        "key": "2026-09-07",
+        "count": 2
+      },
+      {
+        "key": "2026-09-06",
+        "count": 1
+      }
+    ],
+    "weeks": [
+      {
+        "key": "2026-W35",
+        "count": 20
+      },
+      {
+        "key": "2026-W36",
+        "count": 18
+      },
+      {
+        "key": "2026-W34",
+        "count": 17
+      },
+      {
+        "key": "2026-W37",
+        "count": 5
+      }
+    ],
+    "symbols": [
+      {
+        "key": "ADA",
+        "count": 8
+      },
+      {
+        "key": "AVAX",
+        "count": 8
+      },
+      {
+        "key": "BNB",
+        "count": 8
+      },
+      {
+        "key": "XRP",
+        "count": 8
+      },
+      {
+        "key": "BTC",
+        "count": 7
+      },
+      {
+        "key": "ETH",
+        "count": 7
+      },
+      {
+        "key": "LINK",
+        "count": 5
+      },
+      {
+        "key": "SOL",
+        "count": 5
+      },
+      {
+        "key": "DOGE",
+        "count": 4
+      }
+    ],
+    "setups": [
+      {
+        "key": "trend_pullback_reject_short",
+        "count": 16
+      },
+      {
+        "key": "momentum_reversal_long",
+        "count": 12
+      },
+      {
+        "key": "range_breakout_long",
+        "count": 11
+      },
+      {
+        "key": "trend_pullback_reclaim_long",
+        "count": 11
+      },
+      {
+        "key": "momentum_reversal_short",
+        "count": 6
+      },
+      {
+        "key": "range_breakdown_short",
+        "count": 4
+      }
+    ],
+    "directions": [
+      {
+        "key": "long",
+        "count": 34
+      },
+      {
+        "key": "short",
+        "count": 26
+      }
+    ],
+    "timeframes": [
+      {
+        "key": "4h",
+        "count": 51
+      },
+      {
+        "key": "1h",
+        "count": 9
+      }
+    ],
+    "btcGates": [
+      {
+        "key": "BTC_RISK_ON",
+        "count": 32
+      },
+      {
+        "key": "BTC_TRANSITION",
+        "count": 15
+      },
+      {
+        "key": "BTC_SELF",
+        "count": 7
+      },
+      {
+        "key": "BTC_RISK_OFF",
+        "count": 6
+      }
+    ],
+    "outcomes": [
+      {
+        "key": "negative",
+        "count": 42
+      },
+      {
+        "key": "positive",
+        "count": 18
+      }
+    ],
+    "originalClusterRows": 9,
+    "outsideOriginalClusterRows": 51
+  },
+  "totals": {
+    "candidateRows": 486,
+    "requestedWindows": 60,
+    "analyzedWindows": 60,
+    "noArchiveWindows": 0,
+    "rowsWithTrades": 60,
+    "rowsWithBookDepth": 60,
+    "absorptionProxyRows": 25,
+    "liquidityThinningProxyRows": 3,
+    "alignedCvdRows": 28,
+    "originalClusterRows": 9,
+    "outsideOriginalClusterRows": 51,
+    "positiveOutcomeRows": 18,
+    "negativeOutcomeRows": 42
+  },
+  "comparisons": {
+    "slices": [
+      {
+        "label": "all",
+        "rows": 60,
+        "winRatePct": 30,
+        "meanR": -0.3328,
+        "medianR": -1.0393,
+        "netPnlUsd": -3849.01
+      },
+      {
+        "label": "absorptionProxy=true",
+        "rows": 25,
+        "winRatePct": 44,
+        "meanR": 0.0044,
+        "medianR": -0.4948,
+        "netPnlUsd": 298.73
+      },
+      {
+        "label": "absorptionProxy=false",
+        "rows": 35,
+        "winRatePct": 20,
+        "meanR": -0.5736,
+        "medianR": -1.0424,
+        "netPnlUsd": -4147.74
+      },
+      {
+        "label": "liquidityThinningProxy=true",
+        "rows": 3,
+        "winRatePct": 33.33,
+        "meanR": -0.1006,
+        "medianR": -1.0242,
+        "netPnlUsd": -249.64
+      },
+      {
+        "label": "liquidityThinningProxy=false",
+        "rows": 57,
+        "winRatePct": 29.82,
+        "meanR": -0.345,
+        "medianR": -1.0415,
+        "netPnlUsd": -3599.38
+      },
+      {
+        "label": "alignedCvd=true",
+        "rows": 28,
+        "winRatePct": 42.86,
+        "meanR": -0.0186,
+        "medianR": -0.5349,
+        "netPnlUsd": 586.86
+      },
+      {
+        "label": "alignedCvd=false",
+        "rows": 32,
+        "winRatePct": 18.75,
+        "meanR": -0.6077,
+        "medianR": -1.0419,
+        "netPnlUsd": -4435.87
+      }
+    ],
+    "comparableFeatureSummary": [
+      {
+        "feature": "absorptionProxy",
+        "scope": "all",
+        "comparableBuckets": 2,
+        "comparableRows": 9,
+        "flaggedRows": 5,
+        "unflaggedRows": 4,
+        "flaggedMeanR": -0.2749,
+        "unflaggedMeanR": -1.046,
+        "meanLiftR": 0.5307
+      },
+      {
+        "feature": "liquidityThinningProxy",
+        "scope": "all",
+        "comparableBuckets": 0,
+        "comparableRows": 0,
+        "flaggedRows": 0,
+        "unflaggedRows": 0,
+        "flaggedMeanR": null,
+        "unflaggedMeanR": null,
+        "meanLiftR": null
+      },
+      {
+        "feature": "alignedCvd",
+        "scope": "all",
+        "comparableBuckets": 2,
+        "comparableRows": 9,
+        "flaggedRows": 6,
+        "unflaggedRows": 3,
+        "flaggedMeanR": -0.4106,
+        "unflaggedMeanR": -1.0315,
+        "meanLiftR": 0.5124
+      },
+      {
+        "feature": "absorptionProxy",
+        "scope": "outsideOriginalCluster",
+        "comparableBuckets": 1,
+        "comparableRows": 5,
+        "flaggedRows": 4,
+        "unflaggedRows": 1,
+        "flaggedMeanR": -0.082,
+        "unflaggedMeanR": -1.0346,
+        "meanLiftR": 0.9526
+      },
+      {
+        "feature": "liquidityThinningProxy",
+        "scope": "outsideOriginalCluster",
+        "comparableBuckets": 0,
+        "comparableRows": 0,
+        "flaggedRows": 0,
+        "unflaggedRows": 0,
+        "flaggedMeanR": null,
+        "unflaggedMeanR": null,
+        "meanLiftR": null
+      },
+      {
+        "feature": "alignedCvd",
+        "scope": "outsideOriginalCluster",
+        "comparableBuckets": 1,
+        "comparableRows": 5,
+        "flaggedRows": 4,
+        "unflaggedRows": 1,
+        "flaggedMeanR": -0.082,
+        "unflaggedMeanR": -1.0346,
+        "meanLiftR": 0.9526
+      }
+    ],
+    "comparableFeatureBuckets": [
+      {
+        "feature": "absorptionProxy",
+        "scope": "all",
+        "bucket": "trend_pullback_reclaim_long|long|4h|up/high-vol|BTC_RISK_ON",
+        "rows": 5,
+        "flaggedRows": 4,
+        "unflaggedRows": 1,
+        "flaggedMeanR": -0.082,
+        "unflaggedMeanR": -1.0346,
+        "liftR": 0.9526
+      },
+      {
+        "feature": "absorptionProxy",
+        "scope": "all",
+        "bucket": "momentum_reversal_short|short|4h|range/mid-vol|BTC_RISK_ON",
+        "rows": 4,
+        "flaggedRows": 1,
+        "unflaggedRows": 3,
+        "flaggedMeanR": -1.0464,
+        "unflaggedMeanR": -1.0498,
+        "liftR": 0.0034
+      },
+      {
+        "feature": "alignedCvd",
+        "scope": "all",
+        "bucket": "trend_pullback_reclaim_long|long|4h|up/high-vol|BTC_RISK_ON",
+        "rows": 5,
+        "flaggedRows": 4,
+        "unflaggedRows": 1,
+        "flaggedMeanR": -0.082,
+        "unflaggedMeanR": -1.0346,
+        "liftR": 0.9526
+      },
+      {
+        "feature": "alignedCvd",
+        "scope": "all",
+        "bucket": "momentum_reversal_short|short|4h|range/mid-vol|BTC_RISK_ON",
+        "rows": 4,
+        "flaggedRows": 2,
+        "unflaggedRows": 2,
+        "flaggedMeanR": -1.0679,
+        "unflaggedMeanR": -1.0299,
+        "liftR": -0.0379
+      },
+      {
+        "feature": "absorptionProxy",
+        "scope": "outsideOriginalCluster",
+        "bucket": "trend_pullback_reclaim_long|long|4h|up/high-vol|BTC_RISK_ON",
+        "rows": 5,
+        "flaggedRows": 4,
+        "unflaggedRows": 1,
+        "flaggedMeanR": -0.082,
+        "unflaggedMeanR": -1.0346,
+        "liftR": 0.9526
+      },
+      {
+        "feature": "alignedCvd",
+        "scope": "outsideOriginalCluster",
+        "bucket": "trend_pullback_reclaim_long|long|4h|up/high-vol|BTC_RISK_ON",
+        "rows": 5,
+        "flaggedRows": 4,
+        "unflaggedRows": 1,
+        "flaggedMeanR": -0.082,
+        "unflaggedMeanR": -1.0346,
+        "liftR": 0.9526
+      }
+    ]
+  },
+  "rows": [
+    {
+      "eventId": "SOL:4h:momentum_reversal_short:1787068800",
+      "symbol": "SOL",
+      "usdmSymbol": "SOLUSDT",
+      "setup": "momentum_reversal_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "range/mid-vol",
+      "entryTimeIso": "2026-08-18T16:00:00.000Z",
+      "entryPrice": 77.18,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0894,
+        "netPnlUsd": -134.0889,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": false,
+        "btcPrice": 64643.26,
+        "btcTime": 1787068800,
+        "btcTimeIso": "2026-08-18T16:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": true,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-18T15:45:00.000Z",
+        "entry": "2026-08-18T16:00:00.000Z",
+        "end": "2026-08-18T16:15:00.000Z",
+        "trades": 31956,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 31956,
+        "notional": 35857376.64,
+        "buyNotional": 16077073.37,
+        "sellNotional": 19780303.27,
+        "signedTakerDeltaNotional": -3703229.9,
+        "cvdPctOfNotional": -10.3277,
+        "cvdSlopeNotionalPerMin": -123441,
+        "tradeIntensityPerMin": 1065.2,
+        "firstPrice": 77.04,
+        "lastPrice": 77.04,
+        "priceMoveBps": 0,
+        "entryProgressBps": 18.1394,
+        "priceProgressPerAggressiveVolume": 5.05877e-7
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-18T15:45:06.000Z",
+        "lastTimestamp": "2026-08-18T16:14:32.000Z",
+        "preNearBidNotional": 769574574.33,
+        "preNearAskNotional": 741390253.71,
+        "postNearBidNotional": 764501781.81,
+        "postNearAskNotional": 760430258.66,
+        "nearBidNotionalChangePct": -0.6592,
+        "nearAskNotionalChangePct": 2.5681,
+        "postBidAskImbalance": 0.00267
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": false,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "AVAX:1h:trend_pullback_reject_short:1787083200",
+      "symbol": "AVAX",
+      "usdmSymbol": "AVAXUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "1h",
+      "tier": "avoid",
+      "regime": "down/low-vol",
+      "entryTimeIso": "2026-08-18T20:00:00.000Z",
+      "entryPrice": 6.31,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.1388,
+        "netPnlUsd": -90.2393,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": false,
+        "btcPrice": 64582.39,
+        "btcTime": 1787083200,
+        "btcTimeIso": "2026-08-18T20:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": true,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-18T19:45:00.000Z",
+        "entry": "2026-08-18T20:00:00.000Z",
+        "end": "2026-08-18T20:15:00.000Z",
+        "trades": 4002,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 4002,
+        "notional": 795494.24,
+        "buyNotional": 297376.4,
+        "sellNotional": 498117.84,
+        "signedTakerDeltaNotional": -200741.44,
+        "cvdPctOfNotional": -25.2348,
+        "cvdSlopeNotionalPerMin": -6691.38,
+        "tradeIntensityPerMin": 133.4,
+        "firstPrice": 6.351,
+        "lastPrice": 6.351,
+        "priceMoveBps": 0,
+        "entryProgressBps": -64.9762,
+        "priceProgressPerAggressiveVolume": -0.000081680325
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-18T19:45:04.000Z",
+        "lastTimestamp": "2026-08-18T20:14:31.000Z",
+        "preNearBidNotional": 51230968.09,
+        "preNearAskNotional": 31592302.87,
+        "postNearBidNotional": 50586879.01,
+        "postNearAskNotional": 32773096.5,
+        "nearBidNotionalChangePct": -1.2572,
+        "nearAskNotionalChangePct": 3.7376,
+        "postBidAskImbalance": 0.213697
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "BNB:1h:trend_pullback_reject_short:1787086800",
+      "symbol": "BNB",
+      "usdmSymbol": "BNBUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "1h",
+      "tier": "avoid",
+      "regime": "down/low-vol",
+      "entryTimeIso": "2026-08-18T21:00:00.000Z",
+      "entryPrice": 602.53,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.4091,
+        "netPnlUsd": -37.8866,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": false,
+        "btcPrice": 64604.58,
+        "btcTime": 1787086800,
+        "btcTimeIso": "2026-08-18T21:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": true,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-18T20:45:00.000Z",
+        "entry": "2026-08-18T21:00:00.000Z",
+        "end": "2026-08-18T21:15:00.000Z",
+        "trades": 5173,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 5173,
+        "notional": 1313777.58,
+        "buyNotional": 968455.64,
+        "sellNotional": 345321.94,
+        "signedTakerDeltaNotional": 623133.7,
+        "cvdPctOfNotional": 47.4307,
+        "cvdSlopeNotionalPerMin": 20771.12,
+        "tradeIntensityPerMin": 172.4333,
+        "firstPrice": 603.04,
+        "lastPrice": 603.38,
+        "priceMoveBps": 5.6381,
+        "entryProgressBps": -14.1072,
+        "priceProgressPerAggressiveVolume": -0.000010737877
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-18T20:45:09.000Z",
+        "lastTimestamp": "2026-08-18T21:14:31.000Z",
+        "preNearBidNotional": 295710031.92,
+        "preNearAskNotional": 321813804.62,
+        "postNearBidNotional": 295603707.34,
+        "postNearAskNotional": 317022559.17,
+        "nearBidNotionalChangePct": -0.036,
+        "nearAskNotionalChangePct": -1.4888,
+        "postBidAskImbalance": -0.034962
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "XRP:4h:trend_pullback_reject_short:1787097600",
+      "symbol": "XRP",
+      "usdmSymbol": "XRPUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "down/low-vol",
+      "entryTimeIso": "2026-08-19T00:00:00.000Z",
+      "entryPrice": 1,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.11,
+        "netPnlUsd": -111,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": false,
+        "btcPrice": 64330.71,
+        "btcTime": 1787097600,
+        "btcTimeIso": "2026-08-19T00:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": true,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-18T23:45:00.000Z",
+        "entry": "2026-08-19T00:00:00.000Z",
+        "end": "2026-08-19T00:15:00.000Z",
+        "trades": 13058,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 13058,
+        "notional": 6093615.93,
+        "buyNotional": 3017020.06,
+        "sellNotional": 3076595.87,
+        "signedTakerDeltaNotional": -59575.81,
+        "cvdPctOfNotional": -0.9777,
+        "cvdSlopeNotionalPerMin": -1985.86,
+        "tradeIntensityPerMin": 435.2667,
+        "firstPrice": 1.0021,
+        "lastPrice": 0.998,
+        "priceMoveBps": -40.9141,
+        "entryProgressBps": 20,
+        "priceProgressPerAggressiveVolume": 0.000003282123
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-18T23:45:04.000Z",
+        "lastTimestamp": "2026-08-19T00:14:31.000Z",
+        "preNearBidNotional": 434660939.09,
+        "preNearAskNotional": 485181693.35,
+        "postNearBidNotional": 444762136.41,
+        "postNearAskNotional": 459474553.62,
+        "nearBidNotionalChangePct": 2.3239,
+        "nearAskNotionalChangePct": -5.2985,
+        "postBidAskImbalance": -0.016271
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": false,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "ADA:4h:trend_pullback_reject_short:1787126400",
+      "symbol": "ADA",
+      "usdmSymbol": "ADAUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "C",
+      "regime": "down/mid-vol",
+      "entryTimeIso": "2026-08-19T08:00:00.000Z",
+      "entryPrice": 0.1749,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0647,
+        "netPnlUsd": -181.0566,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": false,
+        "btcPrice": 64515.63,
+        "btcTime": 1787126400,
+        "btcTimeIso": "2026-08-19T08:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": true,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-19T07:45:00.000Z",
+        "entry": "2026-08-19T08:00:00.000Z",
+        "end": "2026-08-19T08:15:00.000Z",
+        "trades": 3668,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 3668,
+        "notional": 1021510.63,
+        "buyNotional": 599616.14,
+        "sellNotional": 421894.49,
+        "signedTakerDeltaNotional": 177721.64,
+        "cvdPctOfNotional": 17.3979,
+        "cvdSlopeNotionalPerMin": 5924.05,
+        "tradeIntensityPerMin": 122.2667,
+        "firstPrice": 0.175,
+        "lastPrice": 0.175,
+        "priceMoveBps": 0,
+        "entryProgressBps": -5.7176,
+        "priceProgressPerAggressiveVolume": -0.000005597155
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-19T07:45:04.000Z",
+        "lastTimestamp": "2026-08-19T08:14:34.000Z",
+        "preNearBidNotional": 84267451.88,
+        "preNearAskNotional": 74900964.98,
+        "postNearBidNotional": 85983758.7,
+        "postNearAskNotional": 74002453.12,
+        "nearBidNotionalChangePct": 2.0367,
+        "nearAskNotionalChangePct": -1.1996,
+        "postBidAskImbalance": 0.07489
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "AVAX:4h:trend_pullback_reject_short:1787126400",
+      "symbol": "AVAX",
+      "usdmSymbol": "AVAXUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "C",
+      "regime": "down/mid-vol",
+      "entryTimeIso": "2026-08-19T08:00:00.000Z",
+      "entryPrice": 6.31,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0771,
+        "netPnlUsd": -153.6307,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": false,
+        "btcPrice": 64515.63,
+        "btcTime": 1787126400,
+        "btcTimeIso": "2026-08-19T08:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": true,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-19T07:45:00.000Z",
+        "entry": "2026-08-19T08:00:00.000Z",
+        "end": "2026-08-19T08:15:00.000Z",
+        "trades": 5083,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 5083,
+        "notional": 1289139.96,
+        "buyNotional": 537179.42,
+        "sellNotional": 751960.54,
+        "signedTakerDeltaNotional": -214781.13,
+        "cvdPctOfNotional": -16.6608,
+        "cvdSlopeNotionalPerMin": -7159.37,
+        "tradeIntensityPerMin": 169.4333,
+        "firstPrice": 6.349,
+        "lastPrice": 6.35,
+        "priceMoveBps": 1.5751,
+        "entryProgressBps": -63.3914,
+        "priceProgressPerAggressiveVolume": -0.000049173437
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-19T07:45:04.000Z",
+        "lastTimestamp": "2026-08-19T08:14:34.000Z",
+        "preNearBidNotional": 102097145.56,
+        "preNearAskNotional": 36243214.77,
+        "postNearBidNotional": 95722820.59,
+        "postNearAskNotional": 38841461.1,
+        "nearBidNotionalChangePct": -6.2434,
+        "nearAskNotionalChangePct": 7.1689,
+        "postBidAskImbalance": 0.422708
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "ADA:4h:momentum_reversal_short:1787184000",
+      "symbol": "ADA",
+      "usdmSymbol": "ADAUSDT",
+      "setup": "momentum_reversal_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "range/mid-vol",
+      "entryTimeIso": "2026-08-20T00:00:00.000Z",
+      "entryPrice": 0.18,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0198,
+        "netPnlUsd": -566.5556,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": false,
+        "btcPrice": 69195.64,
+        "btcTime": 1787184000,
+        "btcTimeIso": "2026-08-20T00:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": true,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-19T23:45:00.000Z",
+        "entry": "2026-08-20T00:00:00.000Z",
+        "end": "2026-08-20T00:15:00.000Z",
+        "trades": 12058,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 12058,
+        "notional": 4136480.39,
+        "buyNotional": 2406523.99,
+        "sellNotional": 1729956.4,
+        "signedTakerDeltaNotional": 676567.59,
+        "cvdPctOfNotional": 16.3561,
+        "cvdSlopeNotionalPerMin": 22552.25,
+        "tradeIntensityPerMin": 401.9333,
+        "firstPrice": 0.1875,
+        "lastPrice": 0.188,
+        "priceMoveBps": 26.6667,
+        "entryProgressBps": -444.4444,
+        "priceProgressPerAggressiveVolume": -0.000107445075
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-19T23:45:04.000Z",
+        "lastTimestamp": "2026-08-20T00:14:35.000Z",
+        "preNearBidNotional": 94708745.72,
+        "preNearAskNotional": 92814330.9,
+        "postNearBidNotional": 85348343.18,
+        "postNearAskNotional": 81588388.62,
+        "nearBidNotionalChangePct": -9.8834,
+        "nearAskNotionalChangePct": -12.0951,
+        "postBidAskImbalance": 0.022523
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "AVAX:4h:momentum_reversal_short:1787184000",
+      "symbol": "AVAX",
+      "usdmSymbol": "AVAXUSDT",
+      "setup": "momentum_reversal_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "range/mid-vol",
+      "entryTimeIso": "2026-08-20T00:00:00.000Z",
+      "entryPrice": 6.75,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0464,
+        "netPnlUsd": -248.037,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": false,
+        "btcPrice": 69195.64,
+        "btcTime": 1787184000,
+        "btcTimeIso": "2026-08-20T00:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": true,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-19T23:45:00.000Z",
+        "entry": "2026-08-20T00:00:00.000Z",
+        "end": "2026-08-20T00:15:00.000Z",
+        "trades": 13637,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 13637,
+        "notional": 2440650.4,
+        "buyNotional": 1186894.92,
+        "sellNotional": 1253755.48,
+        "signedTakerDeltaNotional": -66860.56,
+        "cvdPctOfNotional": -2.7395,
+        "cvdSlopeNotionalPerMin": -2228.69,
+        "tradeIntensityPerMin": 454.5667,
+        "firstPrice": 6.783,
+        "lastPrice": 6.754,
+        "priceMoveBps": -42.7539,
+        "entryProgressBps": -5.9259,
+        "priceProgressPerAggressiveVolume": -0.000002428011
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-19T23:45:04.000Z",
+        "lastTimestamp": "2026-08-20T00:14:35.000Z",
+        "preNearBidNotional": 40209651.19,
+        "preNearAskNotional": 36214490.46,
+        "postNearBidNotional": 38150776.14,
+        "postNearAskNotional": 33258954.61,
+        "nearBidNotionalChangePct": -5.1204,
+        "nearAskNotionalChangePct": -8.1612,
+        "postBidAskImbalance": 0.068504
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "BNB:4h:momentum_reversal_short:1787184000",
+      "symbol": "BNB",
+      "usdmSymbol": "BNBUSDT",
+      "setup": "momentum_reversal_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "range/low-vol",
+      "entryTimeIso": "2026-08-20T00:00:00.000Z",
+      "entryPrice": 626.37,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.1038,
+        "netPnlUsd": -117.0076,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": false,
+        "btcPrice": 69195.64,
+        "btcTime": 1787184000,
+        "btcTimeIso": "2026-08-20T00:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": true,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-19T23:45:00.000Z",
+        "entry": "2026-08-20T00:00:00.000Z",
+        "end": "2026-08-20T00:15:00.000Z",
+        "trades": 30182,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 30182,
+        "notional": 11118509.93,
+        "buyNotional": 6773023.35,
+        "sellNotional": 4345486.58,
+        "signedTakerDeltaNotional": 2427536.77,
+        "cvdPctOfNotional": 21.8333,
+        "cvdSlopeNotionalPerMin": 80917.89,
+        "tradeIntensityPerMin": 1006.0667,
+        "firstPrice": 627.99,
+        "lastPrice": 628.59,
+        "priceMoveBps": 9.5543,
+        "entryProgressBps": -35.4423,
+        "priceProgressPerAggressiveVolume": -0.000003187685
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-19T23:45:04.000Z",
+        "lastTimestamp": "2026-08-20T00:14:35.000Z",
+        "preNearBidNotional": 212108129.76,
+        "preNearAskNotional": 187474286.23,
+        "postNearBidNotional": 196634457.08,
+        "postNearAskNotional": 201709159.58,
+        "nearBidNotionalChangePct": -7.2952,
+        "nearAskNotionalChangePct": 7.593,
+        "postBidAskImbalance": -0.01274
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "BTC:4h:range_breakout_long:1787284800",
+      "symbol": "BTC",
+      "usdmSymbol": "BTCUSDT",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/mid-vol",
+      "entryTimeIso": "2026-08-21T04:00:00.000Z",
+      "entryPrice": 76308.65,
+      "outcome": {
+        "exitReason": "TIME_EXIT",
+        "rMultiple": -0.2055,
+        "netPnlUsd": -50.5132,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_SELF",
+        "pass": true,
+        "reason": "Setup is BTC itself; cross-market alt gate not applied."
+      },
+      "btcGateState": "BTC_SELF",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-21T03:45:00.000Z",
+        "entry": "2026-08-21T04:00:00.000Z",
+        "end": "2026-08-21T04:15:00.000Z",
+        "trades": 135893,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 135893,
+        "notional": 365358161.12,
+        "buyNotional": 172789904.65,
+        "sellNotional": 192568256.46,
+        "signedTakerDeltaNotional": -19778351.81,
+        "cvdPctOfNotional": -5.4134,
+        "cvdSlopeNotionalPerMin": -659278.39,
+        "tradeIntensityPerMin": 4529.7667,
+        "firstPrice": 74635.9,
+        "lastPrice": 74835,
+        "priceMoveBps": 26.6762,
+        "entryProgressBps": -193.117,
+        "priceProgressPerAggressiveVolume": -5.28569e-7
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-21T03:45:04.000Z",
+        "lastTimestamp": "2026-08-21T04:14:33.000Z",
+        "preNearBidNotional": 5468298475.83,
+        "preNearAskNotional": 8180760639.72,
+        "postNearBidNotional": 5533765418.27,
+        "postNearAskNotional": 8087211840.47,
+        "nearBidNotionalChangePct": 1.1972,
+        "nearAskNotionalChangePct": -1.1435,
+        "postBidAskImbalance": -0.187464
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "ADA:4h:range_breakout_long:1787342400",
+      "symbol": "ADA",
+      "usdmSymbol": "ADAUSDT",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/high-vol",
+      "entryTimeIso": "2026-08-21T20:00:00.000Z",
+      "entryPrice": 0.23,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0253,
+        "netPnlUsd": -445.7826,
+        "ambiguous": true
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 78338.03,
+        "btcTime": 1787342400,
+        "btcTimeIso": "2026-08-21T20:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-21T19:45:00.000Z",
+        "entry": "2026-08-21T20:00:00.000Z",
+        "end": "2026-08-21T20:15:00.000Z",
+        "trades": 19144,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 19144,
+        "notional": 4648350.81,
+        "buyNotional": 2214633.98,
+        "sellNotional": 2433716.83,
+        "signedTakerDeltaNotional": -219082.84,
+        "cvdPctOfNotional": -4.7131,
+        "cvdSlopeNotionalPerMin": -7302.76,
+        "tradeIntensityPerMin": 638.1333,
+        "firstPrice": 0.2169,
+        "lastPrice": 0.2193,
+        "priceMoveBps": 110.6501,
+        "entryProgressBps": -465.2174,
+        "priceProgressPerAggressiveVolume": -0.000100082246
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-21T19:45:04.000Z",
+        "lastTimestamp": "2026-08-21T20:14:31.000Z",
+        "preNearBidNotional": 75776734.57,
+        "preNearAskNotional": 70254728.26,
+        "postNearBidNotional": 74418556.13,
+        "postNearAskNotional": 70955995,
+        "nearBidNotionalChangePct": -1.7923,
+        "nearAskNotionalChangePct": 0.9982,
+        "postBidAskImbalance": 0.023818
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "BNB:1h:trend_pullback_reclaim_long:1787342400",
+      "symbol": "BNB",
+      "usdmSymbol": "BNBUSDT",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "timeframe": "1h",
+      "tier": "low-sample",
+      "regime": "up/mid-vol",
+      "entryTimeIso": "2026-08-21T20:00:00.000Z",
+      "entryPrice": 676.28,
+      "outcome": {
+        "exitReason": "TP",
+        "rMultiple": 1.7199,
+        "netPnlUsd": 235.4955,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 77520.19,
+        "btcTime": 1787342400,
+        "btcTimeIso": "2026-08-21T20:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-21T19:45:00.000Z",
+        "entry": "2026-08-21T20:00:00.000Z",
+        "end": "2026-08-21T20:15:00.000Z",
+        "trades": 26950,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 26950,
+        "notional": 7532589.49,
+        "buyNotional": 3510917.28,
+        "sellNotional": 4021672.22,
+        "signedTakerDeltaNotional": -510754.94,
+        "cvdPctOfNotional": -6.7806,
+        "cvdSlopeNotionalPerMin": -17025.16,
+        "tradeIntensityPerMin": 898.3333,
+        "firstPrice": 674.96,
+        "lastPrice": 673.36,
+        "priceMoveBps": -23.7051,
+        "entryProgressBps": -43.1774,
+        "priceProgressPerAggressiveVolume": -0.000005732077
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-21T19:45:04.000Z",
+        "lastTimestamp": "2026-08-21T20:14:31.000Z",
+        "preNearBidNotional": 266715467.94,
+        "preNearAskNotional": 211239080.17,
+        "postNearBidNotional": 262469542.63,
+        "postNearAskNotional": 201100202.2,
+        "nearBidNotionalChangePct": -1.5919,
+        "nearAskNotionalChangePct": -4.7997,
+        "postBidAskImbalance": 0.132384
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "BNB:4h:range_breakout_long:1787356800",
+      "symbol": "BNB",
+      "usdmSymbol": "BNBUSDT",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/mid-vol",
+      "entryTimeIso": "2026-08-22T00:00:00.000Z",
+      "entryPrice": 718.11,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0434,
+        "netPnlUsd": -264.5823,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 78410.98,
+        "btcTime": 1787356800,
+        "btcTimeIso": "2026-08-22T00:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-21T23:45:00.000Z",
+        "entry": "2026-08-22T00:00:00.000Z",
+        "end": "2026-08-22T00:15:00.000Z",
+        "trades": 53107,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 53107,
+        "notional": 17250939.47,
+        "buyNotional": 8545667.96,
+        "sellNotional": 8705271.51,
+        "signedTakerDeltaNotional": -159603.55,
+        "cvdPctOfNotional": -0.9252,
+        "cvdSlopeNotionalPerMin": -5320.12,
+        "tradeIntensityPerMin": 1770.2333,
+        "firstPrice": 689.07,
+        "lastPrice": 685.11,
+        "priceMoveBps": -57.4688,
+        "entryProgressBps": -459.5396,
+        "priceProgressPerAggressiveVolume": -0.000026638527
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-21T23:45:04.000Z",
+        "lastTimestamp": "2026-08-22T00:14:31.000Z",
+        "preNearBidNotional": 230163643.62,
+        "preNearAskNotional": 220197461.42,
+        "postNearBidNotional": 229573907.88,
+        "postNearAskNotional": 214784144.92,
+        "nearBidNotionalChangePct": -0.2562,
+        "nearAskNotionalChangePct": -2.4584,
+        "postBidAskImbalance": 0.033283
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "XRP:1h:momentum_reversal_long:1787436000",
+      "symbol": "XRP",
+      "usdmSymbol": "XRPUSDT",
+      "setup": "momentum_reversal_long",
+      "direction": "long",
+      "timeframe": "1h",
+      "tier": "low-sample",
+      "regime": "up/high-vol",
+      "entryTimeIso": "2026-08-22T22:00:00.000Z",
+      "entryPrice": 1.47,
+      "outcome": {
+        "exitReason": "TP",
+        "rMultiple": 1.5677,
+        "netPnlUsd": 533.2177,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_TRANSITION",
+        "pass": true,
+        "btcPrice": 76997.76,
+        "btcTime": 1787436000,
+        "btcTimeIso": "2026-08-22T22:00:00.000Z",
+        "reason": "long setup with BTC BTC_TRANSITION by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_TRANSITION",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-22T21:45:00.000Z",
+        "entry": "2026-08-22T22:00:00.000Z",
+        "end": "2026-08-22T22:15:00.000Z",
+        "trades": 118921,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 118921,
+        "notional": 45596347.44,
+        "buyNotional": 24322633.29,
+        "sellNotional": 21273714.15,
+        "signedTakerDeltaNotional": 3048919.15,
+        "cvdPctOfNotional": 6.6868,
+        "cvdSlopeNotionalPerMin": 101630.64,
+        "tradeIntensityPerMin": 3964.0333,
+        "firstPrice": 1.4662,
+        "lastPrice": 1.4706,
+        "priceMoveBps": 30.0095,
+        "entryProgressBps": 4.0816,
+        "priceProgressPerAggressiveVolume": 8.9517e-8
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-22T21:45:04.000Z",
+        "lastTimestamp": "2026-08-22T22:14:31.000Z",
+        "preNearBidNotional": 366418324.52,
+        "preNearAskNotional": 354823700.8,
+        "postNearBidNotional": 382658701.13,
+        "postNearAskNotional": 366223360.36,
+        "nearBidNotionalChangePct": 4.4322,
+        "nearAskNotionalChangePct": 3.2128,
+        "postBidAskImbalance": 0.021947
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": false,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "AVAX:4h:trend_pullback_reclaim_long:1787472000",
+      "symbol": "AVAX",
+      "usdmSymbol": "AVAXUSDT",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/high-vol",
+      "entryTimeIso": "2026-08-23T08:00:00.000Z",
+      "entryPrice": 7.53,
+      "outcome": {
+        "exitReason": "TIME_EXIT",
+        "rMultiple": -0.0402,
+        "netPnlUsd": -20.2961,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 77311.02,
+        "btcTime": 1787472000,
+        "btcTimeIso": "2026-08-23T08:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-23T07:45:00.000Z",
+        "entry": "2026-08-23T08:00:00.000Z",
+        "end": "2026-08-23T08:15:00.000Z",
+        "trades": 9082,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 9082,
+        "notional": 1584150.05,
+        "buyNotional": 940838.22,
+        "sellNotional": 643311.83,
+        "signedTakerDeltaNotional": 297526.39,
+        "cvdPctOfNotional": 18.7815,
+        "cvdSlopeNotionalPerMin": 9917.55,
+        "tradeIntensityPerMin": 302.7333,
+        "firstPrice": 7.368,
+        "lastPrice": 7.396,
+        "priceMoveBps": 38.0022,
+        "entryProgressBps": -177.9548,
+        "priceProgressPerAggressiveVolume": -0.000112334591
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-23T07:45:04.000Z",
+        "lastTimestamp": "2026-08-23T08:14:31.000Z",
+        "preNearBidNotional": 22655701.32,
+        "preNearAskNotional": 23229320.44,
+        "postNearBidNotional": 22522415.67,
+        "postNearAskNotional": 22541361.86,
+        "nearBidNotionalChangePct": -0.5883,
+        "nearAskNotionalChangePct": -2.9616,
+        "postBidAskImbalance": -0.00042
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "ETH:4h:trend_pullback_reclaim_long:1787472000",
+      "symbol": "ETH",
+      "usdmSymbol": "ETHUSDT",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/high-vol",
+      "entryTimeIso": "2026-08-23T08:00:00.000Z",
+      "entryPrice": 2433.68,
+      "outcome": {
+        "exitReason": "TIME_EXIT",
+        "rMultiple": 0.5635,
+        "netPnlUsd": 170.7412,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 77311.02,
+        "btcTime": 1787472000,
+        "btcTimeIso": "2026-08-23T08:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-23T07:45:00.000Z",
+        "entry": "2026-08-23T08:00:00.000Z",
+        "end": "2026-08-23T08:15:00.000Z",
+        "trades": 150539,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 150539,
+        "notional": 311166180.23,
+        "buyNotional": 164615640.64,
+        "sellNotional": 146550539.59,
+        "signedTakerDeltaNotional": 18065101.05,
+        "cvdPctOfNotional": 5.8056,
+        "cvdSlopeNotionalPerMin": 602170.04,
+        "tradeIntensityPerMin": 5017.9667,
+        "firstPrice": 2389.09,
+        "lastPrice": 2406.58,
+        "priceMoveBps": 73.2078,
+        "entryProgressBps": -111.354,
+        "priceProgressPerAggressiveVolume": -3.5786e-7
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-23T07:45:04.000Z",
+        "lastTimestamp": "2026-08-23T08:14:31.000Z",
+        "preNearBidNotional": 2479020565.77,
+        "preNearAskNotional": 2238935726.83,
+        "postNearBidNotional": 2228585649.87,
+        "postNearAskNotional": 2204288665.71,
+        "nearBidNotionalChangePct": -10.1022,
+        "nearAskNotionalChangePct": -1.5475,
+        "postBidAskImbalance": 0.005481
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "LINK:4h:trend_pullback_reclaim_long:1787472000",
+      "symbol": "LINK",
+      "usdmSymbol": "LINKUSDT",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/high-vol",
+      "entryTimeIso": "2026-08-23T08:00:00.000Z",
+      "entryPrice": 11.42,
+      "outcome": {
+        "exitReason": "TIME_EXIT",
+        "rMultiple": 0.1771,
+        "netPnlUsd": 105.4623,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 77311.02,
+        "btcTime": 1787472000,
+        "btcTimeIso": "2026-08-23T08:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-23T07:45:00.000Z",
+        "entry": "2026-08-23T08:00:00.000Z",
+        "end": "2026-08-23T08:15:00.000Z",
+        "trades": 16805,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 16805,
+        "notional": 3327532.83,
+        "buyNotional": 1947381.75,
+        "sellNotional": 1380151.08,
+        "signedTakerDeltaNotional": 567230.66,
+        "cvdPctOfNotional": 17.0466,
+        "cvdSlopeNotionalPerMin": 18907.69,
+        "tradeIntensityPerMin": 560.1667,
+        "firstPrice": 11.291,
+        "lastPrice": 11.347,
+        "priceMoveBps": 49.597,
+        "entryProgressBps": -63.9229,
+        "priceProgressPerAggressiveVolume": -0.000019210311
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-23T07:45:04.000Z",
+        "lastTimestamp": "2026-08-23T08:14:31.000Z",
+        "preNearBidNotional": 40030759.33,
+        "preNearAskNotional": 38290269.41,
+        "postNearBidNotional": 36116494.09,
+        "postNearAskNotional": 38379443.63,
+        "nearBidNotionalChangePct": -9.7781,
+        "nearAskNotionalChangePct": 0.2329,
+        "postBidAskImbalance": -0.030377
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "LINK:4h:trend_pullback_reclaim_long:1787601600",
+      "symbol": "LINK",
+      "usdmSymbol": "LINKUSDT",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/high-vol",
+      "entryTimeIso": "2026-08-24T20:00:00.000Z",
+      "entryPrice": 11.63,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0346,
+        "netPnlUsd": -329.1427,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 78992.75,
+        "btcTime": 1787601600,
+        "btcTimeIso": "2026-08-24T20:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-24T19:45:00.000Z",
+        "entry": "2026-08-24T20:00:00.000Z",
+        "end": "2026-08-24T20:15:00.000Z",
+        "trades": 11250,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 11250,
+        "notional": 1708803.06,
+        "buyNotional": 670132.8,
+        "sellNotional": 1038670.26,
+        "signedTakerDeltaNotional": -368537.45,
+        "cvdPctOfNotional": -21.567,
+        "cvdSlopeNotionalPerMin": -12284.58,
+        "tradeIntensityPerMin": 375,
+        "firstPrice": 11.569,
+        "lastPrice": 11.533,
+        "priceMoveBps": -31.1176,
+        "entryProgressBps": -83.405,
+        "priceProgressPerAggressiveVolume": -0.000048809011
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-24T19:45:02.000Z",
+        "lastTimestamp": "2026-08-24T20:14:31.000Z",
+        "preNearBidNotional": 51393055.51,
+        "preNearAskNotional": 41796736.24,
+        "postNearBidNotional": 49041021.37,
+        "postNearAskNotional": 41285601.88,
+        "nearBidNotionalChangePct": -4.5766,
+        "nearAskNotionalChangePct": -1.2229,
+        "postBidAskImbalance": 0.08586
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "ADA:1h:trend_pullback_reject_short:1787608800",
+      "symbol": "ADA",
+      "usdmSymbol": "ADAUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "1h",
+      "tier": "low-sample",
+      "regime": "down/mid-vol",
+      "entryTimeIso": "2026-08-24T22:00:00.000Z",
+      "entryPrice": 0.22,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0487,
+        "netPnlUsd": -236.9741,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": false,
+        "btcPrice": 78740,
+        "btcTime": 1787608800,
+        "btcTimeIso": "2026-08-24T22:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-24T21:45:00.000Z",
+        "entry": "2026-08-24T22:00:00.000Z",
+        "end": "2026-08-24T22:15:00.000Z",
+        "trades": 6370,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 6370,
+        "notional": 976443.63,
+        "buyNotional": 466993.43,
+        "sellNotional": 509450.2,
+        "signedTakerDeltaNotional": -42456.77,
+        "cvdPctOfNotional": -4.3481,
+        "cvdSlopeNotionalPerMin": -1415.23,
+        "tradeIntensityPerMin": 212.3333,
+        "firstPrice": 0.221,
+        "lastPrice": 0.2209,
+        "priceMoveBps": -4.5249,
+        "entryProgressBps": -40.9091,
+        "priceProgressPerAggressiveVolume": -0.000041896009
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-24T21:45:02.000Z",
+        "lastTimestamp": "2026-08-24T22:14:31.000Z",
+        "preNearBidNotional": 50831657.58,
+        "preNearAskNotional": 44083149.79,
+        "postNearBidNotional": 52818723.92,
+        "postNearAskNotional": 45259165.8,
+        "nearBidNotionalChangePct": 3.9091,
+        "nearAskNotionalChangePct": 2.6677,
+        "postBidAskImbalance": 0.077077
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "AVAX:4h:trend_pullback_reclaim_long:1787616000",
+      "symbol": "AVAX",
+      "usdmSymbol": "AVAXUSDT",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/mid-vol",
+      "entryTimeIso": "2026-08-25T00:00:00.000Z",
+      "entryPrice": 7.62,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0419,
+        "netPnlUsd": -273.4672,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 80488.01,
+        "btcTime": 1787616000,
+        "btcTimeIso": "2026-08-25T00:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-24T23:45:00.000Z",
+        "entry": "2026-08-25T00:00:00.000Z",
+        "end": "2026-08-25T00:15:00.000Z",
+        "trades": 9191,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 9191,
+        "notional": 1432564.86,
+        "buyNotional": 805915.86,
+        "sellNotional": 626649.01,
+        "signedTakerDeltaNotional": 179266.85,
+        "cvdPctOfNotional": 12.5137,
+        "cvdSlopeNotionalPerMin": 5975.56,
+        "tradeIntensityPerMin": 306.3667,
+        "firstPrice": 7.54,
+        "lastPrice": 7.548,
+        "priceMoveBps": 10.6101,
+        "entryProgressBps": -94.4882,
+        "priceProgressPerAggressiveVolume": -0.000065957355
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-24T23:45:05.000Z",
+        "lastTimestamp": "2026-08-25T00:14:31.000Z",
+        "preNearBidNotional": 25656484.68,
+        "preNearAskNotional": 16067607.69,
+        "postNearBidNotional": 25730714.49,
+        "postNearAskNotional": 15759713.59,
+        "nearBidNotionalChangePct": 0.2893,
+        "nearAskNotionalChangePct": -1.9162,
+        "postBidAskImbalance": 0.240321
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "BTC:4h:range_breakout_long:1787616000",
+      "symbol": "BTC",
+      "usdmSymbol": "BTCUSDT",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/mid-vol",
+      "entryTimeIso": "2026-08-25T00:00:00.000Z",
+      "entryPrice": 80488.01,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0617,
+        "netPnlUsd": -189.1557,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_SELF",
+        "pass": true,
+        "reason": "Setup is BTC itself; cross-market alt gate not applied."
+      },
+      "btcGateState": "BTC_SELF",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-24T23:45:00.000Z",
+        "entry": "2026-08-25T00:00:00.000Z",
+        "end": "2026-08-25T00:15:00.000Z",
+        "trades": 62901,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 62901,
+        "notional": 132384743.95,
+        "buyNotional": 68656847.52,
+        "sellNotional": 63727896.43,
+        "signedTakerDeltaNotional": 4928951.09,
+        "cvdPctOfNotional": 3.7232,
+        "cvdSlopeNotionalPerMin": 164298.37,
+        "tradeIntensityPerMin": 2096.7,
+        "firstPrice": 78915.4,
+        "lastPrice": 78922.3,
+        "priceMoveBps": 0.8744,
+        "entryProgressBps": -194.5271,
+        "priceProgressPerAggressiveVolume": -0.000001469407
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-24T23:45:05.000Z",
+        "lastTimestamp": "2026-08-25T00:14:31.000Z",
+        "preNearBidNotional": 6370174363.56,
+        "preNearAskNotional": 5182869219.29,
+        "postNearBidNotional": 6102161656.14,
+        "postNearAskNotional": 5233843631.55,
+        "nearBidNotionalChangePct": -4.2073,
+        "nearAskNotionalChangePct": 0.9835,
+        "postBidAskImbalance": 0.076598
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "DOGE:4h:trend_pullback_reclaim_long:1787616000",
+      "symbol": "DOGE",
+      "usdmSymbol": "DOGEUSDT",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/high-vol",
+      "entryTimeIso": "2026-08-25T00:00:00.000Z",
+      "entryPrice": 0.09194,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0284,
+        "netPnlUsd": -398.1775,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 80488.01,
+        "btcTime": 1787616000,
+        "btcTimeIso": "2026-08-25T00:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-24T23:45:00.000Z",
+        "entry": "2026-08-25T00:00:00.000Z",
+        "end": "2026-08-25T00:15:00.000Z",
+        "trades": 37488,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 37488,
+        "notional": 12781671.78,
+        "buyNotional": 6559946.33,
+        "sellNotional": 6221725.45,
+        "signedTakerDeltaNotional": 338220.89,
+        "cvdPctOfNotional": 2.6461,
+        "cvdSlopeNotionalPerMin": 11274.03,
+        "tradeIntensityPerMin": 1249.6,
+        "firstPrice": 0.09001,
+        "lastPrice": 0.09027,
+        "priceMoveBps": 28.8857,
+        "entryProgressBps": -181.6402,
+        "priceProgressPerAggressiveVolume": -0.000014210989
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-24T23:45:05.000Z",
+        "lastTimestamp": "2026-08-25T00:14:31.000Z",
+        "preNearBidNotional": 128435319.49,
+        "preNearAskNotional": 128497077.2,
+        "postNearBidNotional": 156208241.4,
+        "postNearAskNotional": 141137435.38,
+        "nearBidNotionalChangePct": 21.6241,
+        "nearAskNotionalChangePct": 9.8371,
+        "postBidAskImbalance": 0.050684
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "ADA:4h:momentum_reversal_long:1787702400",
+      "symbol": "ADA",
+      "usdmSymbol": "ADAUSDT",
+      "setup": "momentum_reversal_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/high-vol",
+      "entryTimeIso": "2026-08-26T00:00:00.000Z",
+      "entryPrice": 0.21,
+      "outcome": {
+        "exitReason": "TIME_EXIT",
+        "rMultiple": -0.0031,
+        "netPnlUsd": -1.4762,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 79088.62,
+        "btcTime": 1787702400,
+        "btcTimeIso": "2026-08-26T00:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-25T23:45:00.000Z",
+        "entry": "2026-08-26T00:00:00.000Z",
+        "end": "2026-08-26T00:15:00.000Z",
+        "trades": 10570,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 10570,
+        "notional": 2720442.5,
+        "buyNotional": 1170754.77,
+        "sellNotional": 1549687.73,
+        "signedTakerDeltaNotional": -378932.95,
+        "cvdPctOfNotional": -13.9291,
+        "cvdSlopeNotionalPerMin": -12631.1,
+        "tradeIntensityPerMin": 352.3333,
+        "firstPrice": 0.209,
+        "lastPrice": 0.2078,
+        "priceMoveBps": -57.4163,
+        "entryProgressBps": -104.7619,
+        "priceProgressPerAggressiveVolume": -0.000038509141
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-25T23:45:04.000Z",
+        "lastTimestamp": "2026-08-26T00:14:31.000Z",
+        "preNearBidNotional": 67498299.72,
+        "preNearAskNotional": 50991000.4,
+        "postNearBidNotional": 63743603.13,
+        "postNearAskNotional": 49644776.9,
+        "nearBidNotionalChangePct": -5.5627,
+        "nearAskNotionalChangePct": -2.6401,
+        "postBidAskImbalance": 0.124341
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "DOGE:4h:momentum_reversal_long:1787702400",
+      "symbol": "DOGE",
+      "usdmSymbol": "DOGEUSDT",
+      "setup": "momentum_reversal_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/high-vol",
+      "entryTimeIso": "2026-08-26T00:00:00.000Z",
+      "entryPrice": 0.08666,
+      "outcome": {
+        "exitReason": "TIME_EXIT",
+        "rMultiple": 0.3173,
+        "netPnlUsd": 115.9328,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 79088.62,
+        "btcTime": 1787702400,
+        "btcTimeIso": "2026-08-26T00:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-25T23:45:00.000Z",
+        "entry": "2026-08-26T00:00:00.000Z",
+        "end": "2026-08-26T00:15:00.000Z",
+        "trades": 35822,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 35822,
+        "notional": 11722214.54,
+        "buyNotional": 5390207.1,
+        "sellNotional": 6332007.45,
+        "signedTakerDeltaNotional": -941800.35,
+        "cvdPctOfNotional": -8.0343,
+        "cvdSlopeNotionalPerMin": -31393.34,
+        "tradeIntensityPerMin": 1194.0667,
+        "firstPrice": 0.08593,
+        "lastPrice": 0.08548,
+        "priceMoveBps": -52.3682,
+        "entryProgressBps": -136.1643,
+        "priceProgressPerAggressiveVolume": -0.000011615921
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-25T23:45:04.000Z",
+        "lastTimestamp": "2026-08-26T00:14:31.000Z",
+        "preNearBidNotional": 141794360.44,
+        "preNearAskNotional": 134191502.73,
+        "postNearBidNotional": 146498793.11,
+        "postNearAskNotional": 136873878.26,
+        "nearBidNotionalChangePct": 3.3178,
+        "nearAskNotionalChangePct": 1.9989,
+        "postBidAskImbalance": 0.033966
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "ETH:4h:trend_pullback_reclaim_long:1787702400",
+      "symbol": "ETH",
+      "usdmSymbol": "ETHUSDT",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/mid-vol",
+      "entryTimeIso": "2026-08-26T00:00:00.000Z",
+      "entryPrice": 2465.57,
+      "outcome": {
+        "exitReason": "TP",
+        "rMultiple": 1.7511,
+        "netPnlUsd": 393.8151,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 79088.62,
+        "btcTime": 1787702400,
+        "btcTimeIso": "2026-08-26T00:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-25T23:45:00.000Z",
+        "entry": "2026-08-26T00:00:00.000Z",
+        "end": "2026-08-26T00:15:00.000Z",
+        "trades": 120113,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 120113,
+        "notional": 157272113.43,
+        "buyNotional": 77211790.64,
+        "sellNotional": 80060322.79,
+        "signedTakerDeltaNotional": -2848532.16,
+        "cvdPctOfNotional": -1.8112,
+        "cvdSlopeNotionalPerMin": -94951.07,
+        "tradeIntensityPerMin": 4003.7667,
+        "firstPrice": 2443.32,
+        "lastPrice": 2436.22,
+        "priceMoveBps": -29.0588,
+        "entryProgressBps": -119.0394,
+        "priceProgressPerAggressiveVolume": -7.56901e-7
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-25T23:45:04.000Z",
+        "lastTimestamp": "2026-08-26T00:14:31.000Z",
+        "preNearBidNotional": 2277807799.92,
+        "preNearAskNotional": 2179910561.17,
+        "postNearBidNotional": 2351233714.15,
+        "postNearAskNotional": 2166879454.81,
+        "nearBidNotionalChangePct": 3.2235,
+        "nearAskNotionalChangePct": -0.5978,
+        "postBidAskImbalance": 0.040803
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "XRP:4h:momentum_reversal_long:1787803200",
+      "symbol": "XRP",
+      "usdmSymbol": "XRPUSDT",
+      "setup": "momentum_reversal_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/high-vol",
+      "entryTimeIso": "2026-08-27T04:00:00.000Z",
+      "entryPrice": 1.41,
+      "outcome": {
+        "exitReason": "TIME_EXIT",
+        "rMultiple": -0.575,
+        "netPnlUsd": -203.9078,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 79082.17,
+        "btcTime": 1787803200,
+        "btcTimeIso": "2026-08-27T04:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-27T03:45:00.000Z",
+        "entry": "2026-08-27T04:00:00.000Z",
+        "end": "2026-08-27T04:15:00.000Z",
+        "trades": 24268,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 24268,
+        "notional": 7074466.24,
+        "buyNotional": 3823747.78,
+        "sellNotional": 3250718.46,
+        "signedTakerDeltaNotional": 573029.31,
+        "cvdPctOfNotional": 8.1,
+        "cvdSlopeNotionalPerMin": 19100.98,
+        "tradeIntensityPerMin": 808.9333,
+        "firstPrice": 1.4056,
+        "lastPrice": 1.4066,
+        "priceMoveBps": 7.1144,
+        "entryProgressBps": -24.1135,
+        "priceProgressPerAggressiveVolume": -0.000003408522
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-27T03:45:03.000Z",
+        "lastTimestamp": "2026-08-27T04:14:31.000Z",
+        "preNearBidNotional": 383673610.87,
+        "preNearAskNotional": 401028876.17,
+        "postNearBidNotional": 386293737.13,
+        "postNearAskNotional": 400710984.83,
+        "nearBidNotionalChangePct": 0.6829,
+        "nearAskNotionalChangePct": -0.0793,
+        "postBidAskImbalance": -0.018319
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "SOL:4h:range_breakout_long:1787817600",
+      "symbol": "SOL",
+      "usdmSymbol": "SOLUSDT",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "B",
+      "regime": "up/mid-vol",
+      "entryTimeIso": "2026-08-27T08:00:00.000Z",
+      "entryPrice": 103.95,
+      "outcome": {
+        "exitReason": "TP",
+        "rMultiple": 1.7609,
+        "netPnlUsd": 513.2905,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 79477.67,
+        "btcTime": 1787817600,
+        "btcTimeIso": "2026-08-27T08:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-27T07:45:00.000Z",
+        "entry": "2026-08-27T08:00:00.000Z",
+        "end": "2026-08-27T08:15:00.000Z",
+        "trades": 170560,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 170560,
+        "notional": 213006576.73,
+        "buyNotional": 111204275.52,
+        "sellNotional": 101802301.21,
+        "signedTakerDeltaNotional": 9401974.32,
+        "cvdPctOfNotional": 4.4139,
+        "cvdSlopeNotionalPerMin": 313399.14,
+        "tradeIntensityPerMin": 5685.3333,
+        "firstPrice": 101.42,
+        "lastPrice": 102.99,
+        "priceMoveBps": 154.8018,
+        "entryProgressBps": -92.3521,
+        "priceProgressPerAggressiveVolume": -4.33565e-7
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-27T07:45:01.000Z",
+        "lastTimestamp": "2026-08-27T08:14:30.000Z",
+        "preNearBidNotional": 716282153.96,
+        "preNearAskNotional": 723749511.08,
+        "postNearBidNotional": 607918697.16,
+        "postNearAskNotional": 632844511.49,
+        "nearBidNotionalChangePct": -15.1286,
+        "nearAskNotionalChangePct": -12.5603,
+        "postBidAskImbalance": -0.020089
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": true,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "SOL:4h:range_breakout_long:1787832000",
+      "symbol": "SOL",
+      "usdmSymbol": "SOLUSDT",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "B",
+      "regime": "up/mid-vol",
+      "entryTimeIso": "2026-08-27T12:00:00.000Z",
+      "entryPrice": 107.2,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0384,
+        "netPnlUsd": -297.3806,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 80302.32,
+        "btcTime": 1787832000,
+        "btcTimeIso": "2026-08-27T12:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-27T11:45:00.000Z",
+        "entry": "2026-08-27T12:00:00.000Z",
+        "end": "2026-08-27T12:15:00.000Z",
+        "trades": 65794,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 65794,
+        "notional": 48960373.64,
+        "buyNotional": 22907444.61,
+        "sellNotional": 26052929.03,
+        "signedTakerDeltaNotional": -3145484.42,
+        "cvdPctOfNotional": -6.4246,
+        "cvdSlopeNotionalPerMin": -104849.48,
+        "tradeIntensityPerMin": 2193.1333,
+        "firstPrice": 103.92,
+        "lastPrice": 104.21,
+        "priceMoveBps": 27.9061,
+        "entryProgressBps": -278.9179,
+        "priceProgressPerAggressiveVolume": -0.000005696809
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-27T11:45:01.000Z",
+        "lastTimestamp": "2026-08-27T12:14:31.000Z",
+        "preNearBidNotional": 617157817.66,
+        "preNearAskNotional": 667206865.63,
+        "postNearBidNotional": 581309909.4,
+        "postNearAskNotional": 571109308.23,
+        "nearBidNotionalChangePct": -5.8085,
+        "nearAskNotionalChangePct": -14.403,
+        "postBidAskImbalance": 0.008851
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": true,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "ADA:4h:trend_pullback_reject_short:1787875200",
+      "symbol": "ADA",
+      "usdmSymbol": "ADAUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "down/high-vol",
+      "entryTimeIso": "2026-08-28T00:00:00.000Z",
+      "entryPrice": 0.21,
+      "outcome": {
+        "exitReason": "TP",
+        "rMultiple": 0.9769,
+        "netPnlUsd": 465.1905,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": false,
+        "btcPrice": 79810.49,
+        "btcTime": 1787875200,
+        "btcTimeIso": "2026-08-28T00:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-27T23:45:00.000Z",
+        "entry": "2026-08-28T00:00:00.000Z",
+        "end": "2026-08-28T00:15:00.000Z",
+        "trades": 6945,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 6945,
+        "notional": 1847484.14,
+        "buyNotional": 852895.24,
+        "sellNotional": 994588.9,
+        "signedTakerDeltaNotional": -141693.65,
+        "cvdPctOfNotional": -7.6695,
+        "cvdSlopeNotionalPerMin": -4723.12,
+        "tradeIntensityPerMin": 231.5,
+        "firstPrice": 0.2138,
+        "lastPrice": 0.213,
+        "priceMoveBps": -37.4181,
+        "entryProgressBps": -142.8571,
+        "priceProgressPerAggressiveVolume": -0.000077325234
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-27T23:45:02.000Z",
+        "lastTimestamp": "2026-08-28T00:14:31.000Z",
+        "preNearBidNotional": 96953557.86,
+        "preNearAskNotional": 78347574.42,
+        "postNearBidNotional": 90581132.77,
+        "postNearAskNotional": 76099552.56,
+        "nearBidNotionalChangePct": -6.5727,
+        "nearAskNotionalChangePct": -2.8693,
+        "postBidAskImbalance": 0.086882
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "AVAX:4h:trend_pullback_reject_short:1787889600",
+      "symbol": "AVAX",
+      "usdmSymbol": "AVAXUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "avoid",
+      "regime": "down/mid-vol",
+      "entryTimeIso": "2026-08-28T04:00:00.000Z",
+      "entryPrice": 7.4,
+      "outcome": {
+        "exitReason": "TIME_EXIT",
+        "rMultiple": 0.3874,
+        "netPnlUsd": 89,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": false,
+        "btcPrice": 79660,
+        "btcTime": 1787889600,
+        "btcTimeIso": "2026-08-28T04:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-28T03:45:00.000Z",
+        "entry": "2026-08-28T04:00:00.000Z",
+        "end": "2026-08-28T04:15:00.000Z",
+        "trades": 6868,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 6868,
+        "notional": 1164150.15,
+        "buyNotional": 489219.97,
+        "sellNotional": 674930.18,
+        "signedTakerDeltaNotional": -185710.21,
+        "cvdPctOfNotional": -15.9524,
+        "cvdSlopeNotionalPerMin": -6190.34,
+        "tradeIntensityPerMin": 228.9333,
+        "firstPrice": 7.432,
+        "lastPrice": 7.446,
+        "priceMoveBps": 18.8375,
+        "entryProgressBps": -62.1622,
+        "priceProgressPerAggressiveVolume": -0.000053397032
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-28T03:45:02.000Z",
+        "lastTimestamp": "2026-08-28T04:14:31.000Z",
+        "preNearBidNotional": 28247246.22,
+        "preNearAskNotional": 30856781.67,
+        "postNearBidNotional": 30051709.33,
+        "postNearAskNotional": 30909430.96,
+        "nearBidNotionalChangePct": 6.3881,
+        "nearAskNotionalChangePct": 0.1706,
+        "postBidAskImbalance": -0.01407
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "AVAX:4h:trend_pullback_reject_short:1787918400",
+      "symbol": "AVAX",
+      "usdmSymbol": "AVAXUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "avoid",
+      "regime": "down/mid-vol",
+      "entryTimeIso": "2026-08-28T12:00:00.000Z",
+      "entryPrice": 7.33,
+      "outcome": {
+        "exitReason": "TIME_EXIT",
+        "rMultiple": -0.4948,
+        "netPnlUsd": -121.5048,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_TRANSITION",
+        "pass": true,
+        "btcPrice": 78331.13,
+        "btcTime": 1787918400,
+        "btcTimeIso": "2026-08-28T12:00:00.000Z",
+        "reason": "short setup with BTC BTC_TRANSITION by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_TRANSITION",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-28T11:45:00.000Z",
+        "entry": "2026-08-28T12:00:00.000Z",
+        "end": "2026-08-28T12:15:00.000Z",
+        "trades": 5043,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 5043,
+        "notional": 655433.23,
+        "buyNotional": 279752.92,
+        "sellNotional": 375680.31,
+        "signedTakerDeltaNotional": -95927.39,
+        "cvdPctOfNotional": -14.6357,
+        "cvdSlopeNotionalPerMin": -3197.58,
+        "tradeIntensityPerMin": 168.1,
+        "firstPrice": 7.42,
+        "lastPrice": 7.404,
+        "priceMoveBps": -21.5633,
+        "entryProgressBps": -100.955,
+        "priceProgressPerAggressiveVolume": -0.000154027862
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-28T11:45:03.000Z",
+        "lastTimestamp": "2026-08-28T12:14:31.000Z",
+        "preNearBidNotional": 33721465.22,
+        "preNearAskNotional": 32530492.97,
+        "postNearBidNotional": 32061730.65,
+        "postNearAskNotional": 33252479.07,
+        "nearBidNotionalChangePct": -4.9219,
+        "nearAskNotionalChangePct": 2.2194,
+        "postBidAskImbalance": -0.018231
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "BTC:4h:momentum_reversal_long:1787976000",
+      "symbol": "BTC",
+      "usdmSymbol": "BTCUSDT",
+      "setup": "momentum_reversal_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "range/mid-vol",
+      "entryTimeIso": "2026-08-29T04:00:00.000Z",
+      "entryPrice": 77626.01,
+      "outcome": {
+        "exitReason": "TIME_EXIT",
+        "rMultiple": 0.4207,
+        "netPnlUsd": 62.429,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_SELF",
+        "pass": true,
+        "reason": "Setup is BTC itself; cross-market alt gate not applied."
+      },
+      "btcGateState": "BTC_SELF",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-29T03:45:00.000Z",
+        "entry": "2026-08-29T04:00:00.000Z",
+        "end": "2026-08-29T04:15:00.000Z",
+        "trades": 27194,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 27194,
+        "notional": 77702473.14,
+        "buyNotional": 35132849.56,
+        "sellNotional": 42569623.58,
+        "signedTakerDeltaNotional": -7436774.02,
+        "cvdPctOfNotional": -9.5708,
+        "cvdSlopeNotionalPerMin": -247892.47,
+        "tradeIntensityPerMin": 906.4667,
+        "firstPrice": 77591.7,
+        "lastPrice": 77561.4,
+        "priceMoveBps": -3.9051,
+        "entryProgressBps": -8.3232,
+        "priceProgressPerAggressiveVolume": -1.07117e-7
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-29T03:45:02.000Z",
+        "lastTimestamp": "2026-08-29T04:14:31.000Z",
+        "preNearBidNotional": 6891561587.92,
+        "preNearAskNotional": 5934263297.79,
+        "postNearBidNotional": 6811955880.79,
+        "postNearAskNotional": 6043293782.65,
+        "nearBidNotionalChangePct": -1.1551,
+        "nearAskNotionalChangePct": 1.8373,
+        "postBidAskImbalance": 0.059794
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "ETH:4h:momentum_reversal_long:1787976000",
+      "symbol": "ETH",
+      "usdmSymbol": "ETHUSDT",
+      "setup": "momentum_reversal_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "range/mid-vol",
+      "entryTimeIso": "2026-08-29T04:00:00.000Z",
+      "entryPrice": 2436.41,
+      "outcome": {
+        "exitReason": "TP",
+        "rMultiple": 1.7397,
+        "netPnlUsd": 316.5311,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_TRANSITION",
+        "pass": true,
+        "btcPrice": 77626.01,
+        "btcTime": 1787976000,
+        "btcTimeIso": "2026-08-29T04:00:00.000Z",
+        "reason": "long setup with BTC BTC_TRANSITION by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_TRANSITION",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-29T03:45:00.000Z",
+        "entry": "2026-08-29T04:00:00.000Z",
+        "end": "2026-08-29T04:15:00.000Z",
+        "trades": 31289,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 31289,
+        "notional": 53124097.34,
+        "buyNotional": 20365386.83,
+        "sellNotional": 32758710.51,
+        "signedTakerDeltaNotional": -12393323.67,
+        "cvdPctOfNotional": -23.329,
+        "cvdSlopeNotionalPerMin": -413110.79,
+        "tradeIntensityPerMin": 1042.9667,
+        "firstPrice": 2437.2,
+        "lastPrice": 2435.88,
+        "priceMoveBps": -5.4161,
+        "entryProgressBps": -2.1753,
+        "priceProgressPerAggressiveVolume": -4.0948e-8
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-29T03:45:02.000Z",
+        "lastTimestamp": "2026-08-29T04:14:31.000Z",
+        "preNearBidNotional": 3929332166.91,
+        "preNearAskNotional": 3301731885.12,
+        "postNearBidNotional": 3629356201.45,
+        "postNearAskNotional": 3377500504.96,
+        "nearBidNotionalChangePct": -7.6343,
+        "nearAskNotionalChangePct": 2.2948,
+        "postBidAskImbalance": 0.035944
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "BNB:4h:momentum_reversal_long:1787990400",
+      "symbol": "BNB",
+      "usdmSymbol": "BNBUSDT",
+      "setup": "momentum_reversal_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "range/mid-vol",
+      "entryTimeIso": "2026-08-29T08:00:00.000Z",
+      "entryPrice": 689.35,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0846,
+        "netPnlUsd": -140.9775,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_TRANSITION",
+        "pass": true,
+        "btcPrice": 77584.67,
+        "btcTime": 1787990400,
+        "btcTimeIso": "2026-08-29T08:00:00.000Z",
+        "reason": "long setup with BTC BTC_TRANSITION by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_TRANSITION",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-29T07:45:00.000Z",
+        "entry": "2026-08-29T08:00:00.000Z",
+        "end": "2026-08-29T08:15:00.000Z",
+        "trades": 11595,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 11595,
+        "notional": 4327904.55,
+        "buyNotional": 1682702.56,
+        "sellNotional": 2645201.99,
+        "signedTakerDeltaNotional": -962499.43,
+        "cvdPctOfNotional": -22.2394,
+        "cvdSlopeNotionalPerMin": -32083.31,
+        "tradeIntensityPerMin": 386.5,
+        "firstPrice": 688.05,
+        "lastPrice": 688.03,
+        "priceMoveBps": -0.2907,
+        "entryProgressBps": -19.1485,
+        "priceProgressPerAggressiveVolume": -0.000004424421
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-29T07:45:02.000Z",
+        "lastTimestamp": "2026-08-29T08:14:31.000Z",
+        "preNearBidNotional": 287955749.36,
+        "preNearAskNotional": 222982489.13,
+        "postNearBidNotional": 281621760,
+        "postNearAskNotional": 219840858.96,
+        "nearBidNotionalChangePct": -2.1996,
+        "nearAskNotionalChangePct": -1.4089,
+        "postBidAskImbalance": 0.123201
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "BTC:4h:momentum_reversal_long:1788076800",
+      "symbol": "BTC",
+      "usdmSymbol": "BTCUSDT",
+      "setup": "momentum_reversal_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "range/low-vol",
+      "entryTimeIso": "2026-08-30T08:00:00.000Z",
+      "entryPrice": 78166,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.1215,
+        "netPnlUsd": -101.547,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_SELF",
+        "pass": true,
+        "reason": "Setup is BTC itself; cross-market alt gate not applied."
+      },
+      "btcGateState": "BTC_SELF",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-30T07:45:00.000Z",
+        "entry": "2026-08-30T08:00:00.000Z",
+        "end": "2026-08-30T08:15:00.000Z",
+        "trades": 18551,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 18551,
+        "notional": 55799613.36,
+        "buyNotional": 26558740.58,
+        "sellNotional": 29240872.77,
+        "signedTakerDeltaNotional": -2682132.19,
+        "cvdPctOfNotional": -4.8067,
+        "cvdSlopeNotionalPerMin": -89404.41,
+        "tradeIntensityPerMin": 618.3667,
+        "firstPrice": 78108.1,
+        "lastPrice": 78122.3,
+        "priceMoveBps": 1.818,
+        "entryProgressBps": -5.5907,
+        "priceProgressPerAggressiveVolume": -1.00192e-7
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-30T07:45:02.000Z",
+        "lastTimestamp": "2026-08-30T08:14:31.000Z",
+        "preNearBidNotional": 6119944552.45,
+        "preNearAskNotional": 7973811022.06,
+        "postNearBidNotional": 6202080744.09,
+        "postNearAskNotional": 8191782430.11,
+        "nearBidNotionalChangePct": 1.3421,
+        "nearAskNotionalChangePct": 2.7336,
+        "postBidAskImbalance": -0.138233
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "SOL:4h:trend_pullback_reclaim_long:1788091200",
+      "symbol": "SOL",
+      "usdmSymbol": "SOLUSDT",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/mid-vol",
+      "entryTimeIso": "2026-08-30T12:00:00.000Z",
+      "entryPrice": 106.29,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0573,
+        "netPnlUsd": -202.9277,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 78823.63,
+        "btcTime": 1788091200,
+        "btcTimeIso": "2026-08-30T12:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-30T11:45:00.000Z",
+        "entry": "2026-08-30T12:00:00.000Z",
+        "end": "2026-08-30T12:15:00.000Z",
+        "trades": 41387,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 41387,
+        "notional": 48447334.19,
+        "buyNotional": 27467372.03,
+        "sellNotional": 20979962.16,
+        "signedTakerDeltaNotional": 6487409.88,
+        "cvdPctOfNotional": 13.3906,
+        "cvdSlopeNotionalPerMin": 216247,
+        "tradeIntensityPerMin": 1379.5667,
+        "firstPrice": 105.02,
+        "lastPrice": 105.7,
+        "priceMoveBps": 64.7496,
+        "entryProgressBps": -55.5085,
+        "priceProgressPerAggressiveVolume": -0.00000114575
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-30T11:45:02.000Z",
+        "lastTimestamp": "2026-08-30T12:14:31.000Z",
+        "preNearBidNotional": 717220627.89,
+        "preNearAskNotional": 607336141.83,
+        "postNearBidNotional": 646963150.1,
+        "postNearAskNotional": 673231683.99,
+        "nearBidNotionalChangePct": -9.7958,
+        "nearAskNotionalChangePct": 10.8499,
+        "postBidAskImbalance": -0.019897
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "AVAX:4h:range_breakdown_short:1788120000",
+      "symbol": "AVAX",
+      "usdmSymbol": "AVAXUSDT",
+      "setup": "range_breakdown_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "down/mid-vol",
+      "entryTimeIso": "2026-08-30T20:00:00.000Z",
+      "entryPrice": 7.11,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0602,
+        "netPnlUsd": -193.8411,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_TRANSITION",
+        "pass": true,
+        "btcPrice": 77682,
+        "btcTime": 1788120000,
+        "btcTimeIso": "2026-08-30T20:00:00.000Z",
+        "reason": "short setup with BTC BTC_TRANSITION by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_TRANSITION",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-30T19:45:00.000Z",
+        "entry": "2026-08-30T20:00:00.000Z",
+        "end": "2026-08-30T20:15:00.000Z",
+        "trades": 4758,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 4758,
+        "notional": 800109.18,
+        "buyNotional": 423421.1,
+        "sellNotional": 376688.08,
+        "signedTakerDeltaNotional": 46733.02,
+        "cvdPctOfNotional": 5.8408,
+        "cvdSlopeNotionalPerMin": 1557.77,
+        "tradeIntensityPerMin": 158.6,
+        "firstPrice": 7.397,
+        "lastPrice": 7.419,
+        "priceMoveBps": 29.7418,
+        "entryProgressBps": -434.5992,
+        "priceProgressPerAggressiveVolume": -0.000543174815
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-30T19:45:02.000Z",
+        "lastTimestamp": "2026-08-30T20:14:31.000Z",
+        "preNearBidNotional": 44019324.16,
+        "preNearAskNotional": 46838835.62,
+        "postNearBidNotional": 43274023.4,
+        "postNearAskNotional": 50733055.25,
+        "nearBidNotionalChangePct": -1.6931,
+        "nearAskNotionalChangePct": 8.3141,
+        "postBidAskImbalance": -0.079345
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "LINK:4h:trend_pullback_reject_short:1788206400",
+      "symbol": "LINK",
+      "usdmSymbol": "LINKUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "avoid",
+      "regime": "down/mid-vol",
+      "entryTimeIso": "2026-08-31T20:00:00.000Z",
+      "entryPrice": 11.32,
+      "outcome": {
+        "exitReason": "TIME_EXIT",
+        "rMultiple": 0.7252,
+        "netPnlUsd": 166.5618,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_TRANSITION",
+        "pass": true,
+        "btcPrice": 78581.29,
+        "btcTime": 1788206400,
+        "btcTimeIso": "2026-08-31T20:00:00.000Z",
+        "reason": "short setup with BTC BTC_TRANSITION by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_TRANSITION",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-31T19:45:00.000Z",
+        "entry": "2026-08-31T20:00:00.000Z",
+        "end": "2026-08-31T20:15:00.000Z",
+        "trades": 9353,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 9353,
+        "notional": 2128912.63,
+        "buyNotional": 881380.72,
+        "sellNotional": 1247531.91,
+        "signedTakerDeltaNotional": -366151.19,
+        "cvdPctOfNotional": -17.199,
+        "cvdSlopeNotionalPerMin": -12205.04,
+        "tradeIntensityPerMin": 311.7667,
+        "firstPrice": 11.42,
+        "lastPrice": 11.408,
+        "priceMoveBps": -10.5079,
+        "entryProgressBps": -77.7385,
+        "priceProgressPerAggressiveVolume": -0.000036515597
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-31T19:45:03.000Z",
+        "lastTimestamp": "2026-08-31T20:14:31.000Z",
+        "preNearBidNotional": 83058776.62,
+        "preNearAskNotional": 65926539.65,
+        "postNearBidNotional": 80927699.36,
+        "postNearAskNotional": 68387842.49,
+        "nearBidNotionalChangePct": -2.5657,
+        "nearAskNotionalChangePct": 3.7334,
+        "postBidAskImbalance": 0.083982
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "XRP:4h:trend_pullback_reject_short:1788206400",
+      "symbol": "XRP",
+      "usdmSymbol": "XRPUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "C",
+      "regime": "down/mid-vol",
+      "entryTimeIso": "2026-08-31T20:00:00.000Z",
+      "entryPrice": 1.38,
+      "outcome": {
+        "exitReason": "TP",
+        "rMultiple": 1.6161,
+        "netPnlUsd": 351.3188,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_TRANSITION",
+        "pass": true,
+        "btcPrice": 78581.29,
+        "btcTime": 1788206400,
+        "btcTimeIso": "2026-08-31T20:00:00.000Z",
+        "reason": "short setup with BTC BTC_TRANSITION by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_TRANSITION",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-08-31T19:45:00.000Z",
+        "entry": "2026-08-31T20:00:00.000Z",
+        "end": "2026-08-31T20:15:00.000Z",
+        "trades": 35837,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 35837,
+        "notional": 14062156.75,
+        "buyNotional": 6701807.98,
+        "sellNotional": 7360348.77,
+        "signedTakerDeltaNotional": -658540.79,
+        "cvdPctOfNotional": -4.6831,
+        "cvdSlopeNotionalPerMin": -21951.36,
+        "tradeIntensityPerMin": 1194.5667,
+        "firstPrice": 1.3867,
+        "lastPrice": 1.3882,
+        "priceMoveBps": 10.817,
+        "entryProgressBps": -59.4203,
+        "priceProgressPerAggressiveVolume": -0.000004225546
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-08-31T19:45:03.000Z",
+        "lastTimestamp": "2026-08-31T20:14:31.000Z",
+        "preNearBidNotional": 383778225.31,
+        "preNearAskNotional": 396420190.4,
+        "postNearBidNotional": 365360590.56,
+        "postNearAskNotional": 383824444.99,
+        "nearBidNotionalChangePct": -4.799,
+        "nearAskNotionalChangePct": -3.1774,
+        "postBidAskImbalance": -0.024645
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "BNB:4h:trend_pullback_reject_short:1788235200",
+      "symbol": "BNB",
+      "usdmSymbol": "BNBUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "down/low-vol",
+      "entryTimeIso": "2026-09-01T04:00:00.000Z",
+      "entryPrice": 690.47,
+      "outcome": {
+        "exitReason": "TP",
+        "rMultiple": 1.7007,
+        "netPnlUsd": 190.8915,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_TRANSITION",
+        "pass": true,
+        "btcPrice": 78632.37,
+        "btcTime": 1788235200,
+        "btcTimeIso": "2026-09-01T04:00:00.000Z",
+        "reason": "short setup with BTC BTC_TRANSITION by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_TRANSITION",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-01T03:45:00.000Z",
+        "entry": "2026-09-01T04:00:00.000Z",
+        "end": "2026-09-01T04:15:00.000Z",
+        "trades": 10249,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 10249,
+        "notional": 1922520.49,
+        "buyNotional": 727177.3,
+        "sellNotional": 1195343.2,
+        "signedTakerDeltaNotional": -468165.9,
+        "cvdPctOfNotional": -24.3517,
+        "cvdSlopeNotionalPerMin": -15605.53,
+        "tradeIntensityPerMin": 341.6333,
+        "firstPrice": 694.39,
+        "lastPrice": 693.45,
+        "priceMoveBps": -13.5371,
+        "entryProgressBps": -43.159,
+        "priceProgressPerAggressiveVolume": -0.000022449179
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-01T03:45:02.000Z",
+        "lastTimestamp": "2026-09-01T04:14:32.000Z",
+        "preNearBidNotional": 191672225.29,
+        "preNearAskNotional": 342640854.21,
+        "postNearBidNotional": 195958454.33,
+        "postNearAskNotional": 335297299.89,
+        "nearBidNotionalChangePct": 2.2362,
+        "nearAskNotionalChangePct": -2.1432,
+        "postBidAskImbalance": -0.262282
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "BTC:4h:trend_pullback_reject_short:1788249600",
+      "symbol": "BTC",
+      "usdmSymbol": "BTCUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "C",
+      "regime": "down/mid-vol",
+      "entryTimeIso": "2026-09-01T08:00:00.000Z",
+      "entryPrice": 78098.97,
+      "outcome": {
+        "exitReason": "TP",
+        "rMultiple": 1.7124,
+        "netPnlUsd": 215.0772,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_SELF",
+        "pass": true,
+        "reason": "Setup is BTC itself; cross-market alt gate not applied."
+      },
+      "btcGateState": "BTC_SELF",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-01T07:45:00.000Z",
+        "entry": "2026-09-01T08:00:00.000Z",
+        "end": "2026-09-01T08:15:00.000Z",
+        "trades": 71829,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 71829,
+        "notional": 303000165.45,
+        "buyNotional": 142823572.87,
+        "sellNotional": 160176592.58,
+        "signedTakerDeltaNotional": -17353019.72,
+        "cvdPctOfNotional": -5.7271,
+        "cvdSlopeNotionalPerMin": -578433.99,
+        "tradeIntensityPerMin": 2394.3,
+        "firstPrice": 78590,
+        "lastPrice": 78278.2,
+        "priceMoveBps": -39.6743,
+        "entryProgressBps": -22.9491,
+        "priceProgressPerAggressiveVolume": -7.574e-8
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-01T07:45:02.000Z",
+        "lastTimestamp": "2026-09-01T08:14:31.000Z",
+        "preNearBidNotional": 7594336386.25,
+        "preNearAskNotional": 7360673667.25,
+        "postNearBidNotional": 8322296203.52,
+        "postNearAskNotional": 6909002292.57,
+        "nearBidNotionalChangePct": 9.5856,
+        "nearAskNotionalChangePct": -6.1363,
+        "postBidAskImbalance": 0.092789
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "ETH:4h:trend_pullback_reject_short:1788264000",
+      "symbol": "ETH",
+      "usdmSymbol": "ETHUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "avoid",
+      "regime": "down/mid-vol",
+      "entryTimeIso": "2026-09-01T12:00:00.000Z",
+      "entryPrice": 2448.97,
+      "outcome": {
+        "exitReason": "TP",
+        "rMultiple": 1.7392,
+        "netPnlUsd": 314.8921,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_OFF",
+        "pass": true,
+        "btcPrice": 77919.06,
+        "btcTime": 1788264000,
+        "btcTimeIso": "2026-09-01T12:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_OFF by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_OFF",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-01T11:45:00.000Z",
+        "entry": "2026-09-01T12:00:00.000Z",
+        "end": "2026-09-01T12:15:00.000Z",
+        "trades": 72508,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 72508,
+        "notional": 122980407.86,
+        "buyNotional": 52545119.61,
+        "sellNotional": 70435288.25,
+        "signedTakerDeltaNotional": -17890168.65,
+        "cvdPctOfNotional": -14.5472,
+        "cvdSlopeNotionalPerMin": -596338.95,
+        "tradeIntensityPerMin": 2416.9333,
+        "firstPrice": 2458.88,
+        "lastPrice": 2454.38,
+        "priceMoveBps": -18.301,
+        "entryProgressBps": -22.0909,
+        "priceProgressPerAggressiveVolume": -1.7963e-7
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-01T11:45:02.000Z",
+        "lastTimestamp": "2026-09-01T12:14:31.000Z",
+        "preNearBidNotional": 2972182792.56,
+        "preNearAskNotional": 3107097039.73,
+        "postNearBidNotional": 3165255975.9,
+        "postNearAskNotional": 2994184422.5,
+        "nearBidNotionalChangePct": 6.496,
+        "nearAskNotionalChangePct": -3.634,
+        "postBidAskImbalance": 0.027774
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "SOL:4h:momentum_reversal_long:1788307200",
+      "symbol": "SOL",
+      "usdmSymbol": "SOLUSDT",
+      "setup": "momentum_reversal_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "range/mid-vol",
+      "entryTimeIso": "2026-09-02T00:00:00.000Z",
+      "entryPrice": 100.29,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0424,
+        "netPnlUsd": -270.2482,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_OFF",
+        "pass": false,
+        "btcPrice": 77563.5,
+        "btcTime": 1788307200,
+        "btcTimeIso": "2026-09-02T00:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_OFF by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_OFF",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-01T23:45:00.000Z",
+        "entry": "2026-09-02T00:00:00.000Z",
+        "end": "2026-09-02T00:15:00.000Z",
+        "trades": 26128,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 26128,
+        "notional": 18212246.19,
+        "buyNotional": 9095662.09,
+        "sellNotional": 9116584.1,
+        "signedTakerDeltaNotional": -20922.01,
+        "cvdPctOfNotional": -0.1149,
+        "cvdSlopeNotionalPerMin": -697.4,
+        "tradeIntensityPerMin": 870.9333,
+        "firstPrice": 100.09,
+        "lastPrice": 100.01,
+        "priceMoveBps": -7.9928,
+        "entryProgressBps": -27.919,
+        "priceProgressPerAggressiveVolume": -0.000001532981
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-01T23:45:03.000Z",
+        "lastTimestamp": "2026-09-02T00:14:31.000Z",
+        "preNearBidNotional": 587077427.89,
+        "preNearAskNotional": 577887790.77,
+        "postNearBidNotional": 582344121.7,
+        "postNearAskNotional": 613568566.24,
+        "nearBidNotionalChangePct": -0.8062,
+        "nearAskNotionalChangePct": 6.1743,
+        "postBidAskImbalance": -0.026109
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "ETH:4h:range_breakdown_short:1788336000",
+      "symbol": "ETH",
+      "usdmSymbol": "ETHUSDT",
+      "setup": "range_breakdown_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "down/mid-vol",
+      "entryTimeIso": "2026-09-02T08:00:00.000Z",
+      "entryPrice": 2381.88,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0633,
+        "netPnlUsd": -184.7283,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_OFF",
+        "pass": true,
+        "btcPrice": 76828.76,
+        "btcTime": 1788336000,
+        "btcTimeIso": "2026-09-02T08:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_OFF by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_OFF",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-02T07:45:00.000Z",
+        "entry": "2026-09-02T08:00:00.000Z",
+        "end": "2026-09-02T08:15:00.000Z",
+        "trades": 58786,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 58786,
+        "notional": 90852801.95,
+        "buyNotional": 36647440.52,
+        "sellNotional": 54205361.42,
+        "signedTakerDeltaNotional": -17557920.9,
+        "cvdPctOfNotional": -19.3257,
+        "cvdSlopeNotionalPerMin": -585264.03,
+        "tradeIntensityPerMin": 1959.5333,
+        "firstPrice": 2420.36,
+        "lastPrice": 2416.38,
+        "priceMoveBps": -16.4438,
+        "entryProgressBps": -144.8436,
+        "priceProgressPerAggressiveVolume": -0.000001594266
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-02T07:45:02.000Z",
+        "lastTimestamp": "2026-09-02T08:14:31.000Z",
+        "preNearBidNotional": 3158175218.67,
+        "preNearAskNotional": 3193666407.59,
+        "postNearBidNotional": 3009947330.54,
+        "postNearAskNotional": 3043669300.72,
+        "nearBidNotionalChangePct": -4.6935,
+        "nearAskNotionalChangePct": -4.6967,
+        "postBidAskImbalance": -0.005571
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "XRP:4h:range_breakdown_short:1788336000",
+      "symbol": "XRP",
+      "usdmSymbol": "XRPUSDT",
+      "setup": "range_breakdown_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "avoid",
+      "regime": "down/mid-vol",
+      "entryTimeIso": "2026-09-02T08:00:00.000Z",
+      "entryPrice": 1.33,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0488,
+        "netPnlUsd": -236.5639,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_OFF",
+        "pass": true,
+        "btcPrice": 76828.76,
+        "btcTime": 1788336000,
+        "btcTimeIso": "2026-09-02T08:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_OFF by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_OFF",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-02T07:45:00.000Z",
+        "entry": "2026-09-02T08:00:00.000Z",
+        "end": "2026-09-02T08:15:00.000Z",
+        "trades": 25936,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 25936,
+        "notional": 12194221.42,
+        "buyNotional": 6238433.38,
+        "sellNotional": 5955788.04,
+        "signedTakerDeltaNotional": 282645.34,
+        "cvdPctOfNotional": 2.3179,
+        "cvdSlopeNotionalPerMin": 9421.51,
+        "tradeIntensityPerMin": 864.5333,
+        "firstPrice": 1.3469,
+        "lastPrice": 1.3437,
+        "priceMoveBps": -23.7583,
+        "entryProgressBps": -103.0075,
+        "priceProgressPerAggressiveVolume": -0.00000844724
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-02T07:45:02.000Z",
+        "lastTimestamp": "2026-09-02T08:14:31.000Z",
+        "preNearBidNotional": 391289607.14,
+        "preNearAskNotional": 330700967.84,
+        "postNearBidNotional": 389454018.79,
+        "postNearAskNotional": 343113709.86,
+        "nearBidNotionalChangePct": -0.4691,
+        "nearAskNotionalChangePct": 3.7535,
+        "postBidAskImbalance": 0.063257
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "BNB:4h:range_breakout_long:1788422400",
+      "symbol": "BNB",
+      "usdmSymbol": "BNBUSDT",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "range/mid-vol",
+      "entryTimeIso": "2026-09-03T08:00:00.000Z",
+      "entryPrice": 711.43,
+      "outcome": {
+        "exitReason": "TP",
+        "rMultiple": 1.714,
+        "netPnlUsd": 220.9272,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_TRANSITION",
+        "pass": true,
+        "btcPrice": 77948.39,
+        "btcTime": 1788422400,
+        "btcTimeIso": "2026-09-03T08:00:00.000Z",
+        "reason": "long setup with BTC BTC_TRANSITION by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_TRANSITION",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-03T07:45:00.000Z",
+        "entry": "2026-09-03T08:00:00.000Z",
+        "end": "2026-09-03T08:15:00.000Z",
+        "trades": 29646,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 29646,
+        "notional": 11461916.82,
+        "buyNotional": 6940143.91,
+        "sellNotional": 4521772.91,
+        "signedTakerDeltaNotional": 2418370.99,
+        "cvdPctOfNotional": 21.0992,
+        "cvdSlopeNotionalPerMin": 80612.37,
+        "tradeIntensityPerMin": 988.2,
+        "firstPrice": 698.86,
+        "lastPrice": 701.95,
+        "priceMoveBps": 44.2149,
+        "entryProgressBps": -133.2527,
+        "priceProgressPerAggressiveVolume": -0.000011625695
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-03T07:45:02.000Z",
+        "lastTimestamp": "2026-09-03T08:14:31.000Z",
+        "preNearBidNotional": 213882906.43,
+        "preNearAskNotional": 281371356.59,
+        "postNearBidNotional": 212581998.57,
+        "postNearAskNotional": 293892943.87,
+        "nearBidNotionalChangePct": -0.6082,
+        "nearAskNotionalChangePct": 4.4502,
+        "postBidAskImbalance": -0.160543
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "ADA:4h:range_breakout_long:1788436800",
+      "symbol": "ADA",
+      "usdmSymbol": "ADAUSDT",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "range/mid-vol",
+      "entryTimeIso": "2026-09-03T12:00:00.000Z",
+      "entryPrice": 0.22,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0242,
+        "netPnlUsd": -465.5455,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_TRANSITION",
+        "pass": true,
+        "btcPrice": 81348,
+        "btcTime": 1788436800,
+        "btcTimeIso": "2026-09-03T12:00:00.000Z",
+        "reason": "long setup with BTC BTC_TRANSITION by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_TRANSITION",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-03T11:45:00.000Z",
+        "entry": "2026-09-03T12:00:00.000Z",
+        "end": "2026-09-03T12:15:00.000Z",
+        "trades": 10667,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 10667,
+        "notional": 3177247.98,
+        "buyNotional": 1413077.1,
+        "sellNotional": 1764170.87,
+        "signedTakerDeltaNotional": -351093.77,
+        "cvdPctOfNotional": -11.0502,
+        "cvdSlopeNotionalPerMin": -11703.13,
+        "tradeIntensityPerMin": 355.5667,
+        "firstPrice": 0.2069,
+        "lastPrice": 0.2075,
+        "priceMoveBps": 28.9995,
+        "entryProgressBps": -568.1818,
+        "priceProgressPerAggressiveVolume": -0.000178828289
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-03T11:45:02.000Z",
+        "lastTimestamp": "2026-09-03T12:14:31.000Z",
+        "preNearBidNotional": 71553262.19,
+        "preNearAskNotional": 90149009.32,
+        "postNearBidNotional": 86498507.13,
+        "postNearAskNotional": 75689978.8,
+        "nearBidNotionalChangePct": 20.8869,
+        "nearAskNotionalChangePct": -16.039,
+        "postBidAskImbalance": 0.066642
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": true,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "BNB:4h:range_breakout_long:1788436800",
+      "symbol": "BNB",
+      "usdmSymbol": "BNBUSDT",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "range/mid-vol",
+      "entryTimeIso": "2026-09-03T12:00:00.000Z",
+      "entryPrice": 727.56,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0773,
+        "netPnlUsd": -153.3938,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_TRANSITION",
+        "pass": true,
+        "btcPrice": 81348,
+        "btcTime": 1788436800,
+        "btcTimeIso": "2026-09-03T12:00:00.000Z",
+        "reason": "long setup with BTC BTC_TRANSITION by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_TRANSITION",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-03T11:45:00.000Z",
+        "entry": "2026-09-03T12:00:00.000Z",
+        "end": "2026-09-03T12:15:00.000Z",
+        "trades": 60696,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 60696,
+        "notional": 28390219.4,
+        "buyNotional": 12516200.16,
+        "sellNotional": 15874019.24,
+        "signedTakerDeltaNotional": -3357819.09,
+        "cvdPctOfNotional": -11.8274,
+        "cvdSlopeNotionalPerMin": -111927.3,
+        "tradeIntensityPerMin": 2023.2,
+        "firstPrice": 714.22,
+        "lastPrice": 711.21,
+        "priceMoveBps": -42.1439,
+        "entryProgressBps": -224.7237,
+        "priceProgressPerAggressiveVolume": -0.000007915534
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-03T11:45:02.000Z",
+        "lastTimestamp": "2026-09-03T12:14:31.000Z",
+        "preNearBidNotional": 416582335.76,
+        "preNearAskNotional": 45461208.5,
+        "postNearBidNotional": 385829985.73,
+        "postNearAskNotional": 56695410.22,
+        "nearBidNotionalChangePct": -7.3821,
+        "nearAskNotionalChangePct": 24.7116,
+        "postBidAskImbalance": 0.743764
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "LINK:4h:range_breakout_long:1788508800",
+      "symbol": "LINK",
+      "usdmSymbol": "LINKUSDT",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "range/mid-vol",
+      "entryTimeIso": "2026-09-04T08:00:00.000Z",
+      "entryPrice": 12.03,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0456,
+        "netPnlUsd": -252.064,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 81224.86,
+        "btcTime": 1788508800,
+        "btcTimeIso": "2026-09-04T08:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-04T07:45:00.000Z",
+        "entry": "2026-09-04T08:00:00.000Z",
+        "end": "2026-09-04T08:15:00.000Z",
+        "trades": 12463,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 12463,
+        "notional": 2773792.03,
+        "buyNotional": 1376714.62,
+        "sellNotional": 1397077.42,
+        "signedTakerDeltaNotional": -20362.8,
+        "cvdPctOfNotional": -0.7341,
+        "cvdSlopeNotionalPerMin": -678.76,
+        "tradeIntensityPerMin": 415.4333,
+        "firstPrice": 11.935,
+        "lastPrice": 11.922,
+        "priceMoveBps": -10.8923,
+        "entryProgressBps": -89.7756,
+        "priceProgressPerAggressiveVolume": -0.000032365642
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-04T07:45:02.000Z",
+        "lastTimestamp": "2026-09-04T08:14:32.000Z",
+        "preNearBidNotional": 402928645.14,
+        "preNearAskNotional": 911136.85,
+        "postNearBidNotional": 394353334.46,
+        "postNearAskNotional": 911136.85,
+        "nearBidNotionalChangePct": -2.1282,
+        "nearAskNotionalChangePct": 0,
+        "postBidAskImbalance": 0.99539
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "LINK:4h:momentum_reversal_short:1788523200",
+      "symbol": "LINK",
+      "usdmSymbol": "LINKUSDT",
+      "setup": "momentum_reversal_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "range/mid-vol",
+      "entryTimeIso": "2026-09-04T12:00:00.000Z",
+      "entryPrice": 11.66,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0401,
+        "netPnlUsd": -285.4425,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": false,
+        "btcPrice": 79429.33,
+        "btcTime": 1788523200,
+        "btcTimeIso": "2026-09-04T12:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-04T11:45:00.000Z",
+        "entry": "2026-09-04T12:00:00.000Z",
+        "end": "2026-09-04T12:15:00.000Z",
+        "trades": 15653,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 15653,
+        "notional": 2960157.25,
+        "buyNotional": 1590285.36,
+        "sellNotional": 1369871.9,
+        "signedTakerDeltaNotional": 220413.46,
+        "cvdPctOfNotional": 7.446,
+        "cvdSlopeNotionalPerMin": 7347.12,
+        "tradeIntensityPerMin": 521.7667,
+        "firstPrice": 12.046,
+        "lastPrice": 12.048,
+        "priceMoveBps": 1.6603,
+        "entryProgressBps": -332.7616,
+        "priceProgressPerAggressiveVolume": -0.00011241348
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-04T11:45:02.000Z",
+        "lastTimestamp": "2026-09-04T12:14:31.000Z",
+        "preNearBidNotional": 425091915.22,
+        "preNearAskNotional": 911136.85,
+        "postNearBidNotional": 427206165.71,
+        "postNearAskNotional": 911136.85,
+        "nearBidNotionalChangePct": 0.4974,
+        "nearAskNotionalChangePct": 0,
+        "postBidAskImbalance": 0.995744
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "XRP:1h:momentum_reversal_long:1788552000",
+      "symbol": "XRP",
+      "usdmSymbol": "XRPUSDT",
+      "setup": "momentum_reversal_long",
+      "direction": "long",
+      "timeframe": "1h",
+      "tier": "low-sample",
+      "regime": "range/mid-vol",
+      "entryTimeIso": "2026-09-04T20:00:00.000Z",
+      "entryPrice": 1.4,
+      "outcome": {
+        "exitReason": "TIME_EXIT",
+        "rMultiple": 0.663,
+        "netPnlUsd": 94.7143,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_TRANSITION",
+        "pass": true,
+        "btcPrice": 79697.04,
+        "btcTime": 1788552000,
+        "btcTimeIso": "2026-09-04T20:00:00.000Z",
+        "reason": "long setup with BTC BTC_TRANSITION by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_TRANSITION",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-04T19:45:00.000Z",
+        "entry": "2026-09-04T20:00:00.000Z",
+        "end": "2026-09-04T20:15:00.000Z",
+        "trades": 40682,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 40682,
+        "notional": 30555668.23,
+        "buyNotional": 12841689.34,
+        "sellNotional": 17713978.89,
+        "signedTakerDeltaNotional": -4872289.55,
+        "cvdPctOfNotional": -15.9456,
+        "cvdSlopeNotionalPerMin": -162409.65,
+        "tradeIntensityPerMin": 1356.0667,
+        "firstPrice": 1.3998,
+        "lastPrice": 1.3962,
+        "priceMoveBps": -25.718,
+        "entryProgressBps": -27.1429,
+        "priceProgressPerAggressiveVolume": -8.88308e-7
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-04T19:45:02.000Z",
+        "lastTimestamp": "2026-09-04T20:14:31.000Z",
+        "preNearBidNotional": 978968480.51,
+        "preNearAskNotional": 877962.04,
+        "postNearBidNotional": 958842307.69,
+        "postNearAskNotional": 811962.83,
+        "nearBidNotionalChangePct": -2.0559,
+        "nearAskNotionalChangePct": -7.5173,
+        "postBidAskImbalance": 0.998308
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "DOGE:4h:range_breakout_long:1788624000",
+      "symbol": "DOGE",
+      "usdmSymbol": "DOGEUSDT",
+      "setup": "range_breakout_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/high-vol",
+      "entryTimeIso": "2026-09-05T16:00:00.000Z",
+      "entryPrice": 0.09079,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0347,
+        "netPnlUsd": -327.8378,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 79754,
+        "btcTime": 1788624000,
+        "btcTimeIso": "2026-09-05T16:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-05T15:45:00.000Z",
+        "entry": "2026-09-05T16:00:00.000Z",
+        "end": "2026-09-05T16:15:00.000Z",
+        "trades": 20194,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 20194,
+        "notional": 7896699.44,
+        "buyNotional": 3358452.05,
+        "sellNotional": 4538247.39,
+        "signedTakerDeltaNotional": -1179795.34,
+        "cvdPctOfNotional": -14.9404,
+        "cvdSlopeNotionalPerMin": -39326.51,
+        "tradeIntensityPerMin": 673.1333,
+        "firstPrice": 0.08773,
+        "lastPrice": 0.08738,
+        "priceMoveBps": -39.8951,
+        "entryProgressBps": -375.592,
+        "priceProgressPerAggressiveVolume": -0.000047563166
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-05T15:45:03.000Z",
+        "lastTimestamp": "2026-09-05T16:14:31.000Z",
+        "preNearBidNotional": 1233260622.51,
+        "preNearAskNotional": 1114325.37,
+        "postNearBidNotional": 1180092751.59,
+        "postNearAskNotional": 1114325.37,
+        "nearBidNotionalChangePct": -4.3112,
+        "nearAskNotionalChangePct": 0,
+        "postBidAskImbalance": 0.998113
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "BTC:4h:momentum_reversal_long:1788638400",
+      "symbol": "BTC",
+      "usdmSymbol": "BTCUSDT",
+      "setup": "momentum_reversal_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/low-vol",
+      "entryTimeIso": "2026-09-05T20:00:00.000Z",
+      "entryPrice": 79831.75,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0999,
+        "netPnlUsd": -121.0915,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_SELF",
+        "pass": true,
+        "reason": "Setup is BTC itself; cross-market alt gate not applied."
+      },
+      "btcGateState": "BTC_SELF",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-05T19:45:00.000Z",
+        "entry": "2026-09-05T20:00:00.000Z",
+        "end": "2026-09-05T20:15:00.000Z",
+        "trades": 32261,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 32261,
+        "notional": 110142285.89,
+        "buyNotional": 39357531.73,
+        "sellNotional": 70784754.15,
+        "signedTakerDeltaNotional": -31427222.42,
+        "cvdPctOfNotional": -28.5333,
+        "cvdSlopeNotionalPerMin": -1047574.08,
+        "tradeIntensityPerMin": 1075.3667,
+        "firstPrice": 79819.3,
+        "lastPrice": 79705.9,
+        "priceMoveBps": -14.2071,
+        "entryProgressBps": -15.7644,
+        "priceProgressPerAggressiveVolume": -1.43128e-7
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-05T19:45:02.000Z",
+        "lastTimestamp": "2026-09-05T20:14:31.000Z",
+        "preNearBidNotional": 23035654861.51,
+        "preNearAskNotional": 55629898.28,
+        "postNearBidNotional": 23065773217.78,
+        "postNearAskNotional": 55629898.28,
+        "nearBidNotionalChangePct": 0.1307,
+        "nearAskNotionalChangePct": 0,
+        "postBidAskImbalance": 0.995188
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "ADA:1h:momentum_reversal_short:1788645600",
+      "symbol": "ADA",
+      "usdmSymbol": "ADAUSDT",
+      "setup": "momentum_reversal_short",
+      "direction": "short",
+      "timeframe": "1h",
+      "tier": "low-sample",
+      "regime": "range/mid-vol",
+      "entryTimeIso": "2026-09-05T22:00:00.000Z",
+      "entryPrice": 0.2195,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0861,
+        "netPnlUsd": -138.6929,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_TRANSITION",
+        "pass": true,
+        "btcPrice": 79783.99,
+        "btcTime": 1788645600,
+        "btcTimeIso": "2026-09-05T22:00:00.000Z",
+        "reason": "short setup with BTC BTC_TRANSITION by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_TRANSITION",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-05T21:45:00.000Z",
+        "entry": "2026-09-05T22:00:00.000Z",
+        "end": "2026-09-05T22:15:00.000Z",
+        "trades": 8663,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 8663,
+        "notional": 2332010.25,
+        "buyNotional": 1325546.71,
+        "sellNotional": 1006463.54,
+        "signedTakerDeltaNotional": 319083.17,
+        "cvdPctOfNotional": 13.6828,
+        "cvdSlopeNotionalPerMin": 10636.11,
+        "tradeIntensityPerMin": 288.7667,
+        "firstPrice": 0.2203,
+        "lastPrice": 0.2203,
+        "priceMoveBps": 0,
+        "entryProgressBps": -36.4465,
+        "priceProgressPerAggressiveVolume": -0.000015628777
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-05T21:45:03.000Z",
+        "lastTimestamp": "2026-09-05T22:14:31.000Z",
+        "preNearBidNotional": 493200218.92,
+        "preNearAskNotional": 894818.16,
+        "postNearBidNotional": 509147028.39,
+        "postNearAskNotional": 894818.16,
+        "nearBidNotionalChangePct": 3.2333,
+        "nearAskNotionalChangePct": 0,
+        "postBidAskImbalance": 0.996491
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "XRP:4h:momentum_reversal_long:1788652800",
+      "symbol": "XRP",
+      "usdmSymbol": "XRPUSDT",
+      "setup": "momentum_reversal_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/mid-vol",
+      "entryTimeIso": "2026-09-06T00:00:00.000Z",
+      "entryPrice": 1.42,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0781,
+        "netPnlUsd": -151.8451,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_ON",
+        "pass": true,
+        "btcPrice": 80028.01,
+        "btcTime": 1788652800,
+        "btcTimeIso": "2026-09-06T00:00:00.000Z",
+        "reason": "long setup with BTC BTC_RISK_ON by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_ON",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-05T23:45:00.000Z",
+        "entry": "2026-09-06T00:00:00.000Z",
+        "end": "2026-09-06T00:15:00.000Z",
+        "trades": 24845,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 24845,
+        "notional": 16693601.47,
+        "buyNotional": 7951543.85,
+        "sellNotional": 8742057.62,
+        "signedTakerDeltaNotional": -790513.77,
+        "cvdPctOfNotional": -4.7354,
+        "cvdSlopeNotionalPerMin": -26350.46,
+        "tradeIntensityPerMin": 828.1667,
+        "firstPrice": 1.4111,
+        "lastPrice": 1.4115,
+        "priceMoveBps": 2.8347,
+        "entryProgressBps": -59.8592,
+        "priceProgressPerAggressiveVolume": -0.000003585754
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-05T23:45:02.000Z",
+        "lastTimestamp": "2026-09-06T00:14:31.000Z",
+        "preNearBidNotional": 1020316916.36,
+        "preNearAskNotional": 1429958.68,
+        "postNearBidNotional": 1009708647.52,
+        "postNearAskNotional": 1429958.68,
+        "nearBidNotionalChangePct": -1.0397,
+        "nearAskNotionalChangePct": 0,
+        "postBidAskImbalance": 0.997172
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "XRP:1h:trend_pullback_reject_short:1788811200",
+      "symbol": "XRP",
+      "usdmSymbol": "XRPUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "1h",
+      "tier": "C",
+      "regime": "down/low-vol",
+      "entryTimeIso": "2026-09-07T20:00:00.000Z",
+      "entryPrice": 1.4,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.154,
+        "netPnlUsd": -82.4286,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_OFF",
+        "pass": true,
+        "btcPrice": 79238,
+        "btcTime": 1788811200,
+        "btcTimeIso": "2026-09-07T20:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_OFF by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_OFF",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-07T19:45:00.000Z",
+        "entry": "2026-09-07T20:00:00.000Z",
+        "end": "2026-09-07T20:15:00.000Z",
+        "trades": 26519,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 26519,
+        "notional": 13900180.61,
+        "buyNotional": 7267886.72,
+        "sellNotional": 6632293.89,
+        "signedTakerDeltaNotional": 635592.83,
+        "cvdPctOfNotional": 4.5726,
+        "cvdSlopeNotionalPerMin": 21186.43,
+        "tradeIntensityPerMin": 883.9667,
+        "firstPrice": 1.3997,
+        "lastPrice": 1.3961,
+        "priceMoveBps": -25.7198,
+        "entryProgressBps": 27.8571,
+        "priceProgressPerAggressiveVolume": 0.000002004085
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-07T19:45:02.000Z",
+        "lastTimestamp": "2026-09-07T20:14:31.000Z",
+        "preNearBidNotional": 923264117.45,
+        "preNearAskNotional": 877962.04,
+        "postNearBidNotional": 864095039.96,
+        "postNearAskNotional": 834730.1,
+        "nearBidNotionalChangePct": -6.4087,
+        "nearAskNotionalChangePct": -4.9241,
+        "postBidAskImbalance": 0.99807
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": false,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "ETH:1h:trend_pullback_reject_short:1788814800",
+      "symbol": "ETH",
+      "usdmSymbol": "ETHUSDT",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "timeframe": "1h",
+      "tier": "avoid",
+      "regime": "down/low-vol",
+      "entryTimeIso": "2026-09-07T21:00:00.000Z",
+      "entryPrice": 2491.09,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.1769,
+        "netPnlUsd": -73.1816,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_RISK_OFF",
+        "pass": true,
+        "btcPrice": 79164,
+        "btcTime": 1788814800,
+        "btcTimeIso": "2026-09-07T21:00:00.000Z",
+        "reason": "short setup with BTC BTC_RISK_OFF by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_RISK_OFF",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-07T20:45:00.000Z",
+        "entry": "2026-09-07T21:00:00.000Z",
+        "end": "2026-09-07T21:15:00.000Z",
+        "trades": 41000,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 41000,
+        "notional": 76315936.44,
+        "buyNotional": 33246111,
+        "sellNotional": 43069825.44,
+        "signedTakerDeltaNotional": -9823714.44,
+        "cvdPctOfNotional": -12.8724,
+        "cvdSlopeNotionalPerMin": -327457.15,
+        "tradeIntensityPerMin": 1366.6667,
+        "firstPrice": 2490.91,
+        "lastPrice": 2495.2,
+        "priceMoveBps": 17.2226,
+        "entryProgressBps": -16.4988,
+        "priceProgressPerAggressiveVolume": -2.16191e-7
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-07T20:45:03.000Z",
+        "lastTimestamp": "2026-09-07T21:14:31.000Z",
+        "preNearBidNotional": 16161954333.44,
+        "preNearAskNotional": 15837117.59,
+        "postNearBidNotional": 15977298196.44,
+        "postNearAskNotional": 15837117.59,
+        "nearBidNotionalChangePct": -1.1425,
+        "nearAskNotionalChangePct": 0,
+        "postBidAskImbalance": 0.99802
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "BTC:4h:range_breakdown_short:1788840000",
+      "symbol": "BTC",
+      "usdmSymbol": "BTCUSDT",
+      "setup": "range_breakdown_short",
+      "direction": "short",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "range/low-vol",
+      "entryTimeIso": "2026-09-08T04:00:00.000Z",
+      "entryPrice": 78482,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.1129,
+        "netPnlUsd": -108.3969,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_SELF",
+        "pass": true,
+        "reason": "Setup is BTC itself; cross-market alt gate not applied."
+      },
+      "btcGateState": "BTC_SELF",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-08T03:45:00.000Z",
+        "entry": "2026-09-08T04:00:00.000Z",
+        "end": "2026-09-08T04:15:00.000Z",
+        "trades": 39452,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 39452,
+        "notional": 120697149.54,
+        "buyNotional": 46481112.84,
+        "sellNotional": 74216036.7,
+        "signedTakerDeltaNotional": -27734923.86,
+        "cvdPctOfNotional": -22.9789,
+        "cvdSlopeNotionalPerMin": -924497.46,
+        "tradeIntensityPerMin": 1315.0667,
+        "firstPrice": 78918.8,
+        "lastPrice": 78789.6,
+        "priceMoveBps": -16.3713,
+        "entryProgressBps": -39.1937,
+        "priceProgressPerAggressiveVolume": -3.24728e-7
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-08T03:45:02.000Z",
+        "lastTimestamp": "2026-09-08T04:14:31.000Z",
+        "preNearBidNotional": 23419028837.12,
+        "preNearAskNotional": 1711163349.85,
+        "postNearBidNotional": 22862593667.99,
+        "postNearAskNotional": 1858634563.28,
+        "nearBidNotionalChangePct": -2.376,
+        "nearAskNotionalChangePct": 8.6182,
+        "postBidAskImbalance": 0.849633
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": true,
+        "alignedCvd": true,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": true,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "DOGE:4h:trend_pullback_reclaim_long:1788868800",
+      "symbol": "DOGE",
+      "usdmSymbol": "DOGEUSDT",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/mid-vol",
+      "entryTimeIso": "2026-09-08T12:00:00.000Z",
+      "entryPrice": 0.09065,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.0415,
+        "netPnlUsd": -276.0381,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_TRANSITION",
+        "pass": true,
+        "btcPrice": 78904,
+        "btcTime": 1788868800,
+        "btcTimeIso": "2026-09-08T12:00:00.000Z",
+        "reason": "long setup with BTC BTC_TRANSITION by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_TRANSITION",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-08T11:45:00.000Z",
+        "entry": "2026-09-08T12:00:00.000Z",
+        "end": "2026-09-08T12:15:00.000Z",
+        "trades": 48257,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 48257,
+        "notional": 28573746.31,
+        "buyNotional": 9938680.08,
+        "sellNotional": 18635066.23,
+        "signedTakerDeltaNotional": -8696386.15,
+        "cvdPctOfNotional": -30.4349,
+        "cvdSlopeNotionalPerMin": -289879.54,
+        "tradeIntensityPerMin": 1608.5667,
+        "firstPrice": 0.08963,
+        "lastPrice": 0.08869,
+        "priceMoveBps": -104.8756,
+        "entryProgressBps": -216.2162,
+        "priceProgressPerAggressiveVolume": -0.000007566954
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-08T11:45:03.000Z",
+        "lastTimestamp": "2026-09-08T12:14:31.000Z",
+        "preNearBidNotional": 1390137561.61,
+        "preNearAskNotional": 1114325.37,
+        "postNearBidNotional": 1376615328.9,
+        "postNearAskNotional": 1114325.37,
+        "nearBidNotionalChangePct": -0.9727,
+        "nearAskNotionalChangePct": 0,
+        "postBidAskImbalance": 0.998382
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    },
+    {
+      "eventId": "ETH:4h:trend_pullback_reclaim_long:1788868800",
+      "symbol": "ETH",
+      "usdmSymbol": "ETHUSDT",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "timeframe": "4h",
+      "tier": "low-sample",
+      "regime": "up/mid-vol",
+      "entryTimeIso": "2026-09-08T12:00:00.000Z",
+      "entryPrice": 2498.62,
+      "outcome": {
+        "exitReason": "SL",
+        "rMultiple": -1.071,
+        "netPnlUsd": -165.8455,
+        "ambiguous": false
+      },
+      "btcGate": {
+        "state": "BTC_TRANSITION",
+        "pass": true,
+        "btcPrice": 78904,
+        "btcTime": 1788868800,
+        "btcTimeIso": "2026-09-08T12:00:00.000Z",
+        "reason": "long setup with BTC BTC_TRANSITION by close/MA20/MA50 context."
+      },
+      "btcGateState": "BTC_TRANSITION",
+      "inOriginalCluster": false,
+      "archiveWindow": {
+        "status": "ok",
+        "start": "2026-09-08T11:45:00.000Z",
+        "entry": "2026-09-08T12:00:00.000Z",
+        "end": "2026-09-08T12:15:00.000Z",
+        "trades": 73326,
+        "bookDepthRows": 720
+      },
+      "tradeFeatures": {
+        "trades": 73326,
+        "notional": 141763488.46,
+        "buyNotional": 58793808.09,
+        "sellNotional": 82969680.38,
+        "signedTakerDeltaNotional": -24175872.29,
+        "cvdPctOfNotional": -17.0537,
+        "cvdSlopeNotionalPerMin": -805862.41,
+        "tradeIntensityPerMin": 2444.2,
+        "firstPrice": 2473.6,
+        "lastPrice": 2468.05,
+        "priceMoveBps": -22.4369,
+        "entryProgressBps": -122.3475,
+        "priceProgressPerAggressiveVolume": -8.6304e-7
+      },
+      "bookDepthFeatures": {
+        "rows": 720,
+        "firstTimestamp": "2026-09-08T11:45:03.000Z",
+        "lastTimestamp": "2026-09-08T12:14:31.000Z",
+        "preNearBidNotional": 15692910120.88,
+        "preNearAskNotional": 15028333.79,
+        "postNearBidNotional": 16024004115.1,
+        "postNearAskNotional": 15028333.79,
+        "nearBidNotionalChangePct": 2.1098,
+        "nearAskNotionalChangePct": 0,
+        "postBidAskImbalance": 0.998126
+      },
+      "featureFlags": {
+        "alignedAggressiveFlow": false,
+        "alignedCvd": false,
+        "weakDirectionalProgress": true,
+        "absorptionProxy": false,
+        "liquidityThinningProxy": false,
+        "usableForExpansion": true
+      }
+    }
+  ],
+  "decision": {
+    "verdict": "balanced_usdm_archive_absorption_watch_only_no_promotion",
+    "reason": "USD-M public archives joined to 60/60 balanced frozen DEMO-SIM rows with both futures trades and coarse bookDepth. Absorption proxy mean R=0.0044 vs unflagged mean R=-0.5736; outside the original cluster, comparable-bucket absorption lift is 0.9526 R across 5 rows. Absorption is watch-only and not promoted.",
+    "killCondition": {
+      "rule": "if absorption lift disappears outside the original clustered sample, mark absorption as context-only rather than a candidate",
+      "originalClusterRows": 9,
+      "outsideOriginalClusterRows": 51,
+      "outsideComparableAbsorption": {
+        "comparableBuckets": 1,
+        "comparableRows": 5,
+        "flaggedRows": 4,
+        "unflaggedRows": 1,
+        "flaggedMeanR": -0.082,
+        "unflaggedMeanR": -1.0346,
+        "meanLiftR": 0.9526
+      },
+      "absorptionContextOnly": false,
+      "absorptionCandidate": false
+    },
+    "candidateAdded": false,
+    "absorptionCandidateAdded": false,
+    "watcherGateChangeProposed": false,
+    "demoSimLogicChangeProposed": false,
+    "noLiveChange": true,
+    "analyzedWindows": 60,
+    "absorptionProxyRows": 25,
+    "liquidityThinningProxyRows": 3
+  }
+}

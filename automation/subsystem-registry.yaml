@@ -1,0 +1,362 @@
+version: 1
+last_updated: '2026-10-03T16:30:00Z'
+status: active_research_contract
+purpose: >-
+  Make RALPH subsystem ownership explicit without creating more cron jobs.
+  This registry says what starts each subsystem, what it must read, what it
+  must produce, who consumes it, when Tomas should be notified, and how the
+  result is judged.
+global_boundaries:
+  - research_only
+  - no_live_trading
+  - no_wallet_keys
+  - no_unapproved_exchange_accounts
+  - no_paid_apis_without_approval
+  - no_public_publishing_without_approval
+  - no_scheduler_change_from_registry_alone
+  - no_alert_wording_threshold_risk_sizing_or_execution_changes
+required_contract_fields:
+  - id
+  - owner_loop
+  - mode
+  - behavior_policy
+  - cadence_or_trigger
+  - inputs
+  - outputs
+  - consumers
+  - notification_gate
+  - effectiveness_check
+  - failure_behavior
+  - current_status
+behavior_policies:
+  deterministic: Same bounded job every run.
+  queue: Pick the highest-value pending owned queue item.
+  deepen: Continue one promising topic until validated, killed, or blocked.
+  explore: Scan for new strategy ideas, prior art, repos, papers, or trader concepts.
+  connect: Synthesize multiple outputs to find combined edges or contradictions.
+  repair: Fix measurement, freshness, schema, routing, or verification defects first.
+subsystems:
+  - id: data_replay_refresh
+    owner_loop: liquid-crypto-alert-edge-backtest
+    mode: scheduled
+    behavior_policy: deterministic
+    cadence_or_trigger: Every 4h UTC via existing OpenClaw cron.
+    inputs:
+      - experiments/btc-eth-alert-edge/data/candles/
+      - experiments/btc-eth-alert-edge/paper/signals.json
+      - crypto-updates runtime/review outputs through existing alert-edge scripts
+    outputs:
+      - experiments/btc-eth-alert-edge/results/universe-snapshot.json
+      - experiments/btc-eth-alert-edge/results/edge-snapshot.json
+      - experiments/btc-eth-alert-edge/results/edge-summary.md
+      - experiments/btc-eth-alert-edge/results/paper-dashboard.json
+      - experiments/btc-eth-alert-edge/results/paper-dashboard.md
+      - experiments/btc-eth-alert-edge/results/historical-demo-sim-replay.json
+      - experiments/btc-eth-alert-edge/results/historical-demo-sim-replay.md
+      - experiments/btc-eth-alert-edge/results/paper-signal-precision-repair.json
+      - experiments/btc-eth-alert-edge/results/paper-signal-precision-repair.md
+      - experiments/btc-eth-alert-edge/results/demo-sim-range-breakout-btc-risk-on-gate.json
+      - experiments/btc-eth-alert-edge/results/demo-sim-range-breakout-btc-risk-on-gate.md
+      - experiments/btc-eth-alert-edge/results/demo-sim-walk-forward-filter-grid.json
+      - experiments/btc-eth-alert-edge/results/demo-sim-walk-forward-filter-grid.md
+      - experiments/btc-eth-alert-edge/results/demo-sim-short-strategy-quarantine.json
+      - experiments/btc-eth-alert-edge/results/demo-sim-short-strategy-quarantine.md
+    consumers:
+      - backtesting_lab
+      - demo_sim_paper_fund
+      - state_of_edge
+      - adversarial_critic
+    notification_gate: >-
+      Silent unless repeated refresh failure, stale data, or integrity failure
+      blocks downstream paper/demo research.
+    effectiveness_check: >-
+      Latest expected outputs exist, are internally verified by the alert-edge
+      loop, and feed fresh replay/paper surfaces instead of stale snapshots.
+    failure_behavior: >-
+      Record blocker in loop-state/work-queues; do not change live watchers,
+      alert wording, thresholds, scheduling, or execution behavior.
+    current_status: active_existing_cron
+
+  - id: strategy_discovery
+    owner_loop: ralph-autoresearch-loop
+    mode: scheduled_or_artifact_triggered
+    behavior_policy: explore
+    cadence_or_trigger: >-
+      Daily bounded autoresearch item when discovery queue is high value; also
+      triggered by a new source, Tomas idea, weak strategy inventory, or empty
+      candidate pipeline.
+    inputs:
+      - automation/work-queues.yaml
+      - automation/retrieval-router.yaml
+      - wiki/notes/
+      - wiki/sources/
+      - decisions/candidates.md
+      - decisions/discarded.md
+      - public/free prior art when selected by the bounded item
+    outputs:
+      - wiki/notes/
+      - decisions/candidates.md
+      - automation/work-queues.yaml
+    owned_queue_items:
+      - demo-sim-profitable-strategy-source-scan
+      - demo-sim-strategy-candidate-spec-seed-list
+      - market-bot-reverse-engineering-source-map
+    consumers:
+      - backtesting_lab
+      - state_of_edge
+      - adversarial_critic
+    notification_gate: >-
+      Silent unless a high-value unknown requires Tomas, or a candidate crosses
+      an explicit human-review gate.
+    effectiveness_check: >-
+      Each useful output becomes a precise candidate spec with mechanism, data
+      need, baseline, cheapest kill test, failure mode, and capital relevance.
+    failure_behavior: >-
+      If source access or evidence is weak, classify watch/needs-access or
+      discard instead of promoting vague ideas.
+    current_status: active_via_autoresearch_queue
+
+  - id: backtesting_lab
+    owner_loop: ralph-autoresearch-loop
+    mode: artifact_triggered
+    behavior_policy: queue
+    cadence_or_trigger: >-
+      Daily bounded item when a candidate spec, measurement bug, data refresh,
+      or state-of-edge review creates a validation task.
+    inputs:
+      - automation/work-queues.yaml
+      - experiments/strategy-destruction-filter/results/filter-report.json
+      - experiments/strategy-destruction-filter/results/survivors.json
+      - experiments/strategy-destruction-filter/results/rejected-ideas.jsonl
+      - experiments/btc-eth-alert-edge/results/historical-demo-sim-replay.json
+      - wiki/notes/
+    outputs:
+      - experiments/strategy-destruction-filter/results/filter-report.json
+      - experiments/strategy-destruction-filter/results/filter-report.md
+      - experiments/strategy-destruction-filter/results/survivors.json
+      - experiments/strategy-destruction-filter/results/rejected-ideas.jsonl
+      - wiki/notes/
+    owned_queue_items:
+      - demo-sim-replay-walk-forward-filter-grid
+      - demo-sim-replay-signal-price-precision-fix
+      - demo-sim-range-breakout-btc-risk-on-forward-gate
+      - demo-sim-short-strategy-quarantine-and-revalidation
+      - strategy-filter-purged-embargo-split-classifier-implementation
+    consumers:
+      - demo_sim_paper_fund
+      - state_of_edge
+      - adversarial_critic
+      - strategy_discovery
+    notification_gate: >-
+      Silent unless a candidate is evidence-backed enough for human go/no-go or
+      a repeated blocker prevents falsification.
+    effectiveness_check: >-
+      Weak ideas are killed cheaply; survivors show baseline lift,
+      out-of-sample discipline, drawdown awareness, and verifier support before
+      any DEMO-SIM/paper-fund discussion.
+    failure_behavior: >-
+      Repair measurement, schema, freshness, and verifier issues before
+      expanding strategy research; record blockers after failures.
+    current_status: active_via_autoresearch_queue
+
+  - id: demo_sim_paper_fund
+    owner_loop: liquid-crypto-alert-edge-backtest plus ralph-autoresearch-loop
+    mode: scheduled_and_event_triggered
+    behavior_policy: deterministic
+    cadence_or_trigger: >-
+      Every 4h after alert-edge refresh for replay state; event-triggered later
+      when closed DEMO-SIM/paper positions exist.
+    inputs:
+      - experiments/btc-eth-alert-edge/paper/signals.json
+      - experiments/btc-eth-alert-edge/results/historical-demo-sim-replay.json
+      - experiments/btc-eth-alert-edge/results/paper-dashboard.json
+      - future demo-sim-trades.jsonl when implemented
+    outputs:
+      - experiments/btc-eth-alert-edge/results/historical-demo-sim-replay.json
+      - experiments/btc-eth-alert-edge/results/historical-demo-sim-replay.md
+      - experiments/btc-eth-alert-edge/results/demo-sim-paper-fund-ledger.json
+      - experiments/btc-eth-alert-edge/results/demo-sim-paper-fund-ledger.md
+      - experiments/btc-eth-alert-edge/results/paper-signal-precision-repair.json
+      - experiments/btc-eth-alert-edge/results/paper-signal-precision-repair.md
+      - experiments/btc-eth-alert-edge/results/demo-sim-range-breakout-btc-risk-on-gate.json
+      - experiments/btc-eth-alert-edge/results/demo-sim-range-breakout-btc-risk-on-gate.md
+      - experiments/btc-eth-alert-edge/results/demo-sim-walk-forward-filter-grid.json
+      - experiments/btc-eth-alert-edge/results/demo-sim-walk-forward-filter-grid.md
+      - experiments/btc-eth-alert-edge/results/demo-sim-short-strategy-quarantine.json
+      - experiments/btc-eth-alert-edge/results/demo-sim-short-strategy-quarantine.md
+    owned_queue_items: []
+    consumers:
+      - state_of_edge
+      - adversarial_critic
+      - trade_postmortem
+      - execution_readiness
+    notification_gate: >-
+      Silent unless drawdown, repeated data failure, or a capital-worthy result
+      needs human review.
+    effectiveness_check: >-
+      Answers whether simulated capital would have grown after fees, drawdown,
+      exposure, allocation, and strategy-level survivability.
+    failure_behavior: >-
+      If ledger/drawdown outputs are absent or stale, keep status partial and
+      route a repair item through validation pending; do not imply capital
+      readiness.
+    current_status: replay_paper_fund_walk_forward_and_short_quarantine_surfaces_active
+
+  - id: state_of_edge
+    owner_loop: ralph-state-of-edge-daily
+    mode: scheduled
+    behavior_policy: deterministic
+    cadence_or_trigger: Daily 19:15 Europe/Prague via existing OpenClaw cron.
+    inputs:
+      - experiments/btc-eth-alert-edge/results/paper-dashboard.json
+      - experiments/btc-eth-alert-edge/results/edge-snapshot.json
+      - experiments/btc-eth-alert-edge/results/historical-demo-sim-replay.json
+      - experiments/strategy-destruction-filter/results/shadow-pnl-ledger.json
+      - experiments/strategy-destruction-filter/results/filter-report.json
+    outputs:
+      - outputs/state-of-edge-report.json
+      - outputs/state-of-edge-report.md
+    consumers:
+      - adversarial_critic
+      - strategy_discovery
+      - backtesting_lab
+      - demo_sim_paper_fund
+    notification_gate: >-
+      Silent unless candidate review, stale-data attention state, repeated
+      blocker, or urgent research/paper risk appears.
+    effectiveness_check: >-
+      Produces a small deterministic promote/watch/kill/stale-data posture from
+      current evidence without financial-advice or execution language.
+    failure_behavior: >-
+      Keep latest state non-promotional; record stale or missing inputs and
+      feed repair tasks rather than loosening gates.
+    current_status: active_existing_cron
+
+  - id: adversarial_critic
+    owner_loop: ralph-adversarial-improvement-loop
+    mode: scheduled
+    behavior_policy: connect
+    cadence_or_trigger: Daily 19:30 Europe/Prague after state-of-edge; deeper pass weekly after maintenance.
+    inputs:
+      - outputs/state-of-edge-report.json
+      - outputs/backtest-readiness-audit.json
+      - outputs/atas-access-audit.json
+      - outputs/ralph-adversarial-improvement-report.json
+      - experiments/btc-eth-alert-edge/results/historical-demo-sim-replay.json
+      - experiments/strategy-destruction-filter/results/filter-report.json
+    outputs:
+      - outputs/ralph-adversarial-improvement-report.json
+      - outputs/ralph-adversarial-improvement-report.md
+    consumers:
+      - ralph-autoresearch-loop
+      - backtesting_lab
+      - execution_readiness
+    notification_gate: >-
+      Silent unless high/critical risk, repeated blocker, broken monitoring, or
+      candidate-review gate fires.
+    effectiveness_check: >-
+      Finds broken assumptions, missing gates, stale evidence, and proposal-only
+      repairs before simulated or future capital is exposed.
+    failure_behavior: >-
+      Emit proposal/blocker only; do not mutate live alerts, thresholds,
+      schedules, accounts, keys, paid services, sizing, or execution.
+    current_status: active_existing_cron
+
+  - id: trade_postmortem
+    owner_loop: ralph-autoresearch-loop
+    mode: event_triggered
+    behavior_policy: deepen
+    cadence_or_trigger: >-
+      Triggered by closed DEMO-SIM/paper position; daily batch fallback can be
+      proposed after a ledger exists.
+    inputs:
+      - future closed DEMO-SIM/paper trade events
+      - experiments/btc-eth-alert-edge/results/paper-dashboard.json
+      - experiments/btc-eth-alert-edge/results/historical-demo-sim-replay.json
+      - wiki/notes/
+    outputs:
+      - future compact postmortem rows with tags
+      - future postmortem summary note when a pattern matters
+    consumers:
+      - strategy_discovery
+      - backtesting_lab
+      - state_of_edge
+      - adversarial_critic
+    notification_gate: >-
+      Silent unless repeated loss pattern, broken assumption, or promotion
+      decision needs human review.
+    effectiveness_check: >-
+      Losses and near-misses change future filters or kill weak ideas instead
+      of becoming unread logs.
+    failure_behavior: >-
+      If event source is missing, remain inactive and feed closed-event source
+      work; do not invent postmortems from incomplete evidence.
+    current_status: planned_blocked_on_closed_event_source
+
+  - id: execution_readiness
+    owner_loop: ralph-weekly-maintenance plus candidate-triggered manual review
+    mode: manual_or_artifact_triggered
+    behavior_policy: repair
+    cadence_or_trigger: >-
+      Weekly maintenance readiness review only when a paper-fund strategy
+      becomes capital-worthy, or on explicit Tomas request.
+    inputs:
+      - outputs/state-of-edge-report.json
+      - outputs/backtest-readiness-audit.json
+      - outputs/atas-access-audit.json
+      - outputs/ralph-adversarial-improvement-report.json
+      - experiments/btc-eth-alert-edge/results/demo-sim-paper-fund-ledger.json
+      - automation/loop-state.yaml
+    outputs:
+      - outputs/backtest-readiness-audit.json
+      - outputs/backtest-readiness-audit.md
+      - future execution-readiness blocker report
+    consumers:
+      - Tomas
+      - adversarial_critic
+      - future execution layer
+    notification_gate: >-
+      Notify only for explicit human decision about approved demo/testnet/live
+      readiness, keys/access path, or unresolved safety blocker.
+    effectiveness_check: >-
+      Separates "profitable enough to discuss" from "safe and authorized enough
+      to execute" with explicit blockers.
+    failure_behavior: >-
+      Default to blocked. Do not create accounts, keys, paid services, demo/
+      testnet access, live-write adapters, or scheduler changes.
+    current_status: blocker_only_no_live_write_adapter
+
+  - id: memory_router_maintenance
+    owner_loop: ralph-weekly-maintenance
+    mode: scheduled
+    behavior_policy: repair
+    cadence_or_trigger: Sunday 18:00 Europe/Prague via existing OpenClaw cron.
+    inputs:
+      - automation/retrieval-router.yaml
+      - automation/work-queues.yaml
+      - automation/loop-state.yaml
+      - automation/loop-registry.yaml
+      - automation/subsystem-registry.yaml
+      - index.yaml
+      - index.md
+    outputs:
+      - outputs/research-validation-checklist.json
+      - outputs/research-validation-checklist.md
+      - outputs/evidence-ledger-prioritizer.json
+      - outputs/evidence-ledger-prioritizer.md
+      - log.md
+    consumers:
+      - all_subsystems
+      - ralph-autoresearch-loop
+      - Tomas only on maintenance notification gate
+    notification_gate: >-
+      Silent unless integrity issue, repeated blocker, missing scheduler state,
+      or user-facing delivery problem requires human attention.
+    effectiveness_check: >-
+      Queues, router, indexes, subsystem contracts, and maintenance reports stay
+      coherent enough that future loops do not reread broad context or run
+      ownerless work.
+    failure_behavior: >-
+      Record maintenance blocker; do not start a strategy branch, change
+      schedules, install dependencies, or mutate live/runtime behavior.
+    current_status: active_existing_cron

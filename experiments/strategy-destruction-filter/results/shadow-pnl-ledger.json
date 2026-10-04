@@ -1,0 +1,4172 @@
+{
+  "generatedAt": "2026-10-04T08:04:46.320Z",
+  "status": "research-only-no-live-execution",
+  "source": "crypto-updates/runtime/alert-feedback.jsonl",
+  "purpose": "shadow-pnl-ledger-for-tradable-alert-plans-before-paper-or-live-promotion",
+  "caveats": [
+    "Uses recorded alert feedback and checkpoint/min/max fields only.",
+    "If both TP and SL are inside the reviewed range, the ledger records stop-first ambiguity conservatively.",
+    "Time exits use the alert-time 30m checkpoint as an approximation, not exact fill-time replay.",
+    "Gross PnL excludes fees, slippage, queue position, latency, and exchange execution constraints."
+  ],
+  "totals": {
+    "records": 809,
+    "tradablePlans": 92,
+    "filled": 75,
+    "noFillOrSkipped": 17,
+    "targetHits": 29,
+    "stopHits": 25,
+    "ambiguousStopFirst": 21,
+    "timeExits": 0,
+    "grossPnlUsd": -1430,
+    "filledGrossPnlUsd": -1430,
+    "winRateFilled": 0.3867
+  },
+  "groups": [
+    {
+      "key": "WICK|ETH|5s|UP|SHORT",
+      "sample": 14,
+      "filled": 13,
+      "outcomes": {
+        "target": 4,
+        "stop": 4,
+        "ambiguous_stop_first": 5,
+        "no_entry": 1
+      },
+      "verdicts": {
+        "fade-useful": 6,
+        "follow-useful": 8
+      },
+      "grossPnlUsd": -330,
+      "winRateFilled": 0.3077,
+      "ids": [
+        "ETH-UP-1787155387758-6hajyk",
+        "ETH-UP-1787172614564-fzmr6k",
+        "ETH-UP-1787225500796-3ofepo",
+        "ETH-UP-1787244073621-ke6bqj",
+        "ETH-UP-1787301604930-4fuxko",
+        "ETH-UP-1787319553921-6zqyk5",
+        "ETH-UP-1787346706532-vqpevd",
+        "ETH-UP-1787351639543-l44acr",
+        "ETH-UP-1787624274735-z556ho",
+        "ETH-UP-1787666721710-dvfqs5",
+        "ETH-UP-1787822740840-bnajym",
+        "ETH-UP-1787925619971-9ah49p",
+        "ETH-UP-1787927717713-canlf3",
+        "ETH-UP-1787934557568-mqwlx8"
+      ]
+    },
+    {
+      "key": "WICK|BTC|5s|UP|SHORT",
+      "sample": 12,
+      "filled": 12,
+      "outcomes": {
+        "stop": 7,
+        "ambiguous_stop_first": 4,
+        "target": 1
+      },
+      "verdicts": {
+        "follow-useful": 9,
+        "fade-useful": 2,
+        "noisy": 1
+      },
+      "grossPnlUsd": -520,
+      "winRateFilled": 0.0833,
+      "ids": [
+        "BTC-UP-1787172640292-pi9ade",
+        "BTC-UP-1787268306831-c05klf",
+        "BTC-UP-1787296518640-6wsdr3",
+        "BTC-UP-1787302155796-0f4tun",
+        "BTC-UP-1787319553744-1a3fqv",
+        "BTC-UP-1787618594753-08i4ek",
+        "BTC-UP-1787624271618-4140ih",
+        "BTC-UP-1787666721714-hrrnwt",
+        "BTC-UP-1787926826253-b6jl5x",
+        "BTC-UP-1787934557640-cxzx28",
+        "BTC-UP-1790914794505-uhcylz",
+        "BTC-UP-1790961896820-69qk6t"
+      ]
+    },
+    {
+      "key": "WICK|BTC|5s|DOWN|LONG",
+      "sample": 10,
+      "filled": 8,
+      "outcomes": {
+        "missing_entry_research": 2,
+        "target": 3,
+        "stop": 3,
+        "ambiguous_stop_first": 2
+      },
+      "verdicts": {
+        "follow-useful": 4,
+        "fade-useful": 6
+      },
+      "grossPnlUsd": -160,
+      "winRateFilled": 0.375,
+      "ids": [
+        "BTC-DOWN-1786537807292-k5b8zx",
+        "BTC-DOWN-1786916406641-e8hw5f",
+        "BTC-DOWN-1787238511387-mzvvky",
+        "BTC-DOWN-1787275319882-irpp3q",
+        "BTC-DOWN-1787302839370-zpc95e",
+        "BTC-DOWN-1787320689065-b3stna",
+        "BTC-DOWN-1787747408423-396e8g",
+        "BTC-DOWN-1787925796592-ifnk9o",
+        "BTC-DOWN-1787932936519-w6nkti",
+        "BTC-DOWN-1790961865240-o2fz2h"
+      ]
+    },
+    {
+      "key": "VELOCITY|ETH|15m|DOWN|LONG",
+      "sample": 10,
+      "filled": 7,
+      "outcomes": {
+        "no_entry": 3,
+        "target": 4,
+        "ambiguous_stop_first": 1,
+        "stop": 2
+      },
+      "verdicts": {
+        "follow-useful": 5,
+        "noisy": 2,
+        "fade-useful": 3
+      },
+      "grossPnlUsd": -30,
+      "winRateFilled": 0.5714,
+      "ids": [
+        "ETH-DOWN-1787176906667-6oyr2y",
+        "ETH-DOWN-1787178833331-szd94s",
+        "ETH-DOWN-1787227447653-ai8ddk",
+        "ETH-DOWN-1787321104344-gtu8lf",
+        "ETH-DOWN-1787375424400-z85x0h",
+        "ETH-DOWN-1787665987752-p9ch0s",
+        "ETH-DOWN-1787826376203-nv25s6",
+        "ETH-DOWN-1787932407992-xuuw4q",
+        "ETH-DOWN-1787934375105-uhajb0",
+        "ETH-DOWN-1789872993683-bjker5"
+      ]
+    },
+    {
+      "key": "VELOCITY|ETH|5m|UP|SHORT",
+      "sample": 9,
+      "filled": 9,
+      "outcomes": {
+        "stop": 3,
+        "target": 4,
+        "ambiguous_stop_first": 2
+      },
+      "verdicts": {
+        "follow-useful": 5,
+        "fade-useful": 3,
+        "noisy": 1
+      },
+      "grossPnlUsd": -130,
+      "winRateFilled": 0.4444,
+      "ids": [
+        "ETH-UP-1787151298775-bhrjsk",
+        "ETH-UP-1787153055182-ymjew4",
+        "ETH-UP-1787179272469-o4lvks",
+        "ETH-UP-1787213450759-gcxdd2",
+        "ETH-UP-1787238219715-lur5og",
+        "ETH-UP-1787241070259-ry3krz",
+        "ETH-UP-1787380834476-2j4any",
+        "ETH-UP-1787826686540-n3anv8",
+        "ETH-UP-1790597269297-frotve"
+      ]
+    },
+    {
+      "key": "WICK|ETH|5s|DOWN|LONG",
+      "sample": 8,
+      "filled": 5,
+      "outcomes": {
+        "missing_entry_research": 2,
+        "no_entry": 1,
+        "target": 1,
+        "ambiguous_stop_first": 3,
+        "stop": 1
+      },
+      "verdicts": {
+        "follow-useful": 4,
+        "fade-useful": 4
+      },
+      "grossPnlUsd": -170,
+      "winRateFilled": 0.2,
+      "ids": [
+        "ETH-DOWN-1786537806074-zf65xw",
+        "ETH-DOWN-1786916407229-q9fgkn",
+        "ETH-DOWN-1787175220292-7f6ia5",
+        "ETH-DOWN-1787238511645-by69lq",
+        "ETH-DOWN-1787296830755-n5y2mj",
+        "ETH-DOWN-1787302839766-uwgqsx",
+        "ETH-DOWN-1787747409852-xas733",
+        "ETH-DOWN-1787925796609-1akwtg"
+      ]
+    },
+    {
+      "key": "VELOCITY|ETH|60s|DOWN|LONG",
+      "sample": 8,
+      "filled": 5,
+      "outcomes": {
+        "missing_entry_research": 1,
+        "no_entry": 2,
+        "target": 4,
+        "ambiguous_stop_first": 1
+      },
+      "verdicts": {
+        "noisy": 2,
+        "fade-useful": 6
+      },
+      "grossPnlUsd": 70,
+      "winRateFilled": 0.8,
+      "ids": [
+        "ETH-DOWN-1786374789722-rrlduq",
+        "ETH-DOWN-1787151595654-yiizfv",
+        "ETH-DOWN-1787187119846-3vul1o",
+        "ETH-DOWN-1787232650136-ns43m6",
+        "ETH-DOWN-1787351462736-f5kvh3",
+        "ETH-DOWN-1787364017274-190mj4",
+        "ETH-DOWN-1787644182524-q4d5qb",
+        "ETH-DOWN-1787692087789-pk6bzs"
+      ]
+    },
+    {
+      "key": "VELOCITY|ETH|5m|DOWN|LONG",
+      "sample": 6,
+      "filled": 4,
+      "outcomes": {
+        "missing_entry_research": 1,
+        "target": 4,
+        "no_entry": 1
+      },
+      "verdicts": {
+        "noisy": 2,
+        "fade-useful": 4
+      },
+      "grossPnlUsd": 120,
+      "winRateFilled": 1,
+      "ids": [
+        "ETH-DOWN-1786462644866-k89vtm",
+        "ETH-DOWN-1787195477083-sqogs3",
+        "ETH-DOWN-1787306244437-fyw5vc",
+        "ETH-DOWN-1787337935499-ypx996",
+        "ETH-DOWN-1787357205898-w0o15a",
+        "ETH-DOWN-1790242498838-h0meqs"
+      ]
+    },
+    {
+      "key": "VELOCITY|BTC|15m|UP|SHORT",
+      "sample": 4,
+      "filled": 3,
+      "outcomes": {
+        "stop": 1,
+        "no_entry": 1,
+        "target": 1,
+        "ambiguous_stop_first": 1
+      },
+      "verdicts": {
+        "follow-useful": 3,
+        "noisy": 1
+      },
+      "grossPnlUsd": -70,
+      "winRateFilled": 0.3333,
+      "ids": [
+        "BTC-UP-1787152019278-xupw3o",
+        "BTC-UP-1787153434499-s85pic",
+        "BTC-UP-1787238242568-s2y5k6",
+        "BTC-UP-1787275902584-2j4z65"
+      ]
+    },
+    {
+      "key": "VELOCITY|ETH|15m|UP|SHORT",
+      "sample": 3,
+      "filled": 3,
+      "outcomes": {
+        "stop": 1,
+        "target": 1,
+        "ambiguous_stop_first": 1
+      },
+      "verdicts": {
+        "follow-useful": 2,
+        "noisy": 1
+      },
+      "grossPnlUsd": -70,
+      "winRateFilled": 0.3333,
+      "ids": [
+        "ETH-UP-1787174375823-5yeu15",
+        "ETH-UP-1787376354071-6tjhus",
+        "ETH-UP-1787818199222-o4ck13"
+      ]
+    },
+    {
+      "key": "VELOCITY|BTC|60s|DOWN|LONG",
+      "sample": 2,
+      "filled": 1,
+      "outcomes": {
+        "no_entry": 1,
+        "ambiguous_stop_first": 1
+      },
+      "verdicts": {
+        "follow-useful": 1,
+        "fade-useful": 1
+      },
+      "grossPnlUsd": -50,
+      "winRateFilled": 0,
+      "ids": [
+        "BTC-DOWN-1787279617750-809y4g",
+        "BTC-DOWN-1787644182507-b3ihp1"
+      ]
+    },
+    {
+      "key": "VELOCITY|ETH|60s|UP|SHORT",
+      "sample": 2,
+      "filled": 2,
+      "outcomes": {
+        "target": 1,
+        "stop": 1
+      },
+      "verdicts": {
+        "fade-useful": 1,
+        "follow-useful": 1
+      },
+      "grossPnlUsd": -20,
+      "winRateFilled": 0.5,
+      "ids": [
+        "ETH-UP-1787276849407-2ty74i",
+        "ETH-UP-1787349130589-ptephm"
+      ]
+    },
+    {
+      "key": "VELOCITY|BTC|5m|DOWN|LONG",
+      "sample": 1,
+      "filled": 1,
+      "outcomes": {
+        "stop": 1
+      },
+      "verdicts": {
+        "follow-useful": 1
+      },
+      "grossPnlUsd": -50,
+      "winRateFilled": 0,
+      "ids": [
+        "BTC-DOWN-1787375424407-i6rob9"
+      ]
+    },
+    {
+      "key": "VELOCITY|BTC|5m|UP|SHORT",
+      "sample": 1,
+      "filled": 1,
+      "outcomes": {
+        "stop": 1
+      },
+      "verdicts": {
+        "follow-useful": 1
+      },
+      "grossPnlUsd": -50,
+      "winRateFilled": 0,
+      "ids": [
+        "BTC-UP-1787213359438-7qays5"
+      ]
+    },
+    {
+      "key": "VELOCITY|BTC|60s|UP|SHORT",
+      "sample": 1,
+      "filled": 0,
+      "outcomes": {
+        "no_entry": 1
+      },
+      "verdicts": {
+        "fade-useful": 1
+      },
+      "grossPnlUsd": 0,
+      "winRateFilled": null,
+      "ids": [
+        "BTC-UP-1787220936327-ke83bj"
+      ]
+    },
+    {
+      "key": "VELOCITY|BTC|15m|DOWN|LONG",
+      "sample": 1,
+      "filled": 1,
+      "outcomes": {
+        "target": 1
+      },
+      "verdicts": {
+        "fade-useful": 1
+      },
+      "grossPnlUsd": 30,
+      "winRateFilled": 1,
+      "ids": [
+        "BTC-DOWN-1787665992179-dwp2cp"
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "id": "ETH-DOWN-1786374789722-rrlduq",
+      "alertLine": 2,
+      "reviewLine": 3,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "60s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-10T15:13:09.722Z",
+      "alertPrice": 1877.89,
+      "fill": {
+        "status": "missing_entry_research",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "noisy",
+        "move30mPct": -0.074,
+        "move1hPct": 0.0692,
+        "minPrice": 1871.37,
+        "maxPrice": 1881.07
+      },
+      "outcome": "missing_entry_research",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1786462644866-k89vtm",
+      "alertLine": 10,
+      "reviewLine": 11,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-11T15:37:24.866Z",
+      "alertPrice": 1858.85,
+      "fill": {
+        "status": "missing_entry_research",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "noisy",
+        "move30mPct": -0.1603,
+        "move1hPct": -0.3384,
+        "minPrice": 1853.62,
+        "maxPrice": 1867.06
+      },
+      "outcome": "missing_entry_research",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1786537806074-zf65xw",
+      "alertLine": 13,
+      "reviewLine": 17,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-12T12:30:06.074Z",
+      "alertPrice": 1915.53,
+      "fill": {
+        "status": "missing_entry_research",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.2219,
+        "move1hPct": 0.4046,
+        "minPrice": 1905.28,
+        "maxPrice": 1918
+      },
+      "outcome": "missing_entry_research",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "BTC-DOWN-1786537807292-k5b8zx",
+      "alertLine": 14,
+      "reviewLine": 18,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-12T12:30:07.292Z",
+      "alertPrice": 64250.87,
+      "fill": {
+        "status": "missing_entry_research",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.1923,
+        "move1hPct": 0.4496,
+        "minPrice": 63912.36,
+        "maxPrice": 64341.67
+      },
+      "outcome": "missing_entry_research",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1786916407229-q9fgkn",
+      "alertLine": 23,
+      "reviewLine": 26,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-16T21:40:07.229Z",
+      "alertPrice": 1869.72,
+      "fill": {
+        "status": "missing_entry_research",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.3434,
+        "move1hPct": -0.0316,
+        "minPrice": 1869.72,
+        "maxPrice": 1878.26
+      },
+      "outcome": "missing_entry_research",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "BTC-DOWN-1786916406641-e8hw5f",
+      "alertLine": 24,
+      "reviewLine": 27,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-16T21:40:06.641Z",
+      "alertPrice": 62809.76,
+      "fill": {
+        "status": "missing_entry_research",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.1593,
+        "move1hPct": 0.1015,
+        "minPrice": 62716.81,
+        "maxPrice": 62978
+      },
+      "outcome": "missing_entry_research",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "ETH-UP-1787151298775-bhrjsk",
+      "alertLine": 35,
+      "reviewLine": 45,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-19T14:54:58.775Z",
+      "alertPrice": 1959.38,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 1961.6,
+        "observedAt": "2026-08-19T14:55:09.316Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 1953.50186,
+        "stopLossPrice": 1969.1769,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 3.4552,
+        "move1hPct": 6.0075,
+        "minPrice": 1959.38,
+        "maxPrice": 2089.9
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787151595654-yiizfv",
+      "alertLine": 36,
+      "reviewLine": 47,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "60s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-19T14:59:55.654Z",
+      "alertPrice": 1963.09,
+      "fill": {
+        "status": "no_entry",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 1968.9792699999998,
+        "stopLossPrice": 1953.2745499999999,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -5.474,
+        "move1hPct": -6.2784,
+        "minPrice": 1963.09,
+        "maxPrice": 2089.9
+      },
+      "outcome": "no_entry",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "BTC-UP-1787152019278-xupw3o",
+      "alertLine": 37,
+      "reviewLine": 50,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-19T15:06:59.278Z",
+      "alertPrice": 66444,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 66452,
+        "observedAt": "2026-08-19T15:07:02.421Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 66244.668,
+        "stopLossPrice": 66776.21999999999,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 3.0721,
+        "move1hPct": 3.2167,
+        "minPrice": 66444,
+        "maxPrice": 68765
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-UP-1787153055182-ymjew4",
+      "alertLine": 38,
+      "reviewLine": 52,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-19T15:24:15.182Z",
+      "alertPrice": 2027.06,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2027.08,
+        "observedAt": "2026-08-19T15:26:00.071Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2020.97882,
+        "stopLossPrice": 2037.1952999999996,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 2.6748,
+        "move1hPct": 3.3965,
+        "minPrice": 2023.64,
+        "maxPrice": 2107.95
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "BTC-UP-1787153434499-s85pic",
+      "alertLine": 42,
+      "reviewLine": 57,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-19T15:30:34.499Z",
+      "alertPrice": 67917.21,
+      "fill": {
+        "status": "no_entry",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 67713.45837000001,
+        "stopLossPrice": 68256.79605,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 1.0491,
+        "move1hPct": 1.3215,
+        "minPrice": 67917.21,
+        "maxPrice": 68921.42
+      },
+      "outcome": "no_entry",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "ETH-UP-1787155387758-6hajyk",
+      "alertLine": 48,
+      "reviewLine": 59,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-19T16:03:07.758Z",
+      "alertPrice": 2100,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2102.05,
+        "observedAt": "2026-08-19T16:03:08.944Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2093.7,
+        "stopLossPrice": 2110.5,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.0471,
+        "move1hPct": -0.851,
+        "minPrice": 2080,
+        "maxPrice": 2107.95
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-UP-1787172614564-fzmr6k",
+      "alertLine": 73,
+      "reviewLine": 85,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-19T20:50:14.564Z",
+      "alertPrice": 2138.88,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2141.84,
+        "observedAt": "2026-08-19T20:50:19.102Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2132.46336,
+        "stopLossPrice": 2149.5744,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 5.8624,
+        "move1hPct": 7.0967,
+        "minPrice": 2138.88,
+        "maxPrice": 2305.52
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "BTC-UP-1787172640292-pi9ade",
+      "alertLine": 75,
+      "reviewLine": 87,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-19T20:50:40.292Z",
+      "alertPrice": 69036.46,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 69113.79,
+        "observedAt": "2026-08-19T20:50:42.023Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 68829.35062000001,
+        "stopLossPrice": 69381.64229999999,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.7004,
+        "move1hPct": 1.0249,
+        "minPrice": 68984.78,
+        "maxPrice": 69914.9
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-UP-1787174375823-5yeu15",
+      "alertLine": 80,
+      "reviewLine": 92,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-19T21:19:35.823Z",
+      "alertPrice": 2267.8,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2267.8,
+        "observedAt": "2026-08-19T21:19:47.711Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2260.9966000000004,
+        "stopLossPrice": 2279.139,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 1.0085,
+        "move1hPct": 0.1446,
+        "minPrice": 2261.36,
+        "maxPrice": 2305.52
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787175220292-7f6ia5",
+      "alertLine": 83,
+      "reviewLine": 95,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-19T21:33:40.292Z",
+      "alertPrice": 2274.6,
+      "fill": {
+        "status": "no_entry",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2281.4237999999996,
+        "stopLossPrice": 2263.227,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.251,
+        "move1hPct": 1.0235,
+        "minPrice": 2247.58,
+        "maxPrice": 2305.52
+      },
+      "outcome": "no_entry",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787176906667-6oyr2y",
+      "alertLine": 90,
+      "reviewLine": 101,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-19T22:01:46.667Z",
+      "alertPrice": 2270.4,
+      "fill": {
+        "status": "no_entry",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2277.2111999999997,
+        "stopLossPrice": 2259.0480000000002,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.6162,
+        "move1hPct": 0.9298,
+        "minPrice": 2241.27,
+        "maxPrice": 2278.52
+      },
+      "outcome": "no_entry",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787178833331-szd94s",
+      "alertLine": 96,
+      "reviewLine": 104,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-19T22:33:53.331Z",
+      "alertPrice": 2244.04,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2243.36,
+        "observedAt": "2026-08-19T22:33:57.633Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2250.7721199999996,
+        "stopLossPrice": 2232.8197999999998,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "noisy",
+        "move30mPct": -0.0165,
+        "move1hPct": -0.2023,
+        "minPrice": 2241.27,
+        "maxPrice": 2266.84
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-UP-1787179272469-o4lvks",
+      "alertLine": 98,
+      "reviewLine": 105,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-19T22:41:12.469Z",
+      "alertPrice": 2265.85,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2265.86,
+        "observedAt": "2026-08-19T22:42:22.005Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2259.0524499999997,
+        "stopLossPrice": 2277.1792499999997,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.6492,
+        "move1hPct": -0.6029,
+        "minPrice": 2243.36,
+        "maxPrice": 2266.24
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787187119846-3vul1o",
+      "alertLine": 114,
+      "reviewLine": 119,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "60s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-20T00:51:59.846Z",
+      "alertPrice": 2257.09,
+      "fill": {
+        "status": "no_entry",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2263.86127,
+        "stopLossPrice": 2245.8045500000003,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": 0.0766,
+        "move1hPct": -0.5175,
+        "minPrice": 2250,
+        "maxPrice": 2270.94
+      },
+      "outcome": "no_entry",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787195477083-sqogs3",
+      "alertLine": 121,
+      "reviewLine": 122,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-20T03:11:17.083Z",
+      "alertPrice": 2225.16,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2225.16,
+        "observedAt": "2026-08-20T03:11:19.276Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2231.8354799999997,
+        "stopLossPrice": 2214.0342,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.9837,
+        "move1hPct": -1.3999,
+        "minPrice": 2221.54,
+        "maxPrice": 2258.39
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "BTC-UP-1787213359438-7qays5",
+      "alertLine": 123,
+      "reviewLine": 128,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-20T08:09:19.438Z",
+      "alertPrice": 70540.18,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 70645.01,
+        "observedAt": "2026-08-20T08:09:21.740Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 70328.55945999999,
+        "stopLossPrice": 70892.88089999999,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 1.4178,
+        "move1hPct": 1.7681,
+        "minPrice": 70540.18,
+        "maxPrice": 71891.01
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-UP-1787213450759-gcxdd2",
+      "alertLine": 124,
+      "reviewLine": 129,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-20T08:10:50.759Z",
+      "alertPrice": 2271.59,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2273.77,
+        "observedAt": "2026-08-20T08:10:59.405Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2264.77523,
+        "stopLossPrice": 2282.9479499999998,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.1435,
+        "move1hPct": 0.961,
+        "minPrice": 2266.08,
+        "maxPrice": 2295.59
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "BTC-UP-1787220936327-ke83bj",
+      "alertLine": 133,
+      "reviewLine": 135,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "60s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-20T10:15:36.327Z",
+      "alertPrice": 72470.38,
+      "fill": {
+        "status": "no_entry",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 72252.96886000001,
+        "stopLossPrice": 72832.7319,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.8312,
+        "move1hPct": -0.7061,
+        "minPrice": 71766,
+        "maxPrice": 72490
+      },
+      "outcome": "no_entry",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "ETH-UP-1787225500796-3ofepo",
+      "alertLine": 137,
+      "reviewLine": 140,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-20T11:31:40.796Z",
+      "alertPrice": 2306.89,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2306.92,
+        "observedAt": "2026-08-20T11:31:42.059Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2299.96933,
+        "stopLossPrice": 2318.4244499999995,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.495,
+        "move1hPct": -0.9684,
+        "minPrice": 2268.89,
+        "maxPrice": 2317.77
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787227447653-ai8ddk",
+      "alertLine": 139,
+      "reviewLine": 142,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-20T12:04:07.653Z",
+      "alertPrice": 2286.32,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2286.32,
+        "observedAt": "2026-08-20T12:05:49.984Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2293.1789599999997,
+        "stopLossPrice": 2274.8884000000003,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.3709,
+        "move1hPct": -0.1828,
+        "minPrice": 2268,
+        "maxPrice": 2294.14
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787232650136-ns43m6",
+      "alertLine": 144,
+      "reviewLine": 147,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "60s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-20T13:30:50.136Z",
+      "alertPrice": 2274.01,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2273.87,
+        "observedAt": "2026-08-20T13:30:54.770Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2280.83203,
+        "stopLossPrice": 2262.63995,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "noisy",
+        "move30mPct": -0.1244,
+        "move1hPct": -0.0638,
+        "minPrice": 2263.01,
+        "maxPrice": 2289.33
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-UP-1787238219715-lur5og",
+      "alertLine": 149,
+      "reviewLine": 156,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-20T15:03:39.715Z",
+      "alertPrice": 2295.83,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2298.43,
+        "observedAt": "2026-08-20T15:03:46.961Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2288.94251,
+        "stopLossPrice": 2307.3091499999996,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.7191,
+        "move1hPct": 1.2231,
+        "minPrice": 2287.56,
+        "maxPrice": 2333.75
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "BTC-UP-1787238242568-s2y5k6",
+      "alertLine": 150,
+      "reviewLine": 157,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-20T15:04:02.568Z",
+      "alertPrice": 72365.45,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 72382.27,
+        "observedAt": "2026-08-20T15:04:06.231Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 72148.35364999999,
+        "stopLossPrice": 72727.27724999998,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "noisy",
+        "move30mPct": 0.0975,
+        "move1hPct": 0.0707,
+        "minPrice": 71978.53,
+        "maxPrice": 72632
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787238511645-by69lq",
+      "alertLine": 151,
+      "reviewLine": 158,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-20T15:08:31.645Z",
+      "alertPrice": 2292.38,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2291.19,
+        "observedAt": "2026-08-20T15:08:39.498Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2299.2571399999997,
+        "stopLossPrice": 2280.9181000000003,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.4371,
+        "move1hPct": -1.5914,
+        "minPrice": 2287.56,
+        "maxPrice": 2333.75
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787238511387-mzvvky",
+      "alertLine": 152,
+      "reviewLine": 159,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-20T15:08:31.387Z",
+      "alertPrice": 72193.99,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 72130.2,
+        "observedAt": "2026-08-20T15:08:39.559Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 72410.57197,
+        "stopLossPrice": 71833.02005,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.0901,
+        "move1hPct": -0.3518,
+        "minPrice": 71978.53,
+        "maxPrice": 72632
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-UP-1787241070259-ry3krz",
+      "alertLine": 155,
+      "reviewLine": 164,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-20T15:51:10.259Z",
+      "alertPrice": 2325.12,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2326.38,
+        "observedAt": "2026-08-20T15:51:10.819Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2318.14464,
+        "stopLossPrice": 2336.7455999999997,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": -0.1733,
+        "move1hPct": 0.8688,
+        "minPrice": 2314.44,
+        "maxPrice": 2360
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "ETH-UP-1787244073621-ke6bqj",
+      "alertLine": 163,
+      "reviewLine": 167,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-20T16:41:13.621Z",
+      "alertPrice": 2343.5,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2343.51,
+        "observedAt": "2026-08-20T16:41:18.641Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2336.4695,
+        "stopLossPrice": 2355.2174999999997,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.2897,
+        "move1hPct": 0.1208,
+        "minPrice": 2332.44,
+        "maxPrice": 2360
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "BTC-UP-1787268306831-c05klf",
+      "alertLine": 175,
+      "reviewLine": 176,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-20T23:25:06.831Z",
+      "alertPrice": 73244.82,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 73245.18,
+        "observedAt": "2026-08-20T23:26:17.256Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 73025.08554,
+        "stopLossPrice": 73611.0441,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.2141,
+        "move1hPct": 0.7549,
+        "minPrice": 72981.31,
+        "maxPrice": 73899
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787275319882-irpp3q",
+      "alertLine": 177,
+      "reviewLine": 181,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-21T01:21:59.882Z",
+      "alertPrice": 74375.6,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 74375.34,
+        "observedAt": "2026-08-21T01:22:05.735Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 74598.7268,
+        "stopLossPrice": 74003.72200000001,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -1.6216,
+        "move1hPct": -0.5393,
+        "minPrice": 74274.52,
+        "maxPrice": 75605.43
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "BTC-UP-1787275902584-2j4z65",
+      "alertLine": 178,
+      "reviewLine": 182,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-21T01:31:42.584Z",
+      "alertPrice": 74911.42,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 74934.08,
+        "observedAt": "2026-08-21T01:31:43.100Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 74686.68574,
+        "stopLossPrice": 75285.97709999999,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.0702,
+        "move1hPct": 0.1452,
+        "minPrice": 74540.96,
+        "maxPrice": 75605.43
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "ETH-UP-1787276849407-2ty74i",
+      "alertLine": 179,
+      "reviewLine": 185,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "60s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-21T01:47:29.407Z",
+      "alertPrice": 2373.98,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2374.02,
+        "observedAt": "2026-08-21T01:47:30.032Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2366.85806,
+        "stopLossPrice": 2385.8498999999997,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.928,
+        "move1hPct": -1.0817,
+        "minPrice": 2340,
+        "maxPrice": 2378
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787279617750-809y4g",
+      "alertLine": 183,
+      "reviewLine": 188,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "60s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-21T02:33:37.750Z",
+      "alertPrice": 74588.54,
+      "fill": {
+        "status": "no_entry",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 74812.30561999998,
+        "stopLossPrice": 74215.5973,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.2033,
+        "move1hPct": -0.0478,
+        "minPrice": 74247.46,
+        "maxPrice": 74824.87
+      },
+      "outcome": "no_entry",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "BTC-UP-1787296518640-6wsdr3",
+      "alertLine": 191,
+      "reviewLine": 194,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-21T07:15:18.640Z",
+      "alertPrice": 76186.01,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 76225.82,
+        "observedAt": "2026-08-21T07:15:19.484Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 75957.45197,
+        "stopLossPrice": 76566.94004999999,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.5834,
+        "move1hPct": 0.9923,
+        "minPrice": 76186.01,
+        "maxPrice": 77200
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787296830755-n5y2mj",
+      "alertLine": 192,
+      "reviewLine": 195,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-21T07:20:30.755Z",
+      "alertPrice": 2383.92,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2381.79,
+        "observedAt": "2026-08-21T07:20:35.747Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2391.07176,
+        "stopLossPrice": 2372.0004,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": 0.3125,
+        "move1hPct": -0.2739,
+        "minPrice": 2362.66,
+        "maxPrice": 2392.42
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "ETH-UP-1787301604930-4fuxko",
+      "alertLine": 196,
+      "reviewLine": 204,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-21T08:40:04.930Z",
+      "alertPrice": 2409.72,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2409.72,
+        "observedAt": "2026-08-21T08:40:38.305Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2402.49084,
+        "stopLossPrice": 2421.7685999999994,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.3249,
+        "move1hPct": -0.4544,
+        "minPrice": 2384.8,
+        "maxPrice": 2443.14
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "BTC-UP-1787302155796-0f4tun",
+      "alertLine": 198,
+      "reviewLine": 206,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-21T08:49:15.796Z",
+      "alertPrice": 77959,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 78036.01,
+        "observedAt": "2026-08-21T08:49:23.191Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 77725.123,
+        "stopLossPrice": 78348.795,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.4866,
+        "move1hPct": 0.2661,
+        "minPrice": 77569.08,
+        "maxPrice": 79200
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787302839370-zpc95e",
+      "alertLine": 201,
+      "reviewLine": 211,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-21T09:00:39.370Z",
+      "alertPrice": 78692.04,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 78635,
+        "observedAt": "2026-08-21T09:00:41.663Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 78928.11611999999,
+        "stopLossPrice": 78298.57979999999,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 1.3191,
+        "move1hPct": 0.9989,
+        "minPrice": 77569.08,
+        "maxPrice": 78768.9
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787302839766-uwgqsx",
+      "alertLine": 202,
+      "reviewLine": 212,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-21T09:00:39.766Z",
+      "alertPrice": 2431.62,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2430.72,
+        "observedAt": "2026-08-21T09:00:41.927Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2438.9148599999994,
+        "stopLossPrice": 2419.4619,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 1.8395,
+        "move1hPct": 1.1379,
+        "minPrice": 2384.8,
+        "maxPrice": 2442.24
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787306244437-fyw5vc",
+      "alertLine": 209,
+      "reviewLine": 217,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-21T09:57:24.437Z",
+      "alertPrice": 2393.25,
+      "fill": {
+        "status": "no_entry",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2400.42975,
+        "stopLossPrice": 2381.28375,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "noisy",
+        "move30mPct": -0.0171,
+        "move1hPct": -0.1717,
+        "minPrice": 2391.31,
+        "maxPrice": 2411.84
+      },
+      "outcome": "no_entry",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "BTC-UP-1787319553744-1a3fqv",
+      "alertLine": 230,
+      "reviewLine": 241,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-21T13:39:13.744Z",
+      "alertPrice": 76804.1,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 76809.65,
+        "observedAt": "2026-08-21T13:39:22.704Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 76573.68770000001,
+        "stopLossPrice": 77188.1205,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.3045,
+        "move1hPct": 0.2108,
+        "minPrice": 76556.08,
+        "maxPrice": 77666.68
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "ETH-UP-1787319553921-6zqyk5",
+      "alertLine": 232,
+      "reviewLine": 243,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-21T13:39:13.921Z",
+      "alertPrice": 2385.29,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2385.29,
+        "observedAt": "2026-08-21T13:39:24.971Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2378.13413,
+        "stopLossPrice": 2397.21645,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": -0.1136,
+        "move1hPct": -0.0398,
+        "minPrice": 2369.63,
+        "maxPrice": 2406.41
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787320689065-b3stna",
+      "alertLine": 235,
+      "reviewLine": 245,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-21T13:58:09.065Z",
+      "alertPrice": 77151.16,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 77134.07,
+        "observedAt": "2026-08-21T13:58:14.969Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 77382.61348,
+        "stopLossPrice": 76765.4042,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": 0.0559,
+        "move1hPct": -0.2721,
+        "minPrice": 76556.08,
+        "maxPrice": 77448.26
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787321104344-gtu8lf",
+      "alertLine": 237,
+      "reviewLine": 248,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-21T14:05:04.344Z",
+      "alertPrice": 2376.48,
+      "fill": {
+        "status": "no_entry",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2383.6094399999997,
+        "stopLossPrice": 2364.5976,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.7137,
+        "move1hPct": -0.7301,
+        "minPrice": 2369.63,
+        "maxPrice": 2402.89
+      },
+      "outcome": "no_entry",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787337935499-ypx996",
+      "alertLine": 258,
+      "reviewLine": 261,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-21T18:45:35.499Z",
+      "alertPrice": 2400.31,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2398.4,
+        "observedAt": "2026-08-21T18:45:40.125Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2407.5109299999995,
+        "stopLossPrice": 2388.30845,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.5645,
+        "move1hPct": -0.767,
+        "minPrice": 2395.89,
+        "maxPrice": 2422.37
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-UP-1787346706532-vqpevd",
+      "alertLine": 265,
+      "reviewLine": 268,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-21T21:11:46.532Z",
+      "alertPrice": 2454.89,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2454.9,
+        "observedAt": "2026-08-21T21:12:04.110Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2447.52533,
+        "stopLossPrice": 2467.1644499999998,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 1.0921,
+        "move1hPct": 3.2152,
+        "minPrice": 2444.68,
+        "maxPrice": 2546.78
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "ETH-UP-1787349130589-ptephm",
+      "alertLine": 266,
+      "reviewLine": 273,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "60s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-21T21:52:10.589Z",
+      "alertPrice": 2504.84,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2505.93,
+        "observedAt": "2026-08-21T21:52:11.838Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2497.32548,
+        "stopLossPrice": 2517.3642,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 1.0971,
+        "move1hPct": 0.7418,
+        "minPrice": 2498.8,
+        "maxPrice": 2546.78
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787351462736-f5kvh3",
+      "alertLine": 269,
+      "reviewLine": 275,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "60s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-21T22:31:02.736Z",
+      "alertPrice": 2516.76,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2514.95,
+        "observedAt": "2026-08-21T22:31:05.986Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2524.31028,
+        "stopLossPrice": 2504.1762000000003,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.0159,
+        "move1hPct": -0.3183,
+        "minPrice": 2509.23,
+        "maxPrice": 2546.42
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-UP-1787351639543-l44acr",
+      "alertLine": 272,
+      "reviewLine": 278,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-21T22:33:59.543Z",
+      "alertPrice": 2523.67,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2523.8,
+        "observedAt": "2026-08-21T22:34:07.508Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2516.09899,
+        "stopLossPrice": 2536.28835,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.0087,
+        "move1hPct": 0.0975,
+        "minPrice": 2513.68,
+        "maxPrice": 2546.42
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787357205898-w0o15a",
+      "alertLine": 280,
+      "reviewLine": 283,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-22T00:06:45.898Z",
+      "alertPrice": 2496.84,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2495.75,
+        "observedAt": "2026-08-22T00:06:47.945Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2504.33052,
+        "stopLossPrice": 2484.3558000000003,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.6568,
+        "move1hPct": -1.101,
+        "minPrice": 2491.11,
+        "maxPrice": 2528.58
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787364017274-190mj4",
+      "alertLine": 285,
+      "reviewLine": 289,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "60s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-22T02:00:17.274Z",
+      "alertPrice": 2507.53,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2504.64,
+        "observedAt": "2026-08-22T02:00:30.507Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2515.05259,
+        "stopLossPrice": 2494.99235,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.4387,
+        "move1hPct": -0.2947,
+        "minPrice": 2495.65,
+        "maxPrice": 2523.24
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787375424400-z85x0h",
+      "alertLine": 304,
+      "reviewLine": 317,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-22T05:10:24.400Z",
+      "alertPrice": 2447.76,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2444.13,
+        "observedAt": "2026-08-22T05:10:30.137Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2455.10328,
+        "stopLossPrice": 2435.5212,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.5875,
+        "move1hPct": 0.5838,
+        "minPrice": 2385,
+        "maxPrice": 2449.22
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787375424407-i6rob9",
+      "alertLine": 305,
+      "reviewLine": 318,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-22T05:10:24.407Z",
+      "alertPrice": 77609.03,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 77537.45,
+        "observedAt": "2026-08-22T05:10:26.490Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 77841.85708999999,
+        "stopLossPrice": 77220.98485,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.5683,
+        "move1hPct": 0.3982,
+        "minPrice": 76567.66,
+        "maxPrice": 77609.03
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-UP-1787376354071-6tjhus",
+      "alertLine": 309,
+      "reviewLine": 323,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-22T05:25:54.071Z",
+      "alertPrice": 2439.84,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2439.84,
+        "observedAt": "2026-08-22T05:26:17.547Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2432.52048,
+        "stopLossPrice": 2452.0391999999997,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "noisy",
+        "move30mPct": -0.0512,
+        "move1hPct": -0.1512,
+        "minPrice": 2425,
+        "maxPrice": 2449.22
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-UP-1787380834476-2j4any",
+      "alertLine": 327,
+      "reviewLine": 334,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-22T06:40:34.476Z",
+      "alertPrice": 2438.96,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2439.17,
+        "observedAt": "2026-08-22T06:40:42.098Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2431.64312,
+        "stopLossPrice": 2451.1548,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "noisy",
+        "move30mPct": -0.0603,
+        "move1hPct": -0.1538,
+        "minPrice": 2426.8,
+        "maxPrice": 2447.6
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "BTC-UP-1787618594753-08i4ek",
+      "alertLine": 362,
+      "reviewLine": 366,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-25T00:43:14.753Z",
+      "alertPrice": 79267.99,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 79316.57,
+        "observedAt": "2026-08-25T00:43:17.710Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 79030.18603000001,
+        "stopLossPrice": 79664.32995,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.5752,
+        "move1hPct": 0.6158,
+        "minPrice": 79164,
+        "maxPrice": 79985.41
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "BTC-UP-1787624271618-4140ih",
+      "alertLine": 368,
+      "reviewLine": 372,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-25T02:17:51.618Z",
+      "alertPrice": 80193.97,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 80300,
+        "observedAt": "2026-08-25T02:17:52.135Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 79953.38809000001,
+        "stopLossPrice": 80594.93985,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.7906,
+        "move1hPct": 0.6276,
+        "minPrice": 80193.97,
+        "maxPrice": 81272.62
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-UP-1787624274735-z556ho",
+      "alertLine": 369,
+      "reviewLine": 373,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-25T02:17:54.735Z",
+      "alertPrice": 2509.13,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2509.21,
+        "observedAt": "2026-08-25T02:17:57.446Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2501.60261,
+        "stopLossPrice": 2521.6756499999997,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.3842,
+        "move1hPct": -0.0403,
+        "minPrice": 2504.84,
+        "maxPrice": 2532.34
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787644182507-b3ihp1",
+      "alertLine": 379,
+      "reviewLine": 383,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "60s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-25T07:49:42.507Z",
+      "alertPrice": 79806.27,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 79805.98,
+        "observedAt": "2026-08-25T07:49:48.789Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 80045.68880999999,
+        "stopLossPrice": 79407.23865,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.2428,
+        "move1hPct": -0.1776,
+        "minPrice": 79369.17,
+        "maxPrice": 80228.93
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787644182524-q4d5qb",
+      "alertLine": 381,
+      "reviewLine": 385,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "60s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-25T07:49:42.524Z",
+      "alertPrice": 2477.43,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2477.4,
+        "observedAt": "2026-08-25T07:51:04.152Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2484.8622899999996,
+        "stopLossPrice": 2465.04285,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.6951,
+        "move1hPct": -0.3177,
+        "minPrice": 2464.41,
+        "maxPrice": 2496.32
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787665987752-p9ch0s",
+      "alertLine": 388,
+      "reviewLine": 394,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-25T13:53:07.752Z",
+      "alertPrice": 2445.14,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2443.17,
+        "observedAt": "2026-08-25T13:53:15.023Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2452.4754199999998,
+        "stopLossPrice": 2432.9143,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -1.0474,
+        "move1hPct": -1.332,
+        "minPrice": 2442.72,
+        "maxPrice": 2484
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787665992179-dwp2cp",
+      "alertLine": 389,
+      "reviewLine": 395,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-25T13:53:12.179Z",
+      "alertPrice": 78180.99,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 78131.33,
+        "observedAt": "2026-08-25T13:53:16.935Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 78415.53297,
+        "stopLossPrice": 77790.08505000001,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -1.1025,
+        "move1hPct": -1.3853,
+        "minPrice": 78131.33,
+        "maxPrice": 79386.94
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-UP-1787666721710-dvfqs5",
+      "alertLine": 390,
+      "reviewLine": 396,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-25T14:05:21.710Z",
+      "alertPrice": 2466.53,
+      "fill": {
+        "status": "no_entry",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2459.13041,
+        "stopLossPrice": 2478.86265,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.4695,
+        "move1hPct": 0.3864,
+        "minPrice": 2462.08,
+        "maxPrice": 2484
+      },
+      "outcome": "no_entry",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "BTC-UP-1787666721714-hrrnwt",
+      "alertLine": 392,
+      "reviewLine": 398,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-25T14:05:21.714Z",
+      "alertPrice": 78846.93,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 78862,
+        "observedAt": "2026-08-25T14:05:31.360Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 78610.38921,
+        "stopLossPrice": 79241.16464999999,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.4681,
+        "move1hPct": 0.4934,
+        "minPrice": 78758,
+        "maxPrice": 79386.94
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787692087789-pk6bzs",
+      "alertLine": 400,
+      "reviewLine": 403,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "60s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-25T21:08:07.789Z",
+      "alertPrice": 2421.72,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2420.16,
+        "observedAt": "2026-08-25T21:08:09.825Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2428.9851599999997,
+        "stopLossPrice": 2409.6114,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.7821,
+        "move1hPct": -1.1678,
+        "minPrice": 2418.38,
+        "maxPrice": 2451.74
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787747408423-396e8g",
+      "alertLine": 406,
+      "reviewLine": 410,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-26T12:30:08.423Z",
+      "alertPrice": 78450.79,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 78333.63,
+        "observedAt": "2026-08-26T12:30:13.022Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 78686.14236999999,
+        "stopLossPrice": 78058.53605,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.1662,
+        "move1hPct": 0.3641,
+        "minPrice": 77913.19,
+        "maxPrice": 78521.52
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787747409852-xas733",
+      "alertLine": 407,
+      "reviewLine": 411,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-26T12:30:09.852Z",
+      "alertPrice": 2459.2,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2455.55,
+        "observedAt": "2026-08-26T12:30:37.686Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2466.5775999999996,
+        "stopLossPrice": 2446.904,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.2078,
+        "move1hPct": 0.3997,
+        "minPrice": 2437.11,
+        "maxPrice": 2466.41
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-UP-1787818199222-o4ck13",
+      "alertLine": 420,
+      "reviewLine": 423,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-27T08:09:59.222Z",
+      "alertPrice": 2526.34,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2526.34,
+        "observedAt": "2026-08-27T08:10:27.228Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2518.76098,
+        "stopLossPrice": 2538.9717,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.171,
+        "move1hPct": 0.2367,
+        "minPrice": 2512.44,
+        "maxPrice": 2546.84
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "ETH-UP-1787822740840-bnajym",
+      "alertLine": 424,
+      "reviewLine": 426,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-27T09:25:40.840Z",
+      "alertPrice": 2551.98,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2554.2,
+        "observedAt": "2026-08-27T09:25:41.533Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2544.32406,
+        "stopLossPrice": 2564.7398999999996,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.5858,
+        "move1hPct": -1.4491,
+        "minPrice": 2512.93,
+        "maxPrice": 2560
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787826376203-nv25s6",
+      "alertLine": 427,
+      "reviewLine": 430,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-27T10:26:16.203Z",
+      "alertPrice": 2508.37,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2505.57,
+        "observedAt": "2026-08-27T10:26:18.231Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2515.8951099999995,
+        "stopLossPrice": 2495.82815,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.1248,
+        "move1hPct": -0.0602,
+        "minPrice": 2486.97,
+        "maxPrice": 2513
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-UP-1787826686540-n3anv8",
+      "alertLine": 429,
+      "reviewLine": 432,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-27T10:31:26.540Z",
+      "alertPrice": 2511.44,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2511.8,
+        "observedAt": "2026-08-27T10:31:38.789Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2503.90568,
+        "stopLossPrice": 2523.9972,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.1983,
+        "move1hPct": -0.5045,
+        "minPrice": 2496.98,
+        "maxPrice": 2513
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-UP-1787925619971-9ah49p",
+      "alertLine": 452,
+      "reviewLine": 460,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-28T14:00:19.971Z",
+      "alertPrice": 2522.92,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2522.92,
+        "observedAt": "2026-08-28T14:00:22.419Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2515.35124,
+        "stopLossPrice": 2535.5346,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -1.3782,
+        "move1hPct": -0.2422,
+        "minPrice": 2472.01,
+        "maxPrice": 2526.37
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787925796592-ifnk9o",
+      "alertLine": 454,
+      "reviewLine": 462,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-28T14:03:16.592Z",
+      "alertPrice": 78982,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 78982,
+        "observedAt": "2026-08-28T14:03:33.563Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 79218.946,
+        "stopLossPrice": 78587.09,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.1064,
+        "move1hPct": -0.6204,
+        "minPrice": 78512,
+        "maxPrice": 79838.73
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787925796609-1akwtg",
+      "alertLine": 455,
+      "reviewLine": 463,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-28T14:03:16.609Z",
+      "alertPrice": 2497.12,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2497.12,
+        "observedAt": "2026-08-28T14:03:21.072Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2504.6113599999994,
+        "stopLossPrice": 2484.6344,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": 0.1097,
+        "move1hPct": -0.4305,
+        "minPrice": 2472.01,
+        "maxPrice": 2526.37
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "BTC-UP-1787926826253-b6jl5x",
+      "alertLine": 456,
+      "reviewLine": 465,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-28T14:20:26.253Z",
+      "alertPrice": 78888.2,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 78888.45,
+        "observedAt": "2026-08-28T14:20:48.996Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 78651.5354,
+        "stopLossPrice": 79282.64099999999,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.4941,
+        "move1hPct": 0.6969,
+        "minPrice": 78613.66,
+        "maxPrice": 79838.73
+      },
+      "outcome": "ambiguous_stop_first",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "ambiguous_stop_first"
+      }
+    },
+    {
+      "id": "ETH-UP-1787927717713-canlf3",
+      "alertLine": 458,
+      "reviewLine": 468,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-28T14:35:17.713Z",
+      "alertPrice": 2505.58,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2506.66,
+        "observedAt": "2026-08-28T14:35:20.643Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2498.06326,
+        "stopLossPrice": 2518.1078999999995,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.1549,
+        "move1hPct": -0.1217,
+        "minPrice": 2500,
+        "maxPrice": 2526.37
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787932407992-xuuw4q",
+      "alertLine": 469,
+      "reviewLine": 478,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-28T15:53:27.992Z",
+      "alertPrice": 2476.93,
+      "fill": {
+        "status": "no_entry",
+        "entryPrice": null,
+        "observedAt": null
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2484.3607899999997,
+        "stopLossPrice": 2464.54535,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 2.2379,
+        "move1hPct": 1.4348,
+        "minPrice": 2412.95,
+        "maxPrice": 2481.54
+      },
+      "outcome": "no_entry",
+      "pnl": {
+        "grossUsd": 0,
+        "grossReturnPctOnNotional": null,
+        "method": "no_fill"
+      }
+    },
+    {
+      "id": "BTC-DOWN-1787932936519-w6nkti",
+      "alertLine": 471,
+      "reviewLine": 480,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-28T16:02:16.519Z",
+      "alertPrice": 78122.68,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 78116.02,
+        "observedAt": "2026-08-28T16:02:19.931Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 78357.04803999998,
+        "stopLossPrice": 77732.06659999999,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.5318,
+        "move1hPct": 0.5187,
+        "minPrice": 77034.01,
+        "maxPrice": 78286
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1787934375105-uhajb0",
+      "alertLine": 474,
+      "reviewLine": 481,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-08-28T16:26:15.105Z",
+      "alertPrice": 2421.5,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2421.5,
+        "observedAt": "2026-08-28T16:26:18.566Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2428.7644999999998,
+        "stopLossPrice": 2409.3925,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.9407,
+        "move1hPct": -0.7281,
+        "minPrice": 2412.95,
+        "maxPrice": 2448.22
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-UP-1787934557568-mqwlx8",
+      "alertLine": 476,
+      "reviewLine": 483,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-28T16:29:17.568Z",
+      "alertPrice": 2433.07,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2433.8,
+        "observedAt": "2026-08-28T16:29:21.263Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2425.77079,
+        "stopLossPrice": 2445.23535,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.4447,
+        "move1hPct": 0.4521,
+        "minPrice": 2429.41,
+        "maxPrice": 2448.22
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "BTC-UP-1787934557640-cxzx28",
+      "alertLine": 477,
+      "reviewLine": 484,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-08-28T16:29:17.640Z",
+      "alertPrice": 77600,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 77619.99,
+        "observedAt": "2026-08-28T16:29:21.474Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 77367.2,
+        "stopLossPrice": 77987.99999999999,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.3002,
+        "move1hPct": 0.5037,
+        "minPrice": 77482,
+        "maxPrice": 78131.86
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1789872993683-bjker5",
+      "alertLine": 617,
+      "reviewLine": 620,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "15m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-09-20T02:56:33.683Z",
+      "alertPrice": 2574.74,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2571.11,
+        "observedAt": "2026-09-20T02:56:34.975Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2582.4642199999994,
+        "stopLossPrice": 2561.8662999999997,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "noisy",
+        "move30mPct": -0.4556,
+        "move1hPct": -0.4766,
+        "minPrice": 2564.33,
+        "maxPrice": 2591.25
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-DOWN-1790242498838-h0meqs",
+      "alertLine": 690,
+      "reviewLine": 696,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-09-24T09:34:58.838Z",
+      "alertPrice": 2631.01,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2631,
+        "observedAt": "2026-09-24T09:35:02.804Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2638.90303,
+        "stopLossPrice": 2617.8549500000004,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.4105,
+        "move1hPct": -0.2645,
+        "minPrice": 2628.37,
+        "maxPrice": 2647.5
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "ETH-UP-1790597269297-frotve",
+      "alertLine": 730,
+      "reviewLine": 735,
+      "asset": "ETH",
+      "symbol": "ethusdt",
+      "triggerKind": "VELOCITY",
+      "triggerLabel": "5m",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-09-28T12:07:49.297Z",
+      "alertPrice": 2690.73,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 2690.73,
+        "observedAt": "2026-09-28T12:09:36.297Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 2682.65781,
+        "stopLossPrice": 2704.18365,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.4148,
+        "move1hPct": -0.1684,
+        "minPrice": 2674.45,
+        "maxPrice": 2693.56
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "BTC-UP-1790914794505-uhcylz",
+      "alertLine": 768,
+      "reviewLine": 774,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-10-02T04:19:54.505Z",
+      "alertPrice": 85907.07,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 85949.06,
+        "observedAt": "2026-10-02T04:20:22.420Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 85649.34879,
+        "stopLossPrice": 86336.60535,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "follow-useful",
+        "move30mPct": 0.8717,
+        "move1hPct": 0.6705,
+        "minPrice": 85893.27,
+        "maxPrice": 86912.75
+      },
+      "outcome": "stop",
+      "pnl": {
+        "grossUsd": -50,
+        "grossReturnPctOnNotional": -0.5,
+        "method": "stop"
+      }
+    },
+    {
+      "id": "BTC-DOWN-1790961865240-o2fz2h",
+      "alertLine": 798,
+      "reviewLine": 804,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "DOWN",
+      "fadeDirection": "LONG",
+      "alertTime": "2026-10-02T17:24:25.240Z",
+      "alertPrice": 84554.53,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 84550.65,
+        "observedAt": "2026-10-02T17:24:51.815Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 84808.19359,
+        "stopLossPrice": 84131.75735,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "fade-useful",
+        "move30mPct": -0.2312,
+        "move1hPct": -0.0159,
+        "minPrice": 84300,
+        "maxPrice": 84900
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    },
+    {
+      "id": "BTC-UP-1790961896820-69qk6t",
+      "alertLine": 801,
+      "reviewLine": 805,
+      "asset": "BTC",
+      "symbol": "btcusdt",
+      "triggerKind": "WICK",
+      "triggerLabel": "5s",
+      "alertDirection": "UP",
+      "fadeDirection": "SHORT",
+      "alertTime": "2026-10-02T17:24:56.820Z",
+      "alertPrice": 84692.48,
+      "fill": {
+        "status": "filled",
+        "entryPrice": 84713.57,
+        "observedAt": "2026-10-02T17:25:00.280Z"
+      },
+      "plan": {
+        "marginUsd": 1000,
+        "leverage": 10,
+        "notional": 10000,
+        "takeProfitPct": 0.3,
+        "stopLossPct": 0.5,
+        "takeProfitPrice": 84438.40256,
+        "stopLossPrice": 85115.94239999999,
+        "timeExit": "30m_after_fill_approximated_by_alert_30m_checkpoint"
+      },
+      "review": {
+        "verdict": "noisy",
+        "move30mPct": 0.0973,
+        "move1hPct": -0.121,
+        "minPrice": 84300,
+        "maxPrice": 84900
+      },
+      "outcome": "target",
+      "pnl": {
+        "grossUsd": 30,
+        "grossReturnPctOnNotional": 0.3,
+        "method": "target_hit"
+      }
+    }
+  ],
+  "decision": {
+    "verdict": "shadow_negative_or_unproven",
+    "candidateAdded": false,
+    "noLiveChange": true,
+    "rationale": "Filled shadow rows=75, gross PnL=-1430 USD before fees/slippage; target hits=29, stop-like outcomes=46.",
+    "nextStep": "Use this as a ledger input to autoresearch; do not promote alert wording, paper trading, or live execution from shadow PnL alone."
+  }
+}

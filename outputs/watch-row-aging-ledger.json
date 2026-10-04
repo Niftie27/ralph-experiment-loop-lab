@@ -1,0 +1,446 @@
+{
+  "generatedAt": "2026-10-03T16:10:20.747Z",
+  "status": "research-paper-watch-row-aging-ledger",
+  "source": {
+    "stateOfEdge": {
+      "path": "outputs/state-of-edge-report.json",
+      "generatedAt": "2026-10-03T16:03:58.588Z",
+      "verdict": "no_trade_watch_low_sample"
+    },
+    "paperSignals": {
+      "path": "experiments/btc-eth-alert-edge/paper/signals.json",
+      "updated": "2026-10-03T16:03:57.450Z",
+      "count": 500
+    },
+    "previousLedger": {
+      "path": "outputs/watch-row-aging-ledger.json",
+      "generatedAt": "2026-09-28T21:19:54.755Z"
+    }
+  },
+  "gates": {
+    "sampleGate": 50,
+    "candidatePromotionAllowed": false
+  },
+  "summary": {
+    "totalRows": 7,
+    "activeRows": 4,
+    "inactiveRows": 3,
+    "decayingRows": 1,
+    "sampleGateReachedRows": 0,
+    "minSampleGap": 30,
+    "oldestActiveAgeDays": 0,
+    "byState": {
+      "aging_low_sample_watch": 3,
+      "decaying_before_sample_gate": 1,
+      "not_seen_current": 3
+    }
+  },
+  "rows": [
+    {
+      "key": "ADA|1h|momentum_reversal_long|long|range/mid-vol",
+      "active": true,
+      "firstSeenAt": "2026-10-03T16:10:20.747Z",
+      "lastSeenAt": "2026-10-03T16:10:20.747Z",
+      "ageDays": 0,
+      "symbol": "ADA",
+      "timeframe": "1h",
+      "setup": "momentum_reversal_long",
+      "direction": "long",
+      "regime": "range/mid-vol",
+      "tier": "low-sample",
+      "action": "watch_low_sample",
+      "latestSignalIso": "2026-10-02T21:00:00.000Z",
+      "sampleProgress": {
+        "sample": 20,
+        "gate": 50,
+        "gap": 30,
+        "percent": 0.4
+      },
+      "stats": {
+        "expectancyR": 0.4108,
+        "profitFactor": 1.8408,
+        "winrate": 0.55,
+        "baselineExpectancyR": -0.0951,
+        "baselineLiftR": 0.5059
+      },
+      "paperSignals": {
+        "total": 1,
+        "closed": 0,
+        "open": 1,
+        "wins": 0,
+        "losses": 0,
+        "resultR": 0,
+        "avgR": null,
+        "firstSignalAt": "2026-10-02T21:00:00.000Z",
+        "lastSignalAt": "2026-10-02T21:00:00.000Z"
+      },
+      "agingState": "aging_low_sample_watch",
+      "observations": [
+        {
+          "at": "2026-10-03T16:10:20.747Z",
+          "action": "watch_low_sample",
+          "sample": 20,
+          "expectancyR": 0.4108,
+          "profitFactor": 1.8408,
+          "baselineExpectancyR": -0.0951
+        }
+      ]
+    },
+    {
+      "key": "ADA|4h|trend_pullback_reject_short|short|down/high-vol",
+      "active": true,
+      "firstSeenAt": "2026-10-03T16:10:20.747Z",
+      "lastSeenAt": "2026-10-03T16:10:20.747Z",
+      "ageDays": 0,
+      "symbol": "ADA",
+      "timeframe": "4h",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "regime": "down/high-vol",
+      "tier": "low-sample",
+      "action": "watch_low_sample",
+      "latestSignalIso": "2026-10-03T04:00:00.000Z",
+      "sampleProgress": {
+        "sample": 18,
+        "gate": 50,
+        "gap": 32,
+        "percent": 0.36
+      },
+      "stats": {
+        "expectancyR": 0.2021,
+        "profitFactor": 1.4983,
+        "winrate": 0.4444,
+        "baselineExpectancyR": 0.0777,
+        "baselineLiftR": 0.1244
+      },
+      "paperSignals": {
+        "total": 3,
+        "closed": 1,
+        "open": 2,
+        "wins": 1,
+        "losses": 0,
+        "resultR": 1.8,
+        "avgR": 1.8,
+        "firstSignalAt": "2026-08-28T00:00:00.000Z",
+        "lastSignalAt": "2026-10-03T04:00:00.000Z"
+      },
+      "agingState": "aging_low_sample_watch",
+      "observations": [
+        {
+          "at": "2026-10-03T16:10:20.747Z",
+          "action": "watch_low_sample",
+          "sample": 18,
+          "expectancyR": 0.2021,
+          "profitFactor": 1.4983,
+          "baselineExpectancyR": 0.0777
+        }
+      ]
+    },
+    {
+      "key": "BNB|4h|trend_pullback_reclaim_long|long|up/low-vol",
+      "active": true,
+      "firstSeenAt": "2026-10-03T16:10:20.747Z",
+      "lastSeenAt": "2026-10-03T16:10:20.747Z",
+      "ageDays": 0,
+      "symbol": "BNB",
+      "timeframe": "4h",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "regime": "up/low-vol",
+      "tier": "low-sample",
+      "action": "watch_low_sample",
+      "latestSignalIso": "2026-10-03T12:00:00.000Z",
+      "sampleProgress": {
+        "sample": 15,
+        "gate": 50,
+        "gap": 35,
+        "percent": 0.3
+      },
+      "stats": {
+        "expectancyR": 0.6927,
+        "profitFactor": 2.8385,
+        "winrate": 0.6667,
+        "baselineExpectancyR": -0.0565,
+        "baselineLiftR": 0.7492
+      },
+      "paperSignals": {
+        "total": 1,
+        "closed": 0,
+        "open": 1,
+        "wins": 0,
+        "losses": 0,
+        "resultR": 0,
+        "avgR": null,
+        "firstSignalAt": "2026-10-03T12:00:00.000Z",
+        "lastSignalAt": "2026-10-03T12:00:00.000Z"
+      },
+      "agingState": "aging_low_sample_watch",
+      "observations": [
+        {
+          "at": "2026-10-03T16:10:20.747Z",
+          "action": "watch_low_sample",
+          "sample": 15,
+          "expectancyR": 0.6927,
+          "profitFactor": 2.8385,
+          "baselineExpectancyR": -0.0565
+        }
+      ]
+    },
+    {
+      "key": "SOL|1h|momentum_reversal_long|long|range/mid-vol",
+      "active": true,
+      "firstSeenAt": "2026-10-03T16:10:20.747Z",
+      "lastSeenAt": "2026-10-03T16:10:20.747Z",
+      "ageDays": 0,
+      "symbol": "SOL",
+      "timeframe": "1h",
+      "setup": "momentum_reversal_long",
+      "direction": "long",
+      "regime": "range/mid-vol",
+      "tier": "low-sample",
+      "action": "watch_low_sample",
+      "latestSignalIso": "2026-10-02T21:00:00.000Z",
+      "sampleProgress": {
+        "sample": 12,
+        "gate": 50,
+        "gap": 38,
+        "percent": 0.24
+      },
+      "stats": {
+        "expectancyR": 0.0991,
+        "profitFactor": 1.1819,
+        "winrate": 0.5,
+        "baselineExpectancyR": -0.1202,
+        "baselineLiftR": 0.2193
+      },
+      "paperSignals": {
+        "total": 2,
+        "closed": 1,
+        "open": 1,
+        "wins": 0,
+        "losses": 1,
+        "resultR": -1,
+        "avgR": -1,
+        "firstSignalAt": "2026-08-25T21:00:00.000Z",
+        "lastSignalAt": "2026-10-02T21:00:00.000Z"
+      },
+      "agingState": "decaying_before_sample_gate",
+      "observations": [
+        {
+          "at": "2026-10-03T16:10:20.747Z",
+          "action": "watch_low_sample",
+          "sample": 12,
+          "expectancyR": 0.0991,
+          "profitFactor": 1.1819,
+          "baselineExpectancyR": -0.1202
+        }
+      ]
+    },
+    {
+      "key": "ADA|4h|momentum_reversal_long|long|range/mid-vol",
+      "active": false,
+      "firstSeenAt": "2026-09-28T16:12:52.641Z",
+      "lastSeenAt": "2026-09-28T21:19:54.755Z",
+      "ageDays": 0.21,
+      "symbol": "ADA",
+      "timeframe": "4h",
+      "setup": "momentum_reversal_long",
+      "direction": "long",
+      "regime": "range/mid-vol",
+      "tier": "low-sample",
+      "action": "watch_low_sample",
+      "latestSignalIso": "2026-09-28T08:00:00.000Z",
+      "sampleProgress": {
+        "sample": 24,
+        "gate": 50,
+        "gap": 26,
+        "percent": 0.48
+      },
+      "stats": {
+        "expectancyR": 0.1215,
+        "profitFactor": 1.2588,
+        "winrate": 0.4583,
+        "baselineExpectancyR": -0.1439,
+        "baselineLiftR": 0.2654
+      },
+      "paperSignals": {
+        "total": 1,
+        "closed": 0,
+        "open": 1,
+        "wins": 0,
+        "losses": 0,
+        "resultR": 0,
+        "avgR": null,
+        "firstSignalAt": "2026-09-28T08:00:00.000Z",
+        "lastSignalAt": "2026-09-28T08:00:00.000Z"
+      },
+      "agingState": "not_seen_current",
+      "observations": [
+        {
+          "at": "2026-09-28T16:12:52.641Z",
+          "action": "watch_low_sample",
+          "sample": 24,
+          "expectancyR": 0.1215,
+          "profitFactor": 1.2588,
+          "baselineExpectancyR": -0.1372
+        },
+        {
+          "at": "2026-09-28T18:38:47.990Z",
+          "action": "watch_low_sample",
+          "sample": 24,
+          "expectancyR": 0.1215,
+          "profitFactor": 1.2588,
+          "baselineExpectancyR": -0.1372
+        },
+        {
+          "at": "2026-09-28T21:19:54.755Z",
+          "action": "watch_low_sample",
+          "sample": 24,
+          "expectancyR": 0.1215,
+          "profitFactor": 1.2588,
+          "baselineExpectancyR": -0.1439
+        }
+      ]
+    },
+    {
+      "key": "AVAX|4h|trend_pullback_reject_short|short|down/high-vol",
+      "active": false,
+      "firstSeenAt": "2026-09-28T16:12:52.641Z",
+      "lastSeenAt": "2026-09-28T18:38:47.990Z",
+      "ageDays": 0.1,
+      "symbol": "AVAX",
+      "timeframe": "4h",
+      "setup": "trend_pullback_reject_short",
+      "direction": "short",
+      "regime": "down/high-vol",
+      "tier": "low-sample",
+      "action": "watch_low_sample",
+      "latestSignalIso": "2026-09-28T04:00:00.000Z",
+      "sampleProgress": {
+        "sample": 15,
+        "gate": 50,
+        "gap": 35,
+        "percent": 0.3
+      },
+      "stats": {
+        "expectancyR": 0.2378,
+        "profitFactor": 1.4881,
+        "winrate": 0.4667,
+        "baselineExpectancyR": 0.0698,
+        "baselineLiftR": 0.168
+      },
+      "paperSignals": {
+        "total": 1,
+        "closed": 0,
+        "open": 1,
+        "wins": 0,
+        "losses": 0,
+        "resultR": 0,
+        "avgR": null,
+        "firstSignalAt": "2026-09-28T04:00:00.000Z",
+        "lastSignalAt": "2026-09-28T04:00:00.000Z"
+      },
+      "agingState": "not_seen_current",
+      "observations": [
+        {
+          "at": "2026-09-28T16:12:52.641Z",
+          "action": "watch_low_sample",
+          "sample": 15,
+          "expectancyR": 0.2378,
+          "profitFactor": 1.4881,
+          "baselineExpectancyR": 0.0698
+        },
+        {
+          "at": "2026-09-28T18:38:47.990Z",
+          "action": "watch_low_sample",
+          "sample": 15,
+          "expectancyR": 0.2378,
+          "profitFactor": 1.4881,
+          "baselineExpectancyR": 0.0698
+        }
+      ]
+    },
+    {
+      "key": "LINK|4h|trend_pullback_reclaim_long|long|up/mid-vol",
+      "active": false,
+      "firstSeenAt": "2026-09-28T16:12:52.641Z",
+      "lastSeenAt": "2026-09-28T21:19:54.755Z",
+      "ageDays": 0.21,
+      "symbol": "LINK",
+      "timeframe": "4h",
+      "setup": "trend_pullback_reclaim_long",
+      "direction": "long",
+      "regime": "up/mid-vol",
+      "tier": "low-sample",
+      "action": "watch_low_sample",
+      "latestSignalIso": "2026-09-28T08:00:00.000Z",
+      "sampleProgress": {
+        "sample": 35,
+        "gate": 50,
+        "gap": 15,
+        "percent": 0.7
+      },
+      "stats": {
+        "expectancyR": 0.0594,
+        "profitFactor": 1.1084,
+        "winrate": 0.4571,
+        "baselineExpectancyR": -0.0767,
+        "baselineLiftR": 0.1361
+      },
+      "paperSignals": {
+        "total": 4,
+        "closed": 4,
+        "open": 0,
+        "wins": 2,
+        "losses": 2,
+        "resultR": 1.6,
+        "avgR": 0.4,
+        "firstSignalAt": "2026-08-18T12:00:00.000Z",
+        "lastSignalAt": "2026-09-28T08:00:00.000Z"
+      },
+      "agingState": "not_seen_current",
+      "observations": [
+        {
+          "at": "2026-09-28T16:12:52.641Z",
+          "action": "watch_low_sample",
+          "sample": 35,
+          "expectancyR": 0.0594,
+          "profitFactor": 1.1084,
+          "baselineExpectancyR": -0.0786
+        },
+        {
+          "at": "2026-09-28T18:38:47.990Z",
+          "action": "watch_low_sample",
+          "sample": 35,
+          "expectancyR": 0.0594,
+          "profitFactor": 1.1084,
+          "baselineExpectancyR": -0.0786
+        },
+        {
+          "at": "2026-09-28T21:19:54.755Z",
+          "action": "watch_low_sample",
+          "sample": 35,
+          "expectancyR": 0.0594,
+          "profitFactor": 1.1084,
+          "baselineExpectancyR": -0.0767
+        }
+      ]
+    }
+  ],
+  "decision": {
+    "verdict": "watch_rows_include_decay_no_promotion",
+    "noThresholdChange": true,
+    "noPromotion": true,
+    "rationale": "Watch rows are tracked as paper/research inventory only; aging, sample progress, and decay are visibility signals, not promotion gates."
+  },
+  "boundaries": {
+    "liveTrading": false,
+    "orderPlacement": false,
+    "alertWordingChanges": false,
+    "paperAlertLogicChanges": false,
+    "thresholdsChanged": false,
+    "sizingTpSlChanged": false,
+    "schedulerChanged": false,
+    "strategyPromotion": false
+  }
+}

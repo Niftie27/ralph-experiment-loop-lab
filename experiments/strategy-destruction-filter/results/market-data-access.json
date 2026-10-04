@@ -1,0 +1,106 @@
+{
+  "generatedAt": "2026-08-29T21:51:31.731Z",
+  "status": "research-only-no-live-execution",
+  "checks": [
+    {
+      "id": "hyperliquid-HYPE-1h-candles",
+      "venue": "Hyperliquid",
+      "endpoint": "POST /info type=candleSnapshot",
+      "status": "accessible",
+      "rows": 169,
+      "firstTime": "2026-08-22T21:00:00.000Z",
+      "lastTime": "2026-08-29T21:00:00.000Z",
+      "note": "Accessible for recent candles; longer 1h pulls are row-capped in practice, so this is not the first full OHLCV backtest rail."
+    },
+    {
+      "id": "hyperliquid-HYPE-funding",
+      "venue": "Hyperliquid",
+      "endpoint": "POST /info type=fundingHistory",
+      "status": "accessible",
+      "rows": 500,
+      "firstTime": "2026-07-30T22:00:00.003Z",
+      "lastTime": "2026-08-20T17:00:00.009Z",
+      "sample": {
+        "coin": "HYPE",
+        "fundingRate": "0.0000193951",
+        "premium": "0.000655161",
+        "time": 1787245200009
+      },
+      "note": "Verified no-key funding history rail for future funding/premium features."
+    },
+    {
+      "id": "hyperliquid-HYPE-current-context",
+      "venue": "Hyperliquid",
+      "endpoint": "POST /info type=metaAndAssetCtxs",
+      "status": "accessible",
+      "rows": 1,
+      "sample": {
+        "markPx": 83.34,
+        "funding": -0.000006668,
+        "openInterest": 24061171.06000001,
+        "dayNtlVlm": 333287634.02976066
+      },
+      "note": "Current funding/open-interest context is accessible, but this is a snapshot rather than a historical series."
+    },
+    {
+      "id": "bybit-HYPEUSDT-instrument",
+      "venue": "Bybit",
+      "endpoint": "GET /v5/market/instruments-info",
+      "status": "accessible",
+      "rows": 1,
+      "sample": {
+        "status": "Trading",
+        "launchTime": "2024-12-04T12:52:20.000Z",
+        "maxLeverage": "75.00",
+        "fundingInterval": 480
+      },
+      "note": "Confirms HYPEUSDT linear perpetual is an active public market."
+    },
+    {
+      "id": "bybit-HYPEUSDT-60-klines",
+      "venue": "Bybit",
+      "endpoint": "GET /v5/market/kline",
+      "status": "accessible",
+      "rows": 10,
+      "firstTime": "2026-08-29T12:00:00.000Z",
+      "lastTime": "2026-08-29T21:00:00.000Z",
+      "note": "Pageable and now wired into the strategy filter for HYPE OHLCV."
+    },
+    {
+      "id": "bybit-HYPEUSDT-funding",
+      "venue": "Bybit",
+      "endpoint": "GET /v5/market/funding/history",
+      "status": "accessible",
+      "rows": 5,
+      "firstTime": "2026-08-28T08:00:00.000Z",
+      "lastTime": "2026-08-29T16:00:00.000Z",
+      "sample": {
+        "symbol": "HYPEUSDT",
+        "fundingRate": "0.0000402",
+        "fundingRateTimestamp": "1788019200000"
+      },
+      "note": "Verified funding history rail for future feature joins."
+    },
+    {
+      "id": "bybit-HYPEUSDT-open-interest",
+      "venue": "Bybit",
+      "endpoint": "GET /v5/market/open-interest",
+      "status": "accessible",
+      "rows": 5,
+      "firstTime": "2026-08-29T17:00:00.000Z",
+      "lastTime": "2026-08-29T21:00:00.000Z",
+      "sample": {
+        "openInterest": "3697019.40000000",
+        "singleOpenInterest": "1848509.7",
+        "timestamp": "1788037200000"
+      },
+      "note": "Verified open-interest history rail for future feature joins."
+    }
+  ],
+  "summary": {
+    "accessible": 7,
+    "limited": 0,
+    "blocked": 0
+  },
+  "decision": "Use Bybit v5 linear klines as the first HYPE historical OHLCV rail; keep Hyperliquid funding/current context and Bybit funding/open-interest as verified next feature rails."
+}

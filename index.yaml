@@ -1,0 +1,446 @@
+topic: RALPH Research OS
+created: '2026-07-01T05:55:16Z'
+last_updated: '2026-10-04T08:52:00Z'
+input_summary: RALPH is a crypto research-memory and decision system built on AI Research OS conventions, extended with loops, unknowns, candidates, experiments, case files, work queues, scoring, and safety rules.
+rounds_completed: 0
+total_sources: 19
+total_wiki_pages: 258
+sources:
+  - title: RALPH Operating Thesis Voice Note
+    origin: local
+    original_path: local://telegram/voice/2026-07-01-ralph-operating-thesis.ogg
+    source_url: null
+    authors: [Tomas]
+    published_date: '2026-07-01'
+    publication: Telegram voice note
+    relevance_score: 1.0
+    summary: Tomas clarified that RALPH should be a self-improving second brain and background research engine. Strategy discovery must come before trading-bot architecture, with current bias toward event-triggered wallet-shadow research under a roughly $100/month infra budget.
+    tags: [ralph, operating-thesis, strategy-discovery, wallet-shadow, automation]
+    uri_full: raw/ralph-operating-thesis-voice-note-2026-07-01.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/ralph-operating-thesis-voice-note-2026-07-01.md
+    assets:
+      - raw/assets/voice-notes/2026-07-01-ralph-operating-thesis.ogg
+    text_quality: high
+    wiki_refs:
+      - wiki/sources/ralph-operating-thesis-voice-note-2026-07-01.md
+      - wiki/overview.md
+      - wiki/synthesis.md
+  - title: RALPH Session Transcript Structured
+    origin: local
+    original_path: local://openclaw-media/ralph_session_transcript_structured.md
+    source_url: null
+    authors: [Tomas, assistant]
+    published_date: '2026-06-30'
+    publication: OpenClaw local media
+    relevance_score: 1.0
+    summary: Primary source for RALPH's intended shape as a self-running research and decision system. Establishes loops, unknowns, market selection, data rails, Zela as validation discipline, and the rule that RALPH is not a trading bot.
+    tags: [ralph, loops, unknowns, data-rails, decision-layer]
+    uri_full: raw/ralph-session-transcript-structured.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/ralph-session-transcript-structured.md
+    assets: []
+    text_quality: high
+    wiki_refs:
+      - wiki/sources/ralph-session-transcript-structured.md
+      - wiki/overview.md
+      - wiki/synthesis.md
+  - title: Crypto Trading Bots Project Handoff
+    origin: local
+    original_path: local://openclaw-media/PROJECT_HANDOFF.md
+    source_url: null
+    authors: [Tomas, assistant]
+    published_date: '2026-06-30'
+    publication: OpenClaw local media
+    relevance_score: 1.0
+    summary: Main historical source for Crypto Trading Bots and the Base L2 MEV bot. Records monitoring-only state, Polymarket history, Morpho/Aave backlog, pre-patch archive gotchas, and the monitor-first discipline.
+    tags: [mev, trading-bots, base, polymarket, morpho, aave, handoff]
+    uri_full: raw/crypto-trading-bots-project-handoff.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/crypto-trading-bots-project-handoff.md
+    assets: []
+    text_quality: high
+    wiki_refs:
+      - wiki/sources/crypto-trading-bots-project-handoff.md
+      - wiki/entities/mev-bot-case-file.md
+  - title: MEV Bot Archive Tarball
+    origin: local
+    original_path: local://openclaw-media/mev-bot_1_.tar.gz
+    source_url: null
+    authors: [Tomas, assistant]
+    published_date: '2026-06-30'
+    publication: OpenClaw local media
+    relevance_score: 1.0
+    summary: Actual Base L2 MEV bot archive inspected as a case-file source. Review found pre-patch state, incomplete simulation and execution wiring, CSV mismatch, compose secret hard-fail, and metric mismatch risks.
+    tags: [mev, archive, code-review, failure-modes]
+    uri_full: raw/assets/mev-bot-archive/mev-bot_1_.tar.gz
+    uri_highlights: null
+    uri_source_page: wiki/sources/mev-bot-archive.md
+    assets:
+      - raw/assets/mev-bot-archive/mev-bot_1_.tar.gz
+    text_quality: high
+    wiki_refs:
+      - wiki/sources/mev-bot-archive.md
+      - wiki/entities/mev-bot-case-file.md
+  - title: Zela Planner Handoff
+    origin: local
+    original_path: local://openclaw-media/Planner_handoff_Zela_bench.md
+    source_url: null
+    authors: [Tomas, planner]
+    published_date: '2026-06-30'
+    publication: OpenClaw local media
+    relevance_score: 1.0
+    summary: Planner handoff recording that Zela live target shut down and the benchmark should pivot toward methodology and builder credibility, not automatic continuation.
+    tags: [zela, benchmark, methodology, pivot]
+    uri_full: raw/zela-planner-handoff.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/zela-planner-handoff.md
+    assets: []
+    text_quality: high
+    wiki_refs:
+      - wiki/sources/zela-planner-handoff.md
+      - wiki/entities/zela.md
+  - title: AI Research OS Workshop README
+    origin: web
+    original_path: https://github.com/iusztinpaul/ai-research-os-workshop
+    source_url: https://github.com/iusztinpaul/ai-research-os-workshop
+    authors: [Louis-Francois Bouchard, Paul Iusztin]
+    published_date: '2026-06-27'
+    publication: GitHub
+    relevance_score: 1.0
+    summary: Upstream README for AI Research OS, describing the persistent research wiki pattern, modes, source layers, and generated research directory layout.
+    tags: [ai-research-os, source-memory, wiki, index]
+    uri_full: raw/ai-research-os-workshop-readme.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/ai-research-os-workshop-readme.md
+    assets: []
+    text_quality: high
+    wiki_refs:
+      - wiki/sources/ai-research-os-workshop-readme.md
+      - wiki/comparisons/ralph-m0-vs-ai-research-os-contract.md
+  - title: AI Research OS Conventions
+    origin: web
+    original_path: https://github.com/iusztinpaul/ai-research-os-workshop/blob/main/plugins/ai-research-os/skills/research/CONVENTIONS.md
+    source_url: https://github.com/iusztinpaul/ai-research-os-workshop/blob/main/plugins/ai-research-os/skills/research/CONVENTIONS.md
+    authors: [AI Research OS workshop]
+    published_date: '2026-06-27'
+    publication: GitHub
+    relevance_score: 1.0
+    summary: 'Authoritative AI Research OS data contract: index first, wiki second, raw third; raw immutable; wiki mutable; index.yaml canonical; index.md generated; log append-only.'
+    tags: [ai-research-os, conventions, data-contract]
+    uri_full: raw/ai-research-os-conventions.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/ai-research-os-conventions.md
+    assets: []
+    text_quality: high
+    wiki_refs:
+      - wiki/sources/ai-research-os-conventions.md
+      - wiki/comparisons/ralph-m0-vs-ai-research-os-contract.md
+  - title: Turn 10,994 Notes Into Memory
+    origin: youtube
+    original_path: https://www.youtube.com/watch?v=ZRM_TfEZcIo&t=1998s
+    source_url: https://www.youtube.com/watch?v=ZRM_TfEZcIo&t=1998s
+    authors: [Paul Iusztin, Louis-Francois Bouchard, AI Engineer]
+    published_date: '2026-06-26'
+    publication: YouTube / AI Engineer
+    relevance_score: 1.0
+    summary: Workshop video about turning a large personal second brain into an AI Research OS. Under-video notes, structured YouTube page summary, and Tomas's browser-extension transcript export are ingested; direct cloud transcript extraction was blocked by YouTube bot protections.
+    tags: [ai-research-os, youtube, second-brain, media-ingest, source-memory, loops]
+    uri_full: raw/youtube-ai-research-os-workshop-video.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/youtube-ai-research-os-workshop-video.md
+    assets:
+      - raw/assets/youtube-ai-research-os-workshop-video/manual-transcript-youtube-transcript-ai-summary.txt
+    text_quality: high
+    youtube_video_id: ZRM_TfEZcIo
+    youtube_url: https://www.youtube.com/watch?v=ZRM_TfEZcIo&t=1998s
+    youtube_channel: AI Engineer
+    duration_seconds: null
+    transcript_source: manual
+    transcript_language: English
+    transcript_language_code: en
+    transcript_is_generated: null
+    timestamps_available: false
+    wiki_refs:
+      - wiki/sources/youtube-ai-research-os-workshop-video.md
+      - wiki/notes/2026-07-01-ai-research-os-video-guide.md
+      - wiki/overview.md
+      - wiki/synthesis.md
+  - title: 'Previous Day High & Low Strategy: Master Liquidity Sweeps'
+    origin: youtube
+    original_path: https://www.youtube.com/watch?v=mgK6kHH3RJI
+    source_url: https://www.youtube.com/watch?v=mgK6kHH3RJI
+    authors: [Chart Champions]
+    published_date: null
+    publication: YouTube
+    relevance_score: 0.86
+    summary: Chart Champions video transcript supplied by Tomas explaining previous day high and previous day low as intraday liquidity/decision levels, not automatic support/resistance. Treat as a reusable full-TA primitive when price interacts with prior session extremes, liquidity sweeps, breakout acceptance, unclear no-trade, or VWAP session-control context. Extracted rules cover session-definition consistency, target families, TradingView session workflow, and RALPH validation caveats.
+    tags: [trading-education, technical-analysis, liquidity-sweeps, pdh-pdl, tradingview, chart-champions]
+    uri_full: raw/chart-champions-previous-day-high-low-strategy-2026-08-30.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/chart-champions-previous-day-high-low-strategy-2026-08-30.md
+    assets: []
+    text_quality: medium
+    youtube_video_id: mgK6kHH3RJI
+    youtube_url: https://www.youtube.com/watch?v=mgK6kHH3RJI
+    youtube_channel: Chart Champions
+    duration_seconds: null
+    transcript_source: manual
+    transcript_language: English
+    transcript_language_code: en
+    transcript_is_generated: null
+    timestamps_available: true
+    wiki_refs:
+      - wiki/sources/chart-champions-previous-day-high-low-strategy-2026-08-30.md
+      - wiki/notes/2026-08-30-previous-day-high-low-liquidity-sweep-intake.md
+      - wiki/concepts/multi-timeframe-full-ta.md
+  - title: Wallet Shadowing ChatGPT Session Transcript
+    origin: local
+    original_path: local://telegram/document/chatGPT_wallet_shadowing_full_session_transcript
+    source_url: null
+    authors: [Tomas, ChatGPT]
+    published_date: '2026-07-01'
+    publication: Telegram attachment
+    relevance_score: 1.0
+    summary: Long session transcript covering Trump-linked wallets, event-anomaly whales, token/entity clusters, and convergence toward a Hyperliquid-first wallet-shadowing validation architecture rather than famous-wallet copy trading. Tomas later clarified that the current thesis is about Trump as president/person, not TRUMP/MELANIA coins.
+    tags: [wallet-shadowing, trump-risk-radar, hyperliquid, copy-trading, strategy-validation]
+    uri_full: raw/wallet-shadowing-chatgpt-session-transcript.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/wallet-shadowing-chatgpt-session-transcript.md
+    assets: []
+    text_quality: high
+    sha256: c79592ba9349d917381a281d9fc3206f0ff6a0ff3424247958282ef8b3bebb88
+    wiki_refs:
+      - wiki/sources/wallet-shadowing-chatgpt-session-transcript.md
+      - wiki/notes/2026-07-01-wallet-shadowing-session-ingest.md
+      - wiki/notes/2026-07-01-wallet-shadowing-address-inventory.md
+      - wiki/notes/2026-07-01-wallet-shadowing-next-direction.md
+      - wiki/concepts/wallet-shadowing-strategy-model.md
+      - wiki/concepts/forward-paper-trade-gate.md
+      - wiki/concepts/trump-risk-radar.md
+      - wiki/comparisons/copyable-wallets-vs-radar-wallets.md
+  - title: Wallet Shadowing Claude Session Transcript
+    origin: local
+    original_path: local://telegram/document/claude_wallet_shadowing_session_transcript
+    source_url: null
+    authors: [Tomas, Claude]
+    published_date: '2026-07-01'
+    publication: Telegram attachment
+    relevance_score: 1.0
+    summary: Cleaner strategic transcript critiquing the ChatGPT wallet-shadowing material, converging on radar-only Trump clusters, activity-defined Hyperliquid candidate discovery, forward paper-trade validation, and prior-art-first experiment discipline.
+    tags: [wallet-shadowing, hyperliquid, prior-art, forward-paper-trade, strategy-validation]
+    uri_full: raw/wallet-shadowing-claude-session-transcript.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/wallet-shadowing-claude-session-transcript.md
+    assets: []
+    text_quality: high
+    sha256: cbd64484ff2901bd1b5c01d5fe1f54c8946216408111d566385da1fc06b9835e
+    wiki_refs:
+      - wiki/sources/wallet-shadowing-claude-session-transcript.md
+      - wiki/notes/2026-07-01-wallet-shadowing-session-ingest.md
+      - wiki/notes/2026-07-01-wallet-shadowing-next-direction.md
+      - wiki/concepts/wallet-shadowing-strategy-model.md
+      - wiki/concepts/forward-paper-trade-gate.md
+      - wiki/concepts/prior-art-before-experiment.md
+  - title: Wallet Shadowing Latency Axis Correction
+    origin: local
+    original_path: local://telegram/message/2026-07-01-wallet-shadowing-latency-axis-correction
+    source_url: null
+    authors: [Tomas, assistant]
+    published_date: '2026-07-01'
+    publication: Telegram message
+    relevance_score: 1.0
+    summary: Tomas reframed wallet shadowing around edge speed relative to latency, arguing that BTC/ETH directional moves are poor shadow targets, slower structural/funding and mid-cap accumulation flows may be more shadowable, and aggregate cohort flow may beat single-wallet copying.
+    tags: [wallet-shadowing, latency, strategy-archetypes, aggregate-flow, funding-basis]
+    uri_full: raw/wallet-shadowing-latency-axis-correction-2026-07-01.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/wallet-shadowing-latency-axis-correction-2026-07-01.md
+    assets: []
+    text_quality: high
+    wiki_refs:
+      - wiki/sources/wallet-shadowing-latency-axis-correction-2026-07-01.md
+      - wiki/concepts/shadowability-latency-axis.md
+      - wiki/comparisons/wallet-shadowing-archetype-map.md
+      - wiki/notes/2026-07-01-wallet-shadowing-next-direction.md
+  - title: Patient-Retail Crypto Strategy Map
+    origin: local
+    original_path: local://telegram/document/patient_retail_strategy_map
+    source_url: null
+    authors: [Tomas, assistant]
+    published_date: '2026-07-01'
+    publication: Telegram attachment
+    relevance_score: 1.0
+    summary: Wiki-ready patient-retail strategy map arguing that RALPH should choose strategies by edge speed, prefer structural and slow-informational edges, use funding/basis as a baseline, and test smart-money accumulation as cohort flow rather than latency-sensitive one-wallet copying.
+    tags: [patient-retail, wallet-shadowing, funding-basis, smart-money, cohort-flow, strategy-map]
+    uri_full: raw/patient-retail-strategy-map-2026-07-01.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/patient-retail-strategy-map-2026-07-01.md
+    assets: []
+    text_quality: high
+    sha256: 825d155170f4efd541ae504b3dc8d657ae67a5ef2545eb3a55447a7c36b06a22
+    wiki_refs:
+      - wiki/sources/patient-retail-strategy-map-2026-07-01.md
+      - wiki/concepts/patient-retail-strategy-map.md
+      - wiki/concepts/smart-money-accumulation-cohort.md
+      - wiki/concepts/funding-basis-structural-baseline.md
+      - wiki/comparisons/patient-retail-strategy-archetypes.md
+      - wiki/notes/2026-07-01-patient-retail-openclaw-prompt.md
+  - title: Tool-First Pivot
+    origin: local
+    original_path: local://telegram/message/2026-07-01-tool-first-pivot
+    source_url: null
+    authors: [Tomas, assistant]
+    published_date: '2026-07-01'
+    publication: Telegram message
+    relevance_score: 1.0
+    summary: 'Tomas challenged the build-first framing and asked why RALPH should not use existing bots, data products, grid tools, copy platforms, and research APIs instead of building from scratch. The result is a tool-first pivot: use existing engines first and custom-build only the missing signal/adapter/validation layer.'
+    tags: [tool-first, freqtrade, grid-bot, copy-trading, dune, tenderly, eigenphi, build-vs-buy]
+    uri_full: raw/tool-first-pivot-2026-07-01.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/tool-first-pivot-2026-07-01.md
+    assets: []
+    text_quality: high
+    wiki_refs:
+      - wiki/sources/tool-first-pivot-2026-07-01.md
+      - wiki/concepts/tool-first-not-build-first.md
+      - wiki/comparisons/existing-tools-vs-custom-ralph-layer.md
+      - wiki/notes/2026-07-01-tool-first-existing-bot-map.md
+  - title: Slow Copy-Trading Distinction
+    origin: local
+    original_path: local://telegram/message/2026-07-01-slow-copy-trading-distinction
+    source_url: null
+    authors: [Tomas, assistant]
+    published_date: '2026-07-01'
+    publication: Telegram message
+    relevance_score: 1.0
+    summary: Tomas clarified that his interest in copy-trading means following slow mid-cap spot accumulators with week-scale holding periods, not mirroring fast perp traders. RALPH should reject fast copy by default but keep slow accumulator following as a valid patient-retail candidate.
+    tags: [copy-trading, smart-money, mid-cap, accumulation, patient-retail]
+    uri_full: raw/slow-copy-trading-distinction-2026-07-01.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/slow-copy-trading-distinction-2026-07-01.md
+    assets: []
+    text_quality: high
+    wiki_refs:
+      - wiki/sources/slow-copy-trading-distinction-2026-07-01.md
+      - wiki/comparisons/fast-copy-trading-vs-slow-accumulator-following.md
+      - wiki/concepts/smart-money-accumulation-cohort.md
+      - wiki/comparisons/copyable-wallets-vs-radar-wallets.md
+  - title: Slow Accumulator Tool Fit Check
+    origin: web
+    original_path: local://web-research/2026-07-01-slow-accumulator-tool-fit
+    source_url: null
+    authors: [assistant]
+    published_date: '2026-07-01'
+    publication: OpenClaw web/source check
+    relevance_score: 1.0
+    summary: Tool-fit check concluding that slow mid-cap spot accumulator signals likely live in Nansen, Arkham, and Dune-style on-chain analytics rather than Copin-style perp copy-trading platforms. Freqtrade is an engine, not a signal source.
+    tags: [nansen, arkham, dune, copin, freqtrade, smart-money, tool-fit]
+    uri_full: raw/slow-accumulator-tool-fit-check-2026-07-01.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/slow-accumulator-tool-fit-check-2026-07-01.md
+    assets: []
+    text_quality: high
+    wiki_refs:
+      - wiki/sources/slow-accumulator-tool-fit-check-2026-07-01.md
+      - wiki/comparisons/slow-accumulator-tool-fit-map.md
+      - wiki/concepts/smart-money-accumulation-cohort.md
+  - title: Liquidation-Map Liquidity Provision
+    origin: web
+    original_path: local://telegram-and-web/2026-07-01-liquidation-map-liquidity-provision
+    source_url: null
+    authors: [Tomas, assistant]
+    published_date: '2026-07-01'
+    publication: Telegram message plus web/source check
+    relevance_score: 1.0
+    summary: Strategy branch reframing RALPH from copying smart money to passive liquidity provision around forced liquidation clusters. Verification found that Hyperliquid exposes user liquidation prices, but a complete global heatmap needs address indexing or existing liquidation-map/data products. The branch has negative skew and requires replay/risk validation.
+    tags: [liquidations, hyperliquid, liquidity-provision, forced-flow, negative-skew, build-vs-buy]
+    uri_full: raw/liquidation-map-liquidity-provision-2026-07-01.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/liquidation-map-liquidity-provision-2026-07-01.md
+    assets: []
+    text_quality: high
+    wiki_refs:
+      - wiki/sources/liquidation-map-liquidity-provision-2026-07-01.md
+      - wiki/concepts/liquidation-map-liquidity-provision.md
+      - wiki/comparisons/liquidation-map-build-vs-buy.md
+      - wiki/notes/2026-07-01-liquidation-map-feasibility-spec.md
+  - title: Liquidation Map Prior Art Gap Map
+    origin: web
+    original_path: local://web-research/2026-07-01-liquidation-map-prior-art-gap-map
+    source_url: null
+    authors: [Tomas, assistant]
+    published_date: '2026-07-01'
+    publication: Telegram correction plus web/source check
+    relevance_score: 1.0
+    summary: Claim-specific verification correcting the liquidation-map branch. Retail/prosumer liquidation heatmaps and data products already exist; RALPH must map whether the missing layer is exportable replay/risk scoring or whether the standalone edge is weak after negative skew and costs.
+    tags: [liquidations, build-vs-buy, prior-art, hyperliquid, coinglass, nansen, 0xarchive, negative-skew]
+    uri_full: raw/liquidation-map-prior-art-gap-map-2026-07-01.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/liquidation-map-prior-art-gap-map-2026-07-01.md
+    assets: []
+    text_quality: high
+    wiki_refs:
+      - wiki/sources/liquidation-map-prior-art-gap-map-2026-07-01.md
+      - wiki/comparisons/liquidation-map-build-vs-buy.md
+      - wiki/notes/2026-07-01-liquidation-map-feasibility-spec.md
+      - wiki/comparisons/slow-accumulator-tool-fit-map.md
+  - title: Liquidation Q1 Baseline Kill Switch
+    origin: web
+    original_path: local://web-research/2026-07-01-liquidation-q1-baseline-kill-switch
+    source_url: null
+    authors: [Tomas, assistant]
+    published_date: '2026-07-01'
+    publication: Telegram correction plus web/source check
+    relevance_score: 1.0
+    summary: "Sequencing correction for the liquidation-map branch. Before broad product gap mapping or building, run a cheap Q1 test: do liquidation/cascade reversals beat simple candle/drawdown baselines after costs and tail risk?"
+    tags: [liquidations, baseline, kill-switch, replay, build-vs-buy, pricing]
+    uri_full: raw/liquidation-q1-baseline-kill-switch-2026-07-01.md
+    uri_highlights: null
+    uri_source_page: wiki/sources/liquidation-q1-baseline-kill-switch-2026-07-01.md
+    assets: []
+    text_quality: high
+    wiki_refs:
+      - wiki/sources/liquidation-q1-baseline-kill-switch-2026-07-01.md
+      - wiki/notes/2026-07-01-liquidation-map-feasibility-spec.md
+      - wiki/comparisons/liquidation-map-build-vs-buy.md
+      - wiki/comparisons/slow-accumulator-tool-fit-map.md
+ingest_log:
+  - date: '2026-07-01'
+    sources_added: 0
+    rounds: 0
+  - date: '2026-07-01'
+    sources_added: 6
+    rounds: 0
+  - date: '2026-07-01'
+    sources_added: 1
+    rounds: 0
+  - date: '2026-07-01'
+    sources_added: 1
+    rounds: 0
+  - date: '2026-07-01'
+    sources_added: 1
+    rounds: 0
+  - date: '2026-07-01'
+    sources_added: 1
+    rounds: 0
+  - date: '2026-07-01'
+    sources_added: 1
+    rounds: 0
+  - date: '2026-07-01'
+    sources_added: 1
+    rounds: 0
+  - date: '2026-07-01'
+    sources_added: 1
+    rounds: 0
+  - date: '2026-07-01'
+    sources_added: 1
+    rounds: 0
+  - date: '2026-07-01'
+    sources_added: 2
+    rounds: 0
+  - date: '2026-07-01'
+    sources_added: 1
+    rounds: 0
+  - date: '2026-07-01'
+    sources_added: 1
+    rounds: 0

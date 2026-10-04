@@ -1,0 +1,846 @@
+{
+  "generated": "2026-09-27T07:51:32.560Z",
+  "status": "cluster_explains_survivor_but_not_robust_edge",
+  "workItem": "validation.survivor-cluster-postmortem",
+  "focus": {
+    "month": "2026-08",
+    "week": "2026-W34",
+    "rows": 66,
+    "bySymbol": [
+      {
+        "key": "BNB",
+        "closedTrades": 10,
+        "wins": 8,
+        "losses": 2,
+        "winrate": 0.8,
+        "netPnlUsd": 1761.27,
+        "avgNetPnlUsd": 176.1274,
+        "profitFactor": 5.9112,
+        "ambiguousTrades": 0,
+        "tpTrades": 8,
+        "slTrades": 2,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 11761.27,
+        "maxDrawdownUsd": 264.58,
+        "maxDrawdownPct": 0.022001,
+        "maxDrawdownAt": "2026-08-22T04:00:00.000Z"
+      },
+      {
+        "key": "ADA",
+        "closedTrades": 8,
+        "wins": 5,
+        "losses": 3,
+        "winrate": 0.625,
+        "netPnlUsd": 1722.37,
+        "avgNetPnlUsd": 215.2966,
+        "profitFactor": 2.6279,
+        "ambiguousTrades": 1,
+        "tpTrades": 5,
+        "slTrades": 3,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 11722.37,
+        "maxDrawdownUsd": 873.45,
+        "maxDrawdownPct": 0.069344,
+        "maxDrawdownAt": "2026-08-22T04:00:00.000Z"
+      },
+      {
+        "key": "XRP",
+        "closedTrades": 9,
+        "wins": 6,
+        "losses": 3,
+        "winrate": 0.666667,
+        "netPnlUsd": 1543.6,
+        "avgNetPnlUsd": 171.5107,
+        "profitFactor": 2.2157,
+        "ambiguousTrades": 1,
+        "tpTrades": 6,
+        "slTrades": 3,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 11543.6,
+        "maxDrawdownUsd": 1081.68,
+        "maxDrawdownPct": 0.085676,
+        "maxDrawdownAt": "2026-08-22T04:00:00.000Z"
+      },
+      {
+        "key": "SOL",
+        "closedTrades": 9,
+        "wins": 6,
+        "losses": 3,
+        "winrate": 0.666667,
+        "netPnlUsd": 1193.27,
+        "avgNetPnlUsd": 132.5858,
+        "profitFactor": 2.4768,
+        "ambiguousTrades": 2,
+        "tpTrades": 6,
+        "slTrades": 3,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 11193.27,
+        "maxDrawdownUsd": 628.48,
+        "maxDrawdownPct": 0.053163,
+        "maxDrawdownAt": "2026-08-22T04:00:00.000Z"
+      },
+      {
+        "key": "AVAX",
+        "closedTrades": 9,
+        "wins": 5,
+        "losses": 4,
+        "winrate": 0.555556,
+        "netPnlUsd": 1152.47,
+        "avgNetPnlUsd": 128.0523,
+        "profitFactor": 1.9864,
+        "ambiguousTrades": 0,
+        "tpTrades": 5,
+        "slTrades": 4,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 11152.47,
+        "maxDrawdownUsd": 738.5,
+        "maxDrawdownPct": 0.062106,
+        "maxDrawdownAt": "2026-08-22T04:00:00.000Z"
+      },
+      {
+        "key": "LINK",
+        "closedTrades": 7,
+        "wins": 3,
+        "losses": 4,
+        "winrate": 0.428571,
+        "netPnlUsd": 366.76,
+        "avgNetPnlUsd": 52.3945,
+        "profitFactor": 1.3282,
+        "ambiguousTrades": 0,
+        "tpTrades": 3,
+        "slTrades": 4,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 10366.76,
+        "maxDrawdownUsd": 901.56,
+        "maxDrawdownPct": 0.080009,
+        "maxDrawdownAt": "2026-08-22T04:00:00.000Z"
+      },
+      {
+        "key": "DOGE",
+        "closedTrades": 8,
+        "wins": 4,
+        "losses": 4,
+        "winrate": 0.5,
+        "netPnlUsd": 318.87,
+        "avgNetPnlUsd": 39.8587,
+        "profitFactor": 1.2465,
+        "ambiguousTrades": 1,
+        "tpTrades": 4,
+        "slTrades": 4,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 10318.87,
+        "maxDrawdownUsd": 862.19,
+        "maxDrawdownPct": 0.077111,
+        "maxDrawdownAt": "2026-08-22T04:00:00.000Z"
+      },
+      {
+        "key": "ETH",
+        "closedTrades": 6,
+        "wins": 2,
+        "losses": 4,
+        "winrate": 0.333333,
+        "netPnlUsd": -230.74,
+        "avgNetPnlUsd": -38.4575,
+        "profitFactor": 0.7656,
+        "ambiguousTrades": 0,
+        "tpTrades": 2,
+        "slTrades": 4,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 9769.25,
+        "maxDrawdownUsd": 749.05,
+        "maxDrawdownPct": 0.071214,
+        "maxDrawdownAt": "2026-08-22T05:00:00.000Z"
+      }
+    ],
+    "byTimeframeTier": [
+      {
+        "key": "4h|low-sample",
+        "closedTrades": 34,
+        "wins": 21,
+        "losses": 13,
+        "winrate": 0.617647,
+        "netPnlUsd": 3974.47,
+        "avgNetPnlUsd": 116.8961,
+        "profitFactor": 1.768,
+        "ambiguousTrades": 4,
+        "tpTrades": 21,
+        "slTrades": 13,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 13974.47,
+        "maxDrawdownUsd": 4931.87,
+        "maxDrawdownPct": 0.260858,
+        "maxDrawdownAt": "2026-08-22T04:00:00.000Z"
+      },
+      {
+        "key": "4h|B",
+        "closedTrades": 7,
+        "wins": 6,
+        "losses": 1,
+        "winrate": 0.857143,
+        "netPnlUsd": 2149.25,
+        "avgNetPnlUsd": 307.0362,
+        "profitFactor": 8.06,
+        "ambiguousTrades": 1,
+        "tpTrades": 6,
+        "slTrades": 1,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 12149.25,
+        "maxDrawdownUsd": 304.43,
+        "maxDrawdownPct": 0.024445,
+        "maxDrawdownAt": "2026-08-22T04:00:00.000Z"
+      },
+      {
+        "key": "1h|low-sample",
+        "closedTrades": 21,
+        "wins": 10,
+        "losses": 11,
+        "winrate": 0.47619,
+        "netPnlUsd": 1566.18,
+        "avgNetPnlUsd": 74.5801,
+        "profitFactor": 1.6809,
+        "ambiguousTrades": 0,
+        "tpTrades": 10,
+        "slTrades": 11,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 11566.18,
+        "maxDrawdownUsd": 1484.91,
+        "maxDrawdownPct": 0.137097,
+        "maxDrawdownAt": "2026-08-22T00:00:00.000Z"
+      },
+      {
+        "key": "4h|avoid",
+        "closedTrades": 1,
+        "wins": 1,
+        "losses": 0,
+        "winrate": 1,
+        "netPnlUsd": 306.3,
+        "avgNetPnlUsd": 306.2979,
+        "profitFactor": null,
+        "ambiguousTrades": 0,
+        "tpTrades": 1,
+        "slTrades": 0,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 10306.3,
+        "maxDrawdownUsd": 0,
+        "maxDrawdownPct": 0,
+        "maxDrawdownAt": null
+      },
+      {
+        "key": "1h|avoid",
+        "closedTrades": 2,
+        "wins": 1,
+        "losses": 1,
+        "winrate": 0.5,
+        "netPnlUsd": 16.26,
+        "avgNetPnlUsd": 8.1316,
+        "profitFactor": 1.1729,
+        "ambiguousTrades": 0,
+        "tpTrades": 1,
+        "slTrades": 1,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 10016.26,
+        "maxDrawdownUsd": 94.04,
+        "maxDrawdownPct": 0.009301,
+        "maxDrawdownAt": "2026-08-19T22:00:00.000Z"
+      },
+      {
+        "key": "1h|B",
+        "closedTrades": 1,
+        "wins": 0,
+        "losses": 1,
+        "winrate": 0,
+        "netPnlUsd": -184.59,
+        "avgNetPnlUsd": -184.5928,
+        "profitFactor": 0,
+        "ambiguousTrades": 0,
+        "tpTrades": 0,
+        "slTrades": 1,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 9815.41,
+        "maxDrawdownUsd": 184.59,
+        "maxDrawdownPct": 0.018459,
+        "maxDrawdownAt": "2026-08-19T23:00:00.000Z"
+      }
+    ],
+    "byDay": [
+      {
+        "key": "2026-08-21",
+        "closedTrades": 16,
+        "wins": 15,
+        "losses": 1,
+        "winrate": 0.9375,
+        "netPnlUsd": 6564.68,
+        "avgNetPnlUsd": 410.2928,
+        "profitFactor": 24.7468,
+        "ambiguousTrades": 0,
+        "tpTrades": 15,
+        "slTrades": 1,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 16564.68,
+        "maxDrawdownUsd": 276.44,
+        "maxDrawdownPct": 0.016415,
+        "maxDrawdownAt": "2026-08-21T23:00:00.000Z"
+      },
+      {
+        "key": "2026-08-20",
+        "closedTrades": 11,
+        "wins": 8,
+        "losses": 3,
+        "winrate": 0.727273,
+        "netPnlUsd": 2369.9,
+        "avgNetPnlUsd": 215.4458,
+        "profitFactor": 4.563,
+        "ambiguousTrades": 0,
+        "tpTrades": 8,
+        "slTrades": 3,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 12369.9,
+        "maxDrawdownUsd": 421.93,
+        "maxDrawdownPct": 0.042193,
+        "maxDrawdownAt": "2026-08-20T03:00:00.000Z"
+      },
+      {
+        "key": "2026-08-19",
+        "closedTrades": 12,
+        "wins": 6,
+        "losses": 6,
+        "winrate": 0.5,
+        "netPnlUsd": 414.36,
+        "avgNetPnlUsd": 34.53,
+        "profitFactor": 1.4074,
+        "ambiguousTrades": 0,
+        "tpTrades": 6,
+        "slTrades": 6,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 10414.36,
+        "maxDrawdownUsd": 1017.08,
+        "maxDrawdownPct": 0.088972,
+        "maxDrawdownAt": "2026-08-19T23:00:00.000Z"
+      },
+      {
+        "key": "2026-08-22",
+        "closedTrades": 27,
+        "wins": 10,
+        "losses": 17,
+        "winrate": 0.37037,
+        "netPnlUsd": -1521.08,
+        "avgNetPnlUsd": -56.3361,
+        "profitFactor": 0.7506,
+        "ambiguousTrades": 5,
+        "tpTrades": 10,
+        "slTrades": 17,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 8478.92,
+        "maxDrawdownUsd": 4777.64,
+        "maxDrawdownPct": 0.360398,
+        "maxDrawdownAt": "2026-08-22T05:00:00.000Z"
+      }
+    ],
+    "byExitReason": [
+      {
+        "key": "TP",
+        "closedTrades": 39,
+        "wins": 39,
+        "losses": 0,
+        "winrate": 1,
+        "netPnlUsd": 15886.03,
+        "avgNetPnlUsd": 407.334,
+        "profitFactor": null,
+        "ambiguousTrades": 0,
+        "tpTrades": 39,
+        "slTrades": 0,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 25886.03,
+        "maxDrawdownUsd": 0,
+        "maxDrawdownPct": 0,
+        "maxDrawdownAt": null
+      },
+      {
+        "key": "SL",
+        "closedTrades": 27,
+        "wins": 0,
+        "losses": 27,
+        "winrate": 0,
+        "netPnlUsd": -8058.15,
+        "avgNetPnlUsd": -298.4501,
+        "profitFactor": 0,
+        "ambiguousTrades": 5,
+        "tpTrades": 0,
+        "slTrades": 27,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 1941.85,
+        "maxDrawdownUsd": 8058.15,
+        "maxDrawdownPct": 0.805815,
+        "maxDrawdownAt": "2026-08-22T05:00:00.000Z"
+      }
+    ],
+    "byFundingPersistence": [
+      {
+        "key": "persistent_positive",
+        "closedTrades": 52,
+        "wins": 31,
+        "losses": 21,
+        "winrate": 0.596154,
+        "netPnlUsd": 6500.34,
+        "avgNetPnlUsd": 125.0065,
+        "profitFactor": 1.9337,
+        "ambiguousTrades": 5,
+        "tpTrades": 31,
+        "slTrades": 21,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 16500.34,
+        "maxDrawdownUsd": 4777.64,
+        "maxDrawdownPct": 0.224534,
+        "maxDrawdownAt": "2026-08-22T05:00:00.000Z"
+      },
+      {
+        "key": "positive_not_persistent",
+        "closedTrades": 12,
+        "wins": 7,
+        "losses": 5,
+        "winrate": 0.583333,
+        "netPnlUsd": 1237.08,
+        "avgNetPnlUsd": 103.0898,
+        "profitFactor": 2.4056,
+        "ambiguousTrades": 0,
+        "tpTrades": 7,
+        "slTrades": 5,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 11237.08,
+        "maxDrawdownUsd": 880.08,
+        "maxDrawdownPct": 0.082406,
+        "maxDrawdownAt": "2026-08-20T03:00:00.000Z"
+      },
+      {
+        "key": "negative_not_persistent",
+        "closedTrades": 2,
+        "wins": 1,
+        "losses": 1,
+        "winrate": 0.5,
+        "netPnlUsd": 90.46,
+        "avgNetPnlUsd": 45.2281,
+        "profitFactor": 1.4191,
+        "ambiguousTrades": 0,
+        "tpTrades": 1,
+        "slTrades": 1,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 10090.46,
+        "maxDrawdownUsd": 215.84,
+        "maxDrawdownPct": 0.020943,
+        "maxDrawdownAt": "2026-08-19T23:00:00.000Z"
+      }
+    ],
+    "drawdownRuns": [
+      {
+        "start": "2026-08-22T04:00:00.000Z",
+        "end": "2026-08-22T05:00:00.000Z",
+        "trades": 13,
+        "netPnlUsd": -4752.49,
+        "symbols": [
+          "AVAX",
+          "BNB",
+          "DOGE",
+          "ETH",
+          "LINK",
+          "SOL",
+          "XRP"
+        ]
+      },
+      {
+        "start": "2026-08-19T22:00:00.000Z",
+        "end": "2026-08-20T03:00:00.000Z",
+        "trades": 8,
+        "netPnlUsd": -1439.01,
+        "symbols": [
+          "ADA",
+          "AVAX",
+          "BNB",
+          "DOGE",
+          "ETH",
+          "LINK",
+          "SOL",
+          "XRP"
+        ]
+      },
+      {
+        "start": "2026-08-22T04:00:00.000Z",
+        "end": "2026-08-22T04:00:00.000Z",
+        "trades": 2,
+        "netPnlUsd": -873.45,
+        "symbols": [
+          "ADA"
+        ]
+      },
+      {
+        "start": "2026-08-22T00:00:00.000Z",
+        "end": "2026-08-22T00:00:00.000Z",
+        "trades": 2,
+        "netPnlUsd": -473.55,
+        "symbols": [
+          "LINK"
+        ]
+      },
+      {
+        "start": "2026-08-21T23:00:00.000Z",
+        "end": "2026-08-21T23:00:00.000Z",
+        "trades": 1,
+        "netPnlUsd": -276.44,
+        "symbols": [
+          "DOGE"
+        ]
+      },
+      {
+        "start": "2026-08-20T12:00:00.000Z",
+        "end": "2026-08-20T12:00:00.000Z",
+        "trades": 1,
+        "netPnlUsd": -243.22,
+        "symbols": [
+          "AVAX"
+        ]
+      }
+    ]
+  },
+  "summaryRows": [
+    {
+      "key": "selected_all",
+      "summary": {
+        "closedTrades": 107,
+        "wins": 54,
+        "losses": 53,
+        "winrate": 0.504673,
+        "netPnlUsd": 9035.42,
+        "avgNetPnlUsd": 84.4432,
+        "profitFactor": 1.6348,
+        "ambiguousTrades": 6,
+        "tpTrades": 53,
+        "slTrades": 51,
+        "timeExitTrades": 3,
+        "endingEquityUsd": 19035.42,
+        "maxDrawdownUsd": 5548.27,
+        "maxDrawdownPct": 0.245439,
+        "maxDrawdownAt": "2026-09-14T22:00:00.000Z"
+      }
+    },
+    {
+      "key": "2026-08",
+      "summary": {
+        "closedTrades": 69,
+        "wins": 40,
+        "losses": 29,
+        "winrate": 0.57971,
+        "netPnlUsd": 7747.56,
+        "avgNetPnlUsd": 112.2835,
+        "profitFactor": 1.8955,
+        "ambiguousTrades": 5,
+        "tpTrades": 40,
+        "slTrades": 29,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 17747.56,
+        "maxDrawdownUsd": 4857.95,
+        "maxDrawdownPct": 0.214901,
+        "maxDrawdownAt": "2026-08-28T12:00:00.000Z"
+      }
+    },
+    {
+      "key": "2026-W34",
+      "summary": {
+        "closedTrades": 66,
+        "wins": 39,
+        "losses": 27,
+        "winrate": 0.590909,
+        "netPnlUsd": 7827.87,
+        "avgNetPnlUsd": 118.6041,
+        "profitFactor": 1.9714,
+        "ambiguousTrades": 5,
+        "tpTrades": 39,
+        "slTrades": 27,
+        "timeExitTrades": 0,
+        "endingEquityUsd": 17827.87,
+        "maxDrawdownUsd": 4777.64,
+        "maxDrawdownPct": 0.211348,
+        "maxDrawdownAt": "2026-08-22T05:00:00.000Z"
+      }
+    },
+    {
+      "key": "outside_focus_week",
+      "summary": {
+        "closedTrades": 41,
+        "wins": 15,
+        "losses": 26,
+        "winrate": 0.365854,
+        "netPnlUsd": 1207.55,
+        "avgNetPnlUsd": 29.4524,
+        "profitFactor": 1.1956,
+        "ambiguousTrades": 1,
+        "tpTrades": 14,
+        "slTrades": 24,
+        "timeExitTrades": 3,
+        "endingEquityUsd": 11207.55,
+        "maxDrawdownUsd": 1485.46,
+        "maxDrawdownPct": 0.134497,
+        "maxDrawdownAt": "2026-09-22T04:00:00.000Z"
+      }
+    }
+  ],
+  "marketContext": {
+    "btc": {
+      "month": {
+        "candles": 56,
+        "startTimeIso": "2026-08-19T08:00:00.000Z",
+        "endTimeIso": "2026-08-28T12:00:00.000Z",
+        "startClose": 64515.63,
+        "endClose": 78331.13,
+        "returnPct": 0.214142,
+        "highPctFromStart": 0.262932,
+        "lowPctFromStart": -0.00404,
+        "avgRangePct": 0.017344,
+        "riskOnShare": 0.9464,
+        "riskOffShare": 0,
+        "transitionShare": 0.0536,
+        "startState": "BTC_RISK_ON",
+        "endState": "BTC_TRANSITION"
+      },
+      "week": {
+        "candles": 18,
+        "startTimeIso": "2026-08-19T08:00:00.000Z",
+        "endTimeIso": "2026-08-22T04:00:00.000Z",
+        "startClose": 64515.63,
+        "endClose": 77289.18,
+        "returnPct": 0.197992,
+        "highPctFromStart": 0.23226,
+        "lowPctFromStart": -0.00404,
+        "avgRangePct": 0.025105,
+        "riskOnShare": 1,
+        "riskOffShare": 0,
+        "transitionShare": 0,
+        "startState": "BTC_RISK_ON",
+        "endState": "BTC_RISK_ON"
+      }
+    },
+    "symbols": [
+      {
+        "symbol": "ADA",
+        "month": {
+          "candles": 56,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-28T12:00:00.000Z",
+          "startClose": 0.1749,
+          "endClose": 0.2045,
+          "returnPct": 0.16924,
+          "highPctFromStart": 0.477416,
+          "lowPctFromStart": -0.006861,
+          "avgRangePct": 0.039416
+        },
+        "week": {
+          "candles": 18,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-22T04:00:00.000Z",
+          "startClose": 0.1749,
+          "endClose": 0.2314,
+          "returnPct": 0.323042,
+          "highPctFromStart": 0.477416,
+          "lowPctFromStart": -0.006861,
+          "avgRangePct": 0.054564
+        }
+      },
+      {
+        "symbol": "AVAX",
+        "month": {
+          "candles": 56,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-28T12:00:00.000Z",
+          "startClose": 6.314,
+          "endClose": 7.331,
+          "returnPct": 0.161071,
+          "highPctFromStart": 0.317232,
+          "lowPctFromStart": -0.003643,
+          "avgRangePct": 0.02818
+        },
+        "week": {
+          "candles": 18,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-22T04:00:00.000Z",
+          "startClose": 6.314,
+          "endClose": 7.61,
+          "returnPct": 0.205258,
+          "highPctFromStart": 0.317232,
+          "lowPctFromStart": -0.003643,
+          "avgRangePct": 0.041368
+        }
+      },
+      {
+        "symbol": "BNB",
+        "month": {
+          "candles": 56,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-28T12:00:00.000Z",
+          "startClose": 602.8,
+          "endClose": 696.11,
+          "returnPct": 0.154794,
+          "highPctFromStart": 0.204512,
+          "lowPctFromStart": -0.001858,
+          "avgRangePct": 0.017882
+        },
+        "week": {
+          "candles": 18,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-22T04:00:00.000Z",
+          "startClose": 602.8,
+          "endClose": 706.06,
+          "returnPct": 0.171301,
+          "highPctFromStart": 0.204512,
+          "lowPctFromStart": -0.001858,
+          "avgRangePct": 0.023637
+        }
+      },
+      {
+        "symbol": "DOGE",
+        "month": {
+          "candles": 56,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-28T12:00:00.000Z",
+          "startClose": 0.07023,
+          "endClose": 0.08589,
+          "returnPct": 0.222982,
+          "highPctFromStart": 0.435284,
+          "lowPctFromStart": -0.004841,
+          "avgRangePct": 0.035086
+        },
+        "week": {
+          "candles": 18,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-22T04:00:00.000Z",
+          "startClose": 0.07023,
+          "endClose": 0.09305,
+          "returnPct": 0.324932,
+          "highPctFromStart": 0.435284,
+          "lowPctFromStart": -0.004841,
+          "avgRangePct": 0.047961
+        }
+      },
+      {
+        "symbol": "ETH",
+        "month": {
+          "candles": 56,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-28T12:00:00.000Z",
+          "startClose": 1923.06,
+          "endClose": 2471.89,
+          "returnPct": 0.285394,
+          "highPctFromStart": 0.334607,
+          "lowPctFromStart": -0.004025,
+          "avgRangePct": 0.023328
+        },
+        "week": {
+          "candles": 18,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-22T04:00:00.000Z",
+          "startClose": 1923.06,
+          "endClose": 2433.31,
+          "returnPct": 0.265332,
+          "highPctFromStart": 0.324337,
+          "lowPctFromStart": -0.004025,
+          "avgRangePct": 0.035081
+        }
+      },
+      {
+        "symbol": "LINK",
+        "month": {
+          "candles": 56,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-28T12:00:00.000Z",
+          "startClose": 9.769,
+          "endClose": 11.567,
+          "returnPct": 0.184052,
+          "highPctFromStart": 0.291842,
+          "lowPctFromStart": -0.011362,
+          "avgRangePct": 0.030905
+        },
+        "week": {
+          "candles": 18,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-22T04:00:00.000Z",
+          "startClose": 9.769,
+          "endClose": 11.748,
+          "returnPct": 0.20258,
+          "highPctFromStart": 0.291842,
+          "lowPctFromStart": -0.011362,
+          "avgRangePct": 0.043396
+        }
+      },
+      {
+        "symbol": "SOL",
+        "month": {
+          "candles": 56,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-28T12:00:00.000Z",
+          "startClose": 77.55,
+          "endClose": 105.24,
+          "returnPct": 0.35706,
+          "highPctFromStart": 0.426177,
+          "lowPctFromStart": -0.008124,
+          "avgRangePct": 0.029991
+        },
+        "week": {
+          "candles": 18,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-22T04:00:00.000Z",
+          "startClose": 77.55,
+          "endClose": 94.46,
+          "returnPct": 0.218053,
+          "highPctFromStart": 0.324823,
+          "lowPctFromStart": -0.008124,
+          "avgRangePct": 0.036361
+        }
+      },
+      {
+        "symbol": "XRP",
+        "month": {
+          "candles": 56,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-28T12:00:00.000Z",
+          "startClose": 1.0057,
+          "endClose": 1.4034,
+          "returnPct": 0.395446,
+          "highPctFromStart": 0.690265,
+          "lowPctFromStart": -0.002486,
+          "avgRangePct": 0.043661
+        },
+        "week": {
+          "candles": 18,
+          "startTimeIso": "2026-08-19T08:00:00.000Z",
+          "endTimeIso": "2026-08-22T04:00:00.000Z",
+          "startClose": 1.0057,
+          "endClose": 1.5638,
+          "returnPct": 0.554937,
+          "highPctFromStart": 0.690265,
+          "lowPctFromStart": -0.002486,
+          "avgRangePct": 0.063394
+        }
+      }
+    ]
+  },
+  "mechanismRead": [
+    "2026-W34 contributes 7827.87 USDT from 66 selected rows; outside that week the same selected survivor has 1207.55 USDT.",
+    "The focus week is broad rather than single-symbol only: 7/8 symbols are positive, but the worst loss cluster still hits many symbols together.",
+    "BTC context is supportive but not explosive: BTC stays 100.0% risk-on through the focus window with 19.8% close-to-close return.",
+    "The useful pocket looks like a short-lived broad alt risk-on expansion under BTC confirmation, not a durable standalone range-breakout rule.",
+    "The main failure mode is synchronized symbol-level loss after the expansion impulse, especially the 2026-08-22 cluster."
+  ],
+  "nextActions": [
+    "Do not promote the survivor or funding context from this cluster alone.",
+    "If continuing research, build a standalone impulse-exhaustion/post-breakout-decay postmortem around 2026-08-22 to identify no-trade or cool-down conditions.",
+    "Prefer mechanisms that explain when to stand down after a broad synchronized alt impulse, not more naive entry variants.",
+    "Keep all work research-only; no demo-sim:all, cron, watcher, sizing, TP/SL, execution, key, or account changes."
+  ],
+  "boundaries": [
+    "research_only",
+    "existing_demo_sim_replay_rows_only",
+    "existing_local_public_candle_cache",
+    "existing_cached_public_no_key_funding_only",
+    "no_new_data_fetch",
+    "no_scheduler_or_cron_changes",
+    "no_alert_watcher_sizing_tp_sl_or_execution_changes",
+    "no_strategy_promotion"
+  ]
+}

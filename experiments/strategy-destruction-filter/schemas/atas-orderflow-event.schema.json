@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openclaw.local/ralph/atas-orderflow-event.schema.json",
+  "title": "RALPH ATAS Orderflow Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "eventId",
+    "source",
+    "capturedAt",
+    "symbol",
+    "market",
+    "timeframe",
+    "pattern",
+    "direction",
+    "btcGate",
+    "level",
+    "orderflow",
+    "priceReaction",
+    "validation"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "eventId": { "type": "string", "minLength": 8 },
+    "source": {
+      "type": "object",
+      "required": ["platform", "exporter", "mode"],
+      "properties": {
+        "platform": { "const": "ATAS" },
+        "exporter": { "type": "string" },
+        "mode": { "enum": ["custom_indicator", "custom_strategy_read_only", "manual_export"] },
+        "feed": { "type": "string" }
+      }
+    },
+    "capturedAt": { "type": "string", "format": "date-time" },
+    "symbol": { "type": "string" },
+    "market": { "type": "string" },
+    "timeframe": { "type": "string" },
+    "pattern": {
+      "type": "object",
+      "required": ["family", "label"],
+      "properties": {
+        "family": { "enum": ["absorption_cluster_search", "footprint_imbalance", "delta_divergence", "volume_profile_reaction"] },
+        "label": { "type": "string" },
+        "levelSource": { "type": "string" }
+      }
+    },
+    "direction": { "enum": ["long", "short", "watch_only"] },
+    "btcGate": {
+      "type": "object",
+      "required": ["regime", "reason"],
+      "properties": {
+        "regime": { "enum": ["BTC_RISK_ON", "BTC_RISK_OFF", "BTC_TRANSITION", "BTC_STALE"] },
+        "price": { "type": "number" },
+        "reason": { "type": "string" }
+      }
+    },
+    "level": {
+      "type": "object",
+      "required": ["price", "side"],
+      "properties": {
+        "price": { "type": "number" },
+        "side": { "enum": ["support", "resistance", "previous_day_high", "previous_day_low", "value_area", "poc", "custom"] },
+        "distanceBps": { "type": "number" }
+      }
+    },
+    "orderflow": {
+      "type": "object",
+      "required": ["aggressiveBuyVolume", "aggressiveSellVolume", "delta", "clusterVolume", "absorptionScore"],
+      "properties": {
+        "aggressiveBuyVolume": { "type": "number" },
+        "aggressiveSellVolume": { "type": "number" },
+        "delta": { "type": "number" },
+        "clusterVolume": { "type": "number" },
+        "imbalanceRatio": { "type": "number" },
+        "cvdSlope": { "type": "number" },
+        "volumeVelocity": { "type": "number" },
+        "deltaVelocity": { "type": "number" },
+        "bidSideVelocity": { "type": "number" },
+        "askSideVelocity": { "type": "number" },
+        "volumePerPriceProgress": { "type": "number" },
+        "absorptionScore": { "type": "number" },
+        "exhaustionScore": { "type": "number" },
+        "breakoutQualityScore": { "type": "number" },
+        "mboAvailable": { "type": "boolean" }
+      }
+    },
+    "priceReaction": {
+      "type": "object",
+      "required": ["entryProxy", "maxFavorableBps", "maxAdverseBps", "reactionLabel"],
+      "properties": {
+        "entryProxy": { "type": "number" },
+        "maxFavorableBps": { "type": "number" },
+        "maxAdverseBps": { "type": "number" },
+        "reactionLabel": { "enum": ["accepted_continuation", "failed_continuation", "sweep_rejection", "mixed", "unknown"] }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "required": ["frozen", "noLiveChange", "baselineRequired", "sampleGate"],
+      "properties": {
+        "frozen": { "type": "boolean" },
+        "noLiveChange": { "const": true },
+        "baselineRequired": { "const": true },
+        "sampleGate": { "type": "number", "minimum": 20 }
+      }
+    }
+  }
+}

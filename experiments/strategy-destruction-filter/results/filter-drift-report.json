@@ -1,0 +1,128 @@
+{
+  "generatedAt": "2026-09-28T14:55:48.632Z",
+  "status": "research-only-drift-report",
+  "baseline": {
+    "id": "2026-09-13-survivor-shape-report",
+    "source": "wiki/notes/2026-09-13-strategy-filter-survivor-shape-reporting.md",
+    "generatedAt": "2026-09-13T06:33:46.939Z",
+    "path": "baselines/2026-09-13-survivor-shape-report.json"
+  },
+  "current": {
+    "generatedAt": "2026-09-28T14:55:22.006Z",
+    "path": "results/filter-report.json"
+  },
+  "totals": {
+    "previous": {
+      "candidates": 13,
+      "variants": 131,
+      "survivors": 2,
+      "survivorShapes": 1,
+      "rejected": 129
+    },
+    "current": {
+      "candidates": 13,
+      "variants": 131,
+      "survivors": 0,
+      "survivorShapes": 0,
+      "rejected": 131
+    },
+    "delta": {
+      "candidates": 0,
+      "variants": 0,
+      "survivors": -2,
+      "survivorShapes": -1,
+      "rejected": 2
+    }
+  },
+  "gateGroupComparison": {
+    "available": false,
+    "reason": "baseline lacks compatible gateGroupDiagnostics"
+  },
+  "shapes": {
+    "added": [],
+    "removed": [
+      {
+        "shapeId": "alert-edge-avax-range-breakdown-short-v0|shape-1",
+        "candidateId": "alert-edge-avax-range-breakdown-short-v0",
+        "representativeVariantId": "alert-edge-avax-range-breakdown-short-v0#1",
+        "previousStatus": "survived_research_gate",
+        "currentStatus": "rejected",
+        "change": "survived_research_gate->rejected",
+        "previousMetrics": {
+          "sample": 217,
+          "expectancyR": 0.1815,
+          "profitFactor": 1.3052,
+          "deflatedSharpe": 1.5665,
+          "outOfSampleExpectancyR": 0.0761,
+          "outOfSampleBaselineLiftR": 0.2457,
+          "positiveOutOfSampleFolds": 1,
+          "foldCount": 5
+        },
+        "currentMetrics": {
+          "sample": 217,
+          "expectancyR": 0.1815,
+          "profitFactor": 1.3052,
+          "deflatedSharpe": 1.5665,
+          "outOfSampleSample": 78,
+          "outOfSampleExpectancyR": 0.0761,
+          "baselineExpectancyLiftR": 0.196,
+          "outOfSampleBaselineLiftR": 0.0875,
+          "positiveFolds": 4,
+          "foldCount": 5,
+          "positiveBaselineLiftFolds": 4,
+          "positiveOutOfSampleFolds": 1,
+          "minFoldExpectancyR": -0.0043
+        },
+        "currentFailures": [
+          "weak_walk_forward_out_of_sample"
+        ]
+      }
+    ],
+    "changed": [
+      {
+        "shapeId": "alert-edge-avax-range-breakdown-short-v0|shape-1",
+        "candidateId": "alert-edge-avax-range-breakdown-short-v0",
+        "representativeVariantId": "alert-edge-avax-range-breakdown-short-v0#1",
+        "previousStatus": "survived_research_gate",
+        "currentStatus": "rejected",
+        "change": "survived_research_gate->rejected",
+        "previousMetrics": {
+          "sample": 217,
+          "expectancyR": 0.1815,
+          "profitFactor": 1.3052,
+          "deflatedSharpe": 1.5665,
+          "outOfSampleExpectancyR": 0.0761,
+          "outOfSampleBaselineLiftR": 0.2457,
+          "positiveOutOfSampleFolds": 1,
+          "foldCount": 5
+        },
+        "currentMetrics": {
+          "sample": 217,
+          "expectancyR": 0.1815,
+          "profitFactor": 1.3052,
+          "deflatedSharpe": 1.5665,
+          "outOfSampleSample": 78,
+          "outOfSampleExpectancyR": 0.0761,
+          "baselineExpectancyLiftR": 0.196,
+          "outOfSampleBaselineLiftR": 0.0875,
+          "positiveFolds": 4,
+          "foldCount": 5,
+          "positiveBaselineLiftFolds": 4,
+          "positiveOutOfSampleFolds": 1,
+          "minFoldExpectancyR": -0.0043
+        },
+        "currentFailures": [
+          "weak_walk_forward_out_of_sample"
+        ]
+      }
+    ],
+    "unchanged": []
+  },
+  "decision": {
+    "noThresholdChange": true,
+    "promotionChanged": false,
+    "verdict": "zero_survivor_shapes_no_promotion",
+    "nextAction": "Keep strict gates; use drift report to audit survivor/watch downgrades before considering any threshold change."
+  },
+  "boundary": "Generated local drift outputs only; no live trading, orders, exchange mutation, keys, paid APIs, alert wording, thresholds, sizing, TP/SL, execution behavior, scheduler cadence, or strategy promotion changed."
+}

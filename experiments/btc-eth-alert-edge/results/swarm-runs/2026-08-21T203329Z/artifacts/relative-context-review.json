@@ -1,0 +1,158 @@
+{
+  "job_id": "relative_context_review",
+  "agent_id": "relative_matrix_reviewer",
+  "generated": "2026-08-21T20:33:29.287Z",
+  "run_id": "2026-08-21T203329Z",
+  "status": "research-only-no-live-execution",
+  "source_files_used": [
+    "results/agent-swarm-feature-table.json",
+    "results/agent-scoreboard-slices.json"
+  ],
+  "forbidden_actions": [
+    "place_live_orders",
+    "modify_live_alert_runtime",
+    "modify_alert_wording",
+    "modify_alert_thresholds",
+    "modify_risk_or_sizing",
+    "read_exchange_account_or_wallet_credentials",
+    "use_exchange_account_or_wallet_access",
+    "use_paid_apis",
+    "claim_live_promotion",
+    "change_alert_filters",
+    "promote_relative_matrix_to_live_gate"
+  ],
+  "sample_counts": {
+    "rows": 64,
+    "relative_alignment_counts": {
+      "confirmed": 22,
+      "mixed": 26,
+      "contradicted": 16
+    },
+    "beta_bucket_counts": {
+      "idiosyncratic-weakness": 27,
+      "market-beta": 7,
+      "cross-pair-divergence": 12,
+      "idiosyncratic-strength": 18
+    }
+  },
+  "alignment_counts": {
+    "by_alignment": [
+      {
+        "alignment": "confirmed",
+        "count": 22,
+        "labels": {
+          "total": 22,
+          "counts": {
+            "noisy": 3,
+            "fade": 9,
+            "follow": 10
+          },
+          "follow_rate": 0.4545,
+          "fade_rate": 0.4091,
+          "noisy_rate": 0.1364
+        }
+      },
+      {
+        "alignment": "mixed",
+        "count": 26,
+        "labels": {
+          "total": 26,
+          "counts": {
+            "follow": 11,
+            "noisy": 3,
+            "fade": 12
+          },
+          "follow_rate": 0.4231,
+          "fade_rate": 0.4615,
+          "noisy_rate": 0.1154
+        }
+      },
+      {
+        "alignment": "contradicted",
+        "count": 16,
+        "labels": {
+          "total": 16,
+          "counts": {
+            "noisy": 5,
+            "fade": 5,
+            "follow": 6
+          },
+          "follow_rate": 0.375,
+          "fade_rate": 0.3125,
+          "noisy_rate": 0.3125
+        }
+      }
+    ],
+    "by_beta_bucket": [
+      {
+        "bucket": "idiosyncratic-weakness",
+        "count": 27,
+        "labels": {
+          "total": 27,
+          "counts": {
+            "noisy": 7,
+            "follow": 8,
+            "fade": 12
+          },
+          "follow_rate": 0.2963,
+          "fade_rate": 0.4444,
+          "noisy_rate": 0.2593
+        }
+      },
+      {
+        "bucket": "market-beta",
+        "count": 7,
+        "labels": {
+          "total": 7,
+          "counts": {
+            "fade": 3,
+            "follow": 4
+          },
+          "follow_rate": 0.5714,
+          "fade_rate": 0.4286,
+          "noisy_rate": 0
+        }
+      },
+      {
+        "bucket": "cross-pair-divergence",
+        "count": 12,
+        "labels": {
+          "total": 12,
+          "counts": {
+            "follow": 7,
+            "noisy": 2,
+            "fade": 3
+          },
+          "follow_rate": 0.5833,
+          "fade_rate": 0.25,
+          "noisy_rate": 0.1667
+        }
+      },
+      {
+        "bucket": "idiosyncratic-strength",
+        "count": 18,
+        "labels": {
+          "total": 18,
+          "counts": {
+            "fade": 8,
+            "follow": 8,
+            "noisy": 2
+          },
+          "follow_rate": 0.4444,
+          "fade_rate": 0.4444,
+          "noisy_rate": 0.1111
+        }
+      }
+    ]
+  },
+  "top_findings": [
+    "Relative alignment is mixed/contradictory across 64 rows, not a clean gate.",
+    "Confirmed relative context appears in 22 rows.",
+    "Current relative reads are useful for hypotheses and slice routing, not promotion."
+  ],
+  "blocked": [
+    "No relative-context slice has enough clean, forward-confirmed evidence.",
+    "Relative matrix is scored against the same small finalized alert set."
+  ],
+  "promotable": false
+}

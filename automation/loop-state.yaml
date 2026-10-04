@@ -1,0 +1,2444 @@
+last_updated: '2026-10-04T08:52:00Z'
+autonomy_level: A2
+approved_recurring_automation: true
+approval:
+  approved_by: Tomas
+  approved_at: '2026-08-10T22:02:00Z'
+  scope: RALPH recurring autoresearch plus 2026-09-12 research/paper autonomy upgrade
+active_loop: ralph-autoresearch-loop
+active_cron:
+  id: 195477c4-ebd4-43e1-96f7-33d1f4cfd10d
+  name: ralph-autoresearch-loop
+  cadence: '30 9 * * *'
+  timezone: Europe/Prague
+  session_target: isolated
+  delivery: none
+  notify_tomas_only_when_needed: true
+  last_status: success
+  last_run_at: '2026-10-04T07:30:00Z'
+  next_run_at: '2026-10-05T07:30:00Z'
+  consecutive_errors: 0
+  last_error_reason: none
+  last_diagnostic_summary: >-
+    2026-10-04 autoresearch chose a bounded DEMO-SIM priority reassessment
+    instead of restarting completed priority items. Verified the 2026-10-04
+    04:04 UTC DEMO-SIM bundle: paper-fund ledger remains
+    capital_impaired_review_required with 490 closed trades, ending equity
+    2954.58 USDT from 10000.00 USDT, -7045.42 USDT net after 5390.00 USDT
+    fees, 35.71% winrate, PF 0.8902, and 88.32% max drawdown. Walk-forward
+    grid and BTC_RISK_ON gate still leave only a watch/candidate survivor,
+    while all short families remain quarantined. Evidence prioritizer remains
+    readyNow=0; next action is still wait for threshold evidence, named
+    trigger, or explicit HITL-gated branch. npm run verify passed. No Telegram
+    notification gate fired.
+  last_delivered: false
+  live_verified_at: '2026-09-13T06:26:10Z'
+  health_route: cron warn cleared by successful 2026-09-03 autoresearch run
+  prompt_updated_at: '2026-09-24T17:49:00Z'
+  prompt_retargeted_at: '2026-09-24T17:49:00Z'
+  current_priority:
+    - wait-for-threshold-evidence-or-named-trigger
+    - strategy-spam-recurring-lane-eligible-weekly-when-no-ready-now-branch
+strategy_spam_lane:
+  status: active_research_mode_inside_existing_autoresearch
+  standalone_cron: false
+  cadence_policy: weekly_or_when_no_ready_now_branch_and_tomas_asks
+  recurring_command: npm run study:strategy-spam-funnel:recurring --prefix ralph-research-os/experiments/strategy-destruction-filter
+  stress_command: npm run study:strategy-spam-survivor-stress --prefix ralph-research-os/experiments/strategy-destruction-filter
+  recurring_profile:
+    max_variants: 300
+    candidate_ids:
+      - spam-btc-volume-breakout-v0
+      - spam-btc-rsi-fade-v0
+      - spam-btc-ma-reclaim-v0
+      - spam-alt-btc-gated-ma-reclaim-v0
+  last_manual_full_run_at: '2026-10-04T08:38:00Z'
+  last_survivor_stress_at: '2026-10-04T08:40:00Z'
+  next_eligible_autoresearch_at: '2026-10-11T08:52:00Z'
+  last_verdict: watch_only_survivor_stress_failed
+  boundary: no_candidate_import_no_strategy_promotion_no_scheduler_change
+alert_edge_backtest_cron:
+  id: 370e239c-33bf-4253-a4f9-88b81706c52e
+  name: liquid-crypto-alert-edge-backtest
+  cadence: '0 */4 * * *'
+  timezone: UTC
+  session_target: isolated
+  delivery: none
+  notify_tomas_only_when_needed: true
+  prompt_updated_at: '2026-09-28T10:08:00Z'
+  demo_sim_replay_added_at: '2026-09-24T17:15:00Z'
+  demo_sim_all_payload_added_at: '2026-09-28T10:08:00Z'
+  last_status: success
+  last_run_at: '2026-10-03T16:03:09Z'
+  next_run_at: '2026-10-03T20:03:09Z'
+  consecutive_errors: 0
+  last_error_reason: resolved_previous_rate_limit
+  last_diagnostic_summary: '2026-10-03T16:03Z cron executed the full demo-sim:all bundle, refreshed requested artifacts around 16:03 UTC, and finished ok with state-of-edge no_trade_watch_low_sample; no Telegram notification gate.'
+  output:
+    - experiments/btc-eth-alert-edge/results/historical-demo-sim-replay.json
+    - experiments/btc-eth-alert-edge/results/historical-demo-sim-replay.md
+    - experiments/btc-eth-alert-edge/results/demo-sim-paper-fund-ledger.md
+    - experiments/btc-eth-alert-edge/results/demo-sim-range-breakout-btc-risk-on-gate.md
+    - experiments/btc-eth-alert-edge/results/demo-sim-walk-forward-filter-grid.md
+    - experiments/btc-eth-alert-edge/results/demo-sim-short-strategy-quarantine.md
+maintenance_cron:
+  id: b1c41fe3-f072-433c-8773-548d485f054c
+  name: ralph-weekly-maintenance
+  cadence: '0 18 * * 0'
+  timezone: Europe/Prague
+  session_target: isolated
+  delivery: none
+  notify_tomas_only_when_needed: true
+  created_at: '2026-08-30T19:22:46Z'
+  next_run_at: '2026-09-13T16:00:00Z'
+  last_status: success
+  consecutive_errors: 0
+  live_verified_at: '2026-09-13T05:59:30Z'
+state_of_edge_cron:
+  id: a157eb8e-ad2e-45bb-b1b7-812331965dee
+  name: ralph-state-of-edge-daily
+  cadence: '15 19 * * *'
+  timezone: Europe/Prague
+  session_target: isolated
+  delivery: none
+  notify_tomas_only_when_needed: true
+  created_at: '2026-09-12T16:05:00Z'
+  next_run_at: '2026-10-04T17:15:00Z'
+  last_status: success
+  last_run_at: '2026-10-03T17:15:00Z'
+  last_scheduled_status: ok
+  last_scheduled_run_at: '2026-10-03T17:15:00Z'
+  last_scheduled_error_reason: resolved_previous_rate_limit
+  last_error_reason: resolved_previous_rate_limit
+  consecutive_errors: 0
+  last_diagnostic_summary: >-
+    Scheduled 2026-10-03T17:15Z state-of-edge run recovered after the Codex
+    subscription usage-limit window, finished ok in live cron history, and
+    produced NO_TELEGRAM_UPDATE. Consecutive errors reset to 0; delivery was
+    not requested because no notification gate fired.
+  live_verified_at: '2026-09-13T05:59:30Z'
+  output:
+    - outputs/state-of-edge-report.json
+    - outputs/state-of-edge-report.md
+adversarial_improvement_cron:
+  id: fa47f4d7-f195-4236-ad27-3e72e340158e
+  name: ralph-adversarial-improvement-loop
+  cadence: '30 19 * * *'
+  timezone: Europe/Prague
+  session_target: isolated
+  delivery: none
+  notify_tomas_only_when_needed: true
+  created_at: '2026-09-19T21:00:00Z'
+  next_run_at: '2026-10-04T17:30:00Z'
+  last_status: success
+  last_run_at: '2026-10-03T17:30:00Z'
+  last_scheduled_status: ok
+  last_scheduled_run_at: '2026-10-03T17:30:00Z'
+  last_scheduled_error_reason: resolved_previous_rate_limit
+  consecutive_errors: 0
+  last_diagnostic_summary: >-
+    Scheduled 2026-10-03T17:30Z adversarial improvement run recovered after
+    the Codex subscription usage-limit window, finished ok in live cron
+    history, and produced NO_TELEGRAM_UPDATE. Consecutive errors reset to 0;
+    delivery was not requested because no high/critical notification gate
+    fired.
+  output:
+    - outputs/ralph-adversarial-improvement-report.json
+    - outputs/ralph-adversarial-improvement-report.md
+    - outputs/watch-row-aging-ledger.json
+    - outputs/watch-row-aging-ledger.md
+    - experiments/strategy-destruction-filter/results/walk-forward-near-miss-sidecar.json
+    - experiments/strategy-destruction-filter/results/walk-forward-near-miss-sidecar.md
+running_jobs: []
+access_findings:
+  research_lane_tool_pricing_map:
+    updated_at: '2026-09-29T06:50:00Z'
+    status: active_navigation_layer_no_paid_action
+    note: research-lanes/README.md
+    summary: >-
+      Created research-lanes/orderflow, research-lanes/metrics,
+      research-lanes/vendor-access-pricing, and research-lanes/copytrading to
+      keep tool/data/pricing/copytrading decisions separate from strategy
+      experiments. Pricing watchlist now tracks observed 2026-09-29 costs and
+      access status for Tardis, ATAS, CoinGlass, Nansen, Arkham, Dune, Copin,
+      GMGN, Coinalyze, Velo, Laevitas, Hyblock, TensorCharts, and vendor data
+      rails. 2026-09-29 derivatives metrics scan ranks Coinalyze as free-key,
+      Velo/CoinGlass as monthly paid API candidates, Laevitas as x402/PAYG
+      watch, and Hyblock as an expensive benchmark/trial only. Current
+      interpretation: ATAS plus Tardis is a labeling/falsification workflow,
+      not an automatic edge; copytrading folder is for paper-only wallet/cohort
+      research and tool prior art, not live copying. No paid signup, API key,
+      wallet connection, live copy, scheduler change, watcher/paper/demo logic
+      change, risk/sizing/TP/SL, or strategy promotion is authorized by this map.
+  historical_orderflow_data_rails:
+    updated_at: '2026-09-29T14:10:00Z'
+    status: active_public_binance_usdm_trades_bookdepth_broader_batch_proven
+    note: wiki/notes/2026-09-28-historical-orderflow-data-rails.md
+    summary: >-
+      ATAS manual CSV exports remain parser/manual-review evidence, not a
+      historical backtest rail. Binance USD-M futures public daily archives are
+      now the best active no-key historical orderflow rail because trades,
+      aggTrades, and coarse percentage-band bookDepth archives are reachable,
+      parse locally, and now join to frozen DEMO-SIM rows via the
+      research-only usdm-orderflow-demo-sim batch. 2026-09-29 broader batch
+      analyzed 30 frozen DEMO-SIM rows with trades and bookDepth for all 30;
+      verdict is usdm_archive_features_broader_sample_ready_no_promotion.
+      Absorption-proxy rows were descriptively positive in this clustered
+      sample, while liquidity-thinning rows were negative; this is not a
+      promotion and should next be tested against a less clustered manifest and
+      same setup/regime baselines. Spot archives remain useful
+      for trades/aggTrades only. Tardis.dev no-key first-day-of-month samples
+      work as a true trade+depth replay benchmark, but full coverage needs a
+      paid key/subscription. Bybit recent public trades and Hyperliquid recent
+      trades/L2 work no-key for recent/current checks. Hyperliquid historical
+      S3 remains requester-pays/needs-tooling because this workspace currently
+      lacks aws and lz4 tooling.
+blockers:
+  strategy_filter_semantic_field_implementation_scope:
+    count: 3
+    last_seen: '2026-08-28T05:38:37Z'
+    status: resolved_in_main_session
+    next_action: resume other bounded research items; semantic ledger guard is now active
+  strategy_filter_atas_verifier_status_drift:
+    count: 1
+    last_seen: '2026-09-24T07:30:00Z'
+    status: resolved
+    next_action: resume purged/embargo split classifier implementation from the 2026-09-22 preflight map
+last_runs:
+  - at: '2026-10-03T07:35:41Z'
+    loop: ralph-autoresearch-loop
+    item: validation.demo-sim-paper-fund-drawdown-and-risk-report
+    output: experiments/btc-eth-alert-edge/src/demo-sim-paper-fund-ledger.mjs, experiments/btc-eth-alert-edge/results/demo-sim-paper-fund-ledger.json, experiments/btc-eth-alert-edge/results/demo-sim-paper-fund-ledger.md, automation/loop-state.yaml, log.md
+    notification: material_state_change_candidate
+    verdict: >-
+      Extended the existing DEMO-SIM paper-fund ledger with an explicit
+      drawdown/risk report. Current full-surface paper-fund state is
+      paper_fund_capital_impaired_stop_and_rebuild_required: 485 closed trades
+      from 500 source records, 2531.62 USDT ending equity from 10000.00 USDT
+      starting capital, -7468.38 USDT net after 5335.00 USDT fees, 35.05%
+      winrate, PF 0.8832, 90.36% max drawdown, 25.32% capital remaining,
+      fees equal to 53.35% of starting capital and 71.43% of the net loss,
+      worst loss streak 20 trades / -2441.74 USDT, worst 25-trade window
+      -4991.90 USDT, and worst 50-trade window -7358.29 USDT. All 25/50/75/90%
+      drawdown tripwires are breached. The result blocks any full-surface
+      paper-capital readiness claim; only separately filtered long pockets may
+      continue through walk-forward/drawdown containment research. No live/demo
+      sizing, watcher/paper alert logic, scheduler, threshold, TP/SL, execution,
+      account/key/API, paid source, or strategy promotion changed.
+  - at: '2026-09-29T14:10:00Z'
+    loop: manual-main-session
+    item: validation.usdm-orderflow-demo-sim-broader-batch
+    output: experiments/strategy-destruction-filter/src/run-usdm-orderflow-demo-sim-batch.mjs, experiments/strategy-destruction-filter/src/verify-filter.mjs, experiments/strategy-destruction-filter/results/usdm-orderflow-demo-sim-batch.*, wiki/notes/2026-09-28-historical-orderflow-data-rails.md, research-lanes/orderflow/README.md, automation/loop-state.yaml, log.md, memory/2026-09-29.md
+    notification: none
+    verdict: >-
+      Expanded the research-only Binance USD-M archive batch from a 3-window
+      plumbing sample to a 30-window frozen DEMO-SIM manifest. All 30 windows
+      joined to public/no-key USD-M futures trades plus bookDepth; verdict is
+      usdm_archive_features_broader_sample_ready_no_promotion. Absorption-proxy
+      rows were descriptively stronger in this clustered sample (22 rows,
+      54.55% win rate, mean R 0.4023) than unflagged rows (8 rows, 0% win
+      rate, mean R -1.1122), while liquidity-thinning rows were negative (7
+      rows, 0% win rate, mean R -1.0718). The broader run exposed and fixed a
+      spread-push stack limit in the runner. Verification passed with node
+      --check, the broader study run, and npm run verify. No scheduler config,
+      live execution, watcher/paper/demo alert logic, thresholds, sizing,
+      TP/SL, paid/API key access, or promotion changed.
+  - at: '2026-09-29T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.demo-sim-paper-fund-ledger-implementation
+    output: experiments/btc-eth-alert-edge/results/demo-sim-paper-fund-ledger.*, automation/loop-state.yaml, log.md
+    notification: none
+    verdict: >-
+      Verified the existing DEMO-SIM paper-fund ledger implementation instead
+      of rebuilding it. `node --check src/demo-sim-paper-fund-ledger.mjs` and
+      `npm run demo-sim:ledger` both passed. The refreshed ledger is still
+      capital_impaired_review_required: 490 closed trades from 500 source
+      records, 6651.64 USDT ending equity from 10000.00 starting capital,
+      -3348.36 USDT net after 5390.00 USDT fees, 36.12% winrate, PF 0.9460,
+      and 84.86% max drawdown. Implementation priority is now cleared from
+      current_priority; next bounded priority is
+      demo-sim-paper-fund-drawdown-and-risk-report. No live/demo sizing,
+      watcher/paper alert logic, scheduler, threshold, TP/SL, execution,
+      account/key/API, paid source, or strategy promotion changed.
+  - at: '2026-09-29T06:50:00Z'
+    loop: manual-main-session
+    item: source-scan.derivatives-metrics-vendor-access
+    output: research-lanes/metrics/metric-tool-map.md, research-lanes/vendor-access-pricing/pricing-watchlist.md, wiki/notes/2026-09-29-derivatives-metrics-vendor-access-scan.md, wiki/research-map.md, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md, memory/2026-09-29.md
+    notification: none
+    verdict: >-
+      Extended the RALPH metrics/vendor-access lane with source-backed
+      derivatives metric candidates. Coinalyze is the best cheap/free-key
+      candidate for consolidated OI/funding/liquidation/long-short rows but
+      still needs account/API-key approval. Velo is a $199/month paid API
+      candidate with 3-month monthly history/full annual history. Laevitas is a
+      PAYG/x402 derivatives/options watch source with no-key payment flow but
+      paid USDC usage. Hyblock is high-fit for liquidation/positioning maps but
+      expensive at $4,788/year Professional launch pricing. TensorCharts is
+      manual orderflow visual prior art only until current pricing/export access
+      is verified. No paid signup, API key/account setup, wallet connection,
+      live copytrading, scheduler config, watcher/paper/demo alert logic,
+      thresholds, sizing, TP/SL, execution, or promotion changed.
+  - at: '2026-09-28T22:20:00Z'
+    loop: manual-main-session
+    item: organization.research-lanes-tool-pricing-copytrading-map
+    output: research-lanes/README.md, research-lanes/orderflow/*, research-lanes/metrics/*, research-lanes/vendor-access-pricing/*, research-lanes/copytrading/*, wiki/research-map.md, automation/retrieval-router.yaml, automation/loop-state.yaml, outputs/research-validation-checklist.*, log.md
+    notification: none
+    verdict: >-
+      Created explicit RALPH research lane folders for orderflow, metrics,
+      vendor access/pricing, and copytrading after Tomas requested durable
+      organization and pricing logs. Added current pricing/access watchlist
+      from official/vendor pages and documented the ATAS+Tardis workflow:
+      Tardis is deterministic historical replay, ATAS is human visual labeling.
+      Added copytrading stance: research and paper-only gates only, no live
+      copying. Updated research-map and retrieval-router so future workers use
+      these folders before broad scans or buy/build proposals. Verification
+      passed with YAML parses and research-validation-checklist expected warn;
+      bridge wiki lint had 0 errors and pre-existing bridge warnings unrelated
+      to the new lane folders. No paid signup, API key/account setup, wallet
+      connection, live copytrading, scheduler config, watcher/paper/demo alert
+      logic, thresholds, sizing, TP/SL, execution, or promotion changed.
+  - at: '2026-09-28T22:05:07Z'
+    loop: manual-main-session
+    item: validation.usdm-orderflow-demo-sim-batch
+    output: experiments/btc-eth-alert-edge/src/binance-usdm-archive.mjs, experiments/strategy-destruction-filter/src/run-usdm-orderflow-demo-sim-batch.mjs, experiments/strategy-destruction-filter/results/usdm-orderflow-demo-sim-batch.*, wiki/notes/2026-09-28-historical-orderflow-data-rails.md, automation/loop-state.yaml, log.md
+    notification: none
+    verdict: >-
+      Implemented the research-only Binance USD-M archive batch recommended by
+      the orderflow data-rail dig. The adapter fetches public/no-key USD-M
+      trades and bookDepth archives; the runner joins bounded windows to frozen
+      closed DEMO-SIM rows and parses only requested windows to avoid retaining
+      full daily archives in memory. Default batch analyzed 3 frozen rows, all
+      with trades and bookDepth; verdict is
+      usdm_archive_features_sample_ready_no_promotion, with 2 absorption-proxy
+      rows and 1 liquidity-thinning proxy row as plumbing smoke only. Verification
+      passed via node --check, study:usdm-orderflow-demo-sim, and npm run verify.
+      No scheduler config, live execution, watcher/paper/demo alert logic,
+      thresholds, sizing, TP/SL, paid/API key access, or promotion changed.
+  - at: '2026-09-28T21:20:34Z'
+    loop: manual-main-session
+    item: evidence-prioritizer-validation-triage
+    output: outputs/evidence-ledger-prioritizer.*, outputs/research-validation-checklist.*, outputs/watch-row-aging-ledger.*, automation/loop-state.yaml, log.md
+    notification: none
+    verdict: >-
+      Refreshed the evidence prioritizer, research-validation checklist, and
+      watch-row aging ledger after the verified 20:03 UTC alert-edge run.
+      Prioritizer reports 0 pending, 0 ready-now, 1 threshold-watch, and 3
+      watch gates; current top ready route is none. Checklist remains warn only
+      because paper/demo is not ready. Watch-row aging ledger now has 2 active
+      low-sample rows, 0 decaying, 0 sample-gate reached, and the prior AVAX
+      4h short row is not_seen_current. Decision: stand down until a threshold
+      gate, named trigger, explicit HITL approval, or next scheduled loop
+      creates new evidence. No scheduler config, live execution, watcher/paper
+      alert logic, thresholds, sizing, TP/SL, or promotion changed.
+  - at: '2026-09-28T18:38:48Z'
+    loop: manual-main-session
+    item: scheduled-state-and-adversarial-rate-limit-recovery
+    output: outputs/state-of-edge-report.*, outputs/watch-row-aging-ledger.*, outputs/ralph-adversarial-improvement-report.*, automation/loop-state.yaml, log.md
+    notification: none
+    verdict: >-
+      Recovered the scheduled 17:15 UTC state-of-edge and 17:30 UTC
+      adversarial runs after both failed during the Codex subscription
+      rate-limit window. Manual state-of-edge rerun remains
+      no_trade_watch_low_sample. Watch-row aging ledger refreshed against the
+      new state report and remains watch_rows_active_low_sample_no_promotion
+      with 3 active rows, 0 decaying, 0 sample-gate reached, oldest active age
+      0.10 days. Manual adversarial rerun reports no_action_needed with 0
+      critical, 0 high, 0 proposals, notifyTomas=false. No scheduler config,
+      live execution, watcher/paper alert logic, threshold, sizing, or
+      promotion changed.
+  - at: '2026-09-28T16:13:04Z'
+    loop: manual-main-session
+    item: validation.watch-row-aging-ledger
+    output: automation/watch-row-aging-ledger.mjs, outputs/watch-row-aging-ledger.*, outputs/ralph-adversarial-improvement-report.*, automation/ralph-adversarial-improvement-loop.mjs, automation/loop-state.yaml, log.md
+    notification: none
+    verdict: >-
+      Added a research/paper-only watch-row aging ledger from
+      state-of-edge-report.json and paper/signals.json. Current verdict is
+      watch_rows_active_low_sample_no_promotion: 3 active low-sample watch rows,
+      0 decaying before sample gate, 0 sample-gate reached, min active sample
+      gap 15. Rows are ADA 4h momentum_reversal_long, LINK 4h
+      trend_pullback_reclaim_long, and AVAX 4h trend_pullback_reject_short.
+      The adversarial loop now recognizes both fresh sidecars and reports
+      no_action_needed with 0 critical, 0 high, 0 proposals, notifyTomas=false.
+      No thresholds, scheduler, watcher/paper alert logic, live execution, or
+      strategy promotion changed.
+  - at: '2026-09-28T16:03:09Z'
+    loop: liquid-crypto-alert-edge-backtest
+    item: repaired-demo-sim-all-cron-verification
+    output: crypto-updates/monitor-index.yaml, crypto-updates/runtime/trade-research-journal.json, experiments/btc-eth-alert-edge/results/universe-snapshot.json, experiments/btc-eth-alert-edge/results/edge-snapshot.json, experiments/btc-eth-alert-edge/paper/signals.json, experiments/btc-eth-alert-edge/results/historical-demo-sim-replay.*, experiments/btc-eth-alert-edge/results/demo-sim-paper-fund-ledger.*, experiments/strategy-destruction-filter/results/shadow-pnl-ledger.*, outputs/state-of-edge-report.*
+    notification: none
+    verdict: >-
+      Verified the first repaired scheduled alert-edge run after the payload
+      changed to demo-sim:all. The isolated cron finished ok at
+      2026-09-28T16:05:10Z and refreshed the requested artifacts around
+      16:03-16:04 UTC. State-of-edge remains no_trade_watch_low_sample: paper
+      overall is 488 closed, -0.0895R average, 33.61% winrate; qualified A/B/C
+      remains 43 closed, -0.1081R average, 34.88% winrate; shadow PnL remains
+      shadow_negative_or_unproven at 72 filled and -1440 USD gross; DEMO-SIM
+      paper fund remains capital_impaired_review_required with ending equity
+      7021.60 USDT, PF 0.9511, and 85.32% max drawdown. Range-breakout
+      BTC-risk-on remains research/watch-only, shorts remain quarantined, and
+      no live/paper alert logic, scheduler, threshold, sizing, execution, or
+      promotion change was made.
+  - at: '2026-09-28T15:14:32Z'
+    loop: manual-main-session
+    item: validation.walk-forward-near-miss-sidecar
+    output: experiments/strategy-destruction-filter/src/run-walk-forward-near-miss-sidecar.mjs, experiments/strategy-destruction-filter/package.json, experiments/strategy-destruction-filter/results/walk-forward-near-miss-sidecar.*, outputs/ralph-adversarial-improvement-report.*, automation/ralph-adversarial-improvement-loop.mjs, automation/loop-state.yaml, log.md
+    notification: none
+    verdict: >-
+      Added a research-only walk-forward near-miss sidecar for the 6 AVAX 1h
+      range-breakdown short variants that fail only the late diagnostic
+      walk-forward OOS fold. The sidecar verdict is
+      near_misses_visible_no_threshold_change: best OOS expectancy among these
+      rows is 0.0761R, but each has only 1/2 required diagnostic OOS folds and
+      fold 5 is weak, with worst fold expectancy down to -0.1912R. The
+      adversarial loop now recognizes a fresh matching sidecar and no longer
+      proposes that repair; latest adversarial report remains
+      proposals_ready_internal with 0 critical, 0 high, notifyTomas=false, and
+      the remaining actionable proposal is watch-row-aging-ledger. No
+      thresholds, scheduler, watcher/paper alert logic, live execution, or
+      strategy promotion changed.
+  - at: '2026-09-28T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.demo-sim-range-breakout-baseline-lift-check
+    output: experiments/btc-eth-alert-edge/results/historical-demo-sim-replay.*, experiments/btc-eth-alert-edge/results/demo-sim-paper-fund-ledger.*, experiments/btc-eth-alert-edge/results/demo-sim-range-breakout-btc-risk-on-gate.*, experiments/btc-eth-alert-edge/results/demo-sim-walk-forward-filter-grid.*, experiments/btc-eth-alert-edge/results/demo-sim-short-strategy-quarantine.*, wiki/notes/2026-09-28-demo-sim-range-breakout-baseline-lift-check.md, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md
+    notification: none
+    verdict: >-
+      Refreshed the existing DEMO-SIM bundle and checked baseline lift for the
+      current research-watch survivor. The full paper fund remains
+      capital-impaired: 490 closed trades, 5868.50 USDT ending equity,
+      -4131.50 USDT net, PF 0.9320, and 85.85% ledger max drawdown. Shorts
+      remain quarantined: 198 short records, -14469.77 USDT, PF 0.4162, and
+      0/20 short families revalidated. The selected pocket
+      `range_breakout_long + BTC_RISK_ON + 4h + B|low-sample` still survives
+      as research-watch only with 26 post-purge forward trades, +2351.05 USDT,
+      PF 1.6356, and 6.94% max drawdown; it beats broader BTC-risk-on long
+      baselines but remains blocked from capital/live/demo sizing promotion by
+      synthetic replay, grid-selection risk, small sample, and impaired account
+      surface.
+  - at: '2026-09-27T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.demo-sim-paper-fund-state-refresh
+    output: experiments/btc-eth-alert-edge/results/historical-demo-sim-replay.*, experiments/btc-eth-alert-edge/results/demo-sim-paper-fund-ledger.*, experiments/btc-eth-alert-edge/results/demo-sim-range-breakout-btc-risk-on-gate.*, experiments/btc-eth-alert-edge/results/demo-sim-walk-forward-filter-grid.*, experiments/btc-eth-alert-edge/results/demo-sim-short-strategy-quarantine.*, automation/loop-state.yaml, log.md
+    notification: none
+    verdict: >-
+      Re-ran the existing DEMO-SIM bundle because the named paper-fund and
+      backtesting-lab priority queue items were already complete. Current
+      replay expanded to 480 closed trades and remains
+      `capital_impaired_review_required`: ending equity 5909.30 USDT,
+      -4090.70 USDT net, 35.63% winrate, PF 0.9315, and 87.82% ledger max
+      drawdown. All short families remain quarantined: 197 short records,
+      -14164.31 USDT net, PF 0.4225, and 0/20 revalidated even for
+      watch-only. Long-only/shorts-withheld improves to 20073.61 USDT ending
+      equity but still has 52.91% max drawdown, so it is not capital-ready.
+      The narrow survivor remains 4h `range_breakout_long` under
+      `BTC_RISK_ON` and tier `B|low-sample`, with 26 post-purge forward
+      trades, +2351.05 USDT, PF 1.6356, and 6.94% max drawdown. No strategy
+      promotion or live/demo sizing change.
+  - at: '2026-09-26T13:20:00Z'
+    loop: manual-main-session
+    item: validation.strategy-filter-purged-embargo-split-classifier-implementation
+    output: experiments/strategy-destruction-filter/src/engine.mjs, experiments/strategy-destruction-filter/src/market-data.mjs, experiments/strategy-destruction-filter/src/run-filter.mjs, experiments/strategy-destruction-filter/src/verify-filter.mjs, experiments/strategy-destruction-filter/test/engine.test.mjs, experiments/strategy-destruction-filter/config.default.json, outputs/backtest-readiness-audit.*, experiments/strategy-destruction-filter/results/filter-report.*, experiments/strategy-destruction-filter/results/filter-drift-report.*, automation/work-queues.yaml, automation/loop-state.yaml, log.md
+    notification: telegram_summary_after_manual_batch
+    verdict: >-
+      Implemented explicit `purged_embargo_entry_time` split accounting in the
+      strategy-destruction filter. Candidate and time-matched baseline trades
+      now receive identical `purged_boundary` treatment around the 70/30 split,
+      boundary rows are excluded before metrics and verdicts, and every verdict
+      emits `splitMetadata`. Verification passed with 31/31 tests, regenerated
+      filter report, backtest readiness audit, drift report, and full verifier.
+      Current filter remains strict: 13 candidates / 131 variants / 0 survivors
+      / 131 rejected; 379 candidate boundary trades were excluded; readiness
+      audit now passes 11/11 and reports `ready_for_research_only_validation`.
+      A Bybit public rate-limit during regeneration exposed a stale-cache
+      weakness, so market-data now falls back to the latest local Bybit cache on
+      public fetch/rate-limit failure. No thresholds, scheduler, alert wording,
+      live watcher behavior, data capture, account/key/API access, paid service,
+      execution, public posting, sizing, TP/SL, or strategy promotion changed.
+  - at: '2026-09-25T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.demo-sim-replay-walk-forward-filter-grid
+    output: experiments/btc-eth-alert-edge/src/demo-sim-walk-forward-filter-grid.mjs, experiments/btc-eth-alert-edge/results/demo-sim-walk-forward-filter-grid.json, experiments/btc-eth-alert-edge/results/demo-sim-walk-forward-filter-grid.md, experiments/btc-eth-alert-edge/package.json, automation/work-queues.yaml, automation/loop-state.yaml, log.md
+    notification: none
+    verdict: >-
+      Added a purged August/September walk-forward grid over existing
+      historical DEMO-SIM replay rows. The grid tested 1008 simple filters and
+      found 18 research-only survivors; the top filter was 4h
+      `range_breakout_long` under `BTC_RISK_ON` with tier `B|low-sample`,
+      showing 44 fit trades, +6043.41 USDT, PF 1.9951, and then 26
+      post-purge forward trades, +2351.05 USDT, PF 1.6356, and 6.9% max
+      drawdown. This is not capital-ready because the replay is synthetic,
+      the split is short, and the policy was selected from a grid. No
+      thresholds, scheduler, alert wording, data capture, account/key/API
+      access, paid service, execution, public posting, watcher behavior,
+      sizing, or strategy promotion changed.
+  - at: '2026-09-24T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-atas-verifier-status-reconciliation
+    output: wiki/notes/2026-09-24-strategy-filter-atas-verifier-status-reconciliation.md, experiments/strategy-destruction-filter/src/verify-filter.mjs, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md
+    notification: none
+    verdict: >-
+      Reconciled the strategy-filter verifier with the current ATAS audit
+      verdict `manual_csv_active__automatic_access_unproven` while preserving
+      manual CSV as research/manual-export access only and asserting
+      `canPullDirectlyNow=false`. Verification passed: `npm test` 29/29 and
+      `npm run verify` with 131 variants, 0 survivors, 131 rejected. Next
+      bounded item returns to the purged/embargo split classifier
+      implementation. No thresholds, scheduler, alert wording, data capture,
+      account/key/API access, paid service, execution, public posting, or
+      strategy promotion changed.
+  - at: '2026-09-23T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-atas-verifier-status-reconciliation
+    output: wiki/notes/2026-09-23-strategy-filter-atas-verifier-drift-blocker.md, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md, bridge source source.ralph-strategy-filter-atas-verifier-drift-blocker
+    notification: none
+    verdict: >-
+      Stopped the purged/embargo implementation path at verifier baseline
+      hygiene. `npm test` for the strategy-destruction filter passed 29/29,
+      but `npm run verify` failed on `ATAS access audit verdict invalid`
+      because the current ATAS audit now reports
+      `manual_csv_active__automatic_access_unproven`, while the verifier
+      allow-list only includes older local-access states. This is a
+      verifier/status drift blocker, not strategy promotion evidence. Next
+      bounded step is to reconcile the verifier while preserving manual CSV as
+      research-only, `canPullDirectlyNow=false`, and no-live/no-install
+      boundaries. No code, thresholds, scheduler, alert wording, data capture,
+      account/key/API access, paid service, execution, public posting, or
+      strategy promotion changed.
+  - at: '2026-09-22T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-purged-embargo-implementation-preflight
+    output: wiki/notes/2026-09-22-strategy-filter-purged-embargo-implementation-preflight.md, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md, bridge source source.ralph-strategy-filter-purged-embargo-implementation-preflight
+    notification: none
+    verdict: >-
+      Ran the final implementation preflight for the purged/embargo split
+      accounting path. Current strategy-filter report remains 13 candidates /
+      131 variants / 0 survivors / 0 effective survivor shapes. OOS gate
+      pressure is still non-promotional: 25 variants pass basic OOS
+      sample/expectancy, 5 have 30 or fewer OOS trades, and all low-margin OOS
+      passers are already rejected by other gates. Next useful branch is a
+      small code pass adding a pure split classifier near `splitIndexForCandles`,
+      identical candidate/baseline `purged_boundary` treatment, per-verdict
+      `splitMetadata`, and verifier assertions. No code, thresholds, scheduler,
+      alert wording, data capture, account/key/API access, paid service,
+      execution, public posting, or strategy promotion changed.
+  - at: '2026-09-21T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-purged-embargo-verifier-assertion-map
+    output: wiki/notes/2026-09-21-strategy-filter-purged-embargo-verifier-assertion-map.md, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md, bridge source source.ralph-purged-embargo-verifier-assertion-map
+    notification: none
+    verdict: >-
+      Mapped the smallest verifier assertion surface for the purged/embargo
+      split implementation. Current report remains 13 candidates / 131 variants
+      / 0 survivors / 0 effective survivor shapes; all 131 verdict rows lack
+      purged/embargo split metadata, while current chronological split sums and
+      candidate-vs-baseline total sample parity still match. Next code pass
+      should add a boundary-aware split classifier, emit per-verdict
+      `splitMetadata`, exclude `purged_boundary` rows from candidate/baseline/
+      walk-forward metrics, and assert candidate/baseline in-sample and OOS
+      parity after exclusion. No code, thresholds, scheduler, alert wording,
+      data capture, account/key/API access, paid service, execution, public
+      posting, or strategy promotion changed.
+  - at: '2026-09-20T07:40:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-purged-embargo-implementation-scope
+    output: wiki/notes/2026-09-20-strategy-filter-purged-embargo-implementation-scope.md, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md, bridge source source.ralph-strategy-filter-purged-embargo-implementation-scope
+    notification: none
+    verdict: >-
+      Narrowed the purged/embargo follow-up to a small report/verifier
+      implementation. Current filter report still has 13 candidates / 131
+      variants / 0 survivors / 0 effective survivor shapes; proxy inspection
+      found no exact boundary fields, so the next code slice should add
+      per-variant `purged_embargo_entry_time` metadata and verifier assertions
+      before changing candidate interpretation. Five of 25 OOS passers have 30
+      or fewer OOS trades, so post-purge low-sample outcomes should remain
+      rejected or Watch-only rather than trigger looser gates. No code,
+      thresholds, scheduler, alert wording, data capture, account/key/API
+      access, paid service, execution, public posting, or strategy promotion
+      changed.
+  - at: '2026-09-20T07:37:11Z'
+    loop: ralph-autoresearch-loop
+    item: validation.backtest-readiness-purged-embargo-design
+    output: wiki/notes/2026-09-20-strategy-filter-purged-embargo-split-design.md, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md, bridge source source.ralph-strategy-filter-purged-embargo-split-design
+    notification: none
+    verdict: >-
+      Defined the smallest purged/embargo split contract for strategy-filter
+      promotion readiness. Future overlapping intraday, planned-level, or
+      orderflow labels should use `purged_embargo_entry_time`: anchor the
+      current 70% chronological split, default purge/embargo bars to
+      `timeframe.maxBars`, exclude boundary trades from survival/baseline/
+      walk-forward metrics, apply identical exclusion to the time-matched
+      baseline, and keep the readiness audit failing until implementation.
+      Current strategy state remains 13 candidates / 131 variants / 0
+      survivors / 0 effective survivor shapes. No code, thresholds, scheduler,
+      alert wording, data capture, account/key/API access, paid service,
+      execution, public posting, or strategy promotion changed.
+  - at: '2026-09-19T21:00:00Z'
+    loop: main-session-continuation
+    item: validation.ralph-adversarial-improvement-loop-bootstrap
+    output: automation/ralph-adversarial-improvement-loop.mjs, automation/ralph-adversarial-improvement-loop.md, automation/atas-access-audit.mjs, automation/backtest-readiness-audit.mjs, experiments/strategy-destruction-filter/schemas/atas-orderflow-event.schema.json, outputs/atas-access-audit.*, outputs/backtest-readiness-audit.*, outputs/ralph-adversarial-improvement-report.*, automation/loop-registry.yaml, automation/work-queues.yaml, automation/loop-state.yaml, log.md
+    notification: none
+    verdict: >-
+      Bootstrapped a research-only RALPH adversarial improvement loop with
+      deterministic critic/proposal/validation/Telegram-gate output, added ATAS
+      access audit and ATAS orderflow event schema for absorption/cluster-search
+      rows, added a backtest readiness audit that keeps the missing
+      purged/embargo split explicit, and scheduled the critic as an isolated
+      daily job at 19:30 Europe/Prague. Current critic output has
+      proposals_ready_internal with no high/critical findings and no Telegram
+      notification. ATAS local access is not available yet; dev runtime is only
+      partial. No live trading, orders, wallet keys, exchange keys, paid APIs,
+      account setup, alert wording, thresholds, risk/sizing/TP/SL, execution,
+      public posting, or strategy promotion changed.
+  - at: '2026-09-19T07:31:19Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-previous-report-drift-contract
+    output: wiki/notes/2026-09-19-strategy-filter-previous-report-drift-contract.md, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md, bridge source source.ralph-strategy-filter-previous-report-drift-contract
+    notification: none
+    verdict: >-
+      Defined the smallest previous-report drift contract for the strategy
+      filter after the AVAX downgrade: compare generatedAt, totals,
+      gate-group pass counts when available, added/removed/status-changed
+      effective survivor shapes, and representative metrics/failures for
+      changed shapes. Current state remains zero survivor shapes and no
+      promotion. No code, thresholds, scheduler, alert wording, data capture,
+      account/key/API access, paid service, execution, or public posting was
+      changed.
+  - at: '2026-09-18T07:31:59Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-near-miss-gate-pressure-audit
+    output: wiki/notes/2026-09-18-strategy-filter-near-miss-gate-pressure-audit.md, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md, bridge source source.ralph-strategy-filter-near-miss-gate-pressure-audit
+    notification: none
+    verdict: >-
+      Audited gate pressure over the current zero-survivor strategy-filter
+      report. Four variants pass headline, approximate deflated-Sharpe, OOS,
+      and baseline gates while failing only walk-forward OOS; all four are
+      duplicate AVAX historical shapes. All three walk-forward passers still
+      fail other hard gates. Keep hard gates unchanged; prefer
+      previous-report/drift reporting over looser thresholds. No strategy
+      promotion, alert change, scheduler change, data capture, account/key/API
+      access, paid service, execution, or public posting was started.
+  - at: '2026-09-17T07:46:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-avax-watch-downgrade-reconciliation
+    output: wiki/notes/2026-09-17-avax-watch-downgrade-reconciliation.md, decisions/discarded.md, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md, bridge source source.ralph-avax-watch-downgrade-reconciliation
+    notification: none
+    verdict: >-
+      Reconciled stale AVAX Watch routing after the refreshed strategy-filter
+      report produced 13 candidates / 131 variants / 0 survivors / 131 rejected.
+      All 8 AVAX range_breakdown_short variants are now rejected, with the top
+      duplicate variants failing weak_walk_forward_out_of_sample. Removed the
+      AVAX forward-paper Watch item and added a discarded-ledger row with a
+      narrow reopen trigger. No strategy promotion, alert change, scheduler
+      change, data capture, account/key/API access, paid service, execution, or
+      public posting was started.
+  - at: '2026-09-17T07:45:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-gate-group-reporting
+    output: wiki/notes/2026-09-17-strategy-filter-gate-group-reporting.md, experiments/strategy-destruction-filter/src/run-filter.mjs, experiments/strategy-destruction-filter/src/verify-filter.mjs, experiments/strategy-destruction-filter/results/filter-report.*, experiments/strategy-destruction-filter/results/survivors.json, experiments/strategy-destruction-filter/results/rejected-ideas.jsonl, automation/retrieval-router.yaml, automation/work-queues.yaml, automation/loop-state.yaml, log.md, bridge source source.ralph-strategy-filter-gate-group-reporting
+    notification: none
+    verdict: >-
+      Added reproducible gate-group diagnostics to the strategy-filter report
+      and verifier. Fresh public/no-key data refresh produced 13 candidates /
+      131 variants / 0 survivors / 131 rejected. The prior AVAX
+      range_breakdown_short Watch survivor shape is now rejected because the
+      top duplicate variants fail weak_walk_forward_out_of_sample. No strategy
+      promotion, alert change, scheduler change, data capture, account/key/API
+      access, paid service, execution, or public posting was started.
+  - at: '2026-09-16T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-psr-diagnostic-overlap-audit
+    output: wiki/notes/2026-09-16-strategy-filter-psr-diagnostic-overlap-audit.md, automation/retrieval-router.yaml, automation/work-queues.yaml, automation/loop-state.yaml, log.md, bridge source source.ralph-strategy-filter-psr-diagnostic-overlap-audit
+    notification: none
+    verdict: >-
+      Local statistics over the current strategy-filter report found that the
+      PSR-style diagnostic should stay diagnostic rather than become a hard
+      survival gate. PSR >=0.95 admits 40/131 variants including 38 rejected
+      variants and 20 deflated-Sharpe failures. PSR >=0.99 would reject the
+      current AVAX survivor shape despite no source-backed threshold
+      calibration. Keep current hard gates; next useful improvement is
+      reproducible gate-group pass reporting. No strategy promotion, alert
+      change, scheduler change, data capture, account/key/API access, paid
+      service, execution, or public posting was started.
+  - at: '2026-09-15T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-chronology-gate-overlap-audit
+    output: wiki/notes/2026-09-15-strategy-filter-chronology-gate-overlap-audit.md, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md, bridge source source.ralph-strategy-filter-chronology-gate-overlap-audit
+    notification: none
+    verdict: >-
+      Local statistics over the current strategy-filter report confirmed that
+      chronology gates still carry independent rejection load. 21/131 variants
+      pass headline expectancy/profit-factor/deflated-Sharpe, but only 2 raw
+      variants survive and they collapse to 1 effective AVAX Watch-only shape.
+      All 19 rejected headline passers fail at least one chronology gate,
+      usually walk-forward OOS, hard OOS expectancy, or hard OOS baseline lift.
+      No strategy promotion, alert change, scheduler change, data capture,
+      account/key/API access, paid service, execution, or public posting was
+      started.
+  - at: '2026-09-14T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-deflated-sharpe-source-calibration
+    output: wiki/notes/2026-09-14-strategy-filter-deflated-sharpe-source-calibration.md, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md, bridge source source.ralph-strategy-filter-deflated-sharpe-source-calibration
+    notification: none
+    verdict: >-
+      Source calibration against Bailey/López de Prado confirmed the current
+      filter metric is correctly labeled as an approximate multiple-testing
+      deflated-Sharpe proxy, not full DSR. Local stats over the current report
+      show 25/131 variants pass the proxy floor, but 23 rejected variants also
+      pass it while failing chronology, baseline, drawdown, failure-slice, or
+      walk-forward gates. Keep it as a rejection gate only; full DSR reporting
+      remains proposed/watch until per-variant return series and effective
+      independent-trial estimation exist. No strategy promotion, alert change,
+      scheduler change, data capture, account/key/API access, execution, or
+      public posting was started.
+  - at: '2026-09-13T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-oos-shrinkage-audit
+    output: wiki/notes/2026-09-13-strategy-filter-oos-shrinkage-audit.md, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md, bridge source source.ralph-strategy-filter-oos-shrinkage-audit
+    notification: none
+    verdict: >-
+      Local statistics over the current strategy-filter report confirmed 13
+      candidates / 131 variants / 2 raw survivors / 1 effective survivor shape
+      / 129 rejected. OOS shrinkage remains a useful pressure test: 21 variants
+      pass headline expectancy/profit-factor/deflated-Sharpe gates, but 13/21
+      still fail at least one OOS gate. The sole effective survivor shape,
+      AVAX 1h range_breakdown_short down/low-vol, keeps positive OOS expectancy
+      and OOS baseline lift, but OOS expectancy is only 0.0927R versus 0.2407R
+      in-sample, so it remains Watch / forward-paper-needed. No strategy
+      promotion, alert change, scheduler change, data capture, account/key/API
+      access, execution, or public posting was started.
+  - at: '2026-09-13T06:34:18Z'
+    loop: main-session-continuation
+    item: validation.strategy-filter-survivor-shape-reporting
+    output: experiments/strategy-destruction-filter/src/run-filter.mjs, experiments/strategy-destruction-filter/src/verify-filter.mjs, experiments/strategy-destruction-filter/results/filter-report.*, experiments/strategy-destruction-filter/results/survivors.json, experiments/strategy-destruction-filter/results/rejected-ideas.jsonl, outputs/state-of-edge-report.*, outputs/evidence-ledger-prioritizer.*, outputs/research-validation-checklist.*, wiki/notes/2026-09-13-strategy-filter-survivor-shape-reporting.md, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md, memory/2026-09-13.md
+    notification: none
+    verdict: >-
+      Added explicit survivor-shape reporting to the strategy filter so raw
+      survivor counts no longer overstate duplicate parameter variants. Fresh
+      report remains 13 candidates / 131 variants / 2 raw survivors / 129
+      rejected, but now reports 1 effective survivor shape:
+      AVAX 1h range_breakdown_short down/low-vol, where #1/#2 differ only by
+      rsiMaxShort while sharing identical realized metrics. AVAX remains Watch /
+      forward-paper-needed. No strategy promotion, alert change, scheduler
+      change, data capture, account/key/API access, execution, or public posting
+      was started.
+  - at: '2026-09-13T06:18:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-post-gate-survivor-concentration-audit
+    output: wiki/notes/2026-09-13-strategy-filter-post-gate-survivor-concentration-audit.md, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md
+    notification: none
+    verdict: >-
+      Local statistics over the current strategy-filter report confirmed 13
+      candidates / 131 variants / 2 raw survivors / 129 rejected, but the two
+      raw survivors are one effective AVAX 1h range_breakdown_short down/low-vol
+      watch shape with identical realized metrics. Rejected variants are mostly
+      destroyed by weak_walk_forward_out_of_sample (119 failures), and AVAX
+      #3-#8 fail only that diagnostic, so strict walk-forward OOS handling
+      remains useful. No strategy promotion, alert change, scheduler change,
+      data capture, account/key/API access, execution, or public posting was
+      started.
+  - at: '2026-09-12T18:40:00Z'
+    loop: main-session-continuation
+    item: investigation.filip-pdv-pdn-cluster-strategy-development
+    output: experiments/strategy-destruction-filter/src/run-planned-level-proxy-replay.mjs, experiments/strategy-destruction-filter/results/planned-level-proxy-replay.*, experiments/strategy-destruction-filter/package.json, experiments/strategy-destruction-filter/README.md, experiments/strategy-destruction-filter/src/verify-filter.mjs, wiki/notes/2026-09-12-planned-level-proxy-replay-scaffold.md, automation/work-queues.yaml, automation/loop-state.yaml, log.md, memory/2026-09-12.md
+    notification: none
+    verdict: >-
+      Added a research-only planned-level proxy replay scaffold for the Filip
+      pdV/pdN plus Cluster Search lane. Default no-fetch run produced 8 frozen
+      BTC planned-level rows; explicit public/no-key Binance aggTrades fetch
+      produced 2 fetched BTCUSDT windows, 2000 trades each, with 0 fetch
+      failures. Verdict remains schema_ready_trade_windows_low_sample, so the
+      branch moved from ready-now to Watch until there are at least 20 frozen
+      planned-level events and 10 fetched public trade windows. No live alerts,
+      thresholds, scheduler, capture, account/key/API/paid access, execution,
+      or strategy promotion changed.
+  - at: '2026-09-12T16:55:00Z'
+    loop: main-session-continuation
+    item: validation.strategy-filter-oos-baseline-lift-gate-implementation
+    output: experiments/strategy-destruction-filter/src/engine.mjs, experiments/strategy-destruction-filter/src/verify-filter.mjs, experiments/strategy-destruction-filter/src/run-filter.mjs, experiments/strategy-destruction-filter/test/engine.test.mjs, experiments/strategy-destruction-filter/results/filter-report.*, experiments/strategy-destruction-filter/results/survivors.json, experiments/strategy-destruction-filter/results/rejected-ideas.jsonl, wiki/notes/2026-09-12-strategy-filter-oos-baseline-lift-gate-implementation.md, outputs/state-of-edge-report.*, outputs/research-validation-checklist.*, outputs/evidence-ledger-prioritizer.*, automation/retrieval-router.yaml, automation/work-queues.yaml, automation/loop-state.yaml, log.md, memory/2026-09-12.md
+    notification: none
+    verdict: >-
+      Implemented weak_out_of_sample_baseline_lift as a hard strategy-filter
+      research gate using the existing minBaselineExpectancyLiftR floor
+      (0.01R). Fresh regeneration produced 13 candidates / 131 variants / 2
+      raw survivors / 129 rejected; the only survivors are AVAX
+      range_breakdown_short #1/#2, still one duplicate metric/signal shape with
+      outOfSampleExpectancyLiftR 0.125R. AVAX remains Watch /
+      forward-paper-needed because exact regime-tagged forward-paper rows are
+      still 0/20. No strategy promotion, alert change, scheduler change, data
+      capture, account/key/API access, execution, or public posting was
+      started.
+  - at: '2026-09-12T16:25:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-oos-baseline-lift-gate-design
+    output: wiki/notes/2026-09-12-strategy-filter-oos-baseline-lift-gate-design.md, automation/retrieval-router.yaml, automation/work-queues.yaml, automation/loop-state.yaml, log.md
+    notification: none
+    verdict: >-
+      Counterfactual local statistics over the frozen 13-candidate / 131-variant
+      strategy-filter report show that adding an OOS baseline-lift hard gate at
+      the existing minBaselineExpectancyLiftR floor (0.01R) would reduce current
+      raw survivors from 6 to 4 and unique metric/signal shapes from 3 to 2 by
+      rejecting only the duplicated fragile AVAX #3/#4 shape with
+      outOfSampleExpectancyLiftR -0.1171R. The gate does not replace other hard
+      gates: 37 rejected variants already pass the proposed OOS baseline-lift
+      floor while failing OOS expectancy, drawdown, failure-slice, low-sample,
+      or walk-forward checks. Recommended future harness change:
+      weak_out_of_sample_baseline_lift. No strategy promotion, alert change,
+      scheduler change, data capture, account/key/API access, execution, or
+      public posting was started.
+  - at: '2026-09-12T16:17:39Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-oos-baseline-lift-audit
+    output: wiki/notes/2026-09-12-strategy-filter-oos-baseline-lift-audit.md, automation/retrieval-router.yaml, automation/work-queues.yaml, automation/loop-state.yaml, log.md
+    notification: none
+    verdict: >-
+      Current strategy-filter report still has 13 candidates / 131 variants / 6
+      raw survivors / 125 rejected. OOS and walk-forward gates are doing the
+      useful destruction work: 17 variants pass deflated Sharpe but fail OOS
+      sample or expectancy, and 15 rejected variants have positive expectancy,
+      pass profit-factor, and pass deflated Sharpe while still failing OOS,
+      drawdown, failure-slice, low-sample, or walk-forward gates. Weak spot:
+      one duplicated AVAX survivor shape (#3/#4) survives current full-sample
+      baseline-lift gates despite negative OOS baseline lift (-0.1171R) and one
+      negative walk-forward fold. Treat it as fragile/watch-only; future filter
+      reporting should surface or gate positive OOS baseline lift before any
+      historical survivor is described as strong. No strategy promotion, alert
+      change, scheduler change, data capture, account/key/API access,
+      execution, or public posting was started.
+  - at: '2026-09-10T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-deflated-sharpe-sensitivity-audit
+    output: wiki/notes/2026-09-10-strategy-filter-deflated-sharpe-sensitivity-audit.md, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md, bridge source source.ralph-strategy-filter-deflated-sharpe-sensitivity-audit
+    notification: none
+    verdict: >-
+      Current strategy-filter report has 13 candidates / 131 variants / 6 raw
+      survivors / 125 rejected. The approximate deflated-Sharpe proxy is not the
+      weak link: trialCount=131 yields 25/131 deflated-Sharpe passers, all six
+      raw AVAX survivors still pass under much harsher hypothetical trial counts
+      through 10000, and the weakest raw survivor remains above 1.07. However,
+      top rejected HYPE funding/fade variants also pass deflated Sharpe while
+      failing chronological OOS, drawdown, failure-slice, or walk-forward gates.
+      Keep deflated Sharpe as one rejection gate, not a promotion signal. AVAX
+      remains Watch / forward-paper-needed. No strategy promotion, alert change,
+      scheduler change, data capture, account/key/API access, execution, or
+      public posting was started.
+  - at: '2026-09-03T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-survivor-uniqueness-audit
+    output: wiki/notes/2026-09-03-strategy-filter-survivor-uniqueness-audit.md, automation/retrieval-router.yaml, automation/loop-state.yaml, log.md, bridge source source.ralph-strategy-filter-survivor-uniqueness-audit
+    notification: none
+    verdict: >-
+      Current strategy-filter report still has 13 candidates / 131 variants / 6
+      raw survivors / 125 rejected, but the 6 AVAX historical survivors collapse
+      to 3 unique metric/signal shapes because survivor pairs #1/#2, #3/#4, and
+      #5/#6 differ only by a non-operative short-side RSI parameter. AVAX remains
+      Watch / forward-paper-needed because exact regime-tagged forward-paper rows
+      are still 0. No strategy promotion, alert change, scheduler change, data
+      capture, account/key/API access, execution, or public posting was started.
+  - at: '2026-09-01T09:30:59Z'
+    loop: main-session-continuation
+    item: unknowns.U-005/U-012/U-028/U-013 route reconciliation
+    output: wiki/notes/2026-09-01-open-unknown-route-reconciliation.md, decisions/unknowns.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/current-operating-map.md, automation/retrieval-router.yaml, index.yaml, index.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, bridge source source.ralph-open-unknown-route-reconciliation, log.md, memory/2026-09-01.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Tomas asked RALPH to look for remaining internal work despite an empty
+      queue. The audit found U-005 still Open even though later flywheel,
+      source-falsification, candidate-scoring, and strategy-rubric artifacts
+      already define promotion/discard gates for the current A2/no-key phase.
+      It also found U-012 still Open even though framework guide/shortlist and
+      build-vs-buy notes already define the trusted composite build order.
+      It also found U-028 answerable: Freqtrade is useful as a
+      validation-hygiene reference, but not the default active engine because no
+      local runnable path is verified. It also found U-013 answerable:
+      Hummingbot is unsuitable as the first active A2/no-key rail but useful as
+      Watch/reference/prior art. U-005, U-012, U-028, and U-013 are now
+      resolved for current routing. Bridge ingest/search verified the
+      reconciliation note. No gated work or strategy promotion was started.
+  - at: '2026-09-01T08:41:00Z'
+    loop: main-session-continuation
+    item: threshold-watch pending cleanup
+    output: automation/evidence-ledger-prioritizer.mjs, automation/work-queues.yaml, automation/current-operating-map.md, automation/retrieval-router.yaml, index.yaml, index.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, log.md, memory/2026-09-01.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Moved TA and AVAX threshold waits from validation pending into Watch and
+      updated the prioritizer to keep tracked Watch gates visible. This leaves
+      no manual ready or wheel-gated pending work unless a row threshold,
+      named trigger, or explicit approval fires. No TA/AVAX rerun or data
+      sampling was performed.
+  - at: '2026-09-01T08:31:00Z'
+    loop: main-session-continuation
+    item: unknowns.U-008/unknowns.U-017 wheel gate
+    output: wiki/notes/2026-09-01-hyperliquid-wallet-shadow-delay-sample.md, automation/work-queues.yaml, automation/current-operating-map.md, automation/retrieval-router.yaml, decisions/unknowns.md, decisions/candidates.md, index.yaml, index.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, bridge source source.ralph-hyperliquid-wallet-shadow-delay-sample, log.md, memory/2026-09-01.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Converted U-008/U-017 from pending unknown work into Watch-only
+      wallet-shadow-independent-event-window-gate. No new sample runs are
+      authorized until Tomas names an independent event/source/account trigger
+      or a source-ranked event record creates a precise window. Any future
+      study must require 3+ windows, 20+ quality observations, same-run raw rows
+      plus delay joins, entry/exit classification, conservative costs, baseline
+      rows, hidden-hedge flags, and cluster/outlier controls.
+  - at: '2026-09-01T08:24:00Z'
+    loop: main-session-continuation
+    item: unknowns.U-001 wheel gate
+    output: wiki/notes/2026-08-31-arkham-evaluation-checklist.md, automation/work-queues.yaml, automation/current-operating-map.md, automation/retrieval-router.yaml, decisions/unknowns.md, decisions/candidates.md, index.yaml, index.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, bridge source source.ralph-arkham-evaluation-checklist, log.md, memory/2026-09-01.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Converted U-001 from pending unknown work into Watch-only
+      arkham-material-value-tiny-export-gate. No active Arkham route exists
+      until Tomas explicitly approves account/API-plan-or-trial/API-key access,
+      spend cap, endpoint scope, local export path, and a tiny comparison
+      against current public routes. No account, key, API call, export, paid
+      service, scanner, scheduler, alert, execution, or strategy promotion was
+      started.
+  - at: '2026-09-01T07:46:01Z'
+    loop: main-session-continuation
+    item: unknowns.U-008/unknowns.U-017 stand-down
+    output: outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, log.md, memory/2026-09-01.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Fresh session status showed context 0% and compactions 0. Read the
+      wallet-shadow handoff and durable delay-sample note. No named independent
+      event trigger exists, so did not start a scoped frozen event-window study
+      or keep sampling the same known leaderboard-sourced addresses. Prioritizer
+      remains pendingItems 5, readyNow 0, watchUntilThreshold 2, needsWheelGate
+      3; checklist remains warn only for cron and paperDemo.
+  - at: '2026-09-01T06:40:40Z'
+    loop: main-session-continuation
+    item: unknowns.U-008/unknowns.U-017 partial
+    output: wiki/notes/2026-09-01-hyperliquid-wallet-shadow-delay-sample.md, experiments/copytrading-address-intake/src/run-hyperliquid-delay-sample.mjs, experiments/copytrading-address-intake/results/hyperliquid-wallet-shadow-delay-sample-2026-09-01.md, decisions/unknowns.md, automation/current-operating-map.md, index.yaml, index.md, log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Tomas allowed opening a blocker if it was substantially blocking. Ran the
+      smallest public/no-key manual wallet-shadow delay sample for U-008/U-017.
+      Known-address extension: primary address 0x7fd...17d1 returned 720 fills
+      and a mixed positive clustered slice, 9/24 net-positive at 60s and 17/24
+      at 180s after 8 bps stress. Address 0x5b5...c060 returned 622 fills but
+      failed after cost stress, 0/24 net-positive at both delays. Address
+      0x20c...44f5 had 0 fills in the settled window. This narrows mechanics
+      but does not close U-008/U-017 or authorize a scanner/recurring capture.
+  - at: '2026-09-01T05:54:41Z'
+    loop: main-session-continuation
+    item: unknowns.U-039
+    output: wiki/notes/2026-09-01-no-key-copytrading-discovery-limit-map.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/unknowns.md, index.yaml, index.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, bridge source source.ralph-no-key-copytrading-discovery-limit-map, log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Resolved U-039 for current routing. No-key copytrading discovery is useful
+      for prior art, triage, rejection, and tiny falsifiers, but not enough to
+      produce useful copy candidates without non-leaderboard universe rows, full
+      history, exits, hedge visibility, and slow cohort coverage.
+  - at: '2026-09-01T05:51:43Z'
+    loop: main-session-continuation
+    item: unknowns.U-019
+    output: wiki/notes/2026-09-01-hyperliquid-activity-defined-universe-route.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/unknowns.md, index.yaml, index.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, bridge source source.ralph-hyperliquid-activity-defined-universe-route, log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Resolved U-019 for current routing. RALPH cannot yet claim an
+      activity-defined Hyperliquid universe because active no-key routes cover
+      leaderboard seeds and known-address verification, not non-leaderboard
+      venue-wide account discovery by recent activity. Future work needs a
+      public/no-key activity export or HITL-approved tiny keyed/export sample.
+  - at: '2026-09-01T05:48:36Z'
+    loop: main-session-continuation
+    item: unknowns.U-024
+    output: wiki/notes/2026-09-01-mid-cap-accumulation-coverage-liquidity-map.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/unknowns.md, index.yaml, index.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, bridge source source.ralph-mid-cap-accumulation-coverage-liquidity-map, log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Resolved U-024 for current routing. Mid-cap accumulation remains a
+      high-fit strategy idea in principle, but active no-key data cannot yet
+      measure enough coverage and liquidity. The branch stays Watch/needs-access
+      until frozen 20+ wallet/entity rows include entry, exit/distribution, flow
+      quality, liquidity/impact context, baselines, and outlier controls.
+  - at: '2026-09-01T05:45:28Z'
+    loop: main-session-continuation
+    item: unknowns.U-022
+    output: wiki/notes/2026-09-01-cohort-flow-vs-single-wallet-signal-map.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/unknowns.md, index.yaml, index.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, bridge source source.ralph-cohort-flow-vs-single-wallet-signal-map, log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Resolved U-022 for current routing. Cohort flow is the preferred signal
+      target over single-wallet copying for Tomas's patient-retail constraints,
+      but it remains Watch/needs-access until frozen 20+ wallet/entity rows
+      include entry, exit/distribution, baselines, delayed follower results, and
+      outlier controls. Single-wallet copying remains radar, falsifier, and
+      rejection material only.
+  - at: '2026-09-01T05:42:29Z'
+    loop: main-session-continuation
+    item: unknowns.U-037
+    output: wiki/notes/2026-09-01-patient-retail-strategy-leg-repeat-fit-map.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/unknowns.md, index.yaml, index.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, bridge source source.ralph-patient-retail-strategy-leg-repeat-fit-map, log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Resolved U-037 for current routing. Repeat-fit strategy legs are:
+      funding/basis as active no-key baseline, smart-money mid-cap accumulation
+      as access-gated alpha, range/grid as offline falsifier, event radar as
+      context/falsifier, token unlocks as source-first watch, and delegated copy
+      as prior art. No leg moved to Q1, paper-candidate, alerts, sizing, or
+      execution.
+  - at: '2026-09-01T05:16:09Z'
+    loop: main-session-continuation
+    item: unknowns.U-018
+    output: wiki/notes/2026-09-01-wallet-shadowing-existing-tool-coverage-map.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/unknowns.md, index.yaml, index.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, bridge source source.ralph-wallet-shadowing-existing-tool-coverage-map, log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Resolved U-018 for current routing. Existing tools cover enough of
+      wallet-shadowing that RALPH should not build broad scanners or copy
+      engines now: Hyperliquid public stats plus official info endpoints cover
+      seed and known-address triage/tiny falsifiers; Nansen/Dune/Arkham-style
+      tools cover slow-accumulator rows or enrichment only after approved
+      export/API access. Remaining gaps are evidence/access gaps, not generic
+      engineering gaps.
+  - at: '2026-09-01T05:12:43Z'
+    loop: main-session-continuation
+    item: unknowns.U-010
+    output: wiki/notes/2026-09-01-event-vs-continuous-small-operator-map.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/unknowns.md, index.yaml, index.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, bridge source source.ralph-event-vs-continuous-small-operator-map, log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Resolved U-010 for current routing. Event-triggered work is easier for
+      bounded research and harder for execution-grade trading because useful
+      edge often decays fastest when latency, spreads, slippage, stale data,
+      missed fills, hidden hedges, and selection bias are worst. Current routing
+      keeps event-triggered work as falsifier/radar unless frozen rows prove
+      delayed copyability; slow continuous/structural families remain better
+      latency-fit research surfaces.
+  - at: '2026-09-01T05:08:06Z'
+    loop: main-session-continuation
+    item: unknowns.U-011
+    output: wiki/notes/2026-09-01-a2-operating-safety-brief.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/unknowns.md, index.yaml, index.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, bridge source source.ralph-a2-operating-safety-brief, log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Resolved U-011 for the current A2/no-key phase as an operating-safety
+      brief. Approved loops stay narrow: one bounded branch, router/index first,
+      internal output by default, self-verification, and minimal durable state
+      updates. TA/AVAX remain threshold-watch; HYPE L2, wallet-shadow capture,
+      paid/keyed sources, scheduler changes, alerts, accounts, demo/testnet,
+      execution, sizing, TP/SL, public posting, and strategy promotion remain
+      blocked or HITL-gated unless Tomas explicitly approves a named branch.
+  - at: '2026-08-31T21:47:36Z'
+    loop: main-session-continuation
+    item: unknowns.U-009
+    output: wiki/notes/2026-08-31-strategy-family-budget-fit-map.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, decisions/unknowns.md, index.yaml, index.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, bridge source source.ralph-strategy-family-budget-fit-map, log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Resolved U-009 for current routing as a research-only budget fit map.
+      Active current-budget families are `$0`/public/local first: market-level
+      funding/basis baseline, local alert-edge/TA strategy destruction, bounded
+      public orderflow research, offline range/grid falsifiers, and tiny
+      Hyperliquid event/fill delay falsifiers. Under-budget but approval-gated
+      options include tiny Nansen/Dune/Arkham-style smart-money exports,
+      0xArchive replay samples, and CoinGlass derivatives context only when
+      tied to a named surviving question. High-frequency market making, DEX
+      arb/MEV, broad live copytrading, production scanner stacks, and
+      execution-first strategies do not fit current constraints.
+  - at: '2026-08-31T21:37:14Z'
+    loop: main-session-continuation
+    item: unknowns.U-002
+    output: wiki/notes/2026-08-31-wallet-shadow-event-candidate-signal-spec.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, decisions/unknowns.md, index.yaml, index.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, bridge source source.ralph-wallet-shadow-event-candidate-signal-spec, log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Resolved U-002 for the current no-key/A2 phase as a research-only signal
+      and intake specification. Opportunistic wallet-shadow/high-volatility
+      event candidates must be frozen before outcome scoring, source-timestamped,
+      access-classified, stored with raw rows and same-run delay joins, and
+      checked against delay, costs, fills, exits, beta, outliers, and hidden
+      hedges. Minimum copyability review bar is 20+ quality observations across
+      3+ event windows, with explicit reject/watch/radar-only/blocked/follow-up
+      states. No wallet, cohort, event, or signal is paper-qualified.
+  - at: '2026-08-31T21:28:00Z'
+    loop: main-session-continuation
+    item: unknowns.U-007
+    output: wiki/notes/2026-08-31-work-queue-state-policy.md, automation/evidence-ledger-prioritizer.mjs, outputs/evidence-ledger-prioritizer.md, automation/work-queues.yaml, automation/loop-state.yaml, decisions/unknowns.md, index.yaml, index.md, log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Resolved U-007 for the current no-key/A2 research phase. Queue states now
+      separate pending, active, done, watch, blocked, and discarded. Promotion
+      requires a named trigger, one selected branch, context below the handoff
+      threshold, and a wheel gate/access classification/cheapest falsifier
+      before expansion. Threshold rows and access-gated branches stay Watch or
+      blocked instead of cluttering ready work. The prioritizer now exposes top
+      needs-wheel-gate items so overload is visible. No scheduler, alert,
+      threshold, account, key, paid service, demo/testnet setup, execution, or
+      strategy promotion changed.
+  - at: '2026-08-31T21:20:00Z'
+    loop: main-session-continuation
+    item: validation.hype-feedback-to-quantified-demo-strategy-loop
+    output: wiki/notes/2026-08-31-hype-feedback-event-only-velocity-kill-test.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/discarded.md, index.yaml, index.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, bridge source source.ralph-hype-feedback-event-only-velocity-kill-test, log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed the first quantified HYPE feedback branch as an event-only
+      velocity kill test. Local finalized HYPE rows provide 95 reviews and 93
+      velocity reviews, but every velocity row is event-only without fresh L2 or
+      signed-flow confirmation. Broad follow rates are near baseline: 30m
+      48/93 (51.6%, Wilson 95% 41.6-61.5%) and 1h 52/93 (55.9%, 45.8-65.6%).
+      The best coarse bucket, HYPE 5m UP, is still only N=27 with wide ranges
+      and material adverse excursion. Decision: reject current HYPE event-only
+      velocity follow/fade as a strategy candidate. Keep the separate HYPE L2
+      absorption capture falsifier Watch-only until Tomas explicitly approves a
+      capture/replay branch.
+  - at: '2026-08-31T18:00:26Z'
+    loop: main-session-continuation
+    item: discovery.smart-money-cohort-discovery-layer
+    output: wiki/concepts/smart-money-accumulation-cohort.md, wiki/notes/2026-08-31-smart-money-cohort-discovery-layer.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, decisions/unknowns.md, index.yaml, index.md, log.md, and memory/2026-08-31.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a research-only smart-money cohort discovery-layer contract.
+      The layer is a future frozen row/export contract, not a scanner or cohort.
+      Minimum valid sample requires 20+ wallets/entities over a 7-14 day entry
+      plus exit/distribution window, with label confidence, token/liquidity
+      context, entry and exit flows, off-ramp context where visible, delayed
+      follower result, baselines, and quality flags. Current public/no-key
+      sources cannot fill the contract; next move is HITL approval for a tiny
+      Nansen/Dune/Arkham export test or leave the branch Watch. No scanner,
+      cohort, account, key, paid service, alert, threshold, scheduler, sizing,
+      execution, public posting, or strategy promotion changed.
+  - at: '2026-08-31T17:56:47Z'
+    loop: main-session-continuation
+    item: discovery.arkham-evaluation-checklist
+    output: wiki/entities/arkham.md, wiki/notes/2026-08-31-arkham-evaluation-checklist.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, decisions/unknowns.md, index.yaml, index.md, log.md, and memory/2026-08-31.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a research-only Arkham access and source-fit checklist. Arkham
+      docs are accessible and show strong enrichment endpoints for intelligence,
+      labels, transfers, top flows, portfolios, balances, loans,
+      counterparties, HyperCore context, and usage analytics. The data API
+      requires an Arkham account, API plan or trial, and API key; subscriptions
+      are usage-based and start at $100, and direct no-key probes from this
+      workspace returned HTTP 400 with an API-key signup message. Arkham remains
+      needs-approval/enrichment-first, not an active rail or strategy source.
+      No account, key, paid service, scanner, cohort, alert, threshold,
+      scheduler, sizing, execution, public posting, or strategy promotion
+      changed.
+  - at: '2026-08-31T17:47:38Z'
+    loop: main-session-continuation
+    item: discovery.wallet-shadowing-archetype-shadowability-map
+    output: wiki/comparisons/wallet-shadowing-archetype-map.md, wiki/notes/2026-08-31-wallet-shadowing-archetype-shadowability-map.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, decisions/unknowns.md, index.yaml, index.md, log.md, and memory/2026-08-31.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a research-only wallet-shadowing archetype shadowability map.
+      Market-level funding/basis is the only currently no-key measurable
+      latency-tolerant comparison floor. Wallet-level structural funding/basis
+      remains Watch because hidden hedges and cross-venue exposure dominate.
+      Slow accumulator following remains the higher-upside alpha branch but is
+      gated on approved/exported smart-money data with exit/distribution rows.
+      Event and Hyperliquid wallet-shadowing remain tiny frozen-falsifier
+      routes, not scanner or strategy-promotion routes. No scanner, cohort,
+      account, key, paid use, alert, threshold, sizing, execution, scheduler,
+      or strategy promotion changed.
+  - at: '2026-08-31T13:20:00Z'
+    loop: main-session-continuation
+    item: discovery.wallet-shadow-delay-evidence
+    output: wiki/notes/2026-08-31-wallet-shadow-delay-evidence.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, decisions/unknowns.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, index.yaml, index.md, log.md, and memory/2026-08-31.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a research-only wallet-shadow delay measurement-path probe.
+      Public Hyperliquid user fills plus candle snapshots can support small
+      latency-adjusted falsifiers for recent known-address rows when raw fill
+      rows and market-data joins are captured in the same run. A live 20-minute
+      probe returned 396 fills for one known sample address and joined one SOL
+      open-short fill to 15s/60s/180s/5m delay scenarios. This proves
+      measurability only; U-008/U-017 remain open until 20+ quality observations
+      across frozen event windows survive delay, costs, exits, selection bias,
+      and hidden-hedge checks. No scanner, cohort, account, key, paid use,
+      alert, threshold, sizing, execution, or strategy promotion changed.
+  - at: '2026-08-31T11:41:37Z'
+    loop: main-session-continuation
+    item: discovery.slow-accumulator-tool-fit-map
+    output: wiki/comparisons/slow-accumulator-tool-fit-map.md, wiki/notes/2026-08-31-slow-accumulator-tool-fit-map-update.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, index.yaml, index.md, log.md, and memory/2026-08-31.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a research-only update of the slow accumulator tool-fit map.
+      Nansen/Dune/Arkham remain the serious smart-money/token-flow source
+      family after approved access/export; DefiLlama and public market data are
+      context only; Hyperliquid/Copin/HyperDash/BitMEX-style copytrading
+      surfaces are perp-copy prior art and triage, not active slow spot
+      accumulator sources. No scanner, cohort, account, key, paid use, alert,
+      threshold, sizing, execution, or strategy promotion changed.
+  - at: '2026-08-31T11:38:19Z'
+    loop: main-session-continuation
+    item: discovery.slow-accumulator-following-exit-risk-scan
+    output: wiki/notes/2026-08-31-slow-accumulator-following-exit-risk-scan.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, decisions/unknowns.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, index.yaml, index.md, log.md, and memory/2026-08-31.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a research-only exit/distribution risk falsifier for slow
+      accumulator following. The branch remains plausible only if exits are
+      first-class: missing exit/distribution rows are a veto, not a caveat.
+      Future paper rows need frozen selection, entry and exit flows,
+      delayed-entry/delayed-exit follower results, liquidity, beta, and quality
+      flags. No scanner, cohort, account, key, paid use, alert, threshold,
+      sizing, execution, or strategy promotion changed.
+  - at: '2026-08-31T11:34:48Z'
+    loop: main-session-continuation
+    item: discovery.slow-accumulator-copytrading-source-fit
+    output: wiki/notes/2026-08-31-slow-accumulator-copytrading-source-fit.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, decisions/unknowns.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, index.yaml, index.md, log.md, and memory/2026-08-31.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a research-only slow-accumulator copytrading source-fit
+      classification. Nansen Smart Money netflows are highest-fit for the exact
+      slow accumulation/distribution signal but require approved access or
+      payment; Dune is transparent extraction if an API/manual export path is
+      approved; Arkham is enrichment; Hyperliquid/Copin/HyperDash-style
+      copytrading surfaces are mostly perp-copy prior art and should not drive
+      slow accumulator selection. No scanner, cohort, account, key, paid use,
+      alert, threshold, sizing, execution, or strategy promotion changed.
+  - at: '2026-08-31T11:25:45Z'
+    loop: main-session-continuation
+    item: discovery.funding-basis-wallet-detection-spike
+    output: wiki/notes/2026-08-31-funding-basis-wallet-detection-spike.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, decisions/unknowns.md, outputs/evidence-ledger-prioritizer.md, outputs/research-validation-checklist.md, index.yaml, index.md, log.md, and memory/2026-08-31.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a research-only wallet-level funding/basis detectability spike.
+      Hyperliquid known-address public routes can triage current perp state,
+      recent/capped fills, and account funding rows, but cannot prove
+      actor-level structural basis books because off-venue hedges, address or
+      sub-account fragmentation, capped history, and leaderboard bias dominate
+      the inference. Current best path remains market-level funding/basis
+      baseline observation plus fixed-window paper accounting; wallet-level
+      structural-basis detection stays Watch until explicit actor-clustering and
+      cross-venue exposure access is approved.
+  - at: '2026-08-31T06:50:00Z'
+    loop: main-session-continuation
+    item: validation.funding-basis-previous-output-comparison-extension
+    output: automation/funding-basis-public-snapshot-table.mjs, outputs/funding-basis-public-snapshot-table.json, outputs/funding-basis-public-snapshot-table.md, wiki/notes/2026-08-31-funding-basis-fixed-window-accounting-design.md, automation/loop-state.yaml, automation/current-operating-map.md, decisions/candidates.md, log.md, and memory/2026-08-31.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Implemented the manual previous-output comparison extension in the
+      funding/basis snapshot collector. The report now compares matching coins
+      against the prior local JSON output before overwriting it. This supports
+      manual repeated-run diagnostics only; it does not create a scheduler,
+      monitor, alert, threshold, account, sizing model, or execution behavior.
+  - at: '2026-08-31T06:44:00Z'
+    loop: main-session-continuation
+    item: validation.funding-basis-fixed-window-accounting-design
+    output: wiki/notes/2026-08-31-funding-basis-fixed-window-accounting-design.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, index.yaml, index.md, log.md, and memory/2026-08-31.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a research-only fixed-window accounting design for the
+      funding/basis baseline. It defines frozen window records, gross carry,
+      liquidity, basis/tail, qualitative cost classes, dumb baselines, and
+      reject/watch/needs-longer-paper-window states. Next safe implementation
+      would be optional previous-output ingestion for manual repeated runs; any
+      scheduler, live monitor, alert, account, demo/testnet setup, or threshold
+      requires separate explicit HITL.
+  - at: '2026-08-31T06:35:00Z'
+    loop: main-session-continuation
+    item: validation.funding-basis-public-snapshot-table
+    output: automation/funding-basis-public-snapshot-table.mjs, outputs/funding-basis-public-snapshot-table.json, outputs/funding-basis-public-snapshot-table.md, wiki/notes/2026-08-31-funding-basis-public-snapshot-table.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, index.yaml, index.md, log.md, and memory/2026-08-31.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a one-shot public/no-key funding-basis snapshot table. The
+      collector saw 233 Hyperliquid perp markets, wrote 20 table rows, fetched
+      864 short-window funding-history rows across the top 12 markets by daily
+      notional volume, and added DefiLlama stable/yield context. The artifact
+      validates the data rail only; C-025 remains Candidate/baseline, not
+      paper-qualified or promoted.
+  - at: '2026-08-31T06:28:00Z'
+    loop: main-session-continuation
+    item: discovery.funding-basis-baseline-monitor
+    output: wiki/notes/2026-08-31-funding-basis-baseline-monitor.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, decisions/unknowns.md, index.yaml, index.md, log.md, and memory/2026-08-31.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a bounded read-only funding/basis baseline monitor spec.
+      Hyperliquid public info routes returned perp market context and
+      funding-history rows without a key, and DefiLlama returned public yield,
+      stablecoin, and open-interest context. The branch is feasible as a
+      no-prediction comparison floor, not a promoted strategy. Next safe
+      artifact is a one-shot public snapshot table/report over top liquid
+      Hyperliquid perp markets, still no-key and read-only.
+  - at: '2026-08-31T05:52:00Z'
+    loop: main-session-continuation
+    item: discovery.strategy-leg-garden
+    output: wiki/notes/2026-08-31-strategy-leg-garden-harvest.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, decisions/unknowns.md, index.yaml, index.md, log.md, and memory/2026-08-31.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a bounded strategy-leg garden harvest. Preserved five raw
+      patient-retail legs with data rails, dumb baselines, kill tests, and tail
+      risks: funding-basis-persistence-baseline, smart-money-mid-cap
+      accumulation, range-grid-offline-falsifier, token-unlock-liquidity
+      pressure, and event-radar-to-paper-filter. No leg was promoted. Next
+      measurable no-key branch remains funding-basis-baseline-monitor.
+  - at: '2026-08-31T05:44:00Z'
+    loop: main-session-continuation
+    item: discovery.patient-retail-archetype-prioritization
+    output: wiki/notes/2026-08-31-patient-retail-archetype-prioritization.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, decisions/unknowns.md, index.yaml, index.md, log.md, and memory/2026-08-31.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a bounded patient-retail archetype prioritization. Funding/basis
+      structural baseline is the best next no-key branch because public
+      Hyperliquid funding/open-interest context works from this workspace and
+      the branch is slow, falsifiable, and baseline-shaped. Smart-money/mid-cap
+      accumulation remains the higher-upside alpha branch but is gated on
+      Dune/Nansen/Arkham access/export evidence. Range/grid remains a watch
+      offline-falsifier; token unlocks are source-first watch; delegated copy is
+      prior-art only; event-timing wallets remain radar-only. No strategy was
+      promoted.
+  - at: '2026-08-31T05:36:00Z'
+    loop: main-session-continuation
+    item: discovery.mid-cap-accumulation-flow-scan
+    output: wiki/notes/2026-08-31-mid-cap-accumulation-flow-scan.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, decisions/unknowns.md, index.yaml, index.md, log.md, and memory/2026-08-31.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a bounded read-only wheel gate for the slow mid-cap
+      accumulation branch. Dune can express relevant transfer/smart-money
+      queries but unauthenticated API/result calls returned invalid API key;
+      Nansen is highest-fit for smart-money net flow but paid/keyed or
+      x402-paid; Arkham is useful for labels, holders, balances, flows, and
+      enrichment but requires access/key; DefiLlama works no-key here and is
+      useful for universe/context only, not wallet-cohort flow rows. C-022 and
+      C-030 stay Candidate; U-024 and U-030 stay Open, narrowed to
+      access/exportability plus exit-flow coverage. No strategy was promoted.
+  - at: '2026-08-30T16:07:00Z'
+    loop: main-session-continuation
+    item: discovery.grid-range-existing-tool-trial-design
+    output: wiki/notes/2026-08-30-grid-range-existing-tool-trial-design.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, decisions/unknowns.md, outputs/evidence-ledger-prioritizer.md, index.yaml, index.md, log.md, and memory/2026-08-30.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a bounded grid/range existing-tool trial design. Hummingbot,
+      Pionex, TradingView, and public Hyperliquid grid repos show grid/range
+      execution and simulation are already productized, but real use crosses
+      account/key/wallet/capital or manual UI boundaries. C-028 stays Watch.
+      The only approved next shape is an offline public-candle falsifier against
+      simple range and no-trade baselines with fees, spread/slippage, funding,
+      and trend-break loss assumptions fixed before any product/demo/testnet
+      evaluation.
+  - at: '2026-08-30T16:02:00Z'
+    loop: main-session-continuation
+    item: discovery.hyperliquid-data-feasibility-spike
+    output: wiki/notes/2026-08-30-hyperliquid-data-feasibility-spike.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, core/data-rails.md, decisions/candidates.md, decisions/unknowns.md, outputs/evidence-ledger-prioritizer.md, index.yaml, index.md, log.md, and memory/2026-08-30.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a bounded public/no-key Hyperliquid data feasibility spike.
+      Current usable routes are public stats leaderboard for discovery-only
+      address seeds, official info endpoint metadata/allMids/candles/funding for
+      market and funding context, and clearinghouseState/userFills for known
+      address verification. Capped userFills responses mean Hyperliquid is good
+      for rejection/watch triage and cheap falsifiers, but not enough by itself
+      to certify complete wallet history, copyability, hidden-hedge absence, or
+      activity-defined universe quality.
+  - at: '2026-08-30T15:53:00Z'
+    loop: main-session-continuation
+    item: discovery.public-free-source-feed-list
+    output: wiki/notes/2026-08-30-public-free-source-feed-list.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, core/data-rails.md, decisions/candidates.md, index.yaml, index.md, log.md, and memory/2026-08-30.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a bounded public/free source-feed map. Current active
+      public/no-key or keyless-proxy rails are Binance/Bybit/Hyperliquid market
+      data, Hyperliquid public stats plus info endpoints for address seed and
+      verification work, DefiLlama protocol context, DEXScreener and
+      GeckoTerminal token/pair liquidity context, and Alternative.me Fear &
+      Greed as coarse sentiment context only. Nansen/Arkham/Dune-style cohort
+      work remains needs-access unless free exportable rows or approved
+      account/key/paid access are verified.
+  - at: '2026-08-30T15:27:00Z'
+    loop: main-session-continuation
+    item: discovery.existing-tool-fit-map
+    output: wiki/notes/2026-08-30-existing-tool-fit-map.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed the current tool-first fit map. Vectorbt remains the active
+      candle sanity rail; Freqtrade is validation-hygiene reference but not
+      locally runnable; hftbacktest/Nautilus are replay/fill-realism references;
+      Nautilus/Barter/Basana are event-driven architecture references; Binance
+      and Hyperliquid public orderflow is active-public-proxy; Hyperliquid
+      wallet routes are discovery/verification only; Nansen/Arkham/Dune-style
+      cohort work remains needs-access/approval; grid/MM/copy products are prior
+      art, not active rails. C-026 stays Candidate; U-027 and U-018 remain Open.
+  - at: '2026-08-30T15:24:00Z'
+    loop: main-session-continuation
+    item: discovery.event-driven-bot-repo-search
+    output: wiki/notes/2026-08-30-event-driven-bot-repo-search.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, decisions/candidates.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a bounded public event-driven bot repo search. NautilusTrader,
+      Barter, and Basana are clean architecture references; Botvana is stale or
+      early-stage as an active rail; Hyperliquid-specific grid/MM bots such as
+      Supurr, smohantty/hyperliquid-trading-bot, zer0cache's Go market maker,
+      Perp Lobster, and browser-wallet apps are source claims and risk-boundary
+      specimens, not install/run targets. C-009 remains Candidate; no repo became
+      a strategy candidate.
+  - at: '2026-08-30T15:18:00Z'
+    loop: main-session-continuation
+    item: discovery.aggregate-flow-signal-feasibility
+    output: wiki/notes/2026-08-30-aggregate-flow-signal-feasibility.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a bounded aggregate-flow feasibility split. Wallet/cohort
+      aggregate flow remains needs-access/watch because broad mid-cap
+      accumulator cohorts require Nansen/Arkham/Dune-style labelled or
+      queryable flow data that is paid/keyed or unverified in this workspace.
+      Exchange/orderflow aggregate flow is active-public-proxy because local
+      Binance/Hyperliquid no-key capture and feature extraction work, but it is
+      not signal evidence until exact alert/orderflow overlap exists. Alert-edge
+      aggregate flow stays watch because current saved orderflow captures have 0
+      exact symbol/time matches against finalized alert reviews. No strategy was
+      promoted.
+  - at: '2026-08-30T09:38:00Z'
+    loop: main-session-continuation
+    item: investigation.trading-bot-build-guide-map
+    output: wiki/notes/2026-08-30-trading-bot-build-guide-map-closeout.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Closed the trading-bot build-guide map under the active Profitability
+      Flywheel. Current build order: strategy family and speed fit, wheel gate,
+      falsifiable hypothesis, cheapest kill test, offline backtest/replay,
+      forward paper/shadow, decision, then only small adapter/no-key prototype
+      if evidence justifies it. Generic bot design remains out of scope.
+  - at: '2026-08-30T09:30:00Z'
+    loop: main-session-continuation
+    item: investigation.trader-grade-ta-feature-taxonomy
+    output: wiki/notes/2026-08-30-trader-grade-ta-feature-taxonomy.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a compact trader-grade TA feature taxonomy. It separates HTF
+      context, mid-TF setup, LTF trigger, orderflow proxy, derivatives context,
+      statistical evidence, and quality flags. Current falsifier: public
+      orderflow remains pipeline evidence only until exact symbol/time overlap
+      exists with finalized alerts; no Telegram alert wording or live gate
+      changed.
+  - at: '2026-08-30T09:22:00Z'
+    loop: main-session-continuation
+    item: investigation.strategy-family-taxonomy
+    output: wiki/notes/2026-08-30-strategy-family-taxonomy.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a compact strategy-family taxonomy. RALPH now classifies
+      families by speed, data rail, validation path, baseline, main failure
+      mode, and current state. Priority favors slow structural baselines, slow
+      informational cohorts, and active TA/orderflow/paper evidence only when
+      it feeds strict rejection or forward-paper gates. Speed MEV remains
+      discard/reference unless explicitly reopened.
+  - at: '2026-08-30T09:16:00Z'
+    loop: main-session-continuation
+    item: investigation.mev-bot-failure-mode-extraction
+    output: wiki/notes/2026-08-30-mev-bot-failure-mode-extraction.md, decisions/candidates.md, decisions/unknowns.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Extracted mandatory validation rules from the historical Base MEV bot
+      case file without booting code or touching execution. Rules cover
+      archive provenance, secret-free monitor mode, schema/config/event/metric
+      contracts, simulation realism, end-to-end wiring, venue mechanics, and
+      latency budget checks. Marked C-006 done and U-006 resolved. Broader
+      wallet-shadow/MEV profitability questions remain unresolved.
+  - at: '2026-08-30T09:10:00Z'
+    loop: main-session-continuation
+    item: investigation.framework-shortlist-comparison
+    output: wiki/notes/2026-08-30-framework-shortlist-comparison.md, experiments/btc-eth-alert-edge/framework-benchmark-plan.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a bounded framework shortlist comparison from existing RALPH
+      source notes and current local artifacts. Current ranking: vectorbt is
+      the active ephemeral benchmark rail via `uv` with `plotly<6`; Freqtrade
+      is the best validation-hygiene reference but not locally runnable;
+      hftbacktest/Nautilus are replay and architecture references; Jesse and
+      OctoBot/grid/copy products remain secondary workflow/tool-fit references.
+      No framework was adopted.
+  - at: '2026-08-30T06:58:00Z'
+    loop: main-session-continuation
+    item: investigation.build-vs-buy-decision-memo
+    output: wiki/notes/2026-08-30-build-vs-buy-decision-memo.md, decisions/decisions.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a compact research-only build-vs-buy memo. Decision: RALPH
+      defaults to existing tools, frameworks, public APIs, dashboards, and
+      datasets before custom infrastructure. Custom RALPH work is justified
+      for branch selection, falsifier design, validation/rejection discipline,
+      Tomas-specific paper evidence, small adapters, and durable memory. Future
+      custom build/data/backtest expansion must name the existing rail checked
+      or classify the branch as needs-access, watch, or custom-exception.
+  - at: '2026-08-30T06:31:00Z'
+    loop: main-session-continuation
+    item: investigation.btc-eth-edge-row-level-parity
+    output: experiments/btc-eth-alert-edge/package.json, experiments/btc-eth-alert-edge/src/framework_benchmark.py, experiments/btc-eth-alert-edge/results/framework-benchmark.json, experiments/btc-eth-alert-edge/results/framework-benchmark.md, wiki/notes/2026-08-30-btc-eth-row-level-parity.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Recovered the vectorbt benchmark after the runtime started resolving a
+      Plotly version incompatible with vectorbt's bundled theme by pinning
+      `plotly<6`. Added row-level parity output. BTCUSDT had 47 custom rows,
+      34 vectorbt rows, 33 shared entries, 14 custom-only rows, and 1
+      vectorbt-only tail row. ETHUSDT had 55 custom rows, 35 vectorbt rows, 34
+      shared entries, 21 custom-only rows, and 1 vectorbt-only tail row. The
+      differences are explainable by vectorbt's one-position portfolio
+      mechanics and custom max-bars maturity filtering. The setup remains
+      weak; no promotion.
+  - at: '2026-08-30T06:16:00Z'
+    loop: main-session-continuation
+    item: discovery.hyperliquid-copytrading-address-sample
+    output: experiments/copytrading-address-intake/src/run-hyperliquid-address-intake.mjs, experiments/copytrading-address-intake/data/public-leaderboard-addresses-2026-08-30.json, experiments/copytrading-address-intake/results/hyperliquid-leaderboard-address-intake-2026-08-30.json, experiments/copytrading-address-intake/results/hyperliquid-leaderboard-address-intake-2026-08-30.md, wiki/notes/2026-08-30-hyperliquid-leaderboard-address-sample.md, decisions/copytrading-watch-ledger.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a bounded six-address Hyperliquid leaderboard seed sample
+      through the official no-key `clearinghouseState` and `userFills`
+      intake. Result: 0 copy candidates, 2/6 accounts with open positions,
+      4/6 capped fill responses, 1/6 no-fill response, 1 rejected-as-copy row,
+      and 5 watch/sample-only rows. This validates the pipeline from public
+      leaderboard seed to no-key rejection/watch classification, but no address
+      or cohort was promoted.
+  - at: '2026-08-30T06:14:00Z'
+    loop: main-session-continuation
+    item: discovery.x-reddit-strategy-inspiration-scan
+    output: wiki/notes/2026-08-30-x-reddit-strategy-inspiration-scan.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a bounded public X/Reddit/social inspiration scan. The scan
+      kept only source-backed falsification themes: failed-strategy
+      postmortems, paper-test duration discipline, data/source quality, deep
+      order-book realism, opening-range breakout as a dumb baseline,
+      Hyperliquid copytrading verifier claims, and Hyperliquid data-layer
+      product claims. X search was noisy, so generic/spammy/product-copy
+      results were rejected. No social item became a strategy candidate.
+  - at: '2026-08-30T06:06:00Z'
+    loop: main-session-continuation
+    item: discovery.copytrading-public-route-ledger
+    output: experiments/copytrading-address-intake/src/run-hyperliquid-public-route-ledger.mjs, experiments/copytrading-address-intake/results/hyperliquid-public-route-ledger.json, experiments/copytrading-address-intake/results/hyperliquid-public-route-ledger.md, wiki/notes/2026-08-30-copytrading-public-route-ledger.md, decisions/copytrading-watch-ledger.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a bounded public/no-key copytrading route ledger. Hyperliquid
+      public stats leaderboard at stats-data.hyperliquid.xyz returned 44,149
+      structured address rows without a key; 22,230 had positive all-time PnL
+      and 2,126 had positive all-time PnL but negative week PnL. The route is
+      now classified as active discovery-only and must be paired with official
+      no-key info endpoint `clearinghouseState`/`userFills` checks before any
+      address enters a cohort spec. HypurrScan and HyperDash remain manual
+      watch routes; HyperTracker, Nansen, and Apify-style routes remain
+      needs-access or needs-approval for programmatic use.
+  - at: '2026-08-30T05:58:00Z'
+    loop: main-session-continuation
+    item: discovery.public-orderflow-data-rail-spike
+    output: crypto-updates/orderflow-alert-replay-alignment.mjs, crypto-updates/runtime/orderflow-alignment/latest.json, crypto-updates/wiki/orderflow/replay-alignment.md, wiki/notes/2026-08-30-orderflow-replay-alignment-audit.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a bounded replay-alignment audit for saved no-key public
+      orderflow captures. The audit checked 244 alert records, 239 finalized
+      reviews, and 6 feature runs, and found 0 exact symbol/time matches plus
+      8 near misses or partial overlaps. The two-hour BTC capture overlapped
+      seven finalized HYPE/SOL alert windows by time, but not symbol, so saved
+      captures remain pipeline evidence rather than alert-classification
+      evidence. Next orderflow work should capture BTC/ETH/SOL/HYPE during
+      active alert windows or run the alignment audit immediately after future
+      captures; do not rerun score-only refreshes before exact overlap exists.
+  - at: '2026-08-29T22:52:06Z'
+    loop: main-session-continuation
+    item: discovery.github-strategy-profile-scan
+    output: wiki/notes/2026-08-29-github-operator-source-map.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a bounded public GitHub/source map. Public GitHub API and raw
+      README/docs checks covered freqtrade/freqtrade,
+      titouannwtt/freqtrade-ultimate, nkaz001/hftbacktest,
+      djienne/COPY_WALLET_HYPERLIQUID,
+      SimSimButDifferent/HyperLiquidAlgoBot,
+      chainstacklabs/hyperliquid-trading-bot, and
+      Drakkar-Software/OctoBot. Result: GitHub/code-backed ideas should feed
+      the community idea kill-test template; Hyperliquid framework constraints
+      and hftbacktest fill realism are useful validation sources; copy-wallet,
+      grid, and indicator/ML bot repos are source claims to falsify, not
+      strategy evidence. `discovery.operator-profile-source-map` is marked
+      done for this GitHub-backed slice; broader X/Reddit/operator mapping
+      remains separate behind stricter noise filters.
+  - at: '2026-08-29T22:42:18Z'
+    loop: main-session-continuation
+    item: investigation.community-idea-to-kill-test-template
+    output: wiki/notes/templates/community-idea-kill-test.md, wiki/notes/2026-08-29-community-idea-kill-test-template.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a research-only template for turning public GitHub, operator,
+      X/Twitter, Reddit, blog, dashboard, product, or paper ideas into
+      falsifiable RALPH records. The template requires source URL, access
+      classification, exact claim, mechanism, market fit, reuse path, data
+      needed, dumb baseline, cheapest kill test, kill criteria, source
+      quality, failure modes, bounded decision, and next micro-action. It only
+      allows Rejected, Watch, Candidate, Blocked, or Reassess; it cannot
+      produce Paper-Qualified, Alert-Qualified, live, execution, sizing,
+      TP/SL, or strategy-promotion states. Next useful branch is a small
+      GitHub/code-backed source map before broader X/Reddit scans.
+  - at: '2026-08-29T22:34:12Z'
+    loop: main-session-continuation
+    item: decision.autoresearch-evidence-ledger-prioritizer
+    output: automation/evidence-ledger-prioritizer.mjs, outputs/evidence-ledger-prioritizer.json, outputs/evidence-ledger-prioritizer.md, wiki/notes/2026-08-29-evidence-ledger-prioritizer.md, automation/work-queues.yaml, automation/loop-state.yaml, automation/retrieval-router.yaml, automation/current-operating-map.md, index.yaml, index.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a research-only evidence ledger prioritizer so RALPH can rank
+      pending work by evidence readiness and cheap kill-test value after a
+      branch finishes. After marking the prioritizer done, the ledger ranked
+      61 remaining pending items: 28 ready-now, 2
+      threshold-watch, and 31 needs-wheel-gate. It correctly held
+      validation.recheck-ta-call-candidates-after-20-row-threshold because the
+      largest call bucket is 9/20 reviewed rows, and held
+      validation.recheck-avax-range-breakdown-after-forward-paper-threshold
+      because exact AVAX 1h range_breakdown_short down/low-vol forward-paper
+      rows are 0/20. Next useful branch is
+      investigation.community-idea-to-kill-test-template, with
+      GitHub/operator source mapping as secondary ready work.
+  - at: '2026-08-29T22:14:02Z'
+    loop: main-session-continuation
+    item: validation.ai-research-os-index-lint
+    output: wiki/notes/2026-08-29-ai-research-os-index-lint.md, index.yaml, index.md, automation/retrieval-router.yaml, automation/work-queues.yaml, automation/loop-state.yaml, automation/current-operating-map.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed bounded Research OS index lint after the forward-paper
+      regime-tagging, AVAX candidate, and source-falsification guide updates.
+      Repaired stale top-level wiki-page count, regenerated index.md routes,
+      added YAML frontmatter to the recent forward-paper and AVAX notes, moved
+      the lint item from pending to done, and bridge-search-verified the new
+      lint note plus materially repaired notes. Next useful branch is
+      validation.recheck-ta-call-candidates-after-20-row-threshold unless exact
+      AVAX regime-tagged forward paper rows become available first.
+  - at: '2026-08-29T22:05:51Z'
+    loop: main-session-continuation
+    item: validation.guide-source-falsification
+    output: wiki/notes/2026-08-29-source-falsification-guide.md, automation/retrieval-router.yaml, automation/work-queues.yaml, automation/loop-state.yaml, automation/current-operating-map.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed a research-only source-falsification guide for the RALPH
+      Profitability Flywheel. Future source-backed ideas, historical
+      survivors, operator/community inputs, and candidate expansions must
+      classify the exact claim, mechanism, access status, baseline, cheapest
+      kill test, falsifier, and decision before promotion or custom expansion.
+      AVAX range breakdown remains Watch / forward-paper-needed because exact
+      regime-tagged forward paper rows are still 0. Next useful branch is
+      validation.ai-research-os-index-lint unless a forward-paper threshold is
+      reached first.
+  - at: '2026-08-29T21:56:44Z'
+    loop: main-session-continuation
+    item: validation.optionally-test-avax-trend-pullback-reclaim-b-tier-candidate
+    output: experiments/strategy-destruction-filter/candidates/seed-strategies.json, experiments/strategy-destruction-filter/results/filter-report.*, experiments/strategy-destruction-filter/results/feature-study.*, experiments/strategy-destruction-filter/results/rejected-ideas.jsonl, experiments/strategy-destruction-filter/results/survivors.json, wiki/notes/2026-08-29-avax-trend-pullback-rejection.md, wiki/notes/2026-08-29-avax-range-breakdown-watch.md, automation/retrieval-router.yaml, automation/work-queues.yaml, automation/loop-state.yaml, automation/current-operating-map.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Added research-only candidate
+      alert-edge-avax-trend-pullback-reclaim-long-v0 for AVAX 1h
+      trend_pullback_reclaim_long in up/mid-vol. Final verification passed
+      over 13 candidates, 131 variants, 6 survivors, 125 rejected variants,
+      14 feature studies, and 28/28 tests. The AVAX pullback candidate was
+      rejected with sample 621, expectancy 0.0037R, profit factor 1.0058,
+      deflated-Sharpe proxy -0.0563, max drawdown 56.1718R, OOS expectancy
+      -0.1091R, 2/5 positive walk-forward folds, 2/5 positive baseline-lift
+      folds, and 0/2 diagnostic out-of-sample folds. Exact regime-tagged
+      forward paper rows are also 0. Do not move this candidate to Watch,
+      Paper-Qualified, Alert-Qualified Proposal, or live/execution-adjacent
+      state.
+  - at: '2026-08-29T21:48:33Z'
+    loop: main-session-continuation
+    item: validation.optionally-test-remaining-avax-b-tier-alert-edge-candidates
+    output: experiments/strategy-destruction-filter/config.default.json, experiments/strategy-destruction-filter/candidates/seed-strategies.json, experiments/strategy-destruction-filter/src/engine.mjs, experiments/strategy-destruction-filter/results/filter-report.*, experiments/strategy-destruction-filter/results/feature-study.*, experiments/strategy-destruction-filter/results/rejected-ideas.jsonl, experiments/strategy-destruction-filter/results/survivors.json, wiki/notes/2026-08-29-avax-range-breakdown-watch.md, automation/retrieval-router.yaml, automation/work-queues.yaml, automation/loop-state.yaml, automation/current-operating-map.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Added research-only candidate
+      alert-edge-avax-range-breakdown-short-v0 for AVAX 1h
+      range_breakdown_short in down/low-vol and added AVAX public/no-key
+      Binance spot candles to the strategy destruction filter universe. The
+      first run exposed a filter/verifier mismatch, so engine verdicts now
+      include walk-forward diagnostic failures. Final verification passed over
+      12 candidates, 130 variants, 6 survivors, 124 rejected variants, 14
+      feature studies, and 28/28 tests. AVAX has 6/8 historical survivors, led
+      by 213 trades, expectancy 0.2066R, profit factor 1.3536, deflated-Sharpe
+      proxy 1.7773, max drawdown 10.1373R, OOS expectancy 0.1426R, baseline
+      lift 0.4098R, and 5/5 positive walk-forward folds. Exact regime-tagged
+      forward paper rows are 0, so the candidate is Watch /
+      forward-paper-needed only, not paper-qualified or promoted.
+  - at: '2026-08-29T21:22:04Z'
+    loop: main-session-continuation
+    item: validation.add-forward-paper-regime-tagging-before-more-historical-bucket-promotion
+    output: experiments/btc-eth-alert-edge/src/backtest.mjs, experiments/btc-eth-alert-edge/src/paper-dashboard.mjs, experiments/btc-eth-alert-edge/src/verify-backtest.mjs, experiments/btc-eth-alert-edge/README.md, experiments/btc-eth-alert-edge/paper/signals.json, experiments/btc-eth-alert-edge/results/edge-snapshot.json, experiments/btc-eth-alert-edge/results/edge-summary.md, experiments/btc-eth-alert-edge/results/paper-dashboard.*, wiki/notes/2026-08-29-forward-paper-regime-tagging.md, automation/retrieval-router.yaml, automation/work-queues.yaml, automation/loop-state.yaml, automation/current-operating-map.md, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Added trend, volatility, and combined regime tags to forward paper
+      signals and backfilled existing ledger rows from local candles during
+      the normal alert-edge backtest refresh. Added regime-aware paper
+      dashboard groups by tier/setup/regime and
+      symbol/timeframe/setup/regime. Verification passed over 9 symbols, 18
+      sources, 428 setup stats, 3 latest candidates, 171 paper signals, 9
+      open, 162 closed, and 0 missing paper regime tags. Future B-tier
+      historical bucket checks should require matching forward paper support
+      at symbol/timeframe/setup/direction/regime granularity. No strategy was
+      promoted.
+  - at: '2026-08-29T20:22:00Z'
+    loop: main-session-continuation
+    item: validation.strategy-filter-sol-b-tier-candidate-destruction
+    output: wiki/notes/2026-08-29-sol-b-tier-candidate-destruction.md, experiments/strategy-destruction-filter/candidates/seed-strategies.json, experiments/strategy-destruction-filter/results/filter-report.*, experiments/strategy-destruction-filter/results/feature-study.*, automation/current-operating-map.md, automation/retrieval-router.yaml, automation/work-queues.yaml, automation/loop-state.yaml, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Selected the next untested B-tier alert-edge bucket under the
+      Profitability Flywheel: SOL 1h trend_pullback_reclaim_long in an
+      up/low-vol regime. Added research-only candidate
+      alert-edge-sol-trend-pullback-reclaim-long-v0 and ran the strict
+      strategy-destruction filter. Final verification showed 11 candidates,
+      122 variants, 0 survivors, and 122 rejected variants. The SOL candidate
+      was rejected with full-sample expectancy -0.0359R, profit factor 0.9476,
+      deflated-Sharpe proxy -0.6698, max drawdown 45.7886R, OOS expectancy
+      0.0709R, baseline lift 0.1174R, and only 1/5 positive walk-forward
+      folds. The paper ledger lacks regime tags and had no exact SOL 1h
+      trend-pullback paper rows, so no paper qualification was possible. No
+      live trading, keys, paid services, public posting, scheduler changes,
+      live alert wording, risk/sizing/TP/SL, execution behavior, cron/systemd
+      changes, watcher behavior, orders, accounts, or strategy promotion
+      changed.
+  - at: '2026-08-29T20:00:00Z'
+    loop: main-session-continuation
+    item: validation.profitability-flywheel-routing-contract-formalization
+    output: core/profitability-flywheel.md, wiki/notes/2026-08-29-ralph-grand-loop-verify-reassess.md, core/navigation.md, docs/ubiquitous-language.md, automation/current-operating-map.md, automation/retrieval-router.yaml, automation/work-queues.yaml, automation/ralph-autoresearch-loop.md, core/automation-policy.md, automation/loop-state.yaml, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Formalized RALPH Profitability Flywheel as the active research/paper
+      operating contract after Tomas approval. The contract routes future
+      RALPH work through Intake, Wheel gate, Hypothesis, Kill test, Forward
+      paper, Postmortem, Decision, Memory, and Reassess. This was an internal
+      docs/router/queue/state update only. Live trading, wallet keys, exchange
+      keys, paid services, public posting, scheduler changes, live alert
+      wording, risk/sizing/TP/SL, execution behavior, cron/systemd changes,
+      watcher behavior, orders, accounts, and strategy promotion remain behind
+      explicit per-action approval.
+  - at: '2026-08-29T16:38:00Z'
+    loop: main-session-continuation
+    item: validation.ta-learning-loop-call-candidate-forward-check
+    output: wiki/notes/2026-08-29-ta-learning-call-candidate-forward-check.md, crypto-updates/setup-analysis-index.yaml, crypto-updates/wiki/setup-analysis/latest.md, crypto-updates/runtime/setup-analysis.json, crypto-updates/runtime/setup-candle-context-cache.json, automation/retrieval-router.yaml, automation/work-queues.yaml, automation/loop-state.yaml, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Refreshed the local TA setup analyzer and checked generated non-live
+      Call candidates against paper/shadow review outcomes and the live TA
+      execution journal. Setup analysis now has 240 reviewed setups, 5
+      unreviewed alerts, 245 hypothetical alert decisions, and 149 reviewed
+      setups with candle context. The 60s DOWN high-evidence velocity bucket
+      remains a research-only fade call candidate at 7/9 aligned outcomes,
+      6 tradable research entries, and 0 matched executions. A new wick UP
+      medium-evidence follow call candidate appears at 4/5 aligned outcomes,
+      3 tradable research entries, and 0 matched executions. Both stay
+      watch-only; no live alert text change is justified before at least 20
+      reviewed rows, stable asset/regime split, enough tradable entries, and
+      preferably exact-follow execution evidence. No live trading, orders,
+      wallet keys, exchange keys, paid APIs, account setup, package install,
+      public posting, cron cadence, watcher behavior, alert wording,
+      risk/sizing, TP/SL, execution behavior, or strategy promotion changed.
+  - at: '2026-08-29T16:18:00Z'
+    loop: main-session-continuation
+    item: validation.strategy-filter-doge-alert-edge-candidate-destruction
+    output: wiki/notes/2026-08-29-doge-candidate-destruction-lookback.md, experiments/strategy-destruction-filter/candidates/seed-strategies.json, experiments/strategy-destruction-filter/config.default.json, experiments/strategy-destruction-filter/schemas/strategy-idea.schema.json, experiments/strategy-destruction-filter/results/filter-report.*, experiments/strategy-destruction-filter/results/feature-study.*, automation/current-operating-map.md, automation/retrieval-router.yaml, automation/work-queues.yaml, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Converted the next untested B-tier alert-edge paper bucket, DOGE 1h
+      momentum_reversal_long in range/low-vol, into strict research-only
+      candidate alert-edge-doge-momentum-reversal-long-v0. Added DOGE public
+      Binance spot candles to the strategy filter research universe and
+      reconciled the JSON schema rule enum with validator-supported rules.
+      Refreshed filter and feature-study artifacts. Final verification showed
+      10 candidates, 121 variants, 0 survivors, and 121 rejected variants.
+      The best DOGE variant had sample 140, expectancy 0.0598R, OOS
+      expectancy 0.2113R, and baseline lift 0.12R, but still failed profit
+      factor, deflated-Sharpe, and drawdown gates. No live trading, orders,
+      wallet keys, exchange keys, paid APIs, account setup, package install,
+      public posting, cron cadence, watcher behavior, alert wording,
+      risk/sizing, TP/SL, execution behavior, or strategy promotion changed.
+  - at: '2026-08-28T12:53:14Z'
+    loop: main-session-continuation
+    item: validation.no-key-first-experiment-selection
+    output: wiki/notes/2026-08-28-no-key-first-experiment-selection.md, crypto-updates/setup-analysis-index.yaml, crypto-updates/wiki/setup-analysis/latest.md, crypto-updates/runtime/setup-analysis.json, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, and log.md
+    notification: telegram-message-4860-accepted-history-mirrored-voice-1787921739464
+    verdict: >-
+      Completed the no-key-first experiment selection. Verified current
+      public/no-key access to Binance public time and Hyperliquid allMids,
+      and compared active local artifacts. The selected next bounded route is
+      validation.ta-learning-loop-call-candidate-forward-check because the
+      setup analyzer was stale at 15 reviewed setups from
+      2026-08-18T20:20:40.322Z versus 222 finalized monitor reviews through
+      2026-08-28T12:03:28.619Z. A skip-candles smoke run briefly rewrote
+      setup-analysis outputs without candle context; this was immediately
+      repaired with the normal public/no-key analyzer refresh, now showing 223
+      reviewed setups, 5 unreviewed alerts, 132 candle-context-ready rows,
+      and callLineDecision research_candidate_not_live. No live alert text,
+      watcher behavior, thresholds, risk/sizing, TP/SL, execution, cron
+      cadence, keys, accounts, paid APIs, package installs, public posting,
+      or strategy promotion changed.
+  - at: '2026-08-28T12:44:10Z'
+    loop: main-session-continuation
+    item: validation.book-freshness-repair-for-orderflow-alert-gate
+    output: wiki/notes/2026-08-20-book-freshness-repair.md, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, and log.md
+    notification: telegram-message-4857-accepted-history-mirrored-voice-1787921234869
+    verdict: >-
+      Closed the BTC/ETH/SOL book-freshness repair as an evidence-quality
+      fix after a bounded local JSONL join over post-2026-08-21T12:20Z
+      monitor rows. Found 73 post-fix joined BTC/ETH/SOL reviews, 63 clean
+      fresh-book rows, 10 stale-but-nonnegative rows, 0 missing/unavailable
+      book ages, 0 negative bookAgeMs, and 0 score_gt_maxScore rows. Fresh
+      book age distribution was min 6ms, p50 350ms, p90 1356ms, max 3640ms.
+      Fresh-book verdict mix remains mixed at 36 fade-useful, 23
+      follow-useful, and 4 noisy, so C-036 stays Candidate and U-038 stays
+      Open. No cron trigger, live execution, orders, wallet keys, exchange
+      keys, paid APIs, account setup, package install, public posting,
+      watcher behavior, alert wording, risk/sizing, TP/SL, or strategy
+      promotion changed.
+  - at: '2026-08-28T12:18:40Z'
+    loop: subagent-continuation
+    item: validation.ta-orderflow-alert-gate-backtest
+    output: wiki/notes/2026-08-13-orderflow-alert-alignment-check.md, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, and log.md
+    notification: telegram-message-4840-accepted-readback-unsupported
+    verdict: >-
+      Refreshed the local alert/orderflow alignment over
+      crypto-updates/runtime/alert-feedback.jsonl through the 2026-08-28
+      monitor index. Joined 216 finalized reviews to matching alerts after
+      strict quality exclusions; excluded 6 legacy/parser-roll rows for
+      negative bookAgeMs, including one score_gt_maxScore row. Fresh-book
+      evidence is now usable in 63 clean BTC/ETH/SOL rows, but the aggregate
+      remains mixed: clean book rows split 36 fade-useful, 23 follow-useful,
+      and 4 noisy. The largest narrow clean-book bucket is SOL WICK 5s DOWN
+      score 5/5 with aligned CVD, aligned negative book imbalance, and depth
+      thinning: 6 rows, 5 fade-useful and 1 follow-useful. This is watchlist
+      evidence only, not a promotion. C-036 stays Candidate and U-038 stays
+      Open. No live execution, orders, wallet keys, exchange keys, paid APIs,
+      account setup, package install, alert wording, watcher behavior,
+      risk/sizing, TP/SL, cron cadence, public posting, or strategy promotion
+      changed. Telegram send returned message 4840, but Telegram readback is
+      unsupported in this workspace, so visible delivery could not be
+      independently verified.
+  - at: '2026-08-28T12:04:13Z'
+    loop: main-session-continuation
+    item: validation.strategy-filter-lookahead-source-guard
+    output: experiments/strategy-destruction-filter/test/engine.test.mjs, wiki/notes/2026-08-28-strategy-filter-bias-hygiene-checklist.md, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Implemented a focused source-pattern lookahead guard for pre-entry
+      strategy signal functions. The new test scans `sma`, `rollingHigh`,
+      `rollingLow`, `rsi`, `atr`, `volumeZ`, `rollingReturnPct`,
+      `marketContext`, and `signalForVariant` in `engine.mjs` for explicit
+      future candle access and whole-series aggregation patterns. First pass
+      exposed a false positive on a legitimate `index - period + 1` warmup
+      loop, so the future-loop pattern was narrowed before acceptance.
+      `npm test` now passes 28/28 and `npm run verify` still passes over the
+      latest 9-candidate / 105-variant / 0-survivor report. Bias-hygiene
+      scaffold is now complete enough to return to alert/orderflow evidence
+      quality work. No live execution, orders, wallet keys, exchange keys, paid
+      APIs, account setup, package install, alert wording, watcher behavior,
+      risk/sizing, TP/SL, cron cadence, public posting, or strategy promotion
+      changed.
+  - at: '2026-08-28T11:49:02Z'
+    loop: main-session-continuation
+    item: validation.strategy-filter-startup-variance-guard
+    output: experiments/strategy-destruction-filter/test/engine.test.mjs, wiki/notes/2026-08-28-strategy-filter-bias-hygiene-checklist.md, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Implemented a native startup/recursive-variance guard in the
+      strategy-destruction-filter test suite. The new representative test
+      compares signal decisions on full history against a prefix-truncated
+      warmup history for breakout, RSI reversion, MA reclaim, funding
+      reversion, and volume-velocity fade rule shapes. `npm test` now passes
+      27/27 and `npm run verify` still passes over the latest 9-candidate /
+      105-variant / 0-survivor report. Reassessed the next small hardening item
+      as a source-pattern lookahead guard for future signal helper expansion.
+      No live execution, orders, wallet keys, exchange keys, paid APIs, account
+      setup, package install, alert wording, watcher behavior, risk/sizing,
+      TP/SL, cron cadence, public posting, or strategy promotion changed.
+  - at: '2026-08-28T11:37:31Z'
+    loop: main-session-continuation
+    item: validation.strategy-filter-bias-hygiene-checklist
+    output: wiki/notes/2026-08-28-strategy-filter-bias-hygiene-checklist.md, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, and log.md
+    notification: manual-telegram-update-requested
+    verdict: >-
+      Completed the Freqtrade-derived bias-hygiene checklist without installing
+      or activating Freqtrade. Local evidence confirms the current
+      strategy-destruction filter already verifies research-only status,
+      chronological OOS split, time-matched baseline comparison,
+      approximate-multiple-testing deflated-Sharpe labeling, walk-forward
+      diagnostics, source coverage, and candidate-consistent semantic rejected
+      ledger rows over the latest 9-candidate / 105-variant / 0-survivor
+      report. Reassessed the cheapest next hardening item as a native
+      startup/recursive variance guard for truncated warmup-window stability.
+      No live execution, orders, wallet keys, exchange keys, paid APIs, account
+      setup, package install, alert wording, watcher behavior, risk/sizing,
+      TP/SL, cron cadence, public posting, or strategy promotion changed.
+  - at: '2026-08-28T10:11:00Z'
+    loop: ralph-autoresearch-loop
+    item: discovery.freqtrade-no-key-dry-run-spike
+    output: wiki/notes/2026-08-28-freqtrade-no-key-dry-run-spike.md, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, and log.md
+    notification: none
+    verdict: >-
+      Completed the Freqtrade no-key access/viability spike. Official docs
+      confirm useful validation-hygiene concepts for dry-run simulation,
+      backtesting, lookahead analysis, recursive analysis, and historic data
+      download. Local checks found no `freqtrade` binary, no Python package, no
+      Docker, no pipx/pip3, and no cached local Freqtrade repo, so Freqtrade
+      remains candidate/watch rather than an active dependency. Reassessed the
+      next safest step as a local strategy-filter bias-hygiene checklist based
+      on Freqtrade's public lookahead and recursive-analysis guard concepts.
+      The run exceeded the intended four-source cap by one source check while
+      verifying the separate backtesting page. No install, account setup,
+      exchange integration, live execution, orders, keys, paid APIs, alert
+      wording, watcher behavior, risk/sizing, TP/SL, cron cadence, public
+      posting, Telegram notification, or strategy promotion changed.
+  - at: '2026-08-28T06:42:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-routing-reconciliation
+    output: automation/retrieval-router.yaml, automation/work-queues.yaml, automation/loop-state.yaml, and log.md
+    notification: none
+    verdict: >-
+      Reconciled stale strategy-destruction-filter routing after the semantic
+      ledger blocker was resolved. Local Node statistics over the current
+      filter artifacts verified 9 candidates, 105 variants, 0 survivors, 105
+      rejected rows, and 105/105 rejected rows carrying idea/thesis/
+      dataRequirements/validation semantics. Removed already-completed OOS,
+      deflated-Sharpe, and idea-schema queue pointers from the strategy-filter
+      router and pointed the next hardening route at the existing no-key
+      Freqtrade validation-hygiene spike. No web checks were needed; no package
+      installs or framework setup were started. No live execution, orders,
+      keys, paid APIs, account setup, alert wording, watcher behavior,
+      risk/sizing, TP/SL, cron cadence, public posting, Telegram notification,
+      or strategy promotion changed.
+  - at: '2026-08-28T05:42:00Z'
+    loop: ralph-autoresearch-loop
+    item: discovery.trading-bot-framework-github-map
+    output: wiki/notes/2026-08-28-framework-shortlist-wheel-gate.md, automation/work-queues.yaml, automation/retrieval-router.yaml, automation/loop-state.yaml, and log.md
+    notification: none
+    verdict: >-
+      Ran the framework/repo wheel gate for future strategy-filter tooling.
+      Public source checks covered Freqtrade bias/backtesting docs,
+      NautilusTrader docs, vectorbt docs/repo, and Jesse docs/site. Local
+      package/binary check found freqtrade, vectorbt, nautilus_trader, and
+      jesse are not installed, so none were marked active dependencies.
+      Verdict: keep the current strategy-destruction-filter as the active local
+      harness, use Freqtrade as the first validation-hygiene benchmark,
+      vectorbt as a possible parameter-sweep kill-test rail, NautilusTrader as
+      an event/replay architecture reference, and Jesse as a secondary crypto
+      workflow reference. No live execution, orders, keys, paid APIs, account
+      setup, package install, alert wording, watcher behavior, risk/sizing,
+      TP/SL, cron cadence, public posting, or strategy promotion changed.
+  - at: '2026-08-28T05:38:37Z'
+    loop: main-session-continuation
+    item: validation.strategy-filter-rejection-ledger-semantic-field-implementation
+    output: experiments/strategy-destruction-filter source, results, automation state/router/queue, and log.md
+    notification: manual-telegram-update-sent-from-main-session
+    verdict: >-
+      Resolved the repeated scope blocker outside the isolated cron boundary
+      after Tomas said to continue. Preserved candidate semantic fields through
+      expandCandidate/summarizeVariantRuns, wrote idea/thesis/dataRequirements/
+      validation into every rejected-ideas.jsonl row, and added verifier
+      assertions that rejected rows are candidate-consistent. Regenerated the
+      strategy-destruction-filter outputs. Verification now shows 105 rejected
+      JSONL rows with 105/105 semantic coverage and 0 survivors. `npm run
+      validate:candidates`, `npm test`, `npm run filter`, and `npm run verify`
+      passed. No live execution, orders, keys, paid APIs, account setup, alert
+      wording, watcher behavior, risk/sizing, TP/SL, cron cadence, public
+      posting, or strategy promotion changed.
+  - at: '2026-08-28T05:27:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-rejection-ledger-semantic-field-implementation
+    output: automation/loop-state.yaml and log.md
+    notification: telegram-attempted-failed-session-not-found
+    verdict: >-
+      Rechecked the queued semantic-field implementation against the current
+      cron durable-output boundary. Local statistics over
+      results/rejected-ideas.jsonl and seed-strategies.json still show 105
+      rejected JSONL rows with 0/105 coverage for idea, thesis,
+      dataRequirements, or validation semantic fields, while all 9 source
+      candidates carry the required semantic fields. The smallest real
+      implementation still requires experiment source edits, regenerated
+      result ledgers, and verifier assertions, which remain outside this
+      payload's allowed durable outputs. This is the third consecutive
+      occurrence of the same scope blocker, so the repeated-blocker Telegram
+      notification gate is met. Attempted delivery through the visible OpenClaw
+      session router failed because no Telegram session was visible for the
+      target. No live execution, orders, keys, paid APIs, account setup, alert
+      wording, risk/sizing, TP/SL, cron cadence, public posting, or strategy
+      promotion changed.
+  - at: '2026-08-28T05:24:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-rejection-ledger-semantic-field-implementation
+    output: log.md
+    notification: none
+    verdict: >-
+      Rechecked the queued semantic-field implementation against the current
+      cron durable-output boundary. Local statistics over
+      results/rejected-ideas.jsonl and seed-strategies.json still show 105
+      rejected JSONL rows with 0/105 coverage for idea, thesis,
+      dataRequirements, or validation semantic fields, while all 9 source
+      candidates carry the required semantic fields. The smallest real
+      implementation still requires experiment source edits, regenerated
+      result ledgers, and verifier assertions, which remain outside this
+      payload's allowed durable outputs. This is the second occurrence of the
+      same scope blocker, so no Telegram notification gate is met yet. No live
+      execution, orders, keys, paid APIs, account setup, alert wording,
+      risk/sizing, TP/SL, cron cadence, public posting, or Telegram update
+      changed.
+  - at: '2026-08-27T21:33:25Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-rejection-ledger-semantic-field-implementation
+    output: wiki/notes/2026-08-27-strategy-filter-semantic-field-implementation-blocker.md
+    notification: none
+    verdict: >-
+      Attempted the queued semantic-field implementation boundary check. The
+      required work would edit experiment source, regenerate
+      results/rejected-ideas.jsonl, and extend verifier assertions, but the
+      current cron payload allows durable outputs only in wiki/decision/
+      automation/log files. No experiment source or generated result files were
+      rewritten. This is a scope blocker, not a technical blocker; keep
+      validation.strategy-filter-rejection-ledger-semantic-field-implementation
+      pending until a run explicitly allows experiment source/result edits, or
+      choose a different bounded queue item. No live execution, orders, keys,
+      paid APIs, account setup, alert wording, risk/sizing, TP/SL, cron cadence,
+      public posting, or Telegram update changed.
+  - at: '2026-08-27T21:29:25Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-rejection-ledger-schema-guard
+    output: wiki/notes/2026-08-27-strategy-filter-rejection-ledger-schema-guard.md
+    notification: none
+    verdict: >-
+      Designed the semantic schema guard for the strict-filter rejection ledger.
+      Local statistics over filter-report.json, rejected-ideas.jsonl, and
+      seed-strategies.json found 105 rejected report rows and 105 rejected JSONL
+      rows. Report verdict rows carry idea text, but not thesis/data/validation;
+      rejected JSONL rows carry none of idea/thesis/data/validation. Candidate
+      specs have the needed fields for all 9 candidates, so the smallest next
+      implementation is candidate-consistent semantic carry-through into
+      rejected-ideas.jsonl plus verify-filter assertions. Because this cron
+      payload limited durable outputs to wiki/decision/automation/log files, no
+      experiment source/result files were rewritten; queued
+      validation.strategy-filter-rejection-ledger-semantic-field-implementation.
+      No live execution, orders, keys, paid APIs, account setup, alert wording,
+      risk/sizing, TP/SL, cron cadence, or Telegram update changed.
+  - at: '2026-08-27T21:20:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-rejection-ledger-quality-audit
+    output: wiki/notes/2026-08-27-strategy-filter-rejection-ledger-quality-audit.md
+    notification: none
+    verdict: >-
+      Audited the current strategy-destruction-filter rejection ledger: 105
+      rejected rows, 0 missing failures, 0 recomputed gate/failure mismatches,
+      0 rows missing params, baseline comparison, or OOS split stats. Six
+      one-failure near misses are all blocked only by negative OOS expectancy,
+      confirming the OOS gate remains the right tripwire. The ledger quality
+      gap is semantic, not numeric: all 105 JSONL rows omit the plain-English
+      idea text present in the report, so the next small hardening item is a
+      schema guard that carries idea/mechanism fields into rejected rows to
+      block paraphrased repeats. No live execution, orders, keys, paid APIs,
+      account setup, alert wording, risk/sizing, TP/SL, cron cadence, or
+      Telegram update changed.
+  - at: '2026-08-27T21:10:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-psr-diagnostic-stress
+    output: wiki/notes/2026-08-27-strategy-filter-psr-diagnostic-stress.md
+    notification: none
+    verdict: >-
+      Stress-checked the diagnostic PSR-style proxy over the current
+      strategy-destruction-filter report: 9 candidates, 105 variants, 0
+      survivors. Local statistics found 42/105 variants with PSR >= 0.8, but
+      only 5/42 had positive OOS expectancy and 37/42 had non-positive OOS.
+      Raising the PSR threshold to 0.95 or 0.99 still mostly preserved false
+      HYPE funding shapes rather than robust survivors. Verdict: keep PSR
+      diagnostic-only; do not let it override positive OOS, baseline lift,
+      drawdown, worst-slice, or walk-forward consistency. No live execution,
+      orders, keys, paid APIs, account setup, alert wording, risk/sizing,
+      TP/SL, cron cadence, or Telegram update changed.
+  - at: '2026-08-27T20:36:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-walk-forward-survivor-invariant
+    output: wiki/notes/2026-08-27-strategy-filter-walk-forward-survivor-invariant.md
+    notification: none
+    verdict: >-
+      Added a verifier survivor tripwire for walk-forward consistency over the
+      current strategy-destruction-filter report: 9 candidates, 105 variants,
+      0 survivors. Local statistics found 29/105 variants with at least 3/5
+      positive walk-forward folds, 40/105 with at least 3/5 positive
+      baseline-lift folds, 9/105 with at least 2 diagnostic OOS folds above
+      the OOS gate, and only 3/105 passing all three walk-forward consistency
+      checks. The two variants that pass every hard gate except OOS expectancy
+      in this local replay check both fail the walk-forward invariant. Future
+      survivors must now have at least 5 valid folds, 60% positive folds, 60%
+      positive baseline-lift folds, all diagnostic OOS folds above the OOS
+      gate, and a finite worst fold. Existing verifier passed. No live
+      execution, orders, keys, paid APIs, account setup, alert wording, risk,
+      sizing, TP/SL, cron cadence, or Telegram update changed.
+  - at: '2026-08-27T18:08:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-threshold-sensitivity
+    output: wiki/notes/2026-08-27-strategy-filter-threshold-sensitivity.md
+    notification: none
+    verdict: >-
+      Ran a one-gate threshold sensitivity check over the latest
+      strategy-destruction-filter report: 9 candidates, 105 variants, 0
+      current survivors. No variant passes every gate except sample,
+      whole-period expectancy, profit factor, deflated-Sharpe, drawdown,
+      worst-slice, OOS sample, or baseline lift. Six HYPE funding variants pass
+      every gate except out-of-sample expectancy; loosening only that gate to
+      negative territory would create false survivors. Added verifier tripwires
+      that keep minOutOfSampleExpectancyR positive and require any future
+      survivor to have strictly positive OOS expectancy independent of config
+      drift. Existing verifier passed. Added next bounded item:
+      strategy-filter-walk-forward-survivor-invariant. No live execution,
+      orders, keys, paid APIs, account setup, alert wording, risk/sizing, TP/SL,
+      cron cadence, or Telegram update changed.
+  - at: '2026-08-27T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.strategy-filter-current-sieve-audit
+    output: wiki/notes/2026-08-27-strategy-filter-current-sieve-audit.md
+    notification: none
+    verdict: >-
+      Audited the latest strategy-destruction-filter report after alert-edge
+      and alert-feedback expansion: 9 candidates, 105 variants, 0 survivors.
+      Local statistics found 32/105 positive headline expectancy, 12/105
+      positive out-of-sample expectancy, 17/105 deflated-Sharpe gate passes,
+      and 42/105 PSR diagnostics >= 0.8, but 0 variants pass all numeric
+      survival gates. HYPE funding still shows false-positive-looking DS/PSR
+      while failing OOS/drawdown/slices; XRP alert-edge shows positive OOS but
+      weak whole-period expectancy, PF, DS, and drawdown; ETH velocity OHLCV
+      proxy is uniformly negative. Added next bounded validation item:
+      strategy-filter-threshold-sensitivity. Existing verifier passed. No live
+      execution, orders, keys, paid APIs, account setup, alert wording, risk,
+      sizing, TP/SL, cron cadence, or Telegram update changed.
+  - at: '2026-08-26T20:58:00Z'
+    loop: ralph-copytrading-autoresearch-lane
+    item: discovery.copytrading-public-route-ledger
+    output: wiki/notes/2026-08-26-copytrading-autoresearch-lane.md
+    notification: none
+    verdict: >-
+      Added copytrading/wallet-following as a first-class research-only RALPH
+      source lane under Tomas's do-not-reinvent-the-wheel rule. Verified
+      Hyperliquid official info endpoint locally without keys for meta,
+      spotMeta, userFills, and clearinghouseState; classified Dune, Arkham,
+      and Nansen APIs plus product exports as needs-access/watch until keys,
+      accounts, pricing, and exportability are explicitly approved and
+      verified. Added the copytrading watch ledger and updated queues/router
+      docs. OpenClaw bridge ingest/search verified for the durable note. No
+      live copying, trading, keys, paid APIs, cron/cadence, watcher behavior,
+      alert wording, risk/sizing, TP/SL, execution, or orders changed.
+  - at: '2026-08-22T10:44:00Z'
+    loop: ralph-hyperliquid-orderflow-capture
+    item: validation.two-to-four-hour-orderflow-capture
+    output: outputs/two-to-four-hour-orderflow-capture.md
+    notification: telegram-accepted-pending-visible-delivery-unverified
+    verdict: >-
+      Finalized bounded no-key BTC public orderflow capture
+      2026-08-22T08-39-ralph-hl-btc-2h. PID 1287957 was complete; capture
+      wrote manifest.yaml, raw-events.jsonl, and orderflow.sqlite. Total raw
+      records: 855,975, with Hyperliquid 57,390 and Binance 798,585.
+      One-second feature extraction produced 11,519 rows. Feasibility projected
+      1,885,667 hftbacktest-like rows with 0 missing separate local receive
+      timestamps; Hyperliquid BTC depth/trade projected rows had native
+      exchange timestamp evidence. Hyperliquid-only hftbacktest smoke replay
+      validated 176,075 rows, 0 missing exchange/local timestamp events, 0
+      negative feed-latency rows, no-trade flat, and 2 passive fixture fills
+      under frozen zero-fee/zero-latency assumptions. Syntax, unittest,
+      YAML, and JSON parse checks passed. OpenClaw accepted a Telegram-visible
+      summary but session history did not verify visible delivery. No live
+      watcher, alert wording, thresholds, keys, paid APIs, risk, sizing,
+      execution, or orders changed.
+  - at: '2026-08-22T07:45:49Z'
+    loop: ralph-hftbacktest-native-timestamp-probe
+    item: validation.hftbacktest-native-timestamp-probe
+    output: outputs/hftbacktest-native-timestamp-probe.md
+    notification: telegram-visible-summary-pending-main-agent
+    verdict: >-
+      Fixed a timestamp-evidence bug in
+      automation/hftbacktest-orderflow-replay-feasibility.mjs where
+      Number(null) made missing exchangeTs look native. Added timestamp
+      evidence by projected row kind, ran a bounded 30s no-key BTC capture,
+      and generated features plus feasibility output. Probe result: Binance
+      trades have native exchange timestamps, Binance book_ticker/depth5 rows
+      rely on fallback exchange timestamps, and Hyperliquid trade/l2_book rows
+      have native exchange timestamp evidence. Extended the hftbacktest runtime
+      spike to support ORDERFLOW_RUN_ID/ORDERFLOW_SOURCE/ORDERFLOW_SYMBOL and
+      Hyperliquid l2_book snapshots, then replayed Hyperliquid BTC only: 195
+      selected events, 666 replay rows, 0 missing exchange/local timestamps,
+      no-trade flat, passive quote 2 simulated fills under frozen zero-fee,
+      zero-latency assumptions. No live watcher, alert wording, thresholds,
+      keys, paid APIs, recurring jobs, risk, sizing, or execution changed.
+  - at: '2026-08-22T07:28:44Z'
+    loop: ralph-hftbacktest-fixture-tests
+    item: validation.hftbacktest-replay-fixture-tests
+    output: outputs/hftbacktest-replay-fixture-tests.md
+    notification: telegram-visible-summary-pending-main-agent
+    verdict: >-
+      Added deterministic fixture tests around the research-only hftbacktest
+      replay converter. The tests cover initial depth snapshot seeding,
+      trade/depth/book_ticker conversion into event_dtype, event-order
+      correction, timestamp-quality flags, negative latency flags, crossed/
+      locked/NaN/non-positive book rejection, and a flat no-trade baseline.
+      Six unittest fixtures passed in the isolated uv venv. The rerun also
+      surfaced that the BTCUSDT capture has separate local receive timestamps
+      but 605 Binance events still lack a distinct exchangeTs value and use ts
+      as the exchange-time fallback. No live watcher, alert wording,
+      thresholds, keys, paid APIs, recurring jobs, risk, sizing, or execution
+      changed.
+  - at: '2026-08-22T07:08:00Z'
+    loop: ralph-hftbacktest-runtime-spike
+    item: validation.hftbacktest-minimal-replay-runtime-spike
+    output: outputs/hftbacktest-minimal-replay-runtime-spike.md
+    notification: telegram-visible-summary-pending-main-agent
+    verdict: >-
+      Validated the minimal local hftbacktest runtime path in an isolated
+      scratch uv venv with `hftbacktest==2.4.4`. Added
+      `automation/hftbacktest-minimal-replay-runtime-spike.py` and generated
+      JSON/Markdown outputs over the no-key BTC capture
+      `2026-08-22T06-48-09-276Z`. The converter used Binance BTCUSDT only,
+      seeded an initial depth snapshot, corrected exchange/local timestamp
+      ordering, produced 1,756 replay rows, and ran no-trade plus passive
+      fixed-spread smoke baselines. No-trade stayed flat; the passive quote
+      baseline produced one simulated fill under frozen zero-fee, zero-latency,
+      0.001 BTC assumptions. Verdict: runtime path validated, but this is not
+      edge evidence; longer captures, conservative fee/latency assumptions, and
+      fixture tests are required before strategy work. No live watcher, alert
+      wording, thresholds, keys, paid APIs, recurring jobs, risk, sizing, or
+      execution changed.
+  - at: '2026-08-22T06:49:07Z'
+    loop: ralph-orderflow-capture-v2-schema
+    item: validation.orderflow-capture-v2-schema
+    output: outputs/hftbacktest-orderflow-replay-feasibility.md
+    notification: telegram-visible-summary-pending-main-agent
+    verdict: >-
+      Updated the read-only `crypto-updates/orderflow-spike.mjs` capture tool
+      to record capture-v2 fields for future public orderflow spikes:
+      `exchangeTs`, `localReceiveTs`, and `sequenceId`, with SQLite columns for
+      `exchange_ts`, `local_receive_ts`, and `sequence_id`. Ran a bounded
+      no-key 5s BTC public capture, then reran the hftbacktest feasibility
+      checker over run `2026-08-22T06-48-09-276Z`. It projected 751 raw events
+      into 1,780 hftbacktest-like rows with 0 missing separate local timestamps
+      and 0 missing native exchange timestamp evidence. Schema blocker cleared;
+      next blocker is isolated package/runtime setup and a frozen minimal replay
+      baseline. No live watcher, alert wording, thresholds, keys, paid APIs,
+      risk, sizing, or execution changed.
+  - at: '2026-08-22T06:44:45Z'
+    loop: ralph-orderflow-replay-feasibility
+    item: validation.hftbacktest-orderflow-replay-feasibility
+    output: outputs/hftbacktest-orderflow-replay-feasibility.md
+    notification: telegram-visible-summary-pending-main-agent
+    verdict: >-
+      Added `automation/hftbacktest-orderflow-replay-feasibility.mjs`, a
+      research-only schema-fit check over the existing public no-key orderflow
+      capture `2026-08-20T22-49-17-670Z`. It projected 1,751 raw events into
+      4,617 hftbacktest-like trade/depth/top-of-book rows, but found all
+      projected rows lack separate local receive timestamps and 3,396 lack
+      native exchange timestamp evidence. Verdict: partial fit, not replay-grade
+      yet. The immediate blocker is capture-v2 schema quality, not strategy
+      logic, so `orderflow-capture-v2-schema` was added as the next validation
+      item. No hftbacktest install/run, live trading, keys, paid APIs, watcher
+      thresholds, alert wording, risk, sizing, or execution changed.
+  - at: '2026-08-22T06:37:31Z'
+    loop: ralph-x-github-research-loop
+    item: discovery.x-github-strategy-keyword-scan
+    output: wiki/notes/2026-08-22-x-github-strategy-knowledge-scan.md
+    notification: telegram-visible-summary-pending-main-agent
+    verdict: >-
+      Completed a bounded read-only GitHub strategy knowledge scan for C-015.
+      Public GitHub/API access worked without auth; private X/Twitter access is
+      not available, so durable sources were citeable repos/docs. The scan
+      found that the strongest next route is not copying public strategies but
+      separating framework validation, execution realism, and overfit
+      postmortems. Freqtrade remains the strongest no-key C-009 framework spike,
+      hftbacktest is the strongest C-036 orderflow-replay feasibility lead, and
+      Quantito is a useful Hyperliquid overfit postmortem. Added
+      `validation.hftbacktest-orderflow-replay-feasibility` as the next concrete
+      C-036 test. No live trading, keys, paid APIs, recurring jobs, watcher
+      thresholds, alert wording, risk, sizing, or execution changed.
+  - at: '2026-08-22T06:20:00Z'
+    loop: ralph-candidate-decision-layer
+    item: validation.strategy-score-rubric-dry-run
+    output: outputs/strategy-score-rubric-dry-run.md
+    notification: telegram-visible-summary-pending-main-agent
+    verdict: >-
+      Added `automation/strategy-score-rubric-dry-run.mjs`, a research-only
+      second-stage rubric review over `outputs/candidate-scoring-dry-run.json`.
+      The rubric reviews routing confidence only and does not mutate candidate
+      states or promote strategies. It reviewed 37 candidates: 29 accepted
+      routes, 1 downgrade, 3 holds, and 4 discarded branches preserved. Only
+      C-015, C-036, and C-009 remain rubric-qualified benchmark routes. C-004
+      DefiLlama battlefield context was downgraded from benchmark to
+      investigate until it has a falsifiable benchmark target. C-027, C-037,
+      and C-012 were held at watch due to execution/live-adjacent wording that
+      needs research-only containment. Next higher-value loops are C-015
+      X/GitHub strategy knowledge scan, C-036 public orderflow data rail, or
+      C-009 trading bot framework/repo map.
+  - at: '2026-08-22T06:08:00Z'
+    loop: ralph-candidate-decision-layer
+    item: validation.candidate-scoring-dry-run
+    output: outputs/candidate-scoring-dry-run.md
+    notification: none
+    verdict: >-
+      Added `automation/candidate-scoring-dry-run.mjs`, a research-only router
+      over `decisions/candidates.md` using the dimensions in
+      `core/candidate-scoring.md`. It writes JSON/Markdown under `outputs/`,
+      recommends route states without mutating candidate records, and keeps
+      discarded branches out of the active top list. Dry-run scored 37
+      candidates: 4 benchmark, 22 investigate, 7 watch, 4 discard. Top active
+      routes were C-015 X/GitHub strategy knowledge loop, C-036 public
+      orderflow data rail, C-009 trading bot framework/repo map, C-004
+      DefiLlama battlefield context, and C-003 Zela benchmark discipline. This
+      is a queue router only, not strategy promotion.
+  - at: '2026-08-22T06:05:00Z'
+    loop: ralph-alert-edge-pre-ml
+    item: validation.pre-ml-feature-label-table-spec
+    output: wiki/notes/2026-08-22-pre-ml-feature-label-table-spec.md
+    notification: none
+    verdict: >-
+      Added a pre-ML feature/label row contract for the alert-edge swarm table.
+      `schemas/pre-ml-feature-row.schema.json`, `src/feature-table-spec.mjs`,
+      and `src/validate-feature-table.mjs` now document and verify
+      deterministic labels, candle context, relative context, quality flags,
+      and clean/tainted row accounting. `npm run validate:features` was added
+      and `npm run verify` now enforces the table contract. Fresh swarm
+      regeneration produced 73 rows, 13 clean and 60 tainted; validator and
+      verifier passed. No model training, alert promotion, live execution,
+      keys, paid APIs, thresholds, risk/sizing, or alert wording changed.
+  - at: '2026-08-22T05:58:00Z'
+    loop: ralph-strategy-destruction-filter
+    item: validation.strategy-idea-spec-schema
+    output: experiments/strategy-destruction-filter/schemas/strategy-idea.schema.json
+    notification: none
+    verdict: >-
+      Added a strict candidate intake contract before more strategy tuning:
+      candidates now require thesis/mechanism, edge speed, falsifiable claim,
+      data requirements, validation baseline, gates, kill criteria, and
+      rule-specific finite parameter grids. `npm run validate:candidates` was
+      added and wired into `run-filter` plus `verify-filter`. Existing 4 seed
+      strategies were enriched to pass the contract. `npm run
+      validate:candidates`, `npm test`, `npm run audit:data`, `npm run
+      study:features`, `npm run filter`, and `npm run verify` passed. Filter
+      remains 4 candidates / 13 variants / 0 survivors / 13 rejected.
+  - at: '2026-08-22T04:05:00Z'
+    loop: ralph-strategy-destruction-filter
+    item: validation.strategy-filter-out-of-sample-split/baseline-comparison/deflated-sharpe-calibration
+    output: experiments/strategy-destruction-filter/results/filter-report.md
+    notification: telegram-accepted-unverified-4112
+    verdict: >-
+      Added chronological out-of-sample split support, a deterministic
+      time-matched alternating-direction baseline, and labeled
+      approximate_multiple_testing_deflated_sharpe calibration to the
+      research-only strategy destruction filter. Full public Binance no-key run
+      tested 3 candidates / 9 variants across BTC/ETH/SOL 1h/4h; all 9 were
+      rejected and 0 survived. Unit tests, filter run, and verifier passed. No
+      live execution, keys, paid APIs, watcher thresholds, or alert wording
+      changed.
+  - at: '2026-08-21T13:46:00Z'
+    loop: ralph-relative-pair-matrix
+    item: validation.relative-pair-context-layer
+    output: wiki/notes/2026-08-21-relative-pair-matrix.md
+    notification: telegram-accepted-unverified-3938
+    verdict: >-
+      Research-only local candle pass computed synthetic relative-pair matrices
+      for BTC/ETH/SOL/XRP/ADA/BNB/DOGE/AVAX/LINK on 1h and 4h candles. 4h
+      data is fresh through 2026-08-21T12:00Z; 1h data stops at
+      2026-08-20T23:00Z. SOL 4h range_breakout_long was mixed: positive
+      SOLUSDT but weak vs BTC and mixed vs ETH, so relative context should
+      classify it as market-beta/mixed confirmation, not pure SOL leadership. A
+      bounded BTC/ETH/SOL alert join had 57 finalized rows and mixed
+      confirmation counts, so relative pairs are a pre-ML/context feature
+      candidate only; no live alert, risk, sizing, threshold, trading, key,
+      account, or paid API change.
+  - at: '2026-08-21T13:25:00Z'
+    loop: ralph-alert-feedback-data-analysis
+    item: validation.ta-orderflow-alert-gate-backtest
+    output: wiki/notes/2026-08-21-alert-feedback-data-analysis.md
+    notification: telegram-accepted-unverified-3925
+    verdict: Joined 117 local Crypto Updates alert_sent rows to 110 finalized reviews. Raw score/CVD buckets remain non-promotable; HYPE velocity buckets and BTC/ETH/SOL wick buckets are worth monitoring only. Parser-roll BTC/ETH/SOL book fields populated, but all six reviewed fresh-book rows had negative bookAgeMs and one SOL row had score 6/5, so they are quality-tainted operational evidence. After the 12:20 UTC timestamp fix there are still zero finalized post-fix BTC/ETH/SOL reviews. C-036 stays Candidate and U-038 stays Open; no live alert, risk, sizing, threshold, trading, key, account, or paid API change.
+  - at: '2026-08-21T12:50:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.book-freshness-repair-for-orderflow-alert-gate
+    output: wiki/notes/2026-08-20-book-freshness-repair.md
+    notification: none
+    verdict: Bounded post timestamp-fix verification found crypto-updates-market-watcher.service active with PID 1194643 and Binance/Hyperliquid reconnect logs. Since the 12:20 UTC restart there is one HYPE alert and zero BTC/ETH/SOL alerts or finalized BTC/ETH/SOL reviews, so clean post-fix bookAge/orderflow alignment evidence is still pending. Early post-roll BTC/ETH/SOL rows proved book fields can populate but had negative bookAgeMs, so they are operational evidence only, not promotable edge-alignment evidence. C-036 stays Candidate and U-038 stays Open; no Telegram gate met.
+  - at: '2026-08-21T08:40:00Z'
+    loop: ralph-watcher-depth-parser-roll-verify
+    item: validation.book-freshness-repair-for-orderflow-alert-gate
+    output: wiki/notes/2026-08-20-book-freshness-repair.md
+    notification: telegram-accepted-unverified
+    verdict: Restarted the live watcher after BTC-UP-1787296518640-6wsdr3 and ETH-DOWN-1787296830755-n5y2mj review windows were finalized. Service is active/running with PID 1188639, Binance and Hyperliquid reconnected, and post-roll ETH alert ETH-UP-1787301604930-4fuxko recorded bookFresh=true with non-null bookAgeMs, bookImbalance, spreadPct, and top5DepthNotional. Czech Telegram summary send was accepted by OpenClaw but visible delivery was not verified before cron end. No alert wording, risk, sizing, thresholds, trading, keys, or paid APIs changed.
+  - at: '2026-08-21T05:59:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.book-freshness-repair-for-orderflow-alert-gate
+    output: wiki/notes/2026-08-20-book-freshness-repair.md
+    notification: none
+    verdict: Ran the existing compact feature extractor on the 2026-08-20 no-key BTC/ETH/SOL orderflow capture. It produced 112 1-second feature rows with 561 trades and 1,184 book updates represented; Binance BTCUSDT/ETHUSDT/SOLUSDT rows have finite average spread and L1 imbalance. This validates feature shape only, not alert edge, because the capture still does not overlap finalized alert/review samples.
+  - at: '2026-08-20T22:52:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.book-freshness-repair-for-orderflow-alert-gate
+    output: wiki/notes/2026-08-20-book-freshness-repair.md
+    notification: none
+    verdict: Verified the alternate no-key public capture route without touching the live watcher. A 12s BTC/ETH/SOL orderflow spike captured 1,751 records, including Binance depth5 rows for all three symbols with finite bid/ask spreads, confirming source access is live and the remaining blocker is live watcher rollout/shadow verification under the alert-surface approval rule.
+  - at: '2026-08-20T22:37:00Z'
+    loop: btc-eth-alert-edge
+    item: validation.book-freshness-repair-for-orderflow-alert-gate
+    output: wiki/notes/2026-08-20-book-freshness-repair.md
+    notification: none
+    verdict: Patched the Crypto Updates watcher depth parser after finding it subscribed to Binance `depth5@100ms` but only looked for compact `b`/`a` arrays while the partial-depth stream provides `bids`/`asks`. Syntax and parser-shape checks passed. The running watcher was not restarted because a 22:05 UTC HYPE alert still had an active 1h review; next step is safe restart/roll and fresh BTC/ETH/SOL alert verification.
+  - at: '2026-08-20T22:29:00Z'
+    loop: btc-eth-alert-edge
+    item: validation.forward-paper-tier-dashboard
+    output: experiments/btc-eth-alert-edge/results/paper-dashboard.md
+    notification: none
+    verdict: Added forward paper dashboard generation and verification. `npm run backtest` now refreshes paper-dashboard JSON/Markdown after the paper ledger, and `npm run verify` asserts the dashboard stays paper-only. Current split shows all rows 67 total / 55 closed / -3.7598R, while qualified A/B/C rows are 8 total / 7 closed / +1.4R; low-sample/avoid rows are -5.1598R.
+  - at: '2026-08-20T07:30:00Z'
+    loop: ralph-autoresearch-loop
+    item: validation.ta-orderflow-alert-gate-backtest
+    output: wiki/notes/2026-08-13-orderflow-alert-alignment-check.md
+    notification: none
+    verdict: 'Refreshed local alignment over 60 finalized alert reviews. Score and CVD-only evidence remain non-promotable: score 4/5 splits 4 follow, 4 fade, 1 noisy; all joined alerts still have fresh public depth unavailable. C-036 stays Candidate and U-038 stays Open; next useful step is fresh public depth capture or book freshness repair, not another score-only refresh.'
+  - at: '2026-08-18T19:39:25Z'
+    loop: ta-learning-loop
+    item: validation.ta-learning-loop-bootstrap
+    output: ../crypto-updates/wiki/setup-analysis/latest.md
+    notification: telegram-accepted-unverified-3539
+    verdict: First deterministic local setup analyzer added. It writes compact setup-analysis JSON/YAML/Markdown from alert-feedback reviews, keeps all recommendation deltas research-only, and makes no live alert, execution, risk, or sizing changes.
+  - at: '2026-08-17T07:31:56Z'
+    loop: ralph-autoresearch-loop
+    item: validation.ta-orderflow-alert-gate-backtest
+    output: wiki/notes/2026-08-13-orderflow-alert-alignment-check.md
+    notification: none
+    verdict: Refreshed local alignment over 13 finalized alert reviews. Score 4/5 now splits across follow, fade, and noisy outcomes, while score 2/5 still maps to 3 same-window follow-through cases; C-036 stays Candidate and U-038 stays Open until fresh public depth is present and price-plus-orderflow beats price-only by asset/trigger family.
+  - at: '2026-08-13T07:32:04Z'
+    loop: ralph-autoresearch-loop
+    item: validation.orderflow-alert-alignment-backtest
+    output: wiki/notes/2026-08-13-orderflow-alert-alignment-check.md
+    notification: none
+    verdict: Initial local alignment over 9 finalized alert reviews is too small for promotion; score 2/5 clustered with three follow-through cases, but fresh public depth was unavailable on every scored alert and one 4/5 ETH case ended noisy, so C-036 stays Candidate and U-038 stays Open.
+  - at: '2026-08-11T22:53:49Z'
+    loop: ralph-autoresearch-loop
+    item: discovery.public-orderflow-data-rail-spike
+    output: wiki/notes/2026-08-11-orderflow-feature-taxonomy.md
+    notification: none
+    verdict: Existing no-key 1s orderflow features can support 5s and 60s rollup proxies for BTC/ETH/SOL on Binance and Hyperliquid; C-036 stays Candidate until rollups are aligned to real alert/review samples and beat price-only baseline.
+  - at: '2026-08-11T22:18:00Z'
+    loop: ralph-autoresearch-loop
+    item: investigation.orderflow-feature-taxonomy
+    output: wiki/notes/2026-08-11-orderflow-feature-taxonomy.md
+    notification: none
+    verdict: Public orderflow feature taxonomy created from existing no-key capture stats; C-036 stays Candidate until alert-alignment statistics beat price-only baseline.
+queue_file: automation/work-queues.yaml
+retrieval_router: automation/retrieval-router.yaml
+token_budget_contract: core/indexing-token-budget.md
+current_research_priority:
+  rail: strategy-destruction-filter
+  candidate: strategy-filter
+  unknown: strategy-survival-calibration
+  next_validation:
+    - ta-learning-loop-call-candidate-forward-check
+    - ai-research-os-index-lint
+    - recheck-ta-call-candidates-after-20-row-threshold
+autonomous_layer_goals:
+  contract: core/autonomous-layer-goals.md
+  active_layers:
+    - safety-and-boundaries
+    - data-rails
+    - setup-detection
+    - historical-backtest
+    - forward-paper-ledger
+    - candidate-decision-layer
+    - pre-ml-dataset-layer
+    - human-facing-knowledge-layer
+  future_layer:
+    - ml-layer-after-label-quality
+  immediate_self_set_goals:
+    - make the strategy filter harder to fool with out-of-sample splits and baselines
+    - keep rejected strategy ideas as durable evidence
+    - connect alert-edge/orderflow outputs into the filter instead of direct trade promotion
+  completed_self_set_goals:
+    - forward-paper-tier-dashboard
+    - strategy-filter-oos-baseline-calibration
+    - strategy-idea-spec-schema
+    - pre-ml-feature-label-table-spec
+    - candidate-scoring-dry-run
+    - strategy-score-rubric-dry-run
+    - x-github-strategy-keyword-scan
+    - hftbacktest-orderflow-replay-feasibility
+    - orderflow-capture-v2-schema
+    - no-key-first-experiment-selection
+pending_manual_runs:
+  - unknowns
+  - source-intake
+  - strategy-research
+  - framework-repo-discovery
+  - market-volatility-watch
+  - mev-bot-case-file-review
+  - zela-case-file-extraction
+  - arkham-data-rail-evaluation
+  - wallet-shadow-event-investigation

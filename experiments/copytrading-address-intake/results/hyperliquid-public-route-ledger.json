@@ -1,0 +1,245 @@
+{
+  "generatedAt": "2026-08-30T06:05:10.667Z",
+  "source": "https://stats-data.hyperliquid.xyz/Mainnet/leaderboard",
+  "verdict": "Hyperliquid's public stats leaderboard is reachable without a key and returns structured wallet rows. It is usable as a discovery route only, not as evidence of copyable edge.",
+  "routes": [
+    {
+      "name": "Hyperliquid public stats leaderboard",
+      "url": "https://stats-data.hyperliquid.xyz/Mainnet/leaderboard",
+      "accessClass": "verified-public-no-key",
+      "programmatic": "yes",
+      "ralphUse": "address seed discovery only; must independent-check fills/state",
+      "status": "active-discovery-route"
+    },
+    {
+      "name": "Hyperliquid official info endpoint",
+      "url": "https://api.hyperliquid.xyz/info",
+      "accessClass": "verified-public-no-key",
+      "programmatic": "yes",
+      "ralphUse": "independent clearinghouseState/userFills checks for known addresses",
+      "status": "active-verification-route"
+    },
+    {
+      "name": "HypurrScan",
+      "url": "https://hypurrscan.io/",
+      "accessClass": "verified-public-manual",
+      "programmatic": "not verified",
+      "ralphUse": "manual address/profile cross-checks",
+      "status": "watch/manual"
+    },
+    {
+      "name": "HyperDash Explore",
+      "url": "https://hyperdash.com/explore",
+      "accessClass": "verified-public-js-page",
+      "programmatic": "not verified",
+      "ralphUse": "manual cohort/source discovery and prior-art UX reference",
+      "status": "watch/manual"
+    },
+    {
+      "name": "HyperTracker",
+      "url": "https://hypertracker.io/",
+      "accessClass": "verified-public-page; API/pricing exists",
+      "programmatic": "needs account/API for official product route",
+      "ralphUse": "manual discovery and prior-art; API remains needs-access",
+      "status": "watch/needs-access"
+    },
+    {
+      "name": "Nansen Hyperliquid leaderboard API",
+      "url": "https://docs.nansen.ai/api/hyperliquid/hyperliquid-leaderboard",
+      "accessClass": "documented-api-key-required",
+      "programmatic": "not active in this workspace",
+      "ralphUse": "future paid/keyed smart-money reference if approved",
+      "status": "needs-access"
+    },
+    {
+      "name": "Apify Hyperliquid leaderboard actors",
+      "url": "https://apify.com/gochujang/hyperliquid-leaderboard",
+      "accessClass": "public listing; paid-per-use/account path",
+      "programmatic": "not active in this workspace",
+      "ralphUse": "watch as possible extractor if free public route breaks",
+      "status": "watch/needs-approval"
+    }
+  ],
+  "leaderboard": {
+    "rowsReturned": 44149,
+    "rowsWithAddress": 44149,
+    "positiveAllTimePnl": 22230,
+    "positiveAllTimeNegativeWeek": 2126,
+    "topRows": [
+      {
+        "address": "0x4ec8fe22a531a96c8a846aaf5cbef73202649a80",
+        "displayName": null,
+        "accountValue": 225006148.986607,
+        "dayPnl": 1.137948,
+        "weekPnl": 5.014262,
+        "monthPnl": 25.435129,
+        "allTimePnl": 445047903.796607,
+        "monthVolume": 0,
+        "oneHitRiskRatio": 0,
+        "riskTags": [
+          "inactive-recent-volume-risk"
+        ]
+      },
+      {
+        "address": "0x393d0b87ed38fc779fd9611144ae649ba6082109",
+        "displayName": null,
+        "accountValue": 1112392096.012101,
+        "dayPnl": 12259608.284719,
+        "weekPnl": 70869162.307516,
+        "monthPnl": 377419828.384001,
+        "allTimePnl": 402461035.132101,
+        "monthVolume": 0,
+        "oneHitRiskRatio": 0.9378,
+        "riskTags": [
+          "inactive-recent-volume-risk",
+          "recent-pnl-concentration-risk"
+        ]
+      },
+      {
+        "address": "0xecb63caa47c7c4e77f60f1ce858cf28dc2b82b00",
+        "displayName": null,
+        "accountValue": 140630863.990653,
+        "dayPnl": -400822.299071,
+        "weekPnl": 1082229.922797,
+        "monthPnl": -8647809.283427,
+        "allTimePnl": 205083973.250653,
+        "monthVolume": 13626226490.55,
+        "oneHitRiskRatio": 0.0422,
+        "riskTags": [
+          "needs-fill-history-check"
+        ]
+      },
+      {
+        "address": "0x8d68efbf06fb8cf932518bcb53705e674c4852dc",
+        "displayName": null,
+        "accountValue": 690333880.655795,
+        "dayPnl": 5997053.64474,
+        "weekPnl": 21378068.615702,
+        "monthPnl": 119565751.979781,
+        "allTimePnl": 191767072.365795,
+        "monthVolume": 0,
+        "oneHitRiskRatio": 0.6235,
+        "riskTags": [
+          "inactive-recent-volume-risk"
+        ]
+      },
+      {
+        "address": "0xfae95f601f3a25ace60d19dbb929f2a5c57e3571",
+        "displayName": "thank you jefef",
+        "accountValue": 2402555.892867,
+        "dayPnl": 122.63842,
+        "weekPnl": 1182.523963,
+        "monthPnl": 1506.486516,
+        "allTimePnl": 149881319.242867,
+        "monthVolume": 0,
+        "oneHitRiskRatio": 0,
+        "riskTags": [
+          "withdrawn-or-stale-profit-risk",
+          "inactive-recent-volume-risk"
+        ]
+      },
+      {
+        "address": "0x488d2a9b70cc18ef66057a48ab3d59da1c59fe08",
+        "displayName": null,
+        "accountValue": 253163904.820352,
+        "dayPnl": 5707159.537029,
+        "weekPnl": 15202812.705317,
+        "monthPnl": 82900375.512023,
+        "allTimePnl": 149564759.100352,
+        "monthVolume": 0,
+        "oneHitRiskRatio": 0.5543,
+        "riskTags": [
+          "inactive-recent-volume-risk"
+        ]
+      },
+      {
+        "address": "0x7fdafde5cfb5465924316eced2d3715494c517d1",
+        "displayName": "BobbyBigSize",
+        "accountValue": 52808850.430308,
+        "dayPnl": -1310330.041249,
+        "weekPnl": -4566935.6962399995,
+        "monthPnl": -26857114.666694,
+        "allTimePnl": 146746839.46030802,
+        "monthVolume": 1728443888.4299998,
+        "oneHitRiskRatio": 0.183,
+        "riskTags": [
+          "recent-drawdown-risk"
+        ]
+      },
+      {
+        "address": "0x9794bbbc222b6b93c1417d01aa1ff06d42e5333b",
+        "displayName": null,
+        "accountValue": 3596.832305,
+        "dayPnl": 40.47173,
+        "weekPnl": 207.220038,
+        "monthPnl": 1148.3566,
+        "allTimePnl": 144136783.682305,
+        "monthVolume": 0,
+        "oneHitRiskRatio": 0,
+        "riskTags": [
+          "small-account-capacity-risk",
+          "withdrawn-or-stale-profit-risk",
+          "inactive-recent-volume-risk"
+        ]
+      },
+      {
+        "address": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+        "displayName": null,
+        "accountValue": 187687643.716094,
+        "dayPnl": 10596.171405,
+        "weekPnl": 178107.328085,
+        "monthPnl": 907454.283988,
+        "allTimePnl": 137812671.676094,
+        "monthVolume": 0,
+        "oneHitRiskRatio": 0.0066,
+        "riskTags": [
+          "inactive-recent-volume-risk"
+        ]
+      },
+      {
+        "address": "0x5b5d51203a0f9079f8aeb098a6523a13f298c060",
+        "displayName": null,
+        "accountValue": 180929793.87971,
+        "dayPnl": -2742866.269084,
+        "weekPnl": -2908502.703244,
+        "monthPnl": -38613748.580413,
+        "allTimePnl": 133896210.15971,
+        "monthVolume": 625095712.92,
+        "oneHitRiskRatio": 0.2884,
+        "riskTags": [
+          "recent-drawdown-risk"
+        ]
+      },
+      {
+        "address": "0x20c2d95a3dfdca9e9ad12794d5fa6fad99da44f5",
+        "displayName": null,
+        "accountValue": 3.414026,
+        "dayPnl": 0.010752,
+        "weekPnl": 0.324933,
+        "monthPnl": 0.522945,
+        "allTimePnl": 122544571.994026,
+        "monthVolume": 0,
+        "oneHitRiskRatio": 0,
+        "riskTags": [
+          "small-account-capacity-risk",
+          "withdrawn-or-stale-profit-risk",
+          "inactive-recent-volume-risk"
+        ]
+      },
+      {
+        "address": "0x493db0ed7514c975e9abcc110bd40c473b6763e3",
+        "displayName": null,
+        "accountValue": 109898995.36134,
+        "dayPnl": 1314135.640772,
+        "weekPnl": 6237618.601487,
+        "monthPnl": 36053203.051826,
+        "allTimePnl": 120935301.38134,
+        "monthVolume": 0,
+        "oneHitRiskRatio": 0.2981,
+        "riskTags": [
+          "inactive-recent-volume-risk"
+        ]
+      }
+    ]
+  }
+}
