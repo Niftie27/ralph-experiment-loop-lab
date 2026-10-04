@@ -26,6 +26,7 @@ Intentionally local / not pushed:
 - Dependency, build, and test-output folders such as `node_modules/`, virtualenvs, `dist/`, `build/`, `coverage/`, `.pytest_cache/`, and `__pycache__/`.
 - Local Obsidian/editor state such as `.obsidian/` and `.DS_Store`.
 - Secrets and credential-like files, including `.env*`, private keys, cookies, sessions, and files with secret/credential naming.
+- Session/transcript-style files caught by the session guard, such as raw session transcripts and session-ingest notes. These stay local unless they are deliberately reviewed, redacted, and renamed for publication.
 - Bulky archived source assets under `raw/assets/` such as `.tar`, `.tar.gz`, `.zip`, and `.ogg` files.
 
 If a future experiment needs a dataset that cannot be regenerated from public sources, keep only a manifest, provenance notes, schema, and small sample in Git. Store the full dataset out-of-band and document the retrieval path before relying on it.
