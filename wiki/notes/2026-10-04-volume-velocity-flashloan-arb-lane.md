@@ -36,6 +36,17 @@ Volume velocity does not create the arbitrage. It may identify stress windows wh
 
 The core question is not whether a visible price difference exists. The core question is whether the spread survives long enough, and deeply enough, to be captured after DEX fees, flashloan fees, gas, priority tips/bribes, slippage, failed transaction cost, and MEV competition.
 
+Always count the full execution-cost stack before calling an opportunity profitable:
+
+- DEX swap fees on every leg;
+- flashloan fee;
+- price impact and slippage at the intended trade size;
+- gas and base fee;
+- priority fee, builder tip, relay/bundle/bribe cost, or equivalent inclusion cost;
+- failed transaction, revert, and simulation-error cost;
+- stale quote and state-drift risk between observation, simulation, and landing;
+- MEV/searcher competition and adverse ordering risk.
+
 ## Important Observation
 
 For midcaps and lower caps during sudden pumps, gross DEX price differences can persist for multiple blocks and sometimes seconds to minutes, especially when liquidity is thin or fragmented. The actually executable profit window can be much shorter once depth, slippage, gas, and competing searchers are modeled.
@@ -51,6 +62,8 @@ Can RALPH identify historical windows where:
 3. a same-chain atomic route was profitable after realistic costs;
 4. the opportunity survived for measurable blocks/slots or wall-clock time;
 5. the required infrastructure speed is feasible for Tomas's budget and operating model?
+
+Cross-chain routes are out of scope for this lane. They are usually not pure atomic flashloan opportunities and should be treated as an inventory/settlement-risk strategy family if reopened later.
 
 ## Proposed Measurement Design
 
@@ -84,7 +97,7 @@ Use measured opportunity survival to classify the needed infra:
 - `SLOW_WATCHER`: opportunity survives minutes; a normal API watcher may be enough for alerts/research, not necessarily execution.
 - `FAST_WATCHER`: opportunity survives seconds to tens of seconds; needs low-latency polling/streaming and rapid simulation, but not necessarily colocated searcher infra.
 - `BLOCK_RACE`: opportunity is one-block/sub-block; requires private relay/bundle path, fast simulation, robust nonce/tx handling, and high operational maturity.
-- `NOT_ATOMIC`: only exists cross-chain or across venues where flashloan execution cannot settle atomically; requires inventory, not pure flashloan.
+- `NOT_ATOMIC`: only exists across venues where flashloan execution cannot settle atomically; requires inventory, not pure flashloan. Cross-chain opportunities are excluded from this lane.
 
 ## Where This Should Live
 
