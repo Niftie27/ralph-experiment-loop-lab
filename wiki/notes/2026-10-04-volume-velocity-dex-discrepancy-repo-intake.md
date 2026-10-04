@@ -251,11 +251,28 @@ Current working thesis:
 
 ## Factor Trigger Frame
 
-Do not hardcode BTC as the only trigger. Treat BTC as the dominant global factor and define a configurable trigger/follower map:
+Do not hardcode BTC as the only trigger, but do keep BTC first. Treat BTC as the dominant global regime gate, then evaluate ETH/majors, then ecosystem or sector leaders, then follower tokens, then DEX venue discrepancies.
 
 ```text
 trigger_asset -> follower_universe -> DEX quote survival
 ```
+
+Hierarchy:
+
+1. **BTC global regime first**
+   - Classify BTC as risk-on, risk-off, transition, or stale.
+   - Check whether BTC is breaking out, breaking down, rejecting, or coiling near a regime-changing level.
+   - This sets the market weather.
+2. **ETH and majors second**
+   - ETH confirmation or divergence changes the meaning of the BTC move.
+   - BTC-only impulse, BTC+ETH impulse, and ETH-led impulse are different states.
+3. **Ecosystem or sector leader third**
+   - SOL, BNB, AVAX, MNT, ARB/OP, ENA/Ethena, Pendle/yield, AI/meme/perp-DEX leaders, etc.
+   - These identify where the shock is concentrating.
+4. **Follower token fourth**
+   - Measure whether the smaller/lower-liquidity token lags, overreacts, or reprices unevenly.
+5. **DEX venue discrepancy last**
+   - Only after the factor chain makes sense should RALPH test whether DEX venues disagree long enough to survive latency and full costs.
 
 Trigger classes:
 
@@ -272,12 +289,21 @@ Separate the **trigger market** from the **execution market**:
 What RALPH must measure:
 
 - leader/factor impulse timestamp;
+- BTC regime and ETH/major confirmation state at the time of the impulse;
 - follower-token response lag at 1s, 5s, 15s, 1m, next block, and next 2 blocks;
 - whether DEX venues for the follower token disagree after the impulse;
 - whether the discrepancy survives the e2e latency and full cost stack;
 - whether the leader/follower relationship is repeatable or only anecdotal.
 
 This reframes the harness as **factor-triggered e2e latency and stale-state measurement**, not BTC-only monitoring.
+
+Decomposition target:
+
+```text
+target move = BTC beta + ETH/major beta + ecosystem/sector leader beta + residual move
+```
+
+The opportunity is more likely in residual lag, stale DEX state, or venue disagreement than in simply observing that all assets moved with BTC.
 
 Budget ladder:
 
