@@ -261,7 +261,13 @@ Trigger classes:
 
 - **Global beta:** BTC, ETH.
 - **Ecosystem leader:** SOL for Solana ecosystem, BNB for BSC, AVAX for Avalanche, MNT for Mantle, ARB/OP for their ecosystems when relevant.
-- **Sector/theme leader:** AI, meme, perp DEX, LST/restaking, gaming, or other baskets where one leading asset moves and related tokens reprice with lag.
+- **Sector/theme leader:** Ethena/ENA and USDe/sUSDe/yield markets, Pendle/yield, LST/restaking, AI, meme, perp DEX, gaming, or other baskets where one leading asset moves and related tokens reprice with lag.
+
+Separate the **trigger market** from the **execution market**:
+
+- Ethereum mainnet may be too competitive for execution, but ETH can still be a trigger/factor.
+- Solana may be out of scope for same-chain execution in this lane, but SOL can still explain impulse in Solana ecosystem tokens.
+- A trigger can come from BTC, ETH, SOL, ENA/Ethena, or another leader; the tested DEX discrepancy can still live on a cheaper/lower-competition chain or venue.
 
 What RALPH must measure:
 
