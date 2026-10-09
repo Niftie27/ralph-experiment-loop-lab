@@ -1,0 +1,15 @@
+[Unit]
+Description=Binance BTCUSDT orderflow collector for RALPH (read-only market data)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__USER__
+WorkingDirectory=__DIR__
+ExecStart=__HOME__/venv-collector/bin/python __DIR__/binance_live.py --all --out __HOME__/data/binance --features __HOME__/data/features
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

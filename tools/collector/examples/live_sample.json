@@ -1,0 +1,275 @@
+{
+ "generated": 1791464933692,
+ "tf": 60,
+ "status": {
+  "last_price": 83393.0,
+  "velocity": 0.9,
+  "bar": {
+   "t": 1791419940000,
+   "open": 83392.4,
+   "high": 83394.1,
+   "low": 83391.9,
+   "close": 83393.0,
+   "volume": 59.122,
+   "bought": 31.966,
+   "sold": 27.156,
+   "delta": 4.81,
+   "vel_max": 1.1
+  },
+  "bar_fp": {
+   "t": 1791419940000,
+   "step": 5.0,
+   "lv": [
+    [
+     83390.0,
+     27.156,
+     31.966,
+     300
+    ]
+   ]
+  },
+  "session": {
+   "day": "2026-10-08",
+   "open": 83400.0,
+   "high": 83406.1,
+   "low": 83389.2,
+   "volume": 3705.348,
+   "cvd": 24.93,
+   "vwap": 83395.4,
+   "sd": 4.09,
+   "poc": 83391.7,
+   "vah": 83398.0,
+   "val": 83390.0
+  },
+  "prev_day": null,
+  "naked": [],
+  "mark": {
+   "mark": 83394.7,
+   "index": 83391.2,
+   "funding": "0.00008123",
+   "next_funding": 1791423599000
+  },
+  "oi": 95889.5,
+  "liq_5m": {
+   "long": 2.4,
+   "short": 0,
+   "count": 2
+  },
+  "book": {
+   "best_bid": 83393.1,
+   "best_ask": 83393.3,
+   "bid_depth": 158.641,
+   "ask_depth": 158.172,
+   "imbalance": 0.001,
+   "bid_walls": [
+    [
+     83383.7,
+     2.99
+    ],
+    [
+     83387.5,
+     2.842
+    ],
+    [
+     83384.1,
+     2.834
+    ]
+   ],
+   "ask_walls": [
+    [
+     83394.9,
+     2.984
+    ],
+    [
+     83400.4,
+     2.964
+    ],
+    [
+     83395.1,
+     2.962
+    ]
+   ]
+  }
+ },
+ "bars": [
+  {
+   "t_ms": 1791419760000.0,
+   "open": 83391.6,
+   "high": 83392.5,
+   "low": 83390.8,
+   "close": 83391.4,
+   "volume": 61.299,
+   "bought": 39.988,
+   "sold": 21.311,
+   "delta": 18.677,
+   "cvd_session": 1.726,
+   "poc": 83390.0,
+   "vwap": 83395.6,
+   "vwap_sd": 4.12,
+   "vel_max": 1.1,
+   "absorb_candle": null,
+   "big_max": 0.0,
+   "big_max_side": null,
+   "liq_long": 0.0,
+   "liq_short": 0.0,
+   "oi": 95880.5,
+   "d_oi": 3.0,
+   "book_imb": 0.094,
+   "s_poc": 83392.4,
+   "s_vah": 83398.0,
+   "s_val": 83390.0,
+   "buy_imb": 1.0,
+   "sell_imb": 1.0,
+   "stack_buy": 1.0,
+   "stack_sell": 1.0
+  },
+  {
+   "t_ms": 1791419820000.0,
+   "open": 83391.1,
+   "high": 83392.6,
+   "low": 83391.1,
+   "close": 83391.8,
+   "volume": 95.07,
+   "bought": 56.983,
+   "sold": 38.087,
+   "delta": 18.896,
+   "cvd_session": 20.622,
+   "poc": 83390.0,
+   "vwap": 83395.5,
+   "vwap_sd": 4.11,
+   "vel_max": 6.2,
+   "absorb_candle": null,
+   "big_max": 0.0,
+   "big_max_side": null,
+   "liq_long": 0.0,
+   "liq_short": 0.0,
+   "oi": 95883.5,
+   "d_oi": 3.0,
+   "book_imb": 0.076,
+   "s_poc": 83391.7,
+   "s_vah": 83398.0,
+   "s_val": 83390.0,
+   "buy_imb": 1.0,
+   "sell_imb": 1.0,
+   "stack_buy": 1.0,
+   "stack_sell": 1.0
+  },
+  {
+   "t_ms": 1791419880000.0,
+   "open": 83391.7,
+   "high": 83392.4,
+   "low": 83391.1,
+   "close": 83392.4,
+   "volume": 59.326,
+   "bought": 29.412,
+   "sold": 29.914,
+   "delta": -0.502,
+   "cvd_session": 20.12,
+   "poc": 83390.0,
+   "vwap": 83395.4,
+   "vwap_sd": 4.11,
+   "vel_max": 1.0,
+   "absorb_candle": null,
+   "big_max": 0.0,
+   "big_max_side": null,
+   "liq_long": 1.2,
+   "liq_short": 0.0,
+   "oi": 95886.5,
+   "d_oi": 3.0,
+   "book_imb": -0.013,
+   "s_poc": 83391.7,
+   "s_vah": 83398.0,
+   "s_val": 83390.0,
+   "buy_imb": 1.0,
+   "sell_imb": 1.0,
+   "stack_buy": 1.0,
+   "stack_sell": 1.0
+  }
+ ],
+ "events": [
+  {
+   "type": "liquidation",
+   "t": 1791418200000,
+   "time": "2026-10-08T00:10:00Z",
+   "liquidated": "long",
+   "qty": 1.2,
+   "price": 83393.7
+  },
+  {
+   "type": "velocity",
+   "t": 1791418563000,
+   "time": "2026-10-08T00:16:03Z",
+   "ratio": 6.0,
+   "side": "buy",
+   "price": 83391.9
+  },
+  {
+   "type": "big_trade",
+   "t": 1791419000001,
+   "time": "2026-10-08T00:23:20Z",
+   "side": "buy",
+   "qty": 30.0,
+   "avg_price": 83396.05,
+   "from": 83390.1,
+   "to": 83402.0,
+   "levels": 120
+  },
+  {
+   "type": "cluster",
+   "t": 1791419820000,
+   "time": "2026-10-08T00:37:00Z",
+   "price": 83390.0,
+   "volume": 95.07,
+   "sold": 38.087,
+   "bought": 56.983,
+   "delta": 18.896,
+   "trades": 300
+  },
+  {
+   "type": "wall_pulled",
+   "t": 1791419853000,
+   "time": "2026-10-08T00:37:33Z",
+   "side": "bid",
+   "price": 83389.7,
+   "qty": 32.787
+  },
+  {
+   "type": "wall_added",
+   "t": 1791419854000,
+   "time": "2026-10-08T00:37:34Z",
+   "side": "bid",
+   "price": 83389.6,
+   "qty": 30.718
+  }
+ ],
+ "footprints": [
+  {
+   "t": 1791419880000,
+   "step": 5.0,
+   "lv": [
+    [
+     83390.0,
+     29.914,
+     29.412,
+     300
+    ]
+   ]
+  }
+ ],
+ "collector": {
+  "started": 1791464928208,
+  "trades": 9120,
+  "gaps": 0,
+  "backfilled": 0,
+  "liquidations": 13,
+  "delay_ms": 180,
+  "book": {
+   "state": "synced",
+   "bids": 1500,
+   "asks": 1480,
+   "resyncs": 0
+  },
+  "data_dir": "/home/claude/dash/livedata"
+ },
+ "_note": "SYNTHETIC example produced in a test run, for the schema only"
+}

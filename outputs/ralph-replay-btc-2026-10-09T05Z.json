@@ -1,0 +1,83 @@
+{
+  "generatedAt": "2026-10-09T06:17:28.050Z",
+  "status": "ralph-orderflow-replay-check",
+  "label": "BTC",
+  "symbol": "BTCUSDT",
+  "hour": "2026-10-09T05Z",
+  "dataDir": "/home/coder/data/binance",
+  "outDir": "/tmp/ralph_replay_btc_2026-10-09T05Z",
+  "inputContract": {
+    "required": [
+      "tape hourly CSV with Time/Bids/Ask/Delta/AggId/TradeTimeMs",
+      "raw hourly JSONL.GZ for liquidations, mark price, and open interest",
+      "book hourly JSONL.GZ with top-of-book snapshots",
+      "sorted unique trade keys by (TradeTimeMs, AggId)"
+    ]
+  },
+  "inputs": {
+    "tape": {
+      "path": "/home/coder/data/binance/tape_BTCUSDT_2026-10-09T05Z.csv",
+      "exists": true,
+      "bytes": 2696205
+    },
+    "raw": {
+      "path": "/home/coder/data/binance/raw_BTCUSDT_2026-10-09T05Z.jsonl.gz",
+      "exists": true,
+      "bytes": 41939943
+    },
+    "book": {
+      "path": "/home/coder/data/binance/book_BTCUSDT_2026-10-09T05Z.jsonl.gz",
+      "exists": true,
+      "bytes": 1882615
+    }
+  },
+  "tape": {
+    "path": "/home/coder/data/binance/tape_BTCUSDT_2026-10-09T05Z.csv",
+    "rows": 32422,
+    "duplicates": 0,
+    "sortViolations": 0,
+    "firstKey": [
+      1791522000384,
+      3480186781
+    ],
+    "lastKey": [
+      1791525599978,
+      3480219202
+    ]
+  },
+  "replay": {
+    "ok": true,
+    "status": 0,
+    "signal": null,
+    "stdout": "Hotovo: 39 914 zprav od 2026-10-09T05:00:00Z do 2026-10-09T05:59:59Z\n  bars: 59\n  big_trade: 49\n  cluster: 34\n  liquidation: 43\n  stacked_imbalance: 17\n  velocity: 16\n  wall_added: 34\n  wall_filled: 4\n  wall_pulled: 29\nVystupy jsou v /tmp/ralph_replay_btc_2026-10-09T05Z",
+    "stderr": ""
+  },
+  "outputs": [
+    {
+      "path": "/tmp/ralph_replay_btc_2026-10-09T05Z/all_prices_2026-10-09_partial.csv",
+      "name": "all_prices_2026-10-09_partial.csv",
+      "bytes": 129384
+    },
+    {
+      "path": "/tmp/ralph_replay_btc_2026-10-09T05Z/bars_60s.csv",
+      "name": "bars_60s.csv",
+      "bytes": 24179
+    },
+    {
+      "path": "/tmp/ralph_replay_btc_2026-10-09T05Z/events.jsonl",
+      "name": "events.jsonl",
+      "bytes": 29351
+    },
+    {
+      "path": "/tmp/ralph_replay_btc_2026-10-09T05Z/footprint_60s.jsonl.gz",
+      "name": "footprint_60s.jsonl.gz",
+      "bytes": 4424
+    },
+    {
+      "path": "/tmp/ralph_replay_btc_2026-10-09T05Z/sessions.csv",
+      "name": "sessions.csv",
+      "bytes": 200
+    }
+  ],
+  "ok": true
+}

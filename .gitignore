@@ -5,6 +5,12 @@
 # stay local and can be regenerated.
 
 # Large market/archive data caches
+tools/collector/data/
+tools/collector/runtime/
+tools/collector/features/
+tools/collector/**/*.jsonl
+tools/collector/**/*.jsonl.gz
+tools/collector/**/*.csv.gz
 experiments/**/data/
 experiments/**/cache/
 experiments/**/.cache/
