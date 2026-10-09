@@ -53,6 +53,7 @@ try:
     import orderflow_engine as ofe          # lives next to this file; optional
 except ImportError:
     ofe = None
+from symbol_settings import add_cli_args, for_symbol, overrides_from_args
 
 try:
     import orjson                           # optional, about 3x faster parsing: ~/venv/bin/pip install orjson
@@ -70,7 +71,6 @@ REST_AGG = "https://fapi.binance.com/fapi/v1/aggTrades"
 REST_DEPTH = "https://fapi.binance.com/fapi/v1/depth"
 REST_OI = "https://fapi.binance.com/fapi/v1/openInterest"
 BOOK_LEVELS_SAVED = 100
-TICK = 0.1
 RECONNECT_AFTER_S = 23 * 3600 + 50 * 60     # Binance closes every connection after 24 h
 
 
@@ -86,14 +86,14 @@ HEADER = "Time;Bids;;;;Ask;Delta;AggId;TradeTimeMs\n"
 GRACE_MS = 10 * 60 * 1000                    # keep an hour open 10 min after it ends, for late (backfilled) trades
 
 
-def tape_line(t, delta):
+def tape_line(t, delta, settings):
     """One aggTrade as an ATAS Bid/Ask Tape row (time;bid price;bid size;0;ask size;ask price;running delta)
     plus two extra columns the dashboard ignores: Binance aggTrade ID and trade time in ms."""
-    p, q = float(t["p"]), float(t["q"])
+    p, q = str(t["p"]), str(t["q"])
     tail = f";{delta:.3f};{t['a']};{t['T']}"
     if t["m"]:   # buyer was the maker, so the seller was aggressive: volume at the bid
-        return f"{local_clock(t['T'])};{p:.1f};{q:.3f};0;0;{p + TICK:.1f}" + tail
-    return f"{local_clock(t['T'])};{p - TICK:.1f};0;0;{q:.3f};{p:.1f}" + tail
+        return f"{local_clock(t['T'])};{p};{q};0;0;{p}" + tail
+    return f"{local_clock(t['T'])};{p};0;0;{q};{p}" + tail
 
 
 def parse_tape_line(line):
@@ -110,8 +110,9 @@ def hour_end_ms(hour):
 
 
 class Recorder:
-    def __init__(self, out_dir, symbol):
+    def __init__(self, out_dir, symbol, settings):
         self.out, self.sym = out_dir, symbol.upper()
+        self.settings = settings
         os.makedirs(out_dir, exist_ok=True)
         self.hours = {}           # hour -> {"trades": {a: trade}, "fh": file, "delta": float}
         self.raw = None
@@ -121,8 +122,7 @@ class Recorder:
     def _tape_path(self, hour):
         return os.path.join(self.out, f"tape_{self.sym}_{hour}.csv")
 
-    @staticmethod
-    def _write_sorted(path, trades):
+    def _write_sorted(self, path, trades):
         tmp = path + ".tmp"
         delta = 0.0
         with open(tmp, "w", encoding="utf-8") as f:
@@ -130,14 +130,17 @@ class Recorder:
             for a in sorted(trades):
                 t = trades[a]
                 delta += -float(t["q"]) if t["m"] else float(t["q"])
-                f.write(tape_line(t, delta) + "\n")
+                f.write(tape_line(t, delta, self.settings) + "\n")
         os.replace(tmp, path)
 
     def _open(self, hour):
         path = self._tape_path(hour)
         trades = {}
-        if os.path.exists(path):             # restart within the same hour: keep what is already on disk
-            with open(path, encoding="utf-8") as f:
+        zipped = path + ".gz"
+        source = path if os.path.exists(path) else zipped if os.path.exists(zipped) else None
+        if source:             # restart within the same hour: keep what is already on disk
+            opener = gzip.open if source.endswith(".gz") else open
+            with opener(source, "rt", encoding="utf-8") as f:
                 next(f, None)
                 for line in f:
                     try:
@@ -161,7 +164,7 @@ class Recorder:
             return
         h["trades"][t["a"]] = t
         h["delta"] += -float(t["q"]) if t["m"] else float(t["q"])
-        h["fh"].write(tape_line(t, h["delta"]) + "\n")
+        h["fh"].write(tape_line(t, h["delta"], self.settings) + "\n")
         self.finalize_old(now_ms)
 
     def _finalize(self, hour):
@@ -225,7 +228,8 @@ class Recorder:
 class Stats:
     """Live numbers for the console: trades, volume, delta, RALPH volume velocity, delay."""
 
-    def __init__(self):
+    def __init__(self, settings):
+        self.settings = settings
         self.sec = collections.OrderedDict()   # second -> [notional, signed notional]
         self.delays = collections.deque(maxlen=2000)
         self.msgs = 0
@@ -268,7 +272,7 @@ class Stats:
         vel = self.velocity(now_s)
         dl = sorted(self.delays)
         med_s = f"~{dl[len(dl) // 2]:.0f} ms" if dl else "-"
-        price = f"{self.last_price:,.1f}".replace(",", " ") if self.last_price else "-"
+        price = f"{self.last_price:,.{self.settings.price_decimals}f}".replace(",", " ") if self.last_price else "-"
         if vel == vel:
             vel_s = f"{vel:.1f}x"
         else:
@@ -288,7 +292,7 @@ class Stats:
         if not bk.bids or not bk.asks:
             return "  book: prazdny"
         bb, ba = max(bk.bids), min(bk.asks)
-        return f"  book {len(bk.bids)}/{len(bk.asks)} urovni, spread {ba - bb:.1f}, resync {bk.resyncs}"
+        return f"  book {len(bk.bids)}/{len(bk.asks)} urovni, spread {self.settings.price(ba - bb)}, resync {bk.resyncs}"
 
 
 def rest_agg_trades(symbol, from_id, to_id):
@@ -465,8 +469,9 @@ class Collector:
     def __init__(self, args):
         self.args = args
         self.sym = args.symbol.lower()
-        self.rec = Recorder(args.out, self.sym)
-        self.stats = Stats()
+        self.settings = for_symbol(args.symbol, args.symbols_config, args.rest_base, overrides_from_args(args))
+        self.rec = Recorder(args.out, self.sym, self.settings)
+        self.stats = Stats(self.settings)
         self.last_a = None
         self.stop = asyncio.Event()
         self.book = OrderBook() if (args.book or args.all) else None
@@ -489,11 +494,14 @@ class Collector:
 
     def _last_recorded_id(self):
         """Continue from the last trade on disk, so trades missed during a restart are filled from REST."""
-        files = sorted(f for f in os.listdir(self.rec.out) if f.startswith(f"tape_{self.sym.upper()}_") and f.endswith(".csv"))
+        files = sorted(f for f in os.listdir(self.rec.out)
+                       if f.startswith(f"tape_{self.sym.upper()}_") and (f.endswith(".csv") or f.endswith(".csv.gz")))
         if not files:
             return None
         best = None
-        with open(os.path.join(self.rec.out, files[-1]), encoding="utf-8") as f:
+        path = os.path.join(self.rec.out, files[-1])
+        opener = gzip.open if path.endswith(".gz") else open
+        with opener(path, "rt", encoding="utf-8") as f:
             for line in f:
                 parts = line.split(";")
                 if len(parts) >= 9 and parts[7].isdigit():
@@ -504,10 +512,9 @@ class Collector:
         if ofe is None:
             print("orderflow_engine.py neni vedle binance_live.py, pocitani je vypnute", flush=True)
             return
-        cfg = types.SimpleNamespace(tf=60, level=5.0, profile_bin=1.0, va=0.7, big=10.0, imb_ratio=3.0, imb_min=2.0,
-                                    cluster=25.0, vel=5.0, wall=25.0, wick=0.25)
+        cfg = types.SimpleNamespace(tf=60, va=0.7, imb_ratio=3.0, vel=5.0, wick=0.25, **self.settings.__dict__)
         try:
-            self.live_sink = ofe.LiveSink(out_dir, cfg.tf)
+            self.live_sink = ofe.LiveSink(out_dir, cfg.tf, self.settings)
             eng = ofe.Engine(cfg, ofe.NullSink())
             state = os.path.join(out_dir, "engine_state.json")
             eng.load_state(state)
@@ -654,26 +661,28 @@ class Collector:
             return None
         best_bid, best_ask = max(bk.bids), min(bk.asks)
         mid = (best_bid + best_ask) / 2
-        lo = math.floor((mid - HEAT_RANGE) / HEAT_STEP) * HEAT_STEP
-        n = int(2 * HEAT_RANGE / HEAT_STEP) + 1
+        heat_range, heat_step = self.settings.heat_range, self.settings.heat_step
+        lo = math.floor((mid - heat_range) / heat_step) * heat_step
+        n = int(2 * heat_range / heat_step) + 1
         b, a = [0.0] * n, [0.0] * n
         frag = {}
-        far = max(FRAG_STEPS)
+        far = max(self.settings.frag_steps)
         bid_lv = sorted(((p, q) for p, q in bk.bids.items() if p >= min(lo, best_bid - far)), reverse=True)
-        ask_lv = sorted((p, q) for p, q in bk.asks.items() if p <= max(lo + n * HEAT_STEP, best_ask + far))
+        ask_lv = sorted((p, q) for p, q in bk.asks.items() if p <= max(lo + n * heat_step, best_ask + far))
         for p, q in bid_lv:
-            i = int((p - lo) // HEAT_STEP)
+            i = int((p - lo) // heat_step)
             if 0 <= i < n:
                 b[i] += q
         for p, q in ask_lv:
-            i = int((p - lo) // HEAT_STEP)
+            i = int((p - lo) // heat_step)
             if 0 <= i < n:
                 a[i] += q
-        for x in FRAG_STEPS:
+        for x in self.settings.frag_steps:
             frag[f"d{x}"] = round(sum(q for p, q in bid_lv if p >= best_bid - x), 2)
             frag[f"u{x}"] = round(sum(q for p, q in ask_lv if p <= best_ask + x), 2)
         known = {"bid_lo": min(bk.bids), "ask_hi": max(bk.asks)}
-        return {"type": "heat", "t": t, "mid": round(mid, 2), "lo": lo, "step": HEAT_STEP,
+        return {"type": "heat", "t": t, "mid": float(self.settings.price(mid)), "lo": float(self.settings.price(lo)),
+                "step": heat_step,
                 "b": [round(v, 2) for v in b], "a": [round(v, 2) for v in a], "frag": frag, "known": known}
 
     async def live_heat(self):
@@ -698,7 +707,7 @@ class Collector:
                 continue
             agg, e_max = {}, 0
             for e, p, q, sell in trades:
-                k = (1 if sell else 0, round(p))
+                k = (1 if sell else 0, round(p / self.settings.tick_size) * self.settings.tick_size)
                 x = agg.setdefault(k, [0.0, 0, p, p])
                 x[0] += q
                 x[1] += 1
@@ -794,6 +803,7 @@ def main():
     ap.add_argument("--live-port", type=int, default=8051, help="port pro zivy dashboard (0 = vypnuto), jen s --features")
     ap.add_argument("--ws-base", default=WS_BASE, help=argparse.SUPPRESS)       # for the local load test
     ap.add_argument("--rest-base", default="https://fapi.binance.com", help=argparse.SUPPRESS)
+    add_cli_args(ap)
     args = ap.parse_args()
     global REST_AGG, REST_DEPTH, REST_OI
     REST_AGG, REST_DEPTH, REST_OI = (args.rest_base + "/fapi/v1/aggTrades", args.rest_base + "/fapi/v1/depth",

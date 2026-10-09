@@ -1,0 +1,10 @@
+[Unit]
+Description=Run RALPH collector storage maintenance hourly
+
+[Timer]
+OnCalendar=hourly
+AccuracySec=5m
+Persistent=true
+
+[Install]
+WantedBy=timers.target

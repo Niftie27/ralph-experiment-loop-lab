@@ -11,6 +11,7 @@ Run in WSL:  python3 diag_1900.py      (needs internet, takes about a minute)
 """
 import gzip
 import json
+import lzma
 import os
 import time
 import urllib.parse
@@ -67,12 +68,14 @@ print("   RALPHuv BTC WICK alert v 17:38 prisel pri -0,30 % za 5 s, takze jeho p
 
 print()
 print("2) Zpozdeni naseho sberace (cas prijeti minus cas odeslani burzou), nejvyssi za sekundu, v ms")
-if not os.path.exists(RAW):
-    print(f"   soubor {RAW} nenalezen")
+raw_path = RAW if os.path.exists(RAW) else RAW.removesuffix(".gz") + ".xz"
+if not os.path.exists(raw_path):
+    print(f"   soubor {RAW} ani xz varianta nenalezen")
 else:
     lag = {}
     try:
-        with gzip.open(RAW, "rt", encoding="utf-8") as f:
+        opener = lzma.open if raw_path.endswith(".xz") else gzip.open
+        with opener(raw_path, "rt", encoding="utf-8") as f:
             for line in f:
                 if '"recv_ms":17914788' not in line:      # 17:00:00-17:01:39 UTC only
                     continue

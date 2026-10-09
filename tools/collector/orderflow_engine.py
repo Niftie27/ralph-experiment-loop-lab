@@ -29,6 +29,7 @@ import glob
 import gzip
 import heapq
 import json
+import lzma
 import math
 import os
 import statistics
@@ -36,6 +37,7 @@ import sys
 import zlib
 from collections import deque
 from datetime import datetime, timezone
+from symbol_settings import add_cli_args, for_symbol, overrides_from_args
 
 NAN = float("nan")
 
@@ -59,6 +61,14 @@ def week_key(ms):
 
 def r(x, d=1):
     return "" if x is None or (isinstance(x, float) and math.isnan(x)) else round(x, d)
+
+
+def rp(c, x):
+    return "" if x is None or (isinstance(x, float) and math.isnan(x)) else round(float(x), c.price_decimals)
+
+
+def rap(c, x):
+    return "" if x is None or (isinstance(x, float) and math.isnan(x)) else round(float(x), max(2, c.price_decimals))
 
 
 class VWAP:
@@ -141,9 +151,10 @@ SESSION_COLUMNS = ["day", "open", "high", "low", "close", "volume", "bought", "s
 
 
 class Sink:
-    def __init__(self, out_dir, tf):
+    def __init__(self, out_dir, tf, settings):
         os.makedirs(out_dir, exist_ok=True)
         self.out = out_dir
+        self.settings = settings
         self.bars_f = open(os.path.join(out_dir, f"bars_{tf}s.csv"), "w", newline="")
         self.bars = csv.writer(self.bars_f)
         self.bars.writerow(BAR_COLUMNS)
@@ -169,7 +180,7 @@ class Sink:
         with open(os.path.join(self.out, name), "w", encoding="utf-8") as f:
             f.write("Price;Volume;Trades;Bid;Asks;Delta\n")
             for p, (buy, sell, n) in sorted(profile.lv.items(), key=lambda kv: -(kv[1][0] + kv[1][1])):
-                f.write(f"{p:.1f};{buy + sell:.3f};{n};{sell:.3f};{buy:.3f};{buy - sell:.3f}\n")
+                f.write(f"{self.settings.price(p)};{buy + sell:.3f};{n};{sell:.3f};{buy:.3f};{buy - sell:.3f}\n")
 
     def close(self):
         for f in (self.bars_f, self.fp, self.ev, self.ses_f):
@@ -210,9 +221,10 @@ def _num(v):
 class LiveSink:
     """Appends bars and events to one file per UTC day and keeps the recent ones in memory for live.json."""
 
-    def __init__(self, out_dir, tf):
+    def __init__(self, out_dir, tf, settings=None):
         os.makedirs(out_dir, exist_ok=True)
         self.out, self.tf = out_dir, tf
+        self.settings = settings
         self.day = None
         self.files = {}
         self.recent_bars = deque(maxlen=720)
@@ -292,7 +304,8 @@ class LiveSink:
         with open(os.path.join(self.out, f"all_prices_{day}.csv"), "w", encoding="utf-8") as f:
             f.write("Price;Volume;Trades;Bid;Asks;Delta\n")
             for p, (buy, sell, n) in sorted(profile.lv.items(), key=lambda kv: -(kv[1][0] + kv[1][1])):
-                f.write(f"{p:.1f};{buy + sell:.3f};{n};{sell:.3f};{buy:.3f};{buy - sell:.3f}\n")
+                price = self.settings.price(p) if self.settings else f"{p:.1f}"
+                f.write(f"{price};{buy + sell:.3f};{n};{sell:.3f};{buy:.3f};{buy - sell:.3f}\n")
 
     def flush(self):
         for f in self.files.values():
@@ -328,7 +341,9 @@ def warm_up(engine, data_dir):
     """Replay today's recorded trades so session VWAP, POC, CVD and velocity are right after a restart."""
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     n = 0
-    for path in sorted(glob.glob(os.path.join(data_dir, f"tape_*_{today}T*.csv"))):
+    paths = glob.glob(os.path.join(data_dir, f"tape_*_{today}T*.csv"))
+    paths += glob.glob(os.path.join(data_dir, f"tape_*_{today}T*.csv.gz"))
+    for path in sorted(paths):
         for t, _, _, d in iter_trades_file(path):
             engine.on_trade(t, *d)
             n += 1
@@ -412,7 +427,8 @@ class Engine:
             return
         self.last_shock, self.last_shock_move = sec, abs(move)
         self.sink.event({"type": "price_shock", "t": sec * 1000, "time": iso(sec * 1000), "side": "down" if move < 0 else "up",
-                         "move_pct": round(move, 3), "from": ref, "to": to, "window_s": 5, "notional_5s": round(notional)})
+                         "move_pct": round(move, 3), "from": rp(self.c, ref), "to": rp(self.c, to),
+                         "window_s": 5, "notional_5s": round(notional)})
 
     def _finish_second(self, sec):
         while self.secs and self.secs[0][0] <= sec - 300:
@@ -439,7 +455,7 @@ class Engine:
         if ratio >= self.c.vel and (sec - self.last_vel >= 60 or ratio >= 2 * self.last_vel_ratio):
             self.last_vel, self.last_vel_ratio = sec, ratio
             self.sink.event({"type": "velocity", "t": sec * 1000, "time": iso(sec * 1000), "ratio": round(ratio, 1),
-                             "side": "buy" if signed >= 0 else "sell", "price": r(self.last_price)})
+                             "side": "buy" if signed >= 0 else "sell", "price": rp(self.c, self.last_price)})
 
     # ------------------------------------------------------------------ inputs
     def on_trade(self, T, p, q, sell):
@@ -513,7 +529,8 @@ class Engine:
             for (side, p), q in walls.items():
                 seen_before = p >= pbid_lo if side == "bid" else p <= pask_hi
                 if (side, p) not in self.walls and seen_before:       # not just scrolling into view
-                    self.sink.event({"type": "wall_added", "t": t, "time": iso(t), "side": side, "price": p, "qty": round(q, 3)})
+                    self.sink.event({"type": "wall_added", "t": t, "time": iso(t), "side": side,
+                                     "price": rp(self.c, p), "qty": round(q, 3)})
         for (side, p), q in self.walls.items():
             if (side, p) in walls:
                 continue
@@ -522,7 +539,7 @@ class Engine:
                 continue                                        # price moved away, the wall is just out of view
             traded = best_bid < p if side == "bid" else best_ask > p
             self.sink.event({"type": "wall_filled" if traded else "wall_pulled", "t": t, "time": iso(t),
-                             "side": side, "price": p, "qty": round(q, 3)})
+                             "side": side, "price": rp(self.c, p), "qty": round(q, 3)})
         self.walls = walls
 
     def on_liq(self, T, side, qty, price, avg):
@@ -535,7 +552,7 @@ class Engine:
         else:
             self.pending_liq.append((T, kind, qty))
         self.sink.event({"type": "liquidation", "t": T, "time": iso(T), "liquidated": kind, "qty": round(qty, 3),
-                         "price": r(avg or price)})
+                         "price": rp(self.c, avg or price)})
 
     def on_mark(self, t, d):
         self.mark = d
@@ -566,7 +583,8 @@ class Engine:
             return
         side = "sell" if o["sell"] else "buy"
         self.sink.event({"type": "big_trade", "t": o["T"], "time": iso(o["T"]), "side": side, "qty": round(o["qty"], 3),
-                         "avg_price": round(o["notional"] / o["qty"], 2), "from": o["lo"], "to": o["hi"],
+                         "avg_price": rap(self.c, o["notional"] / o["qty"]), "from": rp(self.c, o["lo"]),
+                         "to": rp(self.c, o["hi"]),
                          "levels": len(o["levels"])})
         b = self.bar
         if b is not None and b["start"] <= o["T"] < b["start"] + self.tf_ms:
@@ -607,8 +625,9 @@ class Engine:
         for x, (bid, ask, n) in fp.items():
             if bid + ask >= c.cluster:
                 hits += 1
-                self.sink.event({"type": "cluster", "t": t_ms, "time": iso(t_ms), "price": x, "volume": round(bid + ask, 3),
-                                 "sold": round(bid, 3), "bought": round(ask, 3), "delta": round(ask - bid, 3), "trades": n})
+                self.sink.event({"type": "cluster", "t": t_ms, "time": iso(t_ms), "price": rp(c, x),
+                                 "volume": round(bid + ask, 3), "sold": round(bid, 3),
+                                 "bought": round(ask, 3), "delta": round(ask - bid, 3), "trades": n})
 
         # absorption: heavy one-sided aggression that did not move price its way
         delta = b["bought"] - b["sold"]
@@ -621,7 +640,7 @@ class Engine:
                     and progress <= 0.25 * med_rng):
                 absorb = "bull" if delta < 0 else "bear"
                 self.sink.event({"type": "absorption", "t": t_ms, "time": iso(t_ms), "kind": absorb,
-                                 "price": poc_bin, "volume": round(b["volume"], 3), "delta": round(delta, 3)})
+                                 "price": rp(c, poc_bin), "volume": round(b["volume"], 3), "delta": round(delta, 3)})
         top, bot = fp.get(fbin(b["high"], step)), fp.get(fbin(b["low"], step))
         med_cell = statistics.median(v[0] + v[1] for v in fp.values())
         absorb_high = bool(top and rng > 0 and top[1] >= max(c.imb_min, 3 * med_cell) and b["close"] <= b["high"] - 0.25 * rng)
@@ -636,19 +655,21 @@ class Engine:
 
         for lvl in list(self.naked):
             if b["low"] <= lvl <= b["high"]:
-                self.sink.event({"type": "naked_poc_touched", "t": t_ms, "time": iso(t_ms), "price": lvl, "from_day": self.naked[lvl]})
+                self.sink.event({"type": "naked_poc_touched", "t": t_ms, "time": iso(t_ms),
+                                 "price": rp(c, lvl), "from_day": self.naked[lvl]})
                 del self.naked[lvl]
         above = min((x for x in self.naked if x > b["close"]), default=NAN)
         below = max((x for x in self.naked if x < b["close"]), default=NAN)
 
         row = {
-            "time": iso(t_ms), "t_ms": t_ms, "open": b["open"], "high": b["high"], "low": b["low"], "close": b["close"],
+            "time": iso(t_ms), "t_ms": t_ms, "open": rp(c, b["open"]), "high": rp(c, b["high"]),
+            "low": rp(c, b["low"]), "close": rp(c, b["close"]),
             "volume": r(b["volume"], 3), "bought": r(b["bought"], 3), "sold": r(b["sold"], 3), "delta": r(delta, 3),
             "delta_pct": r(delta / b["volume"] * 100 if b["volume"] else NAN, 1), "trades": b["trades"],
             "max_delta": r(b["max_delta"], 3), "min_delta": r(b["min_delta"], 3), "cvd_session": r(s["cvd"], 3),
-            "poc": poc_bin, "poc_vol": r(poc_vol, 3),
-            "vwap": r(vw, 1), "vwap_sd": r(sd, 2), "vwap_dist_sd": r((b["close"] - vw) / sd if sd > 0 else NAN, 2),
-            "wvwap": r(wv, 1), "wvwap_sd": r(wsd, 2), "wvwap_dist_sd": r((b["close"] - wv) / wsd if wsd > 0 else NAN, 2),
+            "poc": rp(c, poc_bin), "poc_vol": r(poc_vol, 3),
+            "vwap": rp(c, vw), "vwap_sd": r(sd, 2), "vwap_dist_sd": r((b["close"] - vw) / sd if sd > 0 else NAN, 2),
+            "wvwap": rp(c, wv), "wvwap_sd": r(wsd, 2), "wvwap_dist_sd": r((b["close"] - wv) / wsd if wsd > 0 else NAN, 2),
             "buy_imb": len(buy_imb), "sell_imb": len(sell_imb), "stack_buy": stack_buy, "stack_sell": stack_sell,
             "cluster_hits": hits, "big_count": b["big_count"], "big_bought": r(b["big_bought"], 3),
             "big_sold": r(b["big_sold"], 3), "big_max": r(b["big_max"], 3), "big_max_side": b["big_max_side"],
@@ -656,26 +677,27 @@ class Engine:
             "absorb_low": int(absorb_low), "exhaust_high": int(exhaust_high), "exhaust_low": int(exhaust_low),
             "liq_long": r(b["liq_long"], 3), "liq_short": r(b["liq_short"], 3), "liq_count": b["liq_count"],
             "oi": r(self.oi, 3), "d_oi": r(self.oi - self.oi_bar_open, 3),
-            "s_poc": r(s["profile"].poc_px, 1), "s_vah": r(vah, 1), "s_val": r(val, 1),
-            "s_high": s["high"], "s_low": s["low"],
+            "s_poc": rp(c, s["profile"].poc_px), "s_vah": rp(c, vah), "s_val": rp(c, val),
+            "s_high": rp(c, s["high"]), "s_low": rp(c, s["low"]),
             "pd_high": pd.get("high", ""), "pd_low": pd.get("low", ""), "pd_poc": pd.get("poc", ""),
             "pd_vah": pd.get("vah", ""), "pd_val": pd.get("val", ""), "pd_vwap": pd.get("vwap", ""),
-            "naked_poc_above": r(above, 1), "naked_poc_below": r(below, 1),
+            "naked_poc_above": rp(c, above), "naked_poc_below": rp(c, below),
         }
         if self.mark:
             m = self.mark
-            row.update({"mark": r(float(m["p"]), 1), "index": r(float(m["i"]), 1),
+            row.update({"mark": rp(c, float(m["p"])), "index": rp(c, float(m["i"])),
                         "premium": r(float(m["p"]) - float(m["i"]), 2), "funding": m.get("r", "")})
         bk = self.book
         if bk and bk.get("b") and bk.get("a"):
             bb, ba = bk["b"][0][0], bk["a"][0][0]
             bd, ad = sum(q for _, q in bk["b"]), sum(q for _, q in bk["a"])
             bw, aw = max(bk["b"], key=lambda x: x[1]), max(bk["a"], key=lambda x: x[1])
-            row.update({"best_bid": bb, "best_ask": ba, "spread": r(ba - bb, 1), "bid_depth": r(bd, 3), "ask_depth": r(ad, 3),
-                        "book_imb": r((bd - ad) / (bd + ad) if bd + ad else NAN, 3), "bid_wall_px": bw[0],
-                        "bid_wall_qty": r(bw[1], 3), "ask_wall_px": aw[0], "ask_wall_qty": r(aw[1], 3)})
+            row.update({"best_bid": rp(c, bb), "best_ask": rp(c, ba), "spread": rp(c, ba - bb),
+                        "bid_depth": r(bd, 3), "ask_depth": r(ad, 3),
+                        "book_imb": r((bd - ad) / (bd + ad) if bd + ad else NAN, 3), "bid_wall_px": rp(c, bw[0]),
+                        "bid_wall_qty": r(bw[1], 3), "ask_wall_px": rp(c, aw[0]), "ask_wall_qty": r(aw[1], 3)})
         footprint = {"t": t_ms, "step": step,
-                     "lv": [[x, round(v[0], 3), round(v[1], 3), v[2]] for x, v in sorted(fp.items(), reverse=True)]}
+                     "lv": [[rp(c, x), round(v[0], 3), round(v[1], 3), v[2]] for x, v in sorted(fp.items(), reverse=True)]}
         self.sink.bar(row, footprint)
         self.recent.append((b["volume"], rng))
 
@@ -690,14 +712,17 @@ class Engine:
             return
         vw, _ = s["vwap"].value()
         vah, val = s["profile"].value_area(self.c.va)
-        row = {"day": s["day"], "open": s["open"], "high": s["high"], "low": s["low"], "close": s["close"],
+        row = {"day": s["day"], "open": rp(self.c, s["open"]), "high": rp(self.c, s["high"]),
+               "low": rp(self.c, s["low"]), "close": rp(self.c, s["close"]),
                "volume": r(s["volume"], 3), "bought": r(s["bought"], 3), "sold": r(s["sold"], 3),
-               "delta": r(s["bought"] - s["sold"], 3), "trades": s["trades"], "vwap": r(vw, 1),
-               "poc": s["profile"].poc_px, "vah": r(vah, 1), "val": r(val, 1), "partial": int(partial)}
+               "delta": r(s["bought"] - s["sold"], 3), "trades": s["trades"], "vwap": rp(self.c, vw),
+               "poc": rp(self.c, s["profile"].poc_px), "vah": rp(self.c, vah), "val": rp(self.c, val),
+               "partial": int(partial)}
         self.sink.session(row, s["profile"], s["day"], partial)
         if not partial:
-            self.prev.append({"high": s["high"], "low": s["low"], "poc": s["profile"].poc_px, "vah": r(vah, 1),
-                              "val": r(val, 1), "vwap": r(vw, 1)})
+            self.prev.append({"high": rp(self.c, s["high"]), "low": rp(self.c, s["low"]),
+                              "poc": rp(self.c, s["profile"].poc_px), "vah": rp(self.c, vah),
+                              "val": rp(self.c, val), "vwap": rp(self.c, vw)})
             self.prev = self.prev[-30:]
             self.naked[s["profile"].poc_px] = s["day"]
             if self.state_path:
@@ -722,24 +747,27 @@ class Engine:
 
     def status(self):
         """Everything known right now, for the live dashboard and later for RALPH."""
-        st = {"last_price": r(self.last_price), "velocity": r(self.vel_last, 1)}
+        st = {"last_price": rp(self.c, self.last_price), "velocity": r(self.vel_last, 1)}
         b, s = self.bar, self.session
         if b is not None:
-            st["bar"] = {"t": b["start"], "open": b["open"], "high": b["high"], "low": b["low"], "close": b["close"],
+            st["bar"] = {"t": b["start"], "open": rp(self.c, b["open"]), "high": rp(self.c, b["high"]),
+                         "low": rp(self.c, b["low"]), "close": rp(self.c, b["close"]),
                          "volume": r(b["volume"], 3), "bought": r(b["bought"], 3), "sold": r(b["sold"], 3),
                          "delta": r(b["bought"] - b["sold"], 3), "vel_max": r(b["vel_max"], 1)}
             st["bar_fp"] = {"t": b["start"], "step": self.c.level,
-                            "lv": [[x, round(v[0], 3), round(v[1], 3), v[2]] for x, v in sorted(b["fp"].items(), reverse=True)]}
+                            "lv": [[rp(self.c, x), round(v[0], 3), round(v[1], 3), v[2]]
+                                   for x, v in sorted(b["fp"].items(), reverse=True)]}
         if s is not None:
             vw, sd = s["vwap"].value()
             vah, val = s["profile"].value_area(self.c.va)
-            st["session"] = {"day": s["day"], "open": s["open"], "high": s["high"], "low": s["low"],
-                             "volume": r(s["volume"], 3), "cvd": r(s["cvd"], 3), "vwap": r(vw, 1), "sd": r(sd, 2),
-                             "poc": r(s["profile"].poc_px, 1), "vah": r(vah, 1), "val": r(val, 1)}
+            st["session"] = {"day": s["day"], "open": rp(self.c, s["open"]), "high": rp(self.c, s["high"]),
+                             "low": rp(self.c, s["low"]), "volume": r(s["volume"], 3), "cvd": r(s["cvd"], 3),
+                             "vwap": rp(self.c, vw), "sd": r(sd, 2), "poc": rp(self.c, s["profile"].poc_px),
+                             "vah": rp(self.c, vah), "val": rp(self.c, val)}
         st["prev_day"] = self.prev[-1] if self.prev else None
         st["naked"] = sorted(self.naked)
         if self.mark:
-            st["mark"] = {"mark": r(float(self.mark["p"]), 1), "index": r(float(self.mark["i"]), 1),
+            st["mark"] = {"mark": rp(self.c, float(self.mark["p"])), "index": rp(self.c, float(self.mark["i"])),
                           "funding": self.mark.get("r"), "next_funding": self.mark.get("T")}
         st["oi"] = r(self.oi, 3)
         now = (self.cur_sec or 0) * 1000
@@ -751,7 +779,8 @@ class Engine:
         bk = self.book
         if bk and bk.get("b") and bk.get("a"):
             bd, ad = sum(q for _, q in bk["b"]), sum(q for _, q in bk["a"])
-            st["book"] = {"best_bid": bk["b"][0][0], "best_ask": bk["a"][0][0], "bid_depth": r(bd, 3), "ask_depth": r(ad, 3),
+            st["book"] = {"best_bid": rp(self.c, bk["b"][0][0]), "best_ask": rp(self.c, bk["a"][0][0]),
+                          "bid_depth": r(bd, 3), "ask_depth": r(ad, 3),
                           "imbalance": r((bd - ad) / (bd + ad) if bd + ad else NAN, 3),
                           "bid_walls": sorted(bk["b"], key=lambda x: -x[1])[:3], "ask_walls": sorted(bk["a"], key=lambda x: -x[1])[:3]}
         return st
@@ -763,9 +792,10 @@ class Engine:
 
 
 # ---------------------------------------------------------------------- reading the recorded files
-def read_gz_lines(path):
+def read_lines(path):
     try:
-        with gzip.open(path, "rt", encoding="utf-8") as f:
+        opener = lzma.open if path.endswith(".xz") else gzip.open if path.endswith(".gz") else open
+        with opener(path, "rt", encoding="utf-8") as f:
             for line in f:
                 yield line
     except (EOFError, OSError, zlib.error):
@@ -773,14 +803,16 @@ def read_gz_lines(path):
 
 
 def iter_trades(data_dir):
-    for path in sorted(glob.glob(os.path.join(data_dir, "tape_*.csv"))):
+    paths = glob.glob(os.path.join(data_dir, "tape_*.csv")) + glob.glob(os.path.join(data_dir, "tape_*.csv.gz"))
+    for path in sorted(paths):
         yield from iter_trades_file(path)
 
 
 def iter_trades_file(path):
     """One hourly tape file, sorted by trade time and ID, without duplicates."""
     rows = {}
-    with open(path, encoding="utf-8") as f:
+    opener = gzip.open if path.endswith(".gz") else open
+    with opener(path, "rt", encoding="utf-8") as f:
         for line in f:
             p = line.rstrip("\n").split(";")
             if len(p) < 9 or p[0].startswith("Time"):
@@ -799,8 +831,9 @@ def iter_trades_file(path):
 
 
 def iter_book(data_dir):
-    for path in sorted(glob.glob(os.path.join(data_dir, "book_*.jsonl.gz"))):
-        for line in read_gz_lines(path):
+    paths = glob.glob(os.path.join(data_dir, "book_*.jsonl.gz")) + glob.glob(os.path.join(data_dir, "book_*.jsonl.xz"))
+    for path in sorted(paths):
+        for line in read_lines(path):
             try:
                 d = json.loads(line)
             except ValueError:
@@ -809,8 +842,9 @@ def iter_book(data_dir):
 
 
 def iter_misc(data_dir):
-    for path in sorted(glob.glob(os.path.join(data_dir, "raw_*.jsonl.gz"))):
-        for line in read_gz_lines(path):
+    paths = glob.glob(os.path.join(data_dir, "raw_*.jsonl.gz")) + glob.glob(os.path.join(data_dir, "raw_*.jsonl.xz"))
+    for path in sorted(paths):
+        for line in read_lines(path):
             if "@forceOrder" not in line and "@markPrice" not in line and "@openInterest" not in line:
                 continue
             try:
@@ -849,12 +883,25 @@ def main():
     ap.add_argument("--from", dest="t_from")
     ap.add_argument("--to", dest="t_to")
     ap.add_argument("--no-raw", action="store_true", help="skip liquidations, funding and open interest")
+    ap.add_argument("--symbol", default=None, help="symbol settings to use, inferred from data dir if omitted")
+    add_cli_args(ap)
     c = ap.parse_args()
+    if c.symbol is None:
+        base = os.path.basename(os.path.abspath(c.data)).lower()
+        c.symbol = "btcusdt" if base == "binance" else base.replace("binance-", "")
+    early_overrides = {k: v for k, v in overrides_from_args(c).items()
+                       if k in ("price_decimals", "tick_size", "heat_range", "heat_step", "frag_steps")}
+    settings = for_symbol(c.symbol, c.symbols_config, None, early_overrides)
+    for key in ("level", "profile_bin", "big", "cluster", "wall", "imb_min"):
+        if getattr(c, key) == ap.get_default(key):
+            setattr(c, key, getattr(settings, key))
+    c.price_decimals = settings.price_decimals
+    c.tick_size = settings.tick_size
 
     t0 = parse_utc(c.t_from) if c.t_from else None
     t1 = parse_utc(c.t_to) if c.t_to else None
     sources = [iter_book(c.data), iter_trades(c.data)] + ([] if c.no_raw else [iter_misc(c.data)])
-    sink = Sink(c.out, c.tf)
+    sink = Sink(c.out, c.tf, settings)
     eng = Engine(c, sink)
     n = 0
     first = last = None

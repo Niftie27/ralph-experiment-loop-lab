@@ -1,0 +1,6 @@
+[Unit]
+Description=RALPH disk free-space alert gate
+
+[Service]
+Type=oneshot
+ExecStart=%h/venv-collector/bin/python %h/ralph_collector/disk_alert.py --path %h/data --min-free-pct 20

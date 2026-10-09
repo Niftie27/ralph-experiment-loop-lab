@@ -1,0 +1,54 @@
+{
+  "BTCUSDT": {
+    "tick_size": 0.1,
+    "price_decimals": 1,
+    "level": 5.0,
+    "profile_bin": 1.0,
+    "big": 10.0,
+    "cluster": 25.0,
+    "wall": 25.0,
+    "imb_min": 2.0,
+    "heat_range": 150.0,
+    "heat_step": 2.0,
+    "frag_steps": [50.0, 100.0, 200.0]
+  },
+  "ETHUSDT": {
+    "tick_size": 0.01,
+    "price_decimals": 2,
+    "level": 0.20,
+    "profile_bin": 0.05,
+    "big": 234.0,
+    "cluster": 1343.0,
+    "wall": 151.0,
+    "imb_min": 27.0,
+    "heat_range": 5.01,
+    "heat_step": 0.05,
+    "frag_steps": [1.51, 3.01, 6.26]
+  },
+  "SOLUSDT": {
+    "tick_size": 0.001,
+    "price_decimals": 3,
+    "level": 0.010,
+    "profile_bin": 0.005,
+    "big": 2946.0,
+    "cluster": 6082.0,
+    "wall": 14233.0,
+    "imb_min": 122.0,
+    "heat_range": 0.221,
+    "heat_step": 0.002,
+    "frag_steps": [0.067, 0.133, 0.276]
+  },
+  "HYPEUSDT": {
+    "tick_size": 0.001,
+    "price_decimals": 3,
+    "level": 0.005,
+    "profile_bin": 0.002,
+    "big": 632.0,
+    "cluster": 1551.0,
+    "wall": 1178.0,
+    "imb_min": 32.0,
+    "heat_range": 0.172,
+    "heat_step": 0.001,
+    "frag_steps": [0.052, 0.104, 0.215]
+  }
+}
