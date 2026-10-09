@@ -76,20 +76,25 @@ def read_raw(path):
         return
 
 
-def move_existing(paths, rounded_dir):
-    os.makedirs(rounded_dir, exist_ok=True)
+def archive_name():
+    return datetime.now(timezone.utc).strftime("run_%Y%m%dT%H%M%SZ")
+
+
+def move_existing(paths, rounded_dir, run_id=None):
+    target_dir = os.path.join(rounded_dir, run_id or archive_name())
+    os.makedirs(target_dir, exist_ok=True)
     for path in paths:
         if os.path.exists(path):
-            shutil.move(path, os.path.join(rounded_dir, os.path.basename(path)))
+            shutil.move(path, os.path.join(target_dir, os.path.basename(path)))
 
 
-def rebuild_tapes(data_dir, symbol, settings, since=None, until=None):
+def rebuild_tapes(data_dir, symbol, settings, since=None, until=None, run_id=None):
     moved = []
     for raw in raw_files(data_dir, symbol, since, until):
         hour = hour_from_name(raw, symbol)
         tape = os.path.join(data_dir, f"tape_{symbol}_{hour}.csv")
         old = [p for p in (tape, tape + ".gz") if os.path.exists(p)]
-        move_existing(old, os.path.join(data_dir, "tape_rounded"))
+        move_existing(old, os.path.join(data_dir, "tape_rounded"), run_id)
         if old:
             moved.extend(old)
         trades = {}
@@ -100,7 +105,7 @@ def rebuild_tapes(data_dir, symbol, settings, since=None, until=None):
     return moved
 
 
-def move_features(features_dir):
+def move_features(features_dir, run_id=None):
     moved = []
     rounded = os.path.join(features_dir, "engine_rounded")
     for name in os.listdir(features_dir) if os.path.isdir(features_dir) else []:
@@ -108,7 +113,7 @@ def move_features(features_dir):
             continue
         path = os.path.join(features_dir, name)
         if os.path.isfile(path):
-            move_existing([path], rounded)
+            move_existing([path], rounded, run_id)
             moved.append(path)
     return moved
 
@@ -124,9 +129,10 @@ def main():
     args = ap.parse_args()
     symbol = args.symbol.upper()
     settings = for_symbol(symbol)
-    moved = rebuild_tapes(args.data, symbol, settings, args.since, args.until)
+    run_id = archive_name()
+    moved = rebuild_tapes(args.data, symbol, settings, args.since, args.until, run_id)
     if not args.tapes_only:
-        moved += move_features(args.features)
+        moved += move_features(args.features, run_id)
     cmd = [sys.executable, os.path.join(os.path.dirname(__file__), "orderflow_engine.py"),
            "--symbol", symbol, "--data", args.data, "--out", args.features]
     if args.since:

@@ -21,3 +21,9 @@ Observed calibration sample:
 | HYPEUSDT | 85.902 | 10538 | 631.020 | 0.005 | 1550.710 | 1177.210 |
 
 These are research defaults, not trading permissions. They only affect read-only collector tapes, features, events, heatmap, and fragility output.
+
+## 2026-10-09 Live File Caveat
+
+ETHUSDT, SOLUSDT, and HYPEUSDT `live_*` feature files from 2026-10-09 are invalid before the collector restart at `2026-10-09T13:46:03Z`.
+
+Use rebuilt non-live engine outputs and rebuilt tapes for historical research before that timestamp. Treat same-day `live_*` files for those symbols as reliable only from `2026-10-09T13:46:03Z` onward.
