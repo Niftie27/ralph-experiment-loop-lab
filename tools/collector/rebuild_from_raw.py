@@ -120,11 +120,13 @@ def main():
     ap.add_argument("--features", required=True)
     ap.add_argument("--since")
     ap.add_argument("--until")
+    ap.add_argument("--tapes-only", action="store_true", help="rebuild tapes only; do not move or rebuild engine outputs")
     args = ap.parse_args()
     symbol = args.symbol.upper()
     settings = for_symbol(symbol)
     moved = rebuild_tapes(args.data, symbol, settings, args.since, args.until)
-    moved += move_features(args.features)
+    if not args.tapes_only:
+        moved += move_features(args.features)
     cmd = [sys.executable, os.path.join(os.path.dirname(__file__), "orderflow_engine.py"),
            "--symbol", symbol, "--data", args.data, "--out", args.features]
     if args.since:
@@ -134,6 +136,9 @@ def main():
     print("MOVED_TO_ROUNDED")
     for path in moved:
         print(path)
+    if args.tapes_only:
+        print("TAPES_ONLY: skipped engine move/rebuild")
+        return
     print("RUN", " ".join(cmd))
     subprocess.check_call(cmd)
 

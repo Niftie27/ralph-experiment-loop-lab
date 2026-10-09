@@ -47,6 +47,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
+from decimal import Decimal, InvalidOperation
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 try:
@@ -89,11 +90,35 @@ GRACE_MS = 10 * 60 * 1000                    # keep an hour open 10 min after it
 def tape_line(t, delta, settings):
     """One aggTrade as an ATAS Bid/Ask Tape row (time;bid price;bid size;0;ask size;ask price;running delta)
     plus two extra columns the dashboard ignores: Binance aggTrade ID and trade time in ms."""
-    p, q = str(t["p"]), str(t["q"])
+    p, ok = _tape_price(str(t["p"]), settings)
+    q = str(t["q"])
+    tick = Decimal(str(settings.tick_size))
     tail = f";{delta:.3f};{t['a']};{t['T']}"
     if t["m"]:   # buyer was the maker, so the seller was aggressive: volume at the bid
-        return f"{local_clock(t['T'])};{p};{q};0;0;{p}" + tail
-    return f"{local_clock(t['T'])};{p};0;0;{q};{p}" + tail
+        ask = _format_price(Decimal(p) + tick, settings.price_decimals) if ok else p
+        return f"{local_clock(t['T'])};{p};{q};0;0;{ask}" + tail
+    bid = _format_price(Decimal(p) - tick, settings.price_decimals) if ok else p
+    return f"{local_clock(t['T'])};{bid};0;0;{q};{p}" + tail
+
+
+def _format_price(price, decimals):
+    return f"{price:.{decimals}f}"
+
+
+def _tape_price(price_text, settings):
+    tick = Decimal(str(settings.tick_size))
+    try:
+        price = Decimal(price_text)
+    except InvalidOperation:
+        print(f"WARN binance_live: {settings.symbol} invalid trade price={price_text}; keeping original", file=sys.stderr)
+        return price_text, False
+    if tick <= 0 or price % tick != 0:
+        print(
+            f"WARN binance_live: {settings.symbol} price={price_text} not multiple of tick_size={settings.tick_size}; keeping original",
+            file=sys.stderr,
+        )
+        return price_text, False
+    return _format_price(price, settings.price_decimals), True
 
 
 def parse_tape_line(line):
