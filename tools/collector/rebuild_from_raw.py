@@ -19,16 +19,39 @@ def hour_from_name(path, symbol):
     return name.removeprefix(f"raw_{symbol}_").removesuffix(".jsonl.gz").removesuffix(".jsonl.xz")
 
 
+def hour_start_ms(hour):
+    return int(datetime.strptime(hour, "%Y-%m-%dT%HZ").replace(tzinfo=timezone.utc).timestamp() * 1000)
+
+
+def bound_ms(value):
+    if not value:
+        return None
+    text = value.replace("Z", "+00:00")
+    if text.endswith("+00:00"):
+        dt = datetime.fromisoformat(text)
+    else:
+        dt = datetime.fromisoformat(text).replace(tzinfo=timezone.utc)
+    return int(dt.timestamp() * 1000)
+
+
 def is_complete(hour):
     end = datetime.strptime(hour, "%Y-%m-%dT%HZ").replace(tzinfo=timezone.utc).timestamp() + 3600
     return datetime.now(timezone.utc).timestamp() > end + 900
 
 
-def raw_files(data_dir, symbol):
+def raw_files(data_dir, symbol, since=None, until=None):
+    since_ms = bound_ms(since)
+    until_ms = bound_ms(until)
     files = []
     for name in os.listdir(data_dir):
         if name.startswith(f"raw_{symbol}_") and (name.endswith(".jsonl.gz") or name.endswith(".jsonl.xz")):
             hour = hour_from_name(name, symbol)
+            start_ms = hour_start_ms(hour)
+            end_ms = start_ms + 3_600_000
+            if since_ms is not None and end_ms <= since_ms:
+                continue
+            if until_ms is not None and start_ms >= until_ms:
+                continue
             if is_complete(hour):
                 files.append(os.path.join(data_dir, name))
     return sorted(files)
@@ -53,9 +76,9 @@ def move_existing(paths, rounded_dir):
             shutil.move(path, os.path.join(rounded_dir, os.path.basename(path)))
 
 
-def rebuild_tapes(data_dir, symbol, settings):
+def rebuild_tapes(data_dir, symbol, settings, since=None, until=None):
     moved = []
-    for raw in raw_files(data_dir, symbol):
+    for raw in raw_files(data_dir, symbol, since, until):
         hour = hour_from_name(raw, symbol)
         tape = os.path.join(data_dir, f"tape_{symbol}_{hour}.csv")
         old = [p for p in (tape, tape + ".gz") if os.path.exists(p)]
@@ -91,7 +114,7 @@ def main():
     args = ap.parse_args()
     symbol = args.symbol.upper()
     settings = for_symbol(symbol)
-    moved = rebuild_tapes(args.data, symbol, settings)
+    moved = rebuild_tapes(args.data, symbol, settings, args.since, args.until)
     moved += move_features(args.features)
     cmd = [sys.executable, os.path.join(os.path.dirname(__file__), "orderflow_engine.py"),
            "--symbol", symbol, "--data", args.data, "--out", args.features]
