@@ -109,7 +109,7 @@ def move_features(features_dir, run_id=None):
     moved = []
     rounded = os.path.join(features_dir, "engine_rounded")
     for name in os.listdir(features_dir) if os.path.isdir(features_dir) else []:
-        if name == "live.json" or name.startswith("live_"):
+        if name == "live.json" or name == "live.json.tmp" or name.startswith("live_"):
             continue
         path = os.path.join(features_dir, name)
         if os.path.isfile(path):
