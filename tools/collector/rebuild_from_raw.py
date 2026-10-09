@@ -34,6 +34,13 @@ def bound_ms(value):
     return int(dt.timestamp() * 1000)
 
 
+def engine_bound(value):
+    if not value:
+        return None
+    dt = datetime.fromtimestamp(bound_ms(value) / 1000, tz=timezone.utc)
+    return dt.strftime("%Y-%m-%dT%H:%M")
+
+
 def is_complete(hour):
     end = datetime.strptime(hour, "%Y-%m-%dT%HZ").replace(tzinfo=timezone.utc).timestamp() + 3600
     return datetime.now(timezone.utc).timestamp() > end + 900
@@ -121,9 +128,9 @@ def main():
     cmd = [sys.executable, os.path.join(os.path.dirname(__file__), "orderflow_engine.py"),
            "--symbol", symbol, "--data", args.data, "--out", args.features]
     if args.since:
-        cmd += ["--from", args.since]
+        cmd += ["--from", engine_bound(args.since)]
     if args.until:
-        cmd += ["--to", args.until]
+        cmd += ["--to", engine_bound(args.until)]
     print("MOVED_TO_ROUNDED")
     for path in moved:
         print(path)
