@@ -108,8 +108,12 @@ def apply_exchange_info(settings, rest_base):
             break
     if tick is None:
         return settings
-    settings.tick_size = tick
-    settings.price_decimals = price_decimals_from_tick(tick)
+    # Binance futures exchangeInfo can be coarser than recorded trade strings
+    # for some symbols. Use it as a startup check, but never let it reduce a
+    # finer local setting derived from raw data.
+    if tick < settings.tick_size:
+        settings.tick_size = tick
+    settings.price_decimals = max(settings.price_decimals, price_decimals_from_tick(settings.tick_size))
     return settings
 
 
