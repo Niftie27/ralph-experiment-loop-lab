@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 
 def sha_lines(path):
     h = hashlib.sha256()
-    opener = lzma.open if path.endswith(".xz") else gzip.open if path.endswith(".gz") else open
+    opener = lzma.open if path.endswith(".xz") or path.endswith(".xz.tmp") else gzip.open if path.endswith(".gz") or path.endswith(".gz.tmp") else open
     with opener(path, "rb") as f:
         for chunk in iter(lambda: f.read(1024 * 1024), b""):
             h.update(chunk)
@@ -37,6 +37,30 @@ def run(cmd):
     subprocess.check_call(cmd)
 
 
+def log_error(message):
+    print(f"ERROR {message}", file=sys.stderr)
+
+
+def remove_tmp(path):
+    try:
+        os.remove(path)
+    except FileNotFoundError:
+        pass
+
+
+def verify_and_replace(kind, source, tmp, output):
+    source_sha = sha_lines(source)
+    output_sha = sha_lines(tmp)
+    if source_sha != output_sha:
+        log_error(f"{kind} verification failed for {source} source_sha256={source_sha} output_sha256={output_sha}")
+        remove_tmp(tmp)
+        return False
+    os.replace(tmp, output)
+    os.remove(source)
+    print(f"VERIFIED {kind} {source} -> {output} source_sha256={source_sha} output_sha256={output_sha}")
+    return True
+
+
 def gzip_tape(path, apply):
     out = path + ".gz"
     if os.path.exists(out):
@@ -46,10 +70,7 @@ def gzip_tape(path, apply):
         tmp = out + ".tmp"
         with open(path, "rb") as src, gzip.open(tmp, "wb", compresslevel=6) as dst:
             shutil.copyfileobj(src, dst, 1024 * 1024)
-        if sha_lines(path) != sha_lines(tmp):
-            raise RuntimeError(f"gzip verification failed for {path}")
-        os.replace(tmp, out)
-        os.replace(path, os.path.join(os.path.dirname(path), "_compressed_" + os.path.basename(path)))
+        verify_and_replace("gzip_tape", path, tmp, out)
     return actions
 
 
@@ -61,14 +82,40 @@ def xz_raw(path, apply):
     if apply:
         tmp = out + ".tmp"
         with open(tmp, "wb") as dst:
-            proc = subprocess.Popen(["nice", "-n", "19", "ionice", "-c", "3", "xz", "-6", "-c", path], stdout=dst)
-            if proc.wait() != 0:
-                raise RuntimeError(f"xz failed for {path}")
-        if sha_lines(path) != sha_lines(tmp):
-            raise RuntimeError(f"xz verification failed for {path}")
-        os.replace(tmp, out)
-        os.replace(path, os.path.join(os.path.dirname(path), "_recompressed_" + os.path.basename(path)))
+            gzip_proc = subprocess.Popen(["gzip", "-cd", path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            xz_proc = subprocess.Popen(
+                ["nice", "-n", "19", "ionice", "-c", "3", "xz", "-6", "-c"],
+                stdin=gzip_proc.stdout,
+                stdout=dst,
+                stderr=subprocess.PIPE,
+            )
+            gzip_proc.stdout.close()
+            _, xz_stderr = xz_proc.communicate()
+            gzip_stderr = gzip_proc.stderr.read()
+            gzip_rc = gzip_proc.wait()
+            if gzip_rc != 0 or xz_proc.returncode != 0:
+                remove_tmp(tmp)
+                log_error(
+                    f"xz_raw compression failed for {path} gzip_rc={gzip_rc} xz_rc={xz_proc.returncode} "
+                    f"gzip_stderr={gzip_stderr.decode(errors='replace').strip()} "
+                    f"xz_stderr={xz_stderr.decode(errors='replace').strip()}"
+                )
+                return actions
+        verify_and_replace("xz_raw", path, tmp, out)
     return actions
+
+
+def pending_hours(data_dir, symbol, grace_min):
+    hours = {}
+    for name in sorted(os.listdir(data_dir)):
+        path = os.path.join(data_dir, name)
+        if name.startswith(f"tape_{symbol}_") and name.endswith(".csv") and finished(path, grace_min):
+            hour = name.removeprefix(f"tape_{symbol}_").removesuffix(".csv")
+            hours.setdefault(hour, {})["tape"] = path
+        if name.startswith(f"raw_{symbol}_") and name.endswith(".jsonl.gz") and finished(path, grace_min):
+            hour = name.removeprefix(f"raw_{symbol}_").removesuffix(".jsonl.gz")
+            hours.setdefault(hour, {})["raw"] = path
+    return sorted(hours.items())
 
 
 def has_verified_outputs(data_dir, features_dir, symbol, raw_path):
@@ -105,17 +152,20 @@ def main():
     ap.add_argument("--features", required=True)
     ap.add_argument("--grace-min", type=int, default=15)
     ap.add_argument("--retention-days", type=int, default=14)
+    ap.add_argument("--max-hours", type=int, default=0, help="limit compression to the oldest N finished hours; 0 means no limit")
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--delete-raw", action="store_true", help="delete retention candidates; only use after dry-run approval")
     args = ap.parse_args()
     symbol = args.symbol.upper()
     actions = []
-    for name in sorted(os.listdir(args.data)):
-        path = os.path.join(args.data, name)
-        if name.startswith(f"tape_{symbol}_") and name.endswith(".csv") and finished(path, args.grace_min):
-            actions += gzip_tape(path, args.apply)
-        if name.startswith(f"raw_{symbol}_") and name.endswith(".jsonl.gz") and finished(path, args.grace_min):
-            actions += xz_raw(path, args.apply)
+    hours = pending_hours(args.data, symbol, args.grace_min)
+    if args.max_hours > 0:
+        hours = hours[:args.max_hours]
+    for _, paths in hours:
+        if "tape" in paths:
+            actions += gzip_tape(paths["tape"], args.apply)
+        if "raw" in paths:
+            actions += xz_raw(paths["raw"], args.apply)
     print("ACTIONS")
     for action in actions:
         print(action)
