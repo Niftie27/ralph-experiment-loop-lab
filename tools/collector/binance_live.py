@@ -470,6 +470,11 @@ class Collector:
         self.args = args
         self.sym = args.symbol.lower()
         self.settings = for_symbol(args.symbol, args.symbols_config, args.rest_base, overrides_from_args(args))
+        print(
+            f"symbol settings: {self.settings.symbol} tick_size={self.settings.tick_size} "
+            f"price_decimals={self.settings.price_decimals}",
+            flush=True,
+        )
         self.rec = Recorder(args.out, self.sym, self.settings)
         self.stats = Stats(self.settings)
         self.last_a = None

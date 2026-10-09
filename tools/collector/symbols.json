@@ -26,17 +26,17 @@
     "frag_steps": [1.51, 3.01, 6.26]
   },
   "SOLUSDT": {
-    "tick_size": 0.001,
-    "price_decimals": 3,
+    "tick_size": 0.01,
+    "price_decimals": 2,
     "level": 0.010,
-    "profile_bin": 0.005,
+    "profile_bin": 0.01,
     "big": 2946.0,
     "cluster": 6082.0,
     "wall": 14233.0,
     "imb_min": 122.0,
     "heat_range": 0.221,
-    "heat_step": 0.002,
-    "frag_steps": [0.067, 0.133, 0.276]
+    "heat_step": 0.01,
+    "frag_steps": [0.07, 0.14, 0.28]
   },
   "HYPEUSDT": {
     "tick_size": 0.001,

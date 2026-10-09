@@ -9,13 +9,14 @@ import argparse
 import json
 import math
 import os
+import sys
 import urllib.error
-import urllib.parse
 import urllib.request
 from dataclasses import asdict, dataclass, fields
 
 
 CONFIG_NAME = "symbols.json"
+_EXCHANGE_INFO_CACHE = {}
 
 
 @dataclass
@@ -88,32 +89,49 @@ def _round_up_to_tick(value, tick):
     return round(math.ceil(float(value) / tick - 1e-12) * tick, 12)
 
 
+def _warn(message):
+    print(f"WARN symbol_settings: {message}", file=sys.stderr)
+
+
+def _exchange_info(rest_base):
+    base = rest_base.rstrip("/")
+    if base not in _EXCHANGE_INFO_CACHE:
+        url = base + "/fapi/v1/exchangeInfo"
+        with urllib.request.urlopen(url, timeout=20) as r:
+            _EXCHANGE_INFO_CACHE[base] = json.loads(r.read())
+    return _EXCHANGE_INFO_CACHE[base]
+
+
 def apply_exchange_info(settings, rest_base):
     """Fetch tickSize once at startup. If Binance is unavailable, keep config."""
-    url = rest_base.rstrip("/") + "/fapi/v1/exchangeInfo?" + urllib.parse.urlencode({"symbol": settings.symbol})
     try:
-        with urllib.request.urlopen(url, timeout=20) as r:
-            data = json.loads(r.read())
-    except (OSError, urllib.error.URLError, ValueError):
+        data = _exchange_info(rest_base)
+    except (OSError, urllib.error.URLError, ValueError) as exc:
+        _warn(f"{settings.symbol} exchangeInfo unavailable, keeping config: {exc}")
         return settings
     if not isinstance(data, dict):
+        _warn(f"{settings.symbol} exchangeInfo invalid response, keeping config")
         return settings
     symbols = data.get("symbols") or []
     if not symbols:
+        _warn(f"{settings.symbol} exchangeInfo has no symbols, keeping config")
+        return settings
+    entry = next((x for x in symbols if x.get("symbol") == settings.symbol), None)
+    if entry is None:
+        _warn(f"{settings.symbol} missing from exchangeInfo, keeping config")
         return settings
     tick = None
-    for filt in symbols[0].get("filters", []):
+    for filt in entry.get("filters", []):
         if filt.get("filterType") == "PRICE_FILTER":
             tick = float(filt["tickSize"])
             break
     if tick is None:
+        _warn(f"{settings.symbol} exchangeInfo missing PRICE_FILTER.tickSize, keeping config")
         return settings
-    # Binance futures exchangeInfo can be coarser than recorded trade strings
-    # for some symbols. Use it as a startup check, but never let it reduce a
-    # finer local setting derived from raw data.
-    if tick < settings.tick_size:
-        settings.tick_size = tick
-    settings.price_decimals = max(settings.price_decimals, price_decimals_from_tick(settings.tick_size))
+    if tick != settings.tick_size:
+        _warn(f"{settings.symbol} config tick_size={settings.tick_size} exchange tickSize={tick}; using exchange tick")
+    settings.tick_size = tick
+    settings.price_decimals = price_decimals_from_tick(tick)
     return settings
 
 
