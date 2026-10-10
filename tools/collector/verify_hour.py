@@ -1,75 +1,62 @@
 #!/usr/bin/env python3
-"""Verify one tape hour against its raw Binance aggTrade messages."""
+"""Verify one tape hour against Binance raw aggTrade messages by trade time."""
 import argparse
-import csv
-import gzip
-import json
-import lzma
 import os
 import sys
-import zlib
-from collections import defaultdict
 
-
-def lines(path):
-    opener = lzma.open if path.endswith(".xz") else gzip.open if path.endswith(".gz") else open
-    try:
-        with opener(path, "rt", encoding="utf-8") as f:
-            yield from f
-    except (EOFError, OSError, zlib.error):
-        return
-
-
-def minute(ms):
-    return ms // 60000
-
-
-def add(bucket, t_ms, price, qty, sell):
-    k = minute(t_ms)
-    row = bucket.setdefault(k, {"open": price, "high": price, "low": price, "close": price,
-                                "volume": 0.0, "delta": 0.0})
-    row["high"] = max(row["high"], price)
-    row["low"] = min(row["low"], price)
-    row["close"] = price
-    row["volume"] += qty
-    row["delta"] += -qty if sell else qty
-
-
-def raw_minutes(path):
-    out = {}
-    for line in lines(path):
-        if "@aggTrade" not in line:
-            continue
-        m = json.loads(line)
-        d = m.get("data", {})
-        add(out, int(d["T"]), float(d["p"]), float(d["q"]), bool(d["m"]))
-    return out
-
-
-def tape_minutes(path):
-    out = {}
-    with (gzip.open(path, "rt", encoding="utf-8") if path.endswith(".gz") else open(path, encoding="utf-8")) as f:
-        for row in csv.reader(f, delimiter=";"):
-            if len(row) < 9 or row[0] == "Time":
-                continue
-            sold, bought = float(row[2] or 0), float(row[4] or 0)
-            if sold:
-                add(out, int(row[8]), float(row[1]), sold, True)
-            elif bought:
-                add(out, int(row[8]), float(row[5]), bought, False)
-    return out
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from trade_time_tapes import (  # noqa: E402
+    load_raw_trades_for_trade_hour,
+    load_tape_trades,
+    minute_bars,
+    parse_raw_hour_from_path,
+)
 
 
 def close(a, b, eps=1e-9):
     return abs(a - b) <= eps
 
 
+def hour_from_tape(path):
+    name = os.path.basename(path)
+    stem = name.removesuffix(".csv.gz").removesuffix(".csv")
+    if not stem.startswith("tape_"):
+        raise ValueError(f"not a tape file: {path}")
+    _, symbol, hour = stem.split("_", 2)
+    return symbol, hour
+
+
 def main():
-    ap = argparse.ArgumentParser(description="Verify OHLC/volume/delta per minute from tape equals raw aggTrades.")
-    ap.add_argument("--raw", required=True)
+    ap = argparse.ArgumentParser(description="Verify tape aggTrade IDs and minute bars from trade-time raw aggTrades.")
+    ap.add_argument("--raw", help="raw file for the target hour; adjacent H-1/H/H+1 files are loaded from the same directory")
+    ap.add_argument("--data", help="raw/tape data directory")
+    ap.add_argument("--symbol")
+    ap.add_argument("--hour")
     ap.add_argument("--tape", required=True)
     args = ap.parse_args()
-    raw, tape = raw_minutes(args.raw), tape_minutes(args.tape)
+    if args.raw:
+        data_dir, symbol, hour = parse_raw_hour_from_path(args.raw)
+    else:
+        data_dir = args.data or os.path.dirname(args.tape)
+        symbol, hour = args.symbol, args.hour
+        if not symbol or not hour:
+            symbol, hour = hour_from_tape(args.tape)
+    raw_trades = load_raw_trades_for_trade_hour(data_dir, symbol, hour, require_next=True)
+    tape_trades = load_tape_trades(args.tape)
+    raw_ids, tape_ids = set(raw_trades), set(tape_trades)
+    if raw_ids != tape_ids:
+        missing = sorted(raw_ids - tape_ids)[:20]
+        extra = sorted(tape_ids - raw_ids)[:20]
+        print(
+            f"FAIL {os.path.basename(args.tape)} id_set raw={len(raw_ids)} tape={len(tape_ids)} "
+            f"missing={len(raw_ids - tape_ids)} extra={len(tape_ids - raw_ids)}"
+        )
+        if missing:
+            print("missing_ids", missing)
+        if extra:
+            print("extra_ids", extra)
+        sys.exit(1)
+    raw, tape = minute_bars(raw_trades), minute_bars(tape_trades)
     bad = []
     for k in sorted(set(raw) | set(tape)):
         r, t = raw.get(k), tape.get(k)
@@ -84,7 +71,7 @@ def main():
         for item in bad[:20]:
             print(item)
         sys.exit(1)
-    print(f"PASS {os.path.basename(args.tape)} minutes={len(raw)}")
+    print(f"PASS {os.path.basename(args.tape)} ids={len(raw_ids)} minutes={len(raw)}")
 
 
 if __name__ == "__main__":

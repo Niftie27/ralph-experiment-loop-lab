@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 
 import binance_live
 from symbol_settings import for_symbol
+from trade_time_tapes import load_raw_trades_for_trade_hour, raw_path
 
 
 def hour_from_name(path, symbol):
@@ -64,6 +65,20 @@ def raw_files(data_dir, symbol, since=None, until=None):
     return sorted(files)
 
 
+def rebuild_hours(data_dir, symbol, since=None, until=None):
+    hours = []
+    for raw in raw_files(data_dir, symbol, since, until):
+        hour = hour_from_name(raw, symbol)
+        hour_after = next_hour(hour)
+        if raw_path(data_dir, symbol, hour) and raw_path(data_dir, symbol, hour_after) and is_complete(hour_after):
+            hours.append(hour)
+    return sorted(set(hours))
+
+
+def next_hour(hour):
+    return datetime.fromtimestamp((hour_start_ms(hour) + 3_600_000) / 1000, tz=timezone.utc).strftime("%Y-%m-%dT%HZ")
+
+
 def read_raw(path):
     opener = gzip.open if path.endswith(".gz") else __import__("lzma").open
     try:
@@ -90,16 +105,13 @@ def move_existing(paths, rounded_dir, run_id=None):
 
 def rebuild_tapes(data_dir, symbol, settings, since=None, until=None, run_id=None):
     moved = []
-    for raw in raw_files(data_dir, symbol, since, until):
-        hour = hour_from_name(raw, symbol)
+    for hour in rebuild_hours(data_dir, symbol, since, until):
         tape = os.path.join(data_dir, f"tape_{symbol}_{hour}.csv")
         old = [p for p in (tape, tape + ".gz") if os.path.exists(p)]
         move_existing(old, os.path.join(data_dir, "tape_rounded"), run_id)
         if old:
             moved.extend(old)
-        trades = {}
-        for t in read_raw(raw):
-            trades[int(t["a"])] = t
+        trades = load_raw_trades_for_trade_hour(data_dir, symbol, hour, require_next=True)
         rec = binance_live.Recorder(data_dir, symbol, settings)
         rec._write_sorted(tape, trades)
     return moved
