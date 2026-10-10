@@ -157,3 +157,44 @@ PASS tape_HYPEUSDT_2026-10-09T11Z.csv ids=17873 minutes=60
 PASS tape_HYPEUSDT_2026-10-09T12Z.csv ids=16464 minutes=60
 PASS tape_HYPEUSDT_2026-10-09T13Z.csv ids=25106 minutes=60
 ```
+
+## Engine ordering check
+
+`orderflow_engine.py` processes corrected tapes in trade-time order:
+
+- `iter_trades()` sorts the active tape file paths.
+- `iter_trades_file()` dedupes each tape by AggId and yields rows sorted by `(TradeTimeMs, AggId)`.
+- The main replay loop merges trades, book, and raw misc streams with `heapq.merge(..., key=lambda x: (x[0], x[1]))`, so events are processed by timestamp, with trades using source priority `1`.
+
+This depends on tape files being split by trade time, which the fixed rebuild now enforces.
+
+## Full ETH/SOL/HYPE engine rebuilds
+
+Commands used no `--since`:
+
+```text
+/home/coder/venv-collector/bin/python /home/coder/ralph_collector/rebuild_from_raw.py --symbol ETHUSDT --data /home/coder/data/binance-ethusdt --features /home/coder/data/features-ethusdt
+/home/coder/venv-collector/bin/python /home/coder/ralph_collector/rebuild_from_raw.py --symbol SOLUSDT --data /home/coder/data/binance-solusdt --features /home/coder/data/features-solusdt
+/home/coder/venv-collector/bin/python /home/coder/ralph_collector/rebuild_from_raw.py --symbol HYPEUSDT --data /home/coder/data/binance-hypeusdt --features /home/coder/data/features-hypeusdt
+```
+
+Engine results:
+
+```text
+ETHUSDT  Hotovo: 842 478 zprav od 2026-10-09T05:48:30Z do 2026-10-10T06:31:55Z
+ETHUSDT  bars_60s.csv: 1483 bars, first 2026-10-09T05:48:00Z, last 2026-10-10T06:30:00Z
+
+SOLUSDT  Hotovo: 435 181 zprav od 2026-10-09T05:48:30Z do 2026-10-10T06:32:48Z
+SOLUSDT  bars_60s.csv: 1484 bars, first 2026-10-09T05:48:00Z, last 2026-10-10T06:31:00Z
+
+HYPEUSDT Hotovo: 482 023 zprav od 2026-10-09T06:28:39Z do 2026-10-10T06:33:30Z
+HYPEUSDT bars_60s.csv: 1445 bars, first 2026-10-09T06:28:00Z, last 2026-10-10T06:32:00Z
+```
+
+Full post-engine tape verification also passed for every completed tape rebuilt by those commands:
+
+```text
+ETHUSDT  2026-10-09T05Z through 2026-10-10T04Z: 24/24 PASS
+SOLUSDT  2026-10-09T05Z through 2026-10-10T04Z: 24/24 PASS
+HYPEUSDT 2026-10-09T06Z through 2026-10-10T04Z: 23/23 PASS
+```
