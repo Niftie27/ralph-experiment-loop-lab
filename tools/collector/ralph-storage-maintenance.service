@@ -3,6 +3,9 @@ Description=RALPH collector lossless storage maintenance
 
 [Service]
 Type=oneshot
+Nice=19
+IOSchedulingClass=idle
+CPUQuota=50%
 ExecStart=%h/venv-collector/bin/python %h/ralph_collector/storage_maintenance.py --symbol BTCUSDT --data %h/data/binance --features %h/data/features --apply
 ExecStart=%h/venv-collector/bin/python %h/ralph_collector/storage_maintenance.py --symbol ETHUSDT --data %h/data/binance-ethusdt --features %h/data/features-ethusdt --apply
 ExecStart=%h/venv-collector/bin/python %h/ralph_collector/storage_maintenance.py --symbol SOLUSDT --data %h/data/binance-solusdt --features %h/data/features-solusdt --apply

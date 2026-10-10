@@ -68,9 +68,13 @@ def gzip_tape(path, apply):
     actions = [f"gzip tape {path} -> {out}"]
     if apply:
         tmp = out + ".tmp"
-        with open(path, "rb") as src, gzip.open(tmp, "wb", compresslevel=6) as dst:
-            shutil.copyfileobj(src, dst, 1024 * 1024)
-        verify_and_replace("gzip_tape", path, tmp, out)
+        try:
+            with open(path, "rb") as src, gzip.open(tmp, "wb", compresslevel=6) as dst:
+                shutil.copyfileobj(src, dst, 1024 * 1024)
+            verify_and_replace("gzip_tape", path, tmp, out)
+        except Exception as err:
+            remove_tmp(tmp)
+            log_error(f"gzip_tape failed for {path}: {err}")
     return actions
 
 
@@ -81,27 +85,31 @@ def xz_raw(path, apply):
     actions = [f"xz raw {path} -> {out}"]
     if apply:
         tmp = out + ".tmp"
-        with open(tmp, "wb") as dst:
-            gzip_proc = subprocess.Popen(["gzip", "-cd", path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            xz_proc = subprocess.Popen(
-                ["nice", "-n", "19", "ionice", "-c", "3", "xz", "-6", "-c"],
-                stdin=gzip_proc.stdout,
-                stdout=dst,
-                stderr=subprocess.PIPE,
-            )
-            gzip_proc.stdout.close()
-            _, xz_stderr = xz_proc.communicate()
-            gzip_stderr = gzip_proc.stderr.read()
-            gzip_rc = gzip_proc.wait()
-            if gzip_rc != 0 or xz_proc.returncode != 0:
-                remove_tmp(tmp)
-                log_error(
-                    f"xz_raw compression failed for {path} gzip_rc={gzip_rc} xz_rc={xz_proc.returncode} "
-                    f"gzip_stderr={gzip_stderr.decode(errors='replace').strip()} "
-                    f"xz_stderr={xz_stderr.decode(errors='replace').strip()}"
+        try:
+            with open(tmp, "wb") as dst:
+                gzip_proc = subprocess.Popen(["gzip", "-cd", path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                xz_proc = subprocess.Popen(
+                    ["nice", "-n", "19", "ionice", "-c", "3", "xz", "-6", "-c"],
+                    stdin=gzip_proc.stdout,
+                    stdout=dst,
+                    stderr=subprocess.PIPE,
                 )
-                return actions
-        verify_and_replace("xz_raw", path, tmp, out)
+                gzip_proc.stdout.close()
+                _, xz_stderr = xz_proc.communicate()
+                gzip_stderr = gzip_proc.stderr.read()
+                gzip_rc = gzip_proc.wait()
+                if gzip_rc != 0 or xz_proc.returncode != 0:
+                    remove_tmp(tmp)
+                    log_error(
+                        f"xz_raw compression failed for {path} gzip_rc={gzip_rc} xz_rc={xz_proc.returncode} "
+                        f"gzip_stderr={gzip_stderr.decode(errors='replace').strip()} "
+                        f"xz_stderr={xz_stderr.decode(errors='replace').strip()}"
+                    )
+                    return actions
+            verify_and_replace("xz_raw", path, tmp, out)
+        except Exception as err:
+            remove_tmp(tmp)
+            log_error(f"xz_raw failed for {path}: {err}")
     return actions
 
 
