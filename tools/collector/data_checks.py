@@ -272,12 +272,12 @@ def git_commit_push(repo, paths):
     if not paths:
         print("GIT no changes")
         return
-    subprocess.check_call(["git", "-C", repo, "add", *paths])
-    diff = subprocess.run(["git", "-C", repo, "diff", "--cached", "--quiet"])
+    subprocess.check_call(["git", "-C", repo, "add", "--", "data-checks/"])
+    diff = subprocess.run(["git", "-C", repo, "diff", "--cached", "--quiet", "--", "data-checks/"])
     if diff.returncode == 0:
         print("GIT no staged changes")
         return
-    subprocess.check_call(["git", "-C", repo, "commit", "-m", "Update hourly data checks"])
+    subprocess.check_call(["git", "-C", repo, "commit", "-m", "Update hourly data checks", "--", "data-checks/"])
     subprocess.check_call(["git", "-C", repo, "push", "origin", "main"])
 
 
@@ -291,6 +291,8 @@ def main():
     args = ap.parse_args()
     repo = expand(args.repo)
     symbols = args.symbol or list(DEFAULT_SYMBOLS)
+    if args.commit_push:
+        subprocess.check_call(["git", "-C", repo, "pull", "--rebase", "origin", "main"])
     completed = set() if args.all else existing_keys(repo)
     rows, failures = [], []
     for symbol in symbols:
