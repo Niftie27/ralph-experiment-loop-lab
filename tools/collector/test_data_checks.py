@@ -68,6 +68,21 @@ class DataChecksTest(unittest.TestCase):
                 reader = csv.reader(f)
                 self.assertEqual(next(reader), data_checks.COLUMNS)
 
+    def test_check_symbol_skips_completed_hours(self):
+        with tempfile.TemporaryDirectory() as root:
+            data = os.path.join(root, "data")
+            os.makedirs(data)
+            h0 = "2026-10-10T00Z"
+            h1 = "2026-10-10T01Z"
+            trade0 = {"a": 10, "T": 1791590400100, "p": "100.0", "q": "0.5", "m": True}
+
+            write_raw(os.path.join(data, f"raw_BTCUSDT_{h0}.jsonl.gz"), [trade0])
+            write_raw(os.path.join(data, f"raw_BTCUSDT_{h1}.jsonl.gz"), [])
+            write_tape(os.path.join(data, f"tape_BTCUSDT_{h0}.csv"), [trade0])
+
+            rows = data_checks.check_symbol(data, "BTCUSDT", 0, completed={("BTCUSDT", h0)})
+            self.assertEqual(rows, [])
+
     def test_raw_finished_waits_for_next_hour_grace(self):
         self.assertGreater(data_checks.hour_end_ts("2026-10-10T00Z"), 0)
         self.assertEqual(

@@ -39,6 +39,15 @@ DEFAULT_SYMBOLS = {
 }
 
 
+def compact_trade(data):
+    return {
+        "T": int(data["T"]),
+        "p": data["p"],
+        "q": data["q"],
+        "m": bool(data["m"]),
+    }
+
+
 def expand(path):
     return os.path.abspath(os.path.expanduser(path))
 
@@ -140,7 +149,7 @@ def load_raw_trades(data_dir, symbol, hour):
                 data = json.loads(line).get("data", {})
                 trade_time = int(data["T"])
                 if start <= trade_time < end:
-                    trades[int(data["a"])] = data
+                    trades[int(data["a"])] = compact_trade(data)
             except (KeyError, TypeError, ValueError, json.JSONDecodeError):
                 continue
     return trades
@@ -161,7 +170,7 @@ def indexed_raw_trades(data_dir, symbol):
                 data = json.loads(line).get("data", {})
                 trade_hour = datetime.fromtimestamp(int(data["T"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%dT%HZ")
                 if trade_hour in allowed:
-                    by_hour.setdefault(trade_hour, {})[int(data["a"])] = data
+                    by_hour.setdefault(trade_hour, {})[int(data["a"])] = compact_trade(data)
             except (KeyError, TypeError, ValueError, json.JSONDecodeError):
                 continue
     return by_hour
@@ -194,14 +203,20 @@ def row_for_hour(data_dir, symbol, hour, raw_trades):
     }
 
 
-def check_symbol(data_dir, symbol, grace_min):
-    raw_index = indexed_raw_trades(data_dir, symbol)
+def check_symbol(data_dir, symbol, grace_min, completed=None, use_index=False):
+    completed = completed or set()
     rows = []
+    raw_index = indexed_raw_trades(data_dir, symbol) if use_index else None
     for hour in available_hours(data_dir, symbol):
+        if (symbol, hour) in completed:
+            continue
         next_hour = shift_hour(hour, 1)
         if not raw_finished(data_dir, symbol, next_hour, grace_min):
             continue
-        rows.append(row_for_hour(data_dir, symbol, hour, raw_index.get(hour, {})))
+        if raw_index is None:
+            rows.append(check_hour(data_dir, symbol, hour))
+        else:
+            rows.append(row_for_hour(data_dir, symbol, hour, raw_index.get(hour, {})))
     return rows
 
 
@@ -213,6 +228,17 @@ def read_existing(path):
         for row in csv.DictReader(f):
             rows[(row["symbol"], row["hour"])] = row
     return rows
+
+
+def existing_keys(repo):
+    keys = set()
+    checks_dir = os.path.join(repo, "data-checks")
+    if not os.path.isdir(checks_dir):
+        return keys
+    for name in os.listdir(checks_dir):
+        if name.endswith(".csv"):
+            keys.update(read_existing(os.path.join(checks_dir, name)))
+    return keys
 
 
 def write_day(path, rows):
@@ -261,15 +287,17 @@ def main():
     ap.add_argument("--grace-min", type=int, default=15)
     ap.add_argument("--commit-push", action="store_true", help="commit and push changed data-check CSVs")
     ap.add_argument("--symbol", action="append", help="limit to symbol; may be repeated")
+    ap.add_argument("--all", action="store_true", help="recheck all finished hours instead of only missing rows")
     args = ap.parse_args()
     repo = expand(args.repo)
     symbols = args.symbol or list(DEFAULT_SYMBOLS)
+    completed = set() if args.all else existing_keys(repo)
     rows, failures = [], []
     for symbol in symbols:
         data_dir, _features_dir = DEFAULT_SYMBOLS[symbol]
         data_dir = expand(data_dir)
         try:
-            for row in check_symbol(data_dir, symbol, args.grace_min):
+            for row in check_symbol(data_dir, symbol, args.grace_min, completed, use_index=args.all):
                 rows.append(row)
                 if row["missing_id_count"] != 0 or row["verify"] != "PASS":
                     failures.append(row)
