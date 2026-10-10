@@ -3,4 +3,4 @@ Description=RALPH disk free-space alert gate
 
 [Service]
 Type=oneshot
-ExecStart=%h/venv-collector/bin/python %h/ralph_collector/disk_alert.py --path %h/data --min-free-pct 20
+ExecStart=%h/venv-collector/bin/python %h/ralph_collector/disk_alert.py --path %h/data --min-free-pct 20 --send-alert --state %h/data/disk-alert-state.json --throttle-hours 6 --openclaw-bin %h/.npm-global/bin/openclaw --channel telegram --target telegram:1539856256
