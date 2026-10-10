@@ -1,0 +1,6 @@
+[Unit]
+Description=RALPH hourly data checks
+
+[Service]
+Type=oneshot
+ExecStart=%h/venv-collector/bin/python %h/ralph_collector/data_checks.py --repo %h/ralph-experiment-loop-lab --commit-push
