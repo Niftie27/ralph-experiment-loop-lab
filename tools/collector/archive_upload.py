@@ -300,10 +300,11 @@ def upload_files(files, state_path, remote):
 
 def selected_files(symbols, data_dirs, state_path, limit, now_ts=None):
     all_files = []
+    passed = read_passed(state_path)
     for symbol in symbols:
         files = candidate_paths(data_dirs[symbol], symbol, now_ts=now_ts)
-        files = [item for item in files if item.remote_path not in read_passed(state_path)]
-        all_files.extend(limit_hours(files, limit))
+        files = limit_hours(files, limit)
+        all_files.extend(item for item in files if item.remote_path not in passed)
     return all_files
 
 

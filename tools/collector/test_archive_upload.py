@@ -166,6 +166,25 @@ class ArchiveUploadTest(unittest.TestCase):
             self.assertEqual(second.uploads, [])
             self.assertEqual(rows(state), before_rows)
 
+    def test_limit_applies_before_pass_skip(self):
+        with tempfile.TemporaryDirectory() as root:
+            data = os.path.join(root, "data")
+            state = os.path.join(root, "state", "archive-files.csv")
+            make_complete_hour(data, hour="2026-10-11T00Z")
+            make_complete_hour(data, hour="2026-10-11T01Z")
+            first_hour = archive_upload.candidate_paths(data, "BTCUSDT", now_ts=NOW_TS)[:3]
+            archive_upload.upload_files(first_hour, state, FakeRemote())
+
+            selected = archive_upload.selected_files(
+                ["BTCUSDT"],
+                {"BTCUSDT": data},
+                state,
+                limit=1,
+                now_ts=NOW_TS,
+            )
+
+            self.assertEqual(selected, [])
+
     def test_generated_commands_do_not_contain_delete(self):
         with tempfile.TemporaryDirectory() as root:
             data = os.path.join(root, "data")
