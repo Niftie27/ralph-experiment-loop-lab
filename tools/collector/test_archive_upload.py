@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import csv
+import fcntl
 import os
 import sys
 import tempfile
@@ -252,6 +253,69 @@ class ArchiveUploadTest(unittest.TestCase):
             self.assertIn("INCOMPLETE_HOURS count=1 BTCUSDT/2026-10-11T00Z/missing=book", out)
             self.assertEqual(len(remote.uploads), 2)
             self.assertEqual([row["kind"] for row in rows(state)], ["raw", "tape"])
+
+    def test_pending_maintenance_reports_intermediate_not_incomplete(self):
+        with tempfile.TemporaryDirectory() as root:
+            data = os.path.join(root, "data")
+            state = os.path.join(root, "state", "archive-files.csv")
+            write_file(os.path.join(data, "raw_BTCUSDT_2026-10-11T00Z.jsonl.gz"), b"raw-waiting")
+            write_file(os.path.join(data, "tape_BTCUSDT_2026-10-11T00Z.csv"), b"tape-waiting")
+            write_file(os.path.join(data, "book_BTCUSDT_2026-10-11T00Z.jsonl.gz"), b"book")
+            files = archive_upload.candidate_paths(data, "BTCUSDT", now_ts=NOW_TS)
+            remote = FakeRemote()
+
+            _result, out = capture(archive_upload.upload_files, files, state, remote)
+
+            self.assertIn("PENDING_MAINTENANCE count=1 BTCUSDT/2026-10-11T00Z/missing=raw,tape", out)
+            self.assertIn("INCOMPLETE_HOURS count=0", out)
+            self.assertEqual(len(remote.uploads), 1)
+
+    def test_true_incomplete_reports_when_no_final_or_intermediate(self):
+        with tempfile.TemporaryDirectory() as root:
+            data = os.path.join(root, "data")
+            state = os.path.join(root, "state", "archive-files.csv")
+            write_file(os.path.join(data, "book_BTCUSDT_2026-10-11T00Z.jsonl.gz"), b"book")
+            files = archive_upload.candidate_paths(data, "BTCUSDT", now_ts=NOW_TS)
+            remote = FakeRemote()
+
+            _result, out = capture(archive_upload.upload_files, files, state, remote)
+
+            self.assertIn("PENDING_MAINTENANCE count=0", out)
+            self.assertIn("INCOMPLETE_HOURS count=1 BTCUSDT/2026-10-11T00Z/missing=raw,tape", out)
+            self.assertEqual(len(remote.uploads), 1)
+
+    def test_main_lock_held_exits_zero_without_remote_calls(self):
+        with tempfile.TemporaryDirectory() as root:
+            data = os.path.join(root, "data")
+            state = os.path.join(root, "state", "archive-files.csv")
+            lock = os.path.join(root, "state", "archive-upload.lock")
+            make_complete_hour(data)
+            os.makedirs(os.path.dirname(lock), exist_ok=True)
+            lock_fd = os.open(lock, os.O_RDWR | os.O_CREAT, 0o600)
+            try:
+                fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                remote = FakeRemote()
+
+                code, out = capture(
+                    archive_upload.main,
+                    [
+                        "--symbol",
+                        "BTCUSDT",
+                        "--data-btcusdt",
+                        data,
+                        "--state",
+                        state,
+                        "--lock",
+                        lock,
+                    ],
+                    remote,
+                )
+
+                self.assertEqual(code, 0)
+                self.assertIn("LOCKED another archive run is active", out)
+                self.assertEqual(remote.commands, [])
+            finally:
+                os.close(lock_fd)
 
     def test_local_size_change_after_pass_exits_without_upload(self):
         with tempfile.TemporaryDirectory() as root:

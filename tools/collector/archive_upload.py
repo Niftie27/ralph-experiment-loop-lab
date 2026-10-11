@@ -180,6 +180,14 @@ def group_hours(files):
     return [(key, sorted(value, key=lambda x: KINDS.index(x.kind))) for key, value in sorted(hours.items())]
 
 
+def intermediate_path(data_dir, symbol, hour, kind):
+    if kind == "raw":
+        return os.path.join(data_dir, f"raw_{symbol}_{hour}.jsonl.gz")
+    if kind == "tape":
+        return os.path.join(data_dir, f"tape_{symbol}_{hour}.csv")
+    return None
+
+
 def read_passed(state_path):
     return set(read_pass_rows(state_path))
 
@@ -212,18 +220,33 @@ def append_state_rows(state_path, rows):
 
 
 def missing_by_hour(files):
-    missing = []
+    incomplete = []
+    pending = []
     for (symbol, hour), hour_files in group_hours(files):
         present = {item.kind for item in hour_files}
-        absent = [kind for kind in KINDS if kind not in present]
+        data_dir = os.path.dirname(hour_files[0].local_path)
+        absent = []
+        waiting = []
+        for kind in KINDS:
+            if kind in present:
+                continue
+            pending_path = intermediate_path(data_dir, symbol, hour, kind)
+            if pending_path and os.path.exists(pending_path):
+                waiting.append(kind)
+            else:
+                absent.append(kind)
+        if waiting:
+            pending.append((symbol, hour, waiting))
         if absent:
-            missing.append((symbol, hour, absent))
-    return missing
+            incomplete.append((symbol, hour, absent))
+    return incomplete, pending
 
 
 def print_incomplete_hours(files):
-    incomplete = missing_by_hour(files)
+    incomplete, pending = missing_by_hour(files)
+    pending_parts = [f"{symbol}/{hour}/missing={','.join(missing)}" for symbol, hour, missing in pending]
     parts = [f"{symbol}/{hour}/missing={','.join(missing)}" for symbol, hour, missing in incomplete]
+    print(f"PENDING_MAINTENANCE count={len(pending)}" + (f" {'; '.join(pending_parts)}" if pending_parts else ""))
     print(f"INCOMPLETE_HOURS count={len(incomplete)}" + (f" {'; '.join(parts)}" if parts else ""))
 
 
@@ -360,6 +383,7 @@ def parse_args(argv=None):
     ap.add_argument("--symbol", action="append", choices=sorted(DEFAULT_SYMBOLS), help="symbol to upload; repeatable")
     ap.add_argument("--hour", action="append", help="specific UTC hour to upload/check, e.g. 2026-10-08T21Z; repeatable")
     ap.add_argument("--state", default="~/ralph-state/archive-files.csv")
+    ap.add_argument("--lock", default="~/ralph-state/archive-upload.lock")
     ap.add_argument("--limit", type=int, default=0, help="upload at most N hours with non-PASS files per selected symbol")
     ap.add_argument("--dry-run", action="store_true", help="print local upload counts without network calls")
     for symbol, (data_dir, _features_dir) in DEFAULT_SYMBOLS.items():
@@ -367,20 +391,37 @@ def parse_args(argv=None):
     return ap.parse_args(argv)
 
 
+def try_run_lock(lock_path):
+    os.makedirs(os.path.dirname(lock_path), exist_ok=True)
+    fd = os.open(lock_path, os.O_RDWR | os.O_CREAT, 0o600)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        os.close(fd)
+        return None
+    return fd
+
+
 def main(argv=None, remote=None):
     args = parse_args(argv)
+    lock_fd = try_run_lock(expand(args.lock))
+    if lock_fd is None:
+        print("LOCKED another archive run is active")
+        return 0
     symbols = args.symbol or sorted(DEFAULT_SYMBOLS)
     state_path = expand(args.state)
     data_dirs = {symbol: expand(getattr(args, f"data_{symbol.lower()}")) for symbol in DEFAULT_SYMBOLS}
-    files = selected_files(symbols, data_dirs, state_path, args.limit, hours=args.hour)
-    if args.dry_run:
-        dry_run_report(files, state_path)
-        return 0
     try:
+        files = selected_files(symbols, data_dirs, state_path, args.limit, hours=args.hour)
+        if args.dry_run:
+            dry_run_report(files, state_path)
+            return 0
         upload_files(files, state_path, remote or RealRemote())
     except ArchiveError as err:
         print(f"ERROR {err}", file=sys.stderr)
         return 1
+    finally:
+        os.close(lock_fd)
     return 0
 
 

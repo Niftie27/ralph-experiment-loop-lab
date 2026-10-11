@@ -1,0 +1,10 @@
+[Unit]
+Description=RALPH collector Storage Box archive upload
+
+[Service]
+Type=oneshot
+Nice=19
+IOSchedulingClass=idle
+CPUQuota=50%
+MemoryMax=1G
+ExecStart=%h/venv-collector/bin/python %h/ralph_collector/archive_upload.py
