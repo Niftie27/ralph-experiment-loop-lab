@@ -255,8 +255,19 @@ def upload_files(files, state_path, remote):
         remote.mkdir_p(item.remote_dir)
         existed = remote.exists(item.remote_path)
         if not existed:
-            remote.upload(item.local_path, item.remote_dir)
+            result = remote.upload(item.local_path, item.remote_dir)
             uploads += 1
+            elapsed = max(result["elapsed_seconds"], 1e-9)
+            speed = item.size_bytes / elapsed
+            print(
+                f"RSYNC_STATS {item.symbol} {item.hour} {item.kind} "
+                f"bytes={item.size_bytes} seconds={elapsed:.6f} bytes_per_second={speed:.2f}"
+            )
+            stdout = result.get("stdout", "").strip()
+            if stdout:
+                print(f"RSYNC_STDOUT_BEGIN {item.remote_path}")
+                print(stdout)
+                print(f"RSYNC_STDOUT_END {item.remote_path}")
         remote_sha = remote.sha256(item.remote_path)
         status = "PASS" if local_sha == remote_sha else "FAIL"
         if existed and status == "PASS":
