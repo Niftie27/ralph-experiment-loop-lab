@@ -20,7 +20,7 @@ Data-quality and ops items may go in any time, with Tomas's OK.
 8. Before enabling --delete-raw: storage_maintenance reads data-checks via --repo ~/ralph-experiment-loop-lab in all 4 ExecStart lines; repoint it to ~/ralph-data-checks-repo.
 9. Step 5: decide where archive-verified.csv is written. The data-checks timer runs reset --hard + clean in its clone, so a second writer there would lose uncommitted rows (needs a lock or a separate location).
 10. data_checks guard should read the marker with git config --local --get (a global value would bypass it).
-11. R6 measured on 2026-10-11: cpu.max 50000 100000, IO scheduler sda=none sr0=mq-deadline, kernel 6.8.0-124-generic.
+11. R6 measured on 2026-10-11: cpu.max 50000 100000, IO scheduler sda=none sr0=mq-deadline, kernel 6.8.0-124-generic; cgroup controllers for user@: cpu memory pids (no io), so IOWeight is not available in user scopes.
 
 ## For D and v2: realism
 12. v1 paper and demo-sim fill at the exact spot alert price with zero delay (optimistic). v2 fills at the
