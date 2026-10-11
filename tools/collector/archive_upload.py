@@ -188,6 +188,15 @@ def intermediate_path(data_dir, symbol, hour, kind):
     return None
 
 
+def final_path(data_dir, symbol, hour, kind):
+    suffix = {
+        "raw": ".jsonl.xz",
+        "tape": ".csv.gz",
+        "book": ".jsonl.gz",
+    }[kind]
+    return os.path.join(data_dir, f"{kind}_{symbol}_{hour}{suffix}")
+
+
 def read_passed(state_path):
     return set(read_pass_rows(state_path))
 
@@ -219,7 +228,8 @@ def append_state_rows(state_path, rows):
         fcntl.flock(f, fcntl.LOCK_UN)
 
 
-def missing_by_hour(files):
+def missing_by_hour(files, now_ts=None, mtime_min=15):
+    now_ts = time.time() if now_ts is None else now_ts
     incomplete = []
     pending = []
     for (symbol, hour), hour_files in group_hours(files):
@@ -232,7 +242,11 @@ def missing_by_hour(files):
                 continue
             pending_path = intermediate_path(data_dir, symbol, hour, kind)
             if pending_path and os.path.exists(pending_path):
-                waiting.append(kind)
+                waiting.append((kind, "intermediate"))
+                continue
+            local_final = final_path(data_dir, symbol, hour, kind)
+            if os.path.exists(local_final) and not old_enough(local_final, now_ts, mtime_min):
+                waiting.append((kind, "too_new"))
             else:
                 absent.append(kind)
         if waiting:
@@ -244,7 +258,11 @@ def missing_by_hour(files):
 
 def print_incomplete_hours(files):
     incomplete, pending = missing_by_hour(files)
-    pending_parts = [f"{symbol}/{hour}/missing={','.join(missing)}" for symbol, hour, missing in pending]
+    pending_parts = []
+    for symbol, hour, missing in pending:
+        kinds = ",".join(kind for kind, _reason in missing)
+        reasons = ",".join(f"{kind}:{reason}" for kind, reason in missing)
+        pending_parts.append(f"{symbol}/{hour}/missing={kinds} reason={reasons}")
     parts = [f"{symbol}/{hour}/missing={','.join(missing)}" for symbol, hour, missing in incomplete]
     print(f"PENDING_MAINTENANCE count={len(pending)}" + (f" {'; '.join(pending_parts)}" if pending_parts else ""))
     print(f"INCOMPLETE_HOURS count={len(incomplete)}" + (f" {'; '.join(parts)}" if parts else ""))

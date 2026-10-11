@@ -284,6 +284,40 @@ class ArchiveUploadTest(unittest.TestCase):
             self.assertIn("INCOMPLETE_HOURS count=1 BTCUSDT/2026-10-11T00Z/missing=raw,tape", out)
             self.assertEqual(len(remote.uploads), 1)
 
+    def test_too_new_final_file_reports_pending_and_is_not_uploaded(self):
+        with tempfile.TemporaryDirectory() as root:
+            data = os.path.join(root, "data")
+            state = os.path.join(root, "state", "archive-files.csv")
+            now_ts = time.time()
+            write_file(os.path.join(data, "raw_BTCUSDT_2026-10-11T00Z.jsonl.xz"), b"raw", mtime=now_ts - 5 * 60)
+            write_file(os.path.join(data, "tape_BTCUSDT_2026-10-11T00Z.csv.gz"), b"tape", mtime=now_ts - 20 * 60)
+            write_file(os.path.join(data, "book_BTCUSDT_2026-10-11T00Z.jsonl.gz"), b"book", mtime=now_ts - 20 * 60)
+            files = archive_upload.candidate_paths(data, "BTCUSDT", now_ts=now_ts)
+            remote = FakeRemote()
+
+            _result, out = capture(archive_upload.upload_files, files, state, remote)
+
+            self.assertIn("PENDING_MAINTENANCE count=1 BTCUSDT/2026-10-11T00Z/missing=raw reason=raw:too_new", out)
+            self.assertIn("INCOMPLETE_HOURS count=0", out)
+            self.assertNotIn("raw_BTCUSDT_2026-10-11T00Z.jsonl.xz", [os.path.basename(local) for local, _remote in remote.uploads])
+            self.assertEqual([row["kind"] for row in rows(state)], ["tape", "book"])
+
+    def test_old_final_file_is_selected_and_uploaded(self):
+        with tempfile.TemporaryDirectory() as root:
+            data = os.path.join(root, "data")
+            state = os.path.join(root, "state", "archive-files.csv")
+            now_ts = time.time()
+            write_file(os.path.join(data, "raw_BTCUSDT_2026-10-11T00Z.jsonl.xz"), b"raw", mtime=now_ts - 20 * 60)
+            write_file(os.path.join(data, "tape_BTCUSDT_2026-10-11T00Z.csv.gz"), b"tape", mtime=now_ts - 20 * 60)
+            write_file(os.path.join(data, "book_BTCUSDT_2026-10-11T00Z.jsonl.gz"), b"book", mtime=now_ts - 20 * 60)
+            files = archive_upload.candidate_paths(data, "BTCUSDT", now_ts=now_ts)
+            remote = FakeRemote()
+
+            _result, out = capture(archive_upload.upload_files, files, state, remote)
+
+            self.assertIn("PENDING_MAINTENANCE count=0", out)
+            self.assertEqual([row["kind"] for row in rows(state)], ["raw", "tape", "book"])
+
     def test_main_lock_held_exits_zero_without_remote_calls(self):
         with tempfile.TemporaryDirectory() as root:
             data = os.path.join(root, "data")
