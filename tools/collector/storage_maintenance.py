@@ -331,6 +331,7 @@ def main():
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--delete-raw", action="store_true", help="delete retention candidates; only use after dry-run approval")
     ap.add_argument("--verify-remote", action="store_true", help="re-verify candidate remote hashes without deleting")
+    ap.add_argument("--verify-remote-limit", type=int, default=0, help="limit --verify-remote to the first N candidates; 0 means no limit")
     ap.add_argument("--verbose", action="store_true", help="print per-hour retention report")
     args = ap.parse_args()
     symbol = args.symbol.upper()
@@ -361,7 +362,8 @@ def main():
             print(f"{row['hour']} {row['path']} {reason}")
     had_error = False
     if args.verify_remote:
-        for row in candidates:
+        verify_rows = candidates[: args.verify_remote_limit] if args.verify_remote_limit > 0 else candidates
+        for row in verify_rows:
             ok, detail = verify_remote(row)
             status = "PASS" if ok else "FAIL"
             print(f"REMOTE_VERIFY {status} {symbol} {row['hour']} raw remote={row['archive']['remote_path']} detail={detail}")
