@@ -62,6 +62,7 @@ def make_remote_with_clone(root):
     run(["git", "-C", remote, "symbolic-ref", "HEAD", "refs/heads/main"])
     run(["git", "clone", remote, clone])
     config_identity(clone)
+    git(["config", "ralph.dataChecksClone", "true"], clone)
     return remote, clone
 
 
@@ -153,6 +154,30 @@ class DataChecksTest(unittest.TestCase):
             datetime.fromtimestamp(data_checks.hour_end_ts("2026-10-10T00Z"), tz=timezone.utc).hour,
             1,
         )
+
+    def test_commit_push_without_marker_preserves_unpushed_commit(self):
+        with tempfile.TemporaryDirectory() as root:
+            repo = os.path.join(root, "repo")
+            run(["git", "init", repo])
+            config_identity(repo)
+            with open(os.path.join(repo, "README.md"), "w", encoding="utf-8") as f:
+                f.write("base\n")
+            git(["add", "README.md"], repo)
+            git(["commit", "-m", "base"], repo)
+            with open(os.path.join(repo, "agent-only.txt"), "w", encoding="utf-8") as f:
+                f.write("must survive\n")
+            git(["add", "agent-only.txt"], repo)
+            git(["commit", "-m", "agent work"], repo)
+            before = git(["rev-parse", "HEAD"], repo).stdout
+            data = write_sample_data(root, [{"a": 10, "T": 1791590400100, "p": "100.0", "q": "0.5", "m": True}])
+
+            with self.assertRaises(SystemExit) as err:
+                run_main(repo, data)
+
+            self.assertEqual(err.exception.code, 1)
+            self.assertEqual(git(["rev-parse", "HEAD"], repo).stdout, before)
+            self.assertTrue(os.path.exists(os.path.join(repo, "agent-only.txt")))
+            self.assertIn("agent work", git(["log", "-1", "--pretty=%s"], repo).stdout)
 
     def test_commit_push_discards_leftover_dirty_csv_and_pushes_data_checks_only(self):
         with tempfile.TemporaryDirectory() as root:

@@ -297,7 +297,19 @@ def refuse_dirty_outside_data_checks(repo):
         sys.exit(1)
 
 
+def require_data_checks_clone(repo):
+    marker = subprocess.run(
+        ["git", "-C", repo, "config", "--get", "ralph.dataChecksClone"],
+        text=True,
+        capture_output=True,
+    )
+    if marker.returncode != 0 or marker.stdout.strip() != "true":
+        print("ERROR --commit-push only runs in the dedicated data-checks clone")
+        sys.exit(1)
+
+
 def sync_commit_push_clone(repo):
+    require_data_checks_clone(repo)
     refuse_dirty_outside_data_checks(repo)
     subprocess.check_call(["git", "-C", repo, "fetch", "origin", "main"])
     subprocess.check_call(["git", "-C", repo, "reset", "--hard", "origin/main"])
