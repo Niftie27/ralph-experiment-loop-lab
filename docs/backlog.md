@@ -17,28 +17,30 @@ Data-quality and ops items may go in any time, with Tomas's OK.
 6. If compression hurts latency later, try xz -3 or run compression only at night (measured 2026-10-10:
  worst 28/20/23 ms, dashboard 32 ms).
 7. Dashboard is BTC-only (labels, decimals, size thresholds). Make it per-symbol later, low priority.
+8. Before enabling --delete-raw: storage_maintenance reads data-checks via --repo ~/ralph-experiment-loop-lab in all 4 ExecStart lines; repoint it to ~/ralph-data-checks-repo.
+9. Step 5: decide where archive-verified.csv is written. The data-checks timer runs reset --hard + clean in its clone, so a second writer there would lose uncommitted rows (needs a lock or a separate location).
 
 ## For D and v2: realism
-8. v1 paper and demo-sim fill at the exact spot alert price with zero delay (optimistic). v2 fills at the
+10. v1 paper and demo-sim fill at the exact spot alert price with zero delay (optimistic). v2 fills at the
  first futures price after the latency (150/500/1000/2000 ms sweep), plus spread and fees.
-9. Limit-order fills: count a fill only when price trades through the limit by 1 tick (a touch is not a fill).
-10. Costs: maker/taker fees, spread from recorded book, funding for positions held across funding times.
-11. Holdout lock: keep the last 2+ weeks untouched until a strategy's final check; log every variant tried.
-12. Split results by session (Asia/EU/US) and volatility regime.
-13. Live/replay parity: replay a recorded day through the same code; it must produce that day's live alerts.
-14. Diagnostics before rejecting OR accepting a result: data gaps (missing IDs), stale book at the signal
+11. Limit-order fills: count a fill only when price trades through the limit by 1 tick (a touch is not a fill).
+12. Costs: maker/taker fees, spread from recorded book, funding for positions held across funding times.
+13. Holdout lock: keep the last 2+ weeks untouched until a strategy's final check; log every variant tried.
+14. Split results by session (Asia/EU/US) and volatility regime.
+15. Live/replay parity: replay a recorded day through the same code; it must produce that day's live alerts.
+16. Diagnostics before rejecting OR accepting a result: data gaps (missing IDs), stale book at the signal
  time, receive-vs-event latency, reconnects, clock drift, fill assumptions, look-ahead (future data).
 
 ## Later: features, gated by backtests and live simulation
-15. Binance spot collector: spot-futures lead/lag and basis (2026-10-08 17:00:25Z: futures -0.432 % vs spot
+17. Binance spot collector: spot-futures lead/lag and basis (2026-10-08 17:00:25Z: futures -0.432 % vs spot
  -0.177 % in 5 s).
-16. Bybit allLiquidation, CME gap, TPO single prints / LVN, candle patterns.
-17. Funding/OI divergence as a regime filter.
-18. Optional v1.1: a copy of v1 with realistic fills, running next to unchanged v1.
+18. Bybit allLiquidation, CME gap, TPO single prints / LVN, candle patterns.
+19. Funding/OI divergence as a regime filter.
+20. Optional v1.1: a copy of v1 with realistic fills, running next to unchanged v1.
 
 ## Decisions and cleanup: Tomas decides
-19. More disk (Tomas buys later): then extend raw retention beyond 7 days.
-20. One Telegram chat receives everything. v2 messages go to a separate test chat.
-21. Short-watch scripts: fixed levels from 2026-09-19, no expiry.
-22. v1: close code not logged, no backfill after reconnects (21-25 per day on 10-07 and 10-08). Not fixing;
+21. More disk (Tomas buys later): then extend raw retention beyond 7 days.
+22. One Telegram chat receives everything. v2 messages go to a separate test chat.
+23. Short-watch scripts: fixed levels from 2026-09-19, no expiry.
+24. v1: close code not logged, no backfill after reconnects (21-25 per day on 10-07 and 10-08). Not fixing;
  v2 replaces it.

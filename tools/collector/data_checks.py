@@ -6,6 +6,7 @@ import gzip
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -30,6 +31,7 @@ COLUMNS = [
     "tape_sha256",
     "verify",
 ]
+DAY_FILE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}\.csv$")
 
 DEFAULT_SYMBOLS = {
     "BTCUSDT": ("~/data/binance", "~/data/features"),
@@ -220,12 +222,19 @@ def check_symbol(data_dir, symbol, grace_min, completed=None, use_index=False):
     return rows
 
 
+def is_day_file(name):
+    return bool(DAY_FILE_RE.fullmatch(name))
+
+
 def read_existing(path):
     rows = {}
     if not os.path.exists(path):
         return rows
     with open(path, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
+        reader = csv.DictReader(f)
+        if reader.fieldnames != COLUMNS:
+            raise RuntimeError(f"unexpected data-check header in {path}: {reader.fieldnames}")
+        for row in reader:
             rows[(row["symbol"], row["hour"])] = row
     return rows
 
@@ -236,7 +245,7 @@ def existing_keys(repo):
     if not os.path.isdir(checks_dir):
         return keys
     for name in os.listdir(checks_dir):
-        if name.endswith(".csv"):
+        if is_day_file(name):
             keys.update(read_existing(os.path.join(checks_dir, name)))
     return keys
 
@@ -268,31 +277,83 @@ def write_rows(repo, rows):
     return changed
 
 
-def git_commit_push(repo, paths):
-    if not paths:
-        print("GIT no changes")
+def git_status_paths(repo):
+    out = subprocess.check_output(["git", "-C", repo, "status", "--porcelain"], text=True)
+    paths = []
+    for line in out.splitlines():
+        path = line[3:]
+        if " -> " in path:
+            path = path.split(" -> ", 1)[1]
+        paths.append(path)
+    return paths
+
+
+def refuse_dirty_outside_data_checks(repo):
+    outside = [path for path in git_status_paths(repo) if not path.startswith("data-checks/")]
+    if outside:
+        print("ERROR dirty paths outside data-checks/:")
+        for path in outside:
+            print(path)
+        sys.exit(1)
+
+
+def sync_commit_push_clone(repo):
+    refuse_dirty_outside_data_checks(repo)
+    subprocess.check_call(["git", "-C", repo, "fetch", "origin", "main"])
+    subprocess.check_call(["git", "-C", repo, "reset", "--hard", "origin/main"])
+    subprocess.check_call(["git", "-C", repo, "clean", "-fd", "--", "data-checks/"])
+
+
+def validate_day_files(repo):
+    checks_dir = os.path.join(repo, "data-checks")
+    if not os.path.isdir(checks_dir):
         return
+    for name in os.listdir(checks_dir):
+        if not is_day_file(name):
+            continue
+        path = os.path.join(checks_dir, name)
+        with open(path, encoding="utf-8") as f:
+            content = f.read()
+        if "<<<<<<<" in content:
+            raise RuntimeError(f"conflict marker found in {path}")
+        with open(path, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            if reader.fieldnames != COLUMNS:
+                raise RuntimeError(f"unexpected data-check header in {path}: {reader.fieldnames}")
+            for _row in reader:
+                pass
+
+
+def git_commit_push(repo, paths):
+    validate_day_files(repo)
     subprocess.check_call(["git", "-C", repo, "add", "--", "data-checks/"])
     diff = subprocess.run(["git", "-C", repo, "diff", "--cached", "--quiet", "--", "data-checks/"])
     if diff.returncode == 0:
         print("GIT no staged changes")
         return
     subprocess.check_call(["git", "-C", repo, "commit", "-m", "Update hourly data checks", "--", "data-checks/"])
+    push = subprocess.run(["git", "-C", repo, "push", "origin", "main"])
+    if push.returncode == 0:
+        return
+    rebase = subprocess.run(["git", "-C", repo, "pull", "--rebase", "origin", "main"])
+    if rebase.returncode != 0:
+        subprocess.run(["git", "-C", repo, "rebase", "--abort"])
+        sys.exit(1)
     subprocess.check_call(["git", "-C", repo, "push", "origin", "main"])
 
 
-def main():
+def main(argv=None):
     ap = argparse.ArgumentParser(description="Backfill/update hourly data-check CSVs.")
     ap.add_argument("--repo", default=".", help="repo root that receives data-checks/YYYY-MM-DD.csv")
     ap.add_argument("--grace-min", type=int, default=15)
     ap.add_argument("--commit-push", action="store_true", help="commit and push changed data-check CSVs")
     ap.add_argument("--symbol", action="append", help="limit to symbol; may be repeated")
     ap.add_argument("--all", action="store_true", help="recheck all finished hours instead of only missing rows")
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
     repo = expand(args.repo)
     symbols = args.symbol or list(DEFAULT_SYMBOLS)
     if args.commit_push:
-        subprocess.check_call(["git", "-C", repo, "pull", "--rebase", "origin", "main"])
+        sync_commit_push_clone(repo)
     completed = set() if args.all else existing_keys(repo)
     rows, failures = [], []
     for symbol in symbols:
