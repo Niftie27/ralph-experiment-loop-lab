@@ -24,6 +24,7 @@ class FakeRemote:
         self.uploads = []
         self.commands = []
         self.upload_results = []
+        self.fail_upload_for = set()
 
     def mkdir_p(self, remote_dir):
         self.commands.append(["ssh", "storagebox", "mkdir", "-p", remote_dir])
@@ -38,6 +39,9 @@ class FakeRemote:
         return archive_upload.hashlib.sha256(self.files[remote_path]).hexdigest()
 
     def upload(self, local_path, remote_dir):
+        remote_path = f"{remote_dir}/{os.path.basename(local_path)}"
+        if remote_path in self.fail_upload_for:
+            raise RuntimeError("planned upload failure")
         self.commands.append(
             [
                 "rsync",
@@ -51,7 +55,6 @@ class FakeRemote:
                 f"storagebox:{remote_dir}/",
             ]
         )
-        remote_path = f"{remote_dir}/{os.path.basename(local_path)}"
         with open(local_path, "rb") as f:
             self.files.setdefault(remote_path, f.read())
         self.uploads.append((local_path, remote_path))
@@ -79,6 +82,13 @@ def rows(path):
         return list(csv.DictReader(f))
 
 
+def capture(fn, *args, **kwargs):
+    out = StringIO()
+    with redirect_stdout(out):
+        result = fn(*args, **kwargs)
+    return result, out.getvalue()
+
+
 class ArchiveUploadTest(unittest.TestCase):
     def test_selection_excludes_live_raw_gzip_tmp_and_too_new_files(self):
         with tempfile.TemporaryDirectory() as root:
@@ -99,6 +109,8 @@ class ArchiveUploadTest(unittest.TestCase):
                 ("2026-10-11T00Z", "raw"),
                 ("2026-10-11T00Z", "tape"),
                 ("2026-10-11T00Z", "book"),
+                ("2026-10-11T03Z", "tape"),
+                ("2026-10-11T03Z", "book"),
             ])
 
     def test_upload_verify_writes_pass_rows_and_remote_day_folders(self):
@@ -183,7 +195,98 @@ class ArchiveUploadTest(unittest.TestCase):
                 now_ts=NOW_TS,
             )
 
-            self.assertEqual(selected, [])
+            self.assertEqual([(item.hour, item.kind) for item in selected], [
+                ("2026-10-11T01Z", "raw"),
+                ("2026-10-11T01Z", "tape"),
+                ("2026-10-11T01Z", "book"),
+            ])
+
+    def test_explicit_hour_after_pass_skips_three_files(self):
+        with tempfile.TemporaryDirectory() as root:
+            data = os.path.join(root, "data")
+            state = os.path.join(root, "state", "archive-files.csv")
+            make_complete_hour(data, hour="2026-10-11T00Z")
+            files = archive_upload.candidate_paths(data, "BTCUSDT", now_ts=NOW_TS)
+            archive_upload.upload_files(files, state, FakeRemote())
+            selected = archive_upload.selected_files(
+                ["BTCUSDT"],
+                {"BTCUSDT": data},
+                state,
+                limit=0,
+                hours=["2026-10-11T00Z"],
+                now_ts=NOW_TS,
+            )
+
+            _result, out = capture(archive_upload.upload_files, selected, state, FakeRemote())
+
+            self.assertIn("SUMMARY uploads=0 verified_existing=0 skipped_pass=3 new_rows=0", out)
+            self.assertEqual(len(rows(state)), 3)
+
+    def test_failure_on_second_file_preserves_first_row_only(self):
+        with tempfile.TemporaryDirectory() as root:
+            data = os.path.join(root, "data")
+            state = os.path.join(root, "state", "archive-files.csv")
+            make_complete_hour(data, hour="2026-10-11T00Z")
+            files = archive_upload.candidate_paths(data, "BTCUSDT", now_ts=NOW_TS)
+            remote = FakeRemote()
+            remote.fail_upload_for.add(files[1].remote_path)
+
+            with self.assertRaises(archive_upload.ArchiveError):
+                archive_upload.upload_files(files, state, remote)
+
+            state_rows = rows(state)
+            self.assertEqual(len(state_rows), 1)
+            self.assertEqual(state_rows[0]["kind"], "raw")
+
+    def test_incomplete_hour_uploads_present_files_and_reports_missing(self):
+        with tempfile.TemporaryDirectory() as root:
+            data = os.path.join(root, "data")
+            state = os.path.join(root, "state", "archive-files.csv")
+            write_file(os.path.join(data, "raw_BTCUSDT_2026-10-11T00Z.jsonl.xz"), b"raw")
+            write_file(os.path.join(data, "tape_BTCUSDT_2026-10-11T00Z.csv.gz"), b"tape")
+            files = archive_upload.candidate_paths(data, "BTCUSDT", now_ts=NOW_TS)
+            remote = FakeRemote()
+
+            _result, out = capture(archive_upload.upload_files, files, state, remote)
+
+            self.assertIn("INCOMPLETE_HOURS count=1 BTCUSDT/2026-10-11T00Z/missing=book", out)
+            self.assertEqual(len(remote.uploads), 2)
+            self.assertEqual([row["kind"] for row in rows(state)], ["raw", "tape"])
+
+    def test_local_size_change_after_pass_exits_without_upload(self):
+        with tempfile.TemporaryDirectory() as root:
+            data = os.path.join(root, "data")
+            state = os.path.join(root, "state", "archive-files.csv")
+            make_complete_hour(data, hour="2026-10-11T00Z")
+            files = archive_upload.candidate_paths(data, "BTCUSDT", now_ts=NOW_TS)
+            remote = FakeRemote()
+            archive_upload.upload_files(files, state, remote)
+            write_file(files[0].local_path, b"raw-changed", mtime=OLD_MTIME)
+            changed_files = archive_upload.candidate_paths(data, "BTCUSDT", now_ts=NOW_TS)
+            second = FakeRemote()
+
+            with self.assertRaises(archive_upload.ArchiveError):
+                _result, out = capture(archive_upload.upload_files, changed_files, state, second)
+
+            self.assertEqual(second.uploads, [])
+            self.assertEqual(len(rows(state)), 3)
+
+    def test_mkdir_once_per_remote_dir_per_run(self):
+        with tempfile.TemporaryDirectory() as root:
+            data = os.path.join(root, "data")
+            state = os.path.join(root, "state", "archive-files.csv")
+            make_complete_hour(data, hour="2026-10-11T00Z")
+            make_complete_hour(data, hour="2026-10-11T01Z")
+            files = archive_upload.candidate_paths(data, "BTCUSDT", now_ts=NOW_TS)
+            remote = FakeRemote()
+
+            archive_upload.upload_files(files, state, remote)
+
+            mkdirs = [cmd for cmd in remote.commands if cmd[:3] == ["ssh", "storagebox", "mkdir"]]
+            self.assertEqual(mkdirs, [
+                ["ssh", "storagebox", "mkdir", "-p", "ralph/raw/BTCUSDT/2026-10-11"],
+                ["ssh", "storagebox", "mkdir", "-p", "ralph/derived/BTCUSDT/2026-10-11"],
+            ])
 
     def test_generated_commands_do_not_contain_delete(self):
         with tempfile.TemporaryDirectory() as root:

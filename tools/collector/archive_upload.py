@@ -135,7 +135,7 @@ def old_enough(path, now_ts, mtime_min):
 
 def candidate_paths(data_dir, symbol, now_ts=None, grace_min=30, mtime_min=15):
     now_ts = time.time() if now_ts is None else now_ts
-    hours = {}
+    out = []
     prefix = {
         "raw": f"raw_{symbol}_",
         "tape": f"tape_{symbol}_",
@@ -155,28 +155,22 @@ def candidate_paths(data_dir, symbol, now_ts=None, grace_min=30, mtime_min=15):
             hour = name.removeprefix(prefix[kind]).removesuffix(suffix[kind])
             path = os.path.join(data_dir, name)
             if finished_hour(hour, now_ts, grace_min) and old_enough(path, now_ts, mtime_min):
-                hours.setdefault(hour, {})[kind] = path
-    out = []
-    for hour in sorted(hours):
-        paths = hours[hour]
-        if all(kind in paths for kind in KINDS):
-            day = hour[:10]
-            for kind in KINDS:
+                day = hour[:10]
                 remote_kind = "raw" if kind == "raw" else "derived"
                 remote_dir = f"ralph/{remote_kind}/{symbol}/{day}"
-                remote_path = f"{remote_dir}/{os.path.basename(paths[kind])}"
+                remote_path = f"{remote_dir}/{name}"
                 out.append(
                     ArchiveFile(
                         symbol=symbol,
                         hour=hour,
                         kind=kind,
-                        local_path=paths[kind],
+                        local_path=path,
                         remote_dir=remote_dir,
                         remote_path=remote_path,
-                        size_bytes=os.path.getsize(paths[kind]),
+                        size_bytes=os.path.getsize(path),
                     )
                 )
-    return out
+    return sorted(out, key=lambda x: (x.symbol, x.hour, KINDS.index(x.kind)))
 
 
 def group_hours(files):
@@ -187,13 +181,17 @@ def group_hours(files):
 
 
 def read_passed(state_path):
-    passed = set()
+    return set(read_pass_rows(state_path))
+
+
+def read_pass_rows(state_path):
+    passed = {}
     if not os.path.exists(state_path):
         return passed
     with open(state_path, newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
             if row.get("status") == "PASS":
-                passed.add(row.get("remote_path"))
+                passed[row.get("remote_path")] = row
     return passed
 
 
@@ -213,11 +211,34 @@ def append_state_rows(state_path, rows):
         fcntl.flock(f, fcntl.LOCK_UN)
 
 
+def missing_by_hour(files):
+    missing = []
+    for (symbol, hour), hour_files in group_hours(files):
+        present = {item.kind for item in hour_files}
+        absent = [kind for kind in KINDS if kind not in present]
+        if absent:
+            missing.append((symbol, hour, absent))
+    return missing
+
+
+def print_incomplete_hours(files):
+    incomplete = missing_by_hour(files)
+    parts = [f"{symbol}/{hour}/missing={','.join(missing)}" for symbol, hour, missing in incomplete]
+    print(f"INCOMPLETE_HOURS count={len(incomplete)}" + (f" {'; '.join(parts)}" if parts else ""))
+
+
+def is_work_item(item, pass_rows):
+    row = pass_rows.get(item.remote_path)
+    if row is None:
+        return True
+    return str(item.size_bytes) != row.get("size_bytes")
+
+
 def dry_run_report(files, state_path):
-    passed = read_passed(state_path)
+    passed = read_pass_rows(state_path)
     totals = {}
     for item in files:
-        if item.remote_path in passed:
+        if not is_work_item(item, passed):
             continue
         key = (item.symbol, item.kind)
         count, size = totals.get(key, (0, 0))
@@ -229,46 +250,67 @@ def dry_run_report(files, state_path):
             count, size = totals.get((symbol, kind), (0, 0))
             print(f"{symbol} {kind} count={count} bytes={size}")
     print(f"TOTAL bytes={total_bytes} gb={total_bytes / 1_000_000_000:.6f}")
+    print_incomplete_hours(files)
 
 
-def limit_hours(files, limit):
+def limit_hours(files, limit, pass_rows):
     if not limit:
         return files
     selected = []
-    for _key, hour_files in group_hours(files)[:limit]:
+    work_hours = []
+    for key, hour_files in group_hours(files):
+        if any(is_work_item(item, pass_rows) for item in hour_files):
+            work_hours.append((key, hour_files))
+    for _key, hour_files in work_hours[:limit]:
         selected.extend(hour_files)
     return selected
 
 
 def upload_files(files, state_path, remote):
-    passed = read_passed(state_path)
-    rows = []
+    passed = read_pass_rows(state_path)
     failed = False
     uploads = 0
     skipped = 0
     verified_existing = 0
+    new_rows = 0
+    made_dirs = set()
+    print_incomplete_hours(files)
     for item in files:
-        if item.remote_path in passed:
+        pass_row = passed.get(item.remote_path)
+        if pass_row and str(item.size_bytes) == pass_row.get("size_bytes"):
             skipped += 1
             continue
-        local_sha = file_sha256(item.local_path)
-        remote.mkdir_p(item.remote_dir)
-        existed = remote.exists(item.remote_path)
-        if not existed:
-            result = remote.upload(item.local_path, item.remote_dir)
-            uploads += 1
-            elapsed = max(result["elapsed_seconds"], 1e-9)
-            speed = item.size_bytes / elapsed
+        if pass_row and str(item.size_bytes) != pass_row.get("size_bytes"):
             print(
-                f"RSYNC_STATS {item.symbol} {item.hour} {item.kind} "
-                f"bytes={item.size_bytes} seconds={elapsed:.6f} bytes_per_second={speed:.2f}"
+                f"CHANGED_AFTER_ARCHIVE {item.symbol} {item.hour} {item.kind} "
+                f"remote={item.remote_path} previous_size={pass_row.get('size_bytes')} current_size={item.size_bytes}"
             )
-            stdout = result.get("stdout", "").strip()
-            if stdout:
-                print(f"RSYNC_STDOUT_BEGIN {item.remote_path}")
-                print(stdout)
-                print(f"RSYNC_STDOUT_END {item.remote_path}")
-        remote_sha = remote.sha256(item.remote_path)
+            failed = True
+            continue
+        local_sha = file_sha256(item.local_path)
+        try:
+            if item.remote_dir not in made_dirs:
+                remote.mkdir_p(item.remote_dir)
+                made_dirs.add(item.remote_dir)
+            existed = remote.exists(item.remote_path)
+            if not existed:
+                result = remote.upload(item.local_path, item.remote_dir)
+                uploads += 1
+                elapsed = max(result["elapsed_seconds"], 1e-9)
+                speed = item.size_bytes / elapsed
+                print(
+                    f"RSYNC_STATS {item.symbol} {item.hour} {item.kind} "
+                    f"bytes={item.size_bytes} seconds={elapsed:.6f} bytes_per_second={speed:.2f}"
+                )
+                stdout = result.get("stdout", "").strip()
+                if stdout:
+                    print(f"RSYNC_STDOUT_BEGIN {item.remote_path}")
+                    print(stdout)
+                    print(f"RSYNC_STDOUT_END {item.remote_path}")
+            remote_sha = remote.sha256(item.remote_path)
+        except Exception as err:
+            print(f"ERROR {item.remote_path}: {err}", file=sys.stderr)
+            raise ArchiveError(f"remote operation failed for {item.remote_path}") from err
         status = "PASS" if local_sha == remote_sha else "FAIL"
         if existed and status == "PASS":
             verified_existing += 1
@@ -285,34 +327,40 @@ def upload_files(files, state_path, remote):
             "remote_sha256": remote_sha,
             "status": status,
         }
-        rows.append(row)
+        append_state_rows(state_path, [row])
+        new_rows += 1
         print(
             f"{status} {item.symbol} {item.hour} {item.kind} "
             f"size={item.size_bytes} remote={item.remote_path} sha256={remote_sha}"
         )
-    if rows:
-        append_state_rows(state_path, rows)
-    print(f"SUMMARY uploads={uploads} verified_existing={verified_existing} skipped_pass={skipped} new_rows={len(rows)}")
+    print(f"SUMMARY uploads={uploads} verified_existing={verified_existing} skipped_pass={skipped} new_rows={new_rows}")
     if failed:
         raise ArchiveError("one or more archive hashes did not match")
-    return rows
+    return new_rows
 
 
-def selected_files(symbols, data_dirs, state_path, limit, now_ts=None):
+def all_candidate_files(symbols, data_dirs, now_ts=None):
     all_files = []
-    passed = read_passed(state_path)
     for symbol in symbols:
-        files = candidate_paths(data_dirs[symbol], symbol, now_ts=now_ts)
-        files = limit_hours(files, limit)
-        all_files.extend(item for item in files if item.remote_path not in passed)
+        all_files.extend(candidate_paths(data_dirs[symbol], symbol, now_ts=now_ts))
     return all_files
+
+
+def selected_files(symbols, data_dirs, state_path, limit, hours=None, now_ts=None):
+    all_files = all_candidate_files(symbols, data_dirs, now_ts=now_ts)
+    if hours:
+        wanted = set(hours)
+        return [item for item in all_files if item.hour in wanted]
+    pass_rows = read_pass_rows(state_path)
+    return limit_hours(all_files, limit, pass_rows)
 
 
 def parse_args(argv=None):
     ap = argparse.ArgumentParser(description="Upload finished RALPH collector hours to Storage Box.")
     ap.add_argument("--symbol", action="append", choices=sorted(DEFAULT_SYMBOLS), help="symbol to upload; repeatable")
+    ap.add_argument("--hour", action="append", help="specific UTC hour to upload/check, e.g. 2026-10-08T21Z; repeatable")
     ap.add_argument("--state", default="~/ralph-state/archive-files.csv")
-    ap.add_argument("--limit", type=int, default=0, help="upload at most N complete hours per selected symbol")
+    ap.add_argument("--limit", type=int, default=0, help="upload at most N hours with non-PASS files per selected symbol")
     ap.add_argument("--dry-run", action="store_true", help="print local upload counts without network calls")
     for symbol, (data_dir, _features_dir) in DEFAULT_SYMBOLS.items():
         ap.add_argument(f"--data-{symbol.lower()}", default=data_dir)
@@ -324,7 +372,7 @@ def main(argv=None, remote=None):
     symbols = args.symbol or sorted(DEFAULT_SYMBOLS)
     state_path = expand(args.state)
     data_dirs = {symbol: expand(getattr(args, f"data_{symbol.lower()}")) for symbol in DEFAULT_SYMBOLS}
-    files = selected_files(symbols, data_dirs, state_path, args.limit)
+    files = selected_files(symbols, data_dirs, state_path, args.limit, hours=args.hour)
     if args.dry_run:
         dry_run_report(files, state_path)
         return 0
