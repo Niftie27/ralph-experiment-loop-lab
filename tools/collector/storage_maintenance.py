@@ -5,6 +5,7 @@ Actions are dry-run by default. Use --apply only after reviewing the printed lis
 """
 import argparse
 import csv
+import fcntl
 import gzip
 import hashlib
 import json
@@ -13,6 +14,7 @@ import os
 import shutil
 import subprocess
 import sys
+from collections import Counter
 from datetime import datetime, timedelta, timezone
 
 
@@ -157,14 +159,22 @@ def read_data_check(repo, symbol, hour):
 
 
 def read_archive_check(repo, symbol, hour):
-    path = os.path.join(repo, "data-checks", "archive-verified.csv")
-    if not os.path.exists(path):
-        return None
-    with open(path, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row.get("symbol") == symbol and row.get("hour") == hour:
-                return row
     return None
+
+
+def read_archive_state(archive_state, symbol, hour, raw_path):
+    if not os.path.exists(archive_state):
+        return None
+    raw_name = os.path.basename(raw_path)
+    found = None
+    with open(archive_state, newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            if row.get("symbol") != symbol or row.get("hour") != hour or row.get("kind") != "raw":
+                continue
+            if not row.get("remote_path", "").endswith("/" + raw_name):
+                continue
+            found = row
+    return found
 
 
 def test_compressed(path):
@@ -175,7 +185,7 @@ def test_compressed(path):
     return os.path.exists(path)
 
 
-def retention_status(data_dir, repo, symbol, raw_path):
+def retention_status(data_dir, repo, archive_state, symbol, raw_path):
     hour = raw_hour(symbol, raw_path)
     tape = os.path.join(data_dir, f"tape_{symbol}_{hour}.csv")
     tape_gz = tape + ".gz"
@@ -186,7 +196,10 @@ def retention_status(data_dir, repo, symbol, raw_path):
     next_row = read_data_check(repo, symbol, shift_hour(hour, 1))
     tape_file = tape_gz if os.path.exists(tape_gz) else tape if os.path.exists(tape) else None
     book_file = book_xz if os.path.exists(book_xz) else book if os.path.exists(book) else None
-    archive = read_archive_check(repo, symbol, hour)
+    archive = read_archive_state(archive_state, symbol, hour, raw_path)
+    local_raw_sha = file_sha256(raw_path)
+    if not raw_path.endswith(".jsonl.xz"):
+        reasons.append("raw_not_xz_for_retention")
     if not row:
         reasons.append("missing_data_check_h")
     elif row.get("missing_id_count") != "0" or row.get("verify") != "PASS":
@@ -204,13 +217,16 @@ def retention_status(data_dir, repo, symbol, raw_path):
     if not archive:
         reasons.append("missing_storagebox_archive_verification")
     else:
-        local_raw_sha = file_sha256(raw_path)
-        if archive.get("status") != "PASS" or archive.get("raw_sha256") != local_raw_sha or archive.get("remote_sha256") != local_raw_sha:
+        if (
+            archive.get("status") != "PASS"
+            or archive.get("local_sha256") != local_raw_sha
+            or archive.get("remote_sha256") != local_raw_sha
+        ):
             reasons.append("bad_storagebox_archive_verification")
-    return {"path": raw_path, "hour": hour, "ok": not reasons, "reasons": reasons, "row": row}
+    return {"path": raw_path, "hour": hour, "ok": not reasons, "reasons": reasons, "row": row, "archive": archive, "sha256": local_raw_sha}
 
 
-def retention_candidates(data_dir, repo, symbol, days):
+def retention_candidates(data_dir, repo, archive_state, symbol, days):
     cutoff = datetime.now(timezone.utc).timestamp() - days * 86400
     out = []
     for name in sorted(os.listdir(data_dir)):
@@ -218,25 +234,88 @@ def retention_candidates(data_dir, repo, symbol, days):
             continue
         path = os.path.join(data_dir, name)
         if hour_end(name) < cutoff:
-            status = retention_status(data_dir, repo, symbol, path)
+            status = retention_status(data_dir, repo, archive_state, symbol, path)
             if status["ok"]:
                 out.append(status)
     return out
 
 
-def retention_report(data_dir, repo, symbol, days):
+def retention_report(data_dir, repo, archive_state, symbol, days):
     cutoff = datetime.now(timezone.utc).timestamp() - days * 86400
     rows = []
     for name in sorted(os.listdir(data_dir)):
         if not name.startswith(f"raw_{symbol}_") or not (name.endswith(".jsonl.gz") or name.endswith(".jsonl.xz")):
             continue
         path = os.path.join(data_dir, name)
-        status = retention_status(data_dir, repo, symbol, path)
+        status = retention_status(data_dir, repo, archive_state, symbol, path)
         if hour_end(name) >= cutoff:
             status["ok"] = False
             status["reasons"] = ["not_older_than_retention_days"] + status["reasons"]
         rows.append(status)
     return rows
+
+
+def remote_sha256(remote_path):
+    result = subprocess.run(
+        ["ssh", "-o", "BatchMode=yes", "storagebox", "sha256sum", remote_path],
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    return result.stdout.split()[0]
+
+
+def verify_remote(row):
+    try:
+        remote_sha = remote_sha256(row["archive"]["remote_path"])
+    except Exception as err:
+        return False, f"ssh_error {err}"
+    if remote_sha != row["sha256"]:
+        return False, f"remote_sha_mismatch remote={remote_sha} local={row['sha256']}"
+    return True, "ok"
+
+
+def append_deleted_row(state_path, row, size):
+    os.makedirs(os.path.dirname(state_path), exist_ok=True)
+    exists = os.path.exists(state_path)
+    fields = ["deleted_at_utc", "symbol", "hour", "path", "size_bytes", "sha256", "remote_path"]
+    with open(state_path, "a+", newline="", encoding="utf-8") as f:
+        fcntl.flock(f, fcntl.LOCK_EX)
+        if not exists or os.path.getsize(state_path) == 0:
+            csv.DictWriter(f, fieldnames=fields).writeheader()
+        writer = csv.DictWriter(f, fieldnames=fields)
+        writer.writerow(
+            {
+                "deleted_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "symbol": row["archive"]["symbol"],
+                "hour": row["hour"],
+                "path": row["path"],
+                "size_bytes": str(size),
+                "sha256": row["sha256"],
+                "remote_path": row["archive"]["remote_path"],
+            }
+        )
+        f.flush()
+        os.fsync(f.fileno())
+        fcntl.flock(f, fcntl.LOCK_UN)
+
+
+def reason_counts(report):
+    counts = Counter()
+    for row in report:
+        if row["ok"]:
+            continue
+        for reason in row["reasons"]:
+            counts[reason.split()[0]] += 1
+    return counts
+
+
+def print_retention_summary(symbol, report):
+    candidates = sum(1 for row in report if row["ok"])
+    counts = reason_counts(report)
+    parts = [f"candidates={candidates}"]
+    parts.extend(f"{reason}={count}" for reason, count in sorted(counts.items()))
+    print(f"RETENTION_SUMMARY {symbol} " + " ".join(parts))
 
 
 def main():
@@ -245,14 +324,18 @@ def main():
     ap.add_argument("--data", required=True)
     ap.add_argument("--features", required=True)
     ap.add_argument("--repo", default="~/ralph-experiment-loop-lab")
+    ap.add_argument("--archive-state", default="~/ralph-state/archive-files.csv")
     ap.add_argument("--grace-min", type=int, default=15)
     ap.add_argument("--retention-days", type=int, default=7)
     ap.add_argument("--max-hours", type=int, default=0, help="limit compression to the oldest N finished hours; 0 means no limit")
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--delete-raw", action="store_true", help="delete retention candidates; only use after dry-run approval")
+    ap.add_argument("--verify-remote", action="store_true", help="re-verify candidate remote hashes without deleting")
+    ap.add_argument("--verbose", action="store_true", help="print per-hour retention report")
     args = ap.parse_args()
     symbol = args.symbol.upper()
     repo = os.path.abspath(os.path.expanduser(args.repo))
+    archive_state = os.path.abspath(os.path.expanduser(args.archive_state))
     actions = []
     hours = pending_hours(args.data, symbol, args.grace_min)
     if args.max_hours > 0:
@@ -265,22 +348,42 @@ def main():
     print("ACTIONS")
     for action in actions:
         print(action)
-    report = retention_report(args.data, repo, symbol, args.retention_days)
+    report = retention_report(args.data, repo, archive_state, symbol, args.retention_days)
     candidates = [row for row in report if row["ok"]]
+    print_retention_summary(symbol, report)
     print("RAW_RETENTION_CANDIDATES")
     for row in candidates:
         print(row["path"])
-    print("RAW_RETENTION_REPORT")
-    for row in report:
-        reason = "OK" if row["ok"] else ";".join(row["reasons"])
-        print(f"{row['hour']} {row['path']} {reason}")
+    if args.verbose:
+        print("RAW_RETENTION_REPORT")
+        for row in report:
+            reason = "OK" if row["ok"] else ";".join(row["reasons"])
+            print(f"{row['hour']} {row['path']} {reason}")
+    had_error = False
+    if args.verify_remote:
+        for row in candidates:
+            ok, detail = verify_remote(row)
+            status = "PASS" if ok else "FAIL"
+            print(f"REMOTE_VERIFY {status} {symbol} {row['hour']} raw remote={row['archive']['remote_path']} detail={detail}")
+            had_error = had_error or not ok
     if args.apply and args.delete_raw:
         for row in candidates:
             path = row["path"]
+            if not os.path.basename(path).startswith(f"raw_{symbol}_") or not path.endswith(".jsonl.xz"):
+                log_error(f"refusing non-xz raw deletion path={path}")
+                had_error = True
+                continue
+            ok, detail = verify_remote(row)
+            if not ok:
+                log_error(f"remote verification failed before delete path={path} remote={row['archive']['remote_path']} detail={detail}")
+                had_error = True
+                continue
             size = os.path.getsize(path)
             os.remove(path)
+            append_deleted_row(os.path.expanduser("~/ralph-state/raw-deleted.csv"), row, size)
             print(f"DELETED {path} size={size} data_check={json.dumps(row['row'], sort_keys=True)}")
+    return 1 if had_error else 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
