@@ -83,6 +83,14 @@ Largest subfolder writers and sources:
 | `data/binance-archive-cache` | `experiments/btc-eth-alert-edge/src/binance-data.mjs` sets `CACHE_DIR`, fetches spot monthly/daily kline ZIPs, and writes decompressed CSV. | Binance spot public archive: `https://data.binance.vision/data/spot/{monthly,daily}/klines/...`; current-month tail is fetched from Binance REST klines. | CSV kline rows, then normalized into JSON candle arrays. | Recreatable from public/no-key archive/REST plus repo scripts; rerun time not recorded. |
 | `data/candles` | `experiments/btc-eth-alert-edge/src/backtest.mjs` sets `CANDLE_DIR`, calls `fetchBinanceSpotCandles`, and writes JSON candle files. DEMO-SIM scripts read those files. | Computed from the spot archive cache plus Binance REST tail, with Coinbase fallback available in `backtest.mjs`. | JSON arrays of normalized candles. | Recreatable by `npm run backtest --prefix ralph-research-os/experiments/btc-eth-alert-edge`; rerun time not recorded. |
 
+Market boundary:
+
+- `btc-eth-alert-edge` backtest/DEMO-SIM candles are Binance SPOT by default: `src/binance-data.mjs` uses `https://data.binance.vision/data/spot` and `https://api.binance.com/api/v3/klines`, and `src/backtest.mjs` writes `data/candles/binance-spot-...json`.
+- `strategy-destruction-filter` default candle provider is also Binance SPOT through `src/market-data.mjs` (`provider = "binance-spot"`, `market: "spot"`), unless a specific branch explicitly selects another provider.
+- `strategy-destruction-filter` USD-M orderflow batches are futures-specific overlays: `src/run-usdm-orderflow-demo-sim-batch.mjs` uses Binance USD-M futures public daily archives for `trades` and `bookDepth`.
+- The USD-M full-path MFE/MAE rescore uses the targeted USD-M batch as its source set, but resolves full-path candles from the same canonical candle cache, preferring `binance-spot-{symbol}USDT-{timeframe}.json` when available.
+- The strategy spam funnel is SPOT candle research: its data requirements declare `markets: ["spot"]`, and the active alt branch says `ETH/SOL spot-candle continuation/fade spam`.
+
 ## Writers
 
 What wrote there today:
