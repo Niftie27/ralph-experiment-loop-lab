@@ -23,7 +23,7 @@ the script mtime. The proof level is therefore `mtime`, not git provenance.
 ### sw-btc-82k
 
 - Price feed: Bybit linear public REST endpoints for ticker, 1m candles, 5m candles, and recent trades.
-- Entry trigger: BTC short candidate requires the extension zone to have been seen, with `highSeen >= 81_950`, non-positive or weak buy/sell flow, 1m structure loss or 5m weakness, and failed continuation from the high.
+- Entry trigger: BTC short candidate requires the extension zone to have been seen, with `highSeen >= 81_950`, flow `deltaPct <= 5`, 1m structure loss or 5m weakness, and failed continuation from the high.
 - SL rule: invalidation is the evaluated recent high plus 120.
 - TP rule: TP1 is `max(localLow, mark - 300)`, TP2 is `max(79_280, mark - 650)`, and TP3 is `max(78_550, mark - 1_100)`.
 - Dedupe/seed rule: repeats are throttled for 45 minutes. A later alert requires a better retest by at least the larger of 100 or 0.12%. On start, the script seeds the last alert from recent successful log history within a 3-hour lookback.
