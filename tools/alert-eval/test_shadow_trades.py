@@ -1,6 +1,8 @@
 import datetime as dt
 import csv
 import gzip
+import json
+import lzma
 import math
 import tempfile
 import unittest
@@ -34,6 +36,7 @@ class ShadowTradeTests(unittest.TestCase):
     def test_sl_first(self):
         row = run([tr(5, 100), tr(6, 102.2), tr(7, 98)])
         self.assertEqual(row["exit_reason"], "SL")
+        self.assertEqual(row["exit_price"], "102.2")
         self.assertLess(float(row["R"]), 0)
 
     def test_tp_first(self):
@@ -80,6 +83,12 @@ class ShadowTradeTests(unittest.TestCase):
         r = st.trade_r(100, 99, 102)
         expected = (100 - 99 - (100 + 99) * 0.0007) / 2
         self.assertAlmostEqual(r, expected)
+
+    def test_sl_gap_fill_uses_crossing_trade_price(self):
+        row = run([tr(5, 100), tr(6, 104)])
+        self.assertEqual(row["exit_reason"], "SL")
+        self.assertEqual(row["exit_price"], "104")
+        self.assertAlmostEqual(float(row["R"]), st.trade_r(100, 104, 102), places=7)
 
     def test_corrected_ladder_tp1_dropped_splits_halves(self):
         row = run(
@@ -133,6 +142,52 @@ class ShadowTradeTests(unittest.TestCase):
             window = st.load_window("bybit", a, root, root, set(), set())
             self.assertEqual(window.trades_count, 2)
             self.assertEqual(list(window.prices), [100.0, 99.0])
+            self.assertEqual(window.order_violations, 0)
+
+    def write_raw(self, root, symbol, hour, rows):
+        path = root / f"raw_{symbol}_{hour.strftime('%Y-%m-%dT%HZ')}.jsonl.xz"
+        with lzma.open(path, "wt") as f:
+            for trade_id, when, price in rows:
+                f.write(json.dumps({"data": {"e": "aggTrade", "a": trade_id, "T": int(when.timestamp() * 1000), "p": str(price)}}) + "\n")
+
+    def test_collector_window_across_midnight_unique_monotonic(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            old_local_raw_dir = st.local_raw_dir
+            st.local_raw_dir = lambda symbol: root
+            try:
+                a = st.Alert("a1", "src", "v", dt.datetime(2026, 1, 1, 23, 59, 30, tzinfo=UTC), "BTCUSDT", 100, 102, (99, 98, 97))
+                self.write_raw(root, "BTCUSDT", dt.datetime(2026, 1, 1, 23, tzinfo=UTC), [(1, a.alert_time, 100), (2, a.alert_time + dt.timedelta(seconds=10), 99)])
+                self.write_raw(root, "BTCUSDT", dt.datetime(2026, 1, 2, 0, tzinfo=UTC), [(3, a.alert_time + dt.timedelta(seconds=40), 98)])
+                window = st.load_window("binance", a, root, root, set(), set())
+            finally:
+                st.local_raw_dir = old_local_raw_dir
+            self.assertEqual(window.trades_count, 3)
+            self.assertEqual(len(set(window.collector_ids)), 3)
+            self.assertEqual(window.duplicates, 0)
+            self.assertEqual(window.order_violations, 0)
+            self.assertEqual(list(window.times), sorted(window.times))
+
+    def test_archive_day_and_collector_next_day_no_dups(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            old_local_raw_dir = st.local_raw_dir
+            st.local_raw_dir = lambda symbol: root
+            try:
+                a = st.Alert("a1", "src", "v", dt.datetime(2026, 1, 1, 23, 59, 50, tzinfo=UTC), "BTCUSDT", 100, 102, (99, 98, 97))
+                archive = root / "BTCUSDT-aggTrades-2026-01-01.zip"
+                with zipfile.ZipFile(archive, "w") as z:
+                    z.writestr(
+                        "BTCUSDT-aggTrades-2026-01-01.csv",
+                        "agg_trade_id,price,quantity,first_trade_id,last_trade_id,transact_time,is_buyer_maker\n"
+                        f"1,100,1,1,1,{int(a.alert_time.timestamp()*1000)},false\n",
+                    )
+                self.write_raw(root, "BTCUSDT", dt.datetime(2026, 1, 2, 0, tzinfo=UTC), [(2, a.alert_time + dt.timedelta(seconds=20), 99)])
+                window = st.load_window("binance", a, root, root, {("BTCUSDT", dt.date(2026, 1, 1))}, set())
+            finally:
+                st.local_raw_dir = old_local_raw_dir
+            self.assertEqual(window.trades_count, 2)
+            self.assertEqual(window.duplicates, 0)
             self.assertEqual(window.order_violations, 0)
 
 

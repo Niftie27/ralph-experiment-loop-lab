@@ -88,6 +88,7 @@ class Coverage:
 class Window:
     times: array = field(default_factory=lambda: array("q"))
     prices: array = field(default_factory=lambda: array("d"))
+    collector_ids: array = field(default_factory=lambda: array("q"))
     price_path: str = "missing"
     covered_until: dt.datetime | None = None
     coverage: list[Coverage] = field(default_factory=list)
@@ -296,18 +297,20 @@ def coverage_for_bybit(symbol: str, start: dt.datetime, end: dt.datetime, root: 
     return merge_coverage(coverage), "bybit_public", notes
 
 
-def append_trade(times: array, prices: array, t_ms: int, price: float, start_ms: int, end_ms: int) -> bool:
+def append_trade(window: Window, t_ms: int, price: float, start_ms: int, end_ms: int, collector_id: int = -1) -> bool:
     if t_ms < start_ms or t_ms > end_ms:
         return False
-    times.append(int(t_ms))
-    prices.append(float(price))
+    window.times.append(int(t_ms))
+    window.prices.append(float(price))
+    window.collector_ids.append(int(collector_id))
     return True
 
 
-def sort_window(times: array, prices: array) -> None:
-    ordered = sorted(zip(times, prices), key=lambda x: x[0])
-    times[:] = array("q", (t for t, _ in ordered))
-    prices[:] = array("d", (p for _, p in ordered))
+def sort_window(window: Window) -> None:
+    ordered = sorted(range(len(window.times)), key=lambda i: (window.times[i], i))
+    window.times[:] = array("q", (window.times[i] for i in ordered))
+    window.prices[:] = array("d", (window.prices[i] for i in ordered))
+    window.collector_ids[:] = array("q", (window.collector_ids[i] for i in ordered))
 
 
 def read_binance_archive(path: Path, start_ms: int, end_ms: int, window: Window) -> None:
@@ -326,12 +329,18 @@ def read_binance_archive(path: Path, start_ms: int, end_ms: int, window: Window)
                 if prev_key is not None and key < prev_key:
                     window.order_violations += 1
                 prev_key = key
-                append_trade(window.times, window.prices, t_ms, float(row["price"]), start_ms, end_ms)
+                append_trade(window, t_ms, float(row["price"]), start_ms, end_ms)
 
 
-def read_collector_raw_files(symbol: str, start: dt.datetime, end: dt.datetime, start_ms: int, end_ms: int, window: Window) -> None:
-    seen_ids: set[int] = set()
-    prev_key: tuple[int, int] | None = None
+def in_ranges_ms(t_ms: int, ranges: list[tuple[int, int]]) -> bool:
+    return any(start <= t_ms <= end for start, end in ranges)
+
+
+def read_collector_raw_files(symbol: str, start: dt.datetime, end: dt.datetime, ranges: list[tuple[int, int]], window: Window) -> None:
+    if not ranges:
+        return
+    start_ms = min(start for start, _ in ranges)
+    end_ms = max(end for _, end in ranges)
     for hour in iter_hours(start - dt.timedelta(hours=1), end + dt.timedelta(hours=1)):
         path = raw_file(symbol, hour)
         if not path.exists():
@@ -344,17 +353,9 @@ def read_collector_raw_files(symbol: str, start: dt.datetime, end: dt.datetime, 
                     continue
                 trade_id = int(data["a"])
                 t_ms = int(data["T"])
-                if t_ms < start_ms or t_ms > end_ms:
+                if t_ms < start_ms or t_ms > end_ms or not in_ranges_ms(t_ms, ranges):
                     continue
-                if trade_id in seen_ids:
-                    window.duplicates += 1
-                    continue
-                seen_ids.add(trade_id)
-                key = (t_ms, trade_id)
-                if prev_key is not None and key < prev_key:
-                    window.order_violations += 1
-                prev_key = key
-                append_trade(window.times, window.prices, t_ms, float(data["p"]), start_ms, end_ms)
+                append_trade(window, t_ms, float(data["p"]), start_ms, end_ms, trade_id)
 
 
 def read_bybit_file(path: Path, start_ms: int, end_ms: int, window: Window) -> None:
@@ -371,7 +372,38 @@ def read_bybit_file(path: Path, start_ms: int, end_ms: int, window: Window) -> N
             if prev_key is not None and key < prev_key:
                 window.order_violations += 1
             prev_key = key
-            append_trade(window.times, window.prices, t_ms, float(row["price"]), start_ms, end_ms)
+            append_trade(window, t_ms, float(row["price"]), start_ms, end_ms)
+
+
+def check_window_order_and_duplicates(source: str, alert_id: str, window: Window) -> None:
+    seen: set[int] = set()
+    prev_time: int | None = None
+    backward = 0
+    duplicates = 0
+    keep = []
+    for i, t_ms in enumerate(window.times):
+        collector_id = window.collector_ids[i]
+        if prev_time is not None and t_ms < prev_time:
+            backward += 1
+        prev_time = t_ms
+        if collector_id >= 0:
+            if collector_id in seen:
+                duplicates += 1
+                continue
+            seen.add(collector_id)
+        keep.append(i)
+    window.order_violations += backward
+    window.duplicates += duplicates
+    if duplicates:
+        window.times[:] = array("q", (window.times[i] for i in keep))
+        window.prices[:] = array("d", (window.prices[i] for i in keep))
+        window.collector_ids[:] = array("q", (window.collector_ids[i] for i in keep))
+    if backward or duplicates:
+        sort_window(window)
+    if backward:
+        window.notes.append(f"order_violations_sorted {source} {alert_id} {backward}")
+    if duplicates:
+        window.notes.append(f"collector_duplicates_deduped {alert_id} {duplicates}")
 
 
 def load_window(
@@ -393,22 +425,22 @@ def load_window(
     window = Window(price_path=label, notes=notes)
     window.coverage = coverage
     if source == "binance":
+        collector_ranges: list[tuple[int, int]] = []
         for day in iter_days(start, end):
             archive = binance_archive_file(archive_root, alert.symbol, day)
             if archive.exists() and (alert.symbol, day) in manifest_verified:
                 read_binance_archive(archive, start_ms, end_ms, window)
             else:
-                read_collector_raw_files(alert.symbol, max(start, day_start(day)), min(end, day_start(day) + dt.timedelta(days=1)), start_ms, end_ms, window)
+                range_start = max(start, day_start(day))
+                range_end = min(end, day_start(day) + dt.timedelta(days=1) - dt.timedelta(milliseconds=1))
+                collector_ranges.append((int(range_start.timestamp() * 1000), int(range_end.timestamp() * 1000)))
+        read_collector_raw_files(alert.symbol, start, end, collector_ranges, window)
     else:
         for day in iter_days(start, end):
             path = bybit_file(bybit_root, alert.symbol, day)
             if path.exists():
                 read_bybit_file(path, start_ms, end_ms, window)
-    if window.order_violations:
-        sort_window(window.times, window.prices)
-        window.notes.append(f"order_violations_sorted {source} {alert.alert_id} {window.order_violations}")
-    if window.duplicates:
-        window.notes.append(f"collector_duplicates_deduped {alert.symbol} {alert.alert_id} {window.duplicates}")
+    check_window_order_and_duplicates(source, alert.alert_id, window)
     window.covered_until = continuous_covered_until(coverage, start)
     return window
 
@@ -537,7 +569,7 @@ def eval_one_target(
         last_i = i
         price = prices[i]
         if price >= alert.sl:
-            return finish(row, "SL", times[i], trade_r(entry, alert.sl, alert.sl), alert.sl)
+            return finish(row, "SL", times[i], trade_r(entry, price, alert.sl), price)
         if tp is not None and price <= tp:
             return finish(row, "TP", times[i], trade_r(entry, tp, alert.sl), tp)
     if not is_full_path_covered(covered_until, entry_time_ms, timeout_s) or last_i is None:
@@ -564,6 +596,7 @@ def eval_ladder(
     else:
         open_slices = [{"idx": 0, "tp": None, "weight": 1.0}]
     realized: list[float] = []
+    exit_notional = 0.0
     deadline_ms = entry_time_ms + timeout_s * 1000
     last_i: int | None = None
     last_event: tuple[str, int, float] | None = None
@@ -574,16 +607,21 @@ def eval_ladder(
         price = prices[i]
         if price >= alert.sl:
             for open_slice in open_slices:
-                realized.append(open_slice["weight"] * trade_r(entry, alert.sl, alert.sl))
+                weight = float(open_slice["weight"])
+                realized.append(weight * trade_r(entry, price, alert.sl))
+                exit_notional += weight * price
             open_slices = []
-            last_event = ("SL", i, alert.sl)
+            last_event = ("SL", i, exit_notional)
             break
         hit = [s for s in open_slices if s["tp"] is not None and price <= s["tp"]]
         if hit:
             for open_slice in hit:
-                realized.append(open_slice["weight"] * trade_r(entry, float(open_slice["tp"]), alert.sl))
+                weight = float(open_slice["weight"])
+                tp_price = float(open_slice["tp"])
+                realized.append(weight * trade_r(entry, tp_price, alert.sl))
+                exit_notional += weight * tp_price
             open_slices = [s for s in open_slices if s not in hit]
-            last_event = (f"TP{hit[-1]['idx']}", i, price)
+            last_event = (f"TP{hit[-1]['idx']}", i, exit_notional)
             if not open_slices:
                 break
     if open_slices:
@@ -591,8 +629,10 @@ def eval_ladder(
             row["exit_reason"] = "path_incomplete"
             return row
         for open_slice in open_slices:
-            realized.append(open_slice["weight"] * trade_r(entry, prices[last_i], alert.sl))
-        last_event = ("timeout", last_i, prices[last_i])
+            weight = float(open_slice["weight"])
+            realized.append(weight * trade_r(entry, prices[last_i], alert.sl))
+            exit_notional += weight * prices[last_i]
+        last_event = ("timeout", last_i, exit_notional)
     if last_event is None:
         row["exit_reason"] = "path_incomplete"
         return row
@@ -637,7 +677,12 @@ def stats(rows: list[dict[str, str]]) -> dict[str, object]:
         [r for r in rows if r["R"] and r["exit_reason"] not in {"skipped_sl_before_entry", "path_incomplete", "no_entry_data"}],
         key=alert_order_key,
     )
-    skipped = len([r for r in rows if r["exit_reason"] in {"skipped_sl_before_entry", "path_incomplete", "no_entry_data"}])
+    skipped_reasons = {
+        "skipped_sl_before_entry": len([r for r in rows if r["exit_reason"] == "skipped_sl_before_entry"]),
+        "path_incomplete": len([r for r in rows if r["exit_reason"] == "path_incomplete"]),
+        "no_entry_data": len([r for r in rows if r["exit_reason"] == "no_entry_data"]),
+    }
+    skipped = sum(skipped_reasons.values())
     values = [float(r["R"]) for r in tradable]
     wins = [v for v in values if v > 0]
     losses = [v for v in values if v < 0]
@@ -651,6 +696,7 @@ def stats(rows: list[dict[str, str]]) -> dict[str, object]:
     return {
         "count": len(values),
         "skipped": skipped,
+        **skipped_reasons,
         "winrate": (len(wins) / len(values) if values else math.nan),
         "avg_r": (sum(values) / len(values) if values else math.nan),
         "sum_r": sum(values),
@@ -689,7 +735,7 @@ def print_reports(rows: list[dict[str, str]], counts: dict[str, list[int]]) -> N
         alerts = ",".join(r["alert_id"] for r in sorted(grouped[key], key=alert_order_key))
         print(
             "|".join(key),
-            f"count={s['count']} skipped={s['skipped']} winrate={fmt_float(s['winrate'])} avgR={fmt_float(s['avg_r'])} sumR={fmt_float(s['sum_r'])} PF={fmt_float(s['pf'])} maxDD={fmt_float(s['max_dd'])} alerts={alerts}",
+            f"count={s['count']} skipped={s['skipped']} sl_skip={s['skipped_sl_before_entry']} incomplete={s['path_incomplete']} no_entry={s['no_entry_data']} winrate={fmt_float(s['winrate'])} avgR={fmt_float(s['avg_r'])} sumR={fmt_float(s['sum_r'])} PF={fmt_float(s['pf'])} maxDD={fmt_float(s['max_dd'])} alerts={alerts}",
         )
     print("grid all alerts:")
     grid: dict[tuple[str, str, str], list[dict[str, str]]] = {}
@@ -697,7 +743,7 @@ def print_reports(rows: list[dict[str, str]], counts: dict[str, list[int]]) -> N
         grid.setdefault((row["variant"], row["tp_mode"], row["price_path"]), []).append(row)
     for key in sorted(grid):
         s = stats(grid[key])
-        print("|".join(key), f"count={s['count']} skipped={s['skipped']} winrate={fmt_float(s['winrate'])} avgR={fmt_float(s['avg_r'])} sumR={fmt_float(s['sum_r'])} PF={fmt_float(s['pf'])} maxDD={fmt_float(s['max_dd'])}")
+        print("|".join(key), f"count={s['count']} skipped={s['skipped']} sl_skip={s['skipped_sl_before_entry']} incomplete={s['path_incomplete']} no_entry={s['no_entry_data']} winrate={fmt_float(s['winrate'])} avgR={fmt_float(s['avg_r'])} sumR={fmt_float(s['sum_r'])} PF={fmt_float(s['pf'])} maxDD={fmt_float(s['max_dd'])}")
     target = [r for r in rows if r["variant"] == "delay=30s|timeout=4h|exit=TP1-only" and r["risk_bps"]]
     by_source: dict[str, list[float]] = {}
     for row in target:
