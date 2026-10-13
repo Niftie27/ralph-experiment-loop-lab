@@ -249,32 +249,35 @@ def compare_known_texts(
     ledger_by_id: dict[str, LedgerAlert],
     pairs: dict[str, Edge],
     text_cache: dict[str, str],
-) -> list[str]:
+) -> tuple[list[str], dict[str, int]]:
     mismatches: list[str] = []
+    compared = {"cache": 0, "ledger": 0}
     for export_id, edge in sorted(pairs.items(), key=lambda item: int(item[0])):
         ledger = ledger_by_id[edge.alert_id]
         cached = text_cache.get(ledger.telegram_message_id)
-        if not cached:
-            continue
         ex = exports_by_id[export_id]
-        parsed = parse_alert_text(cached)
-        for field in ("price", "sl", "tp1", "tp2", "tp3"):
-            export_value = getattr(ex, field)
-            if not decimal_equal(export_value, parsed[field]):
-                mismatches.append(f"{edge.alert_id} export_id={export_id} cache {field}: export={export_value} cache={parsed[field]}")
+        if cached:
+            parsed = parse_alert_text(cached)
+            compared["cache"] += 1
+            for field in ("price", "sl", "tp1", "tp2", "tp3"):
+                export_value = getattr(ex, field)
+                if not decimal_equal(export_value, parsed[field]):
+                    mismatches.append(f"{edge.alert_id} export_id={export_id} cache {field}: export={export_value} cache={parsed[field]}")
         ledger_fields = {
             "sl": ledger.sl_sent,
             "tp1": ledger.tp1_sent,
             "tp2": ledger.tp2_sent,
             "tp3": ledger.tp3_sent,
         }
+        if any(ledger_fields.values()):
+            compared["ledger"] += 1
         for field, raw in ledger_fields.items():
             if not raw:
                 continue
             ledger_value = parse_decimal(raw)
             if not decimal_equal(getattr(ex, field), ledger_value):
                 mismatches.append(f"{edge.alert_id} export_id={export_id} ledger {field}: export={getattr(ex, field)} ledger={ledger_value}")
-    return mismatches
+    return mismatches, compared
 
 
 def write_output(path: Path, exports: list[ExportAlert], pairs: dict[str, Edge], ambiguous_exports: set[str]) -> None:
@@ -334,6 +337,7 @@ def report(
     ambiguous_exports: set[str],
     ambiguous_alerts: set[str],
     mismatches: list[str],
+    known_text_compared: dict[str, int],
 ) -> str:
     paired_alerts = {edge.alert_id for edge in pairs.values()}
     unpaired_exports = [ex.export_id for ex in exports if ex.export_id not in pairs and ex.export_id not in ambiguous_exports]
@@ -355,6 +359,8 @@ def report(
         dt_line,
         "tp1_ge_price_by_format: " + ", ".join(f"{key}={bad}/{total}" for key, (bad, total) in by_format.items()),
         "tp1_ge_price_by_symbol_format: " + ", ".join(f"{key}={bad}/{total}" for key, (bad, total) in by_symbol_format.items()),
+        f"known_text_compared cache: {known_text_compared.get('cache', 0)}",
+        f"known_text_compared ledger: {known_text_compared.get('ledger', 0)}",
         f"known_text_mismatches: {len(mismatches)}",
     ]
     lines.extend(mismatches)
@@ -369,9 +375,9 @@ def run(args: argparse.Namespace) -> int:
     exports_by_id = {ex.export_id: ex for ex in exports}
     ledger_by_id = {led.alert_id: led for led in ledger}
     text_cache = load_text_cache(args.text_cache_csv)
-    mismatches = compare_known_texts(exports_by_id, ledger_by_id, pairs, text_cache)
+    mismatches, known_text_compared = compare_known_texts(exports_by_id, ledger_by_id, pairs, text_cache)
     write_output(args.output_csv, exports, pairs, ambiguous_exports)
-    print(report(exports, ledger, edges, pairs, ambiguous_exports, ambiguous_alerts, mismatches))
+    print(report(exports, ledger, edges, pairs, ambiguous_exports, ambiguous_alerts, mismatches, known_text_compared))
     return 0
 
 

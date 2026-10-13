@@ -71,6 +71,27 @@ class PairTelegramExportTests(unittest.TestCase):
         self.assertEqual(ambiguous_exports, {"1"})
         self.assertEqual(ambiguous_alerts, set())
 
+    def test_known_text_report_counts_cache_and_ledger_comparisons(self):
+        ex = export(1)
+        led = ledger("a1")
+        edge = pte.Edge("1", "a1", 0)
+        mismatches, compared = pte.compare_known_texts(
+            {"1": ex},
+            {"a1": led},
+            {"1": edge},
+            {"1": "BTC SHORT CANDIDATE @100 | manual only\nSL ~102 | TP 99/98/97"},
+        )
+        self.assertEqual(mismatches, [])
+        self.assertEqual(compared, {"cache": 1, "ledger": 1})
+
+    def test_known_text_report_counts_ledger_when_cache_missing(self):
+        ex = export(1)
+        led = ledger("a1")
+        edge = pte.Edge("1", "a1", 0)
+        mismatches, compared = pte.compare_known_texts({"1": ex}, {"a1": led}, {"1": edge}, {})
+        self.assertEqual(mismatches, [])
+        self.assertEqual(compared, {"cache": 0, "ledger": 1})
+
 
 if __name__ == "__main__":
     unittest.main()
