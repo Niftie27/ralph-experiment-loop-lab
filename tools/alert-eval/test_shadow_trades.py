@@ -65,6 +65,24 @@ class ShadowTradeTests(unittest.TestCase):
         self.assertEqual(sent["exit_reason"], "TP")
         self.assertEqual(corrected["exit_reason"], "timeout")
 
+    def test_marketable_tp_fills_at_next_trade_price(self):
+        row = run([tr(5, 100), tr(6, 100.5), tr(8, 99.0)], exit_mode="TP1-only", tps=(101, 98, 97))
+        self.assertEqual(row["exit_reason"], "TP")
+        self.assertEqual(row["exit_price"], "100.5")
+        self.assertAlmostEqual(float(row["R"]), st.trade_r(100, 100.5, 102), places=7)
+
+    def test_marketable_tp_first_trade_above_tp_rests_then_fills_at_tp(self):
+        row = run([tr(5, 100), tr(6, 101.5), tr(8, 100.8)], exit_mode="TP1-only", tps=(101, 98, 97))
+        self.assertEqual(row["exit_reason"], "TP")
+        self.assertEqual(row["exit_price"], "101")
+        self.assertAlmostEqual(float(row["R"]), st.trade_r(100, 101, 102), places=7)
+
+    def test_marketable_tp_sl_priority_on_first_trade(self):
+        row = run([tr(5, 100), tr(6, 102.5), tr(8, 100.5)], exit_mode="TP1-only", tps=(101, 98, 97))
+        self.assertEqual(row["exit_reason"], "SL")
+        self.assertEqual(row["exit_price"], "102.5")
+        self.assertAlmostEqual(float(row["R"]), st.trade_r(100, 102.5, 102), places=7)
+
     def test_entry_already_beyond_sl_skipped(self):
         row = run([tr(5, 103), tr(6, 99)])
         self.assertEqual(row["exit_reason"], "skipped_sl_before_entry")
@@ -100,6 +118,17 @@ class ShadowTradeTests(unittest.TestCase):
         )
         expected = st.trade_r(100, 98, 102) / 2 + st.trade_r(100, 97, 102) / 2
         self.assertEqual(row["dropped_tps"], "1")
+        self.assertAlmostEqual(float(row["R"]), expected, places=7)
+
+    def test_ladder_marketable_and_normal_leg(self):
+        row = run([tr(5, 100), tr(6, 100.5), tr(7, 98), tr(8, 97)], exit_mode="ladder", tps=(101, 98, 97))
+        expected = (
+            st.trade_r(100, 100.5, 102) / 3
+            + st.trade_r(100, 98, 102) / 3
+            + st.trade_r(100, 97, 102) / 3
+        )
+        self.assertEqual(row["exit_reason"], "TP3")
+        self.assertEqual(row["exit_price"], f"{((100.5 + 98 + 97) / 3):.12g}")
         self.assertAlmostEqual(float(row["R"]), expected, places=7)
 
     def test_window_loader_zip_in_window_and_ordered(self):

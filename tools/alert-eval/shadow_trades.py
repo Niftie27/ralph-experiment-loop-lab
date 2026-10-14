@@ -563,6 +563,7 @@ def eval_one_target(
     entry = prices[entry_i]
     deadline_ms = entry_time_ms + timeout_s * 1000
     last_i: int | None = None
+    marketable_tp = tp is not None and tp >= entry
     for i in range(entry_i + 1, len(times)):
         if times[i] > deadline_ms:
             break
@@ -570,6 +571,8 @@ def eval_one_target(
         price = prices[i]
         if price >= alert.sl:
             return finish(row, "SL", times[i], trade_r(entry, price, alert.sl), price)
+        if marketable_tp and i == entry_i + 1 and price <= tp:
+            return finish(row, "TP", times[i], trade_r(entry, price, alert.sl), price)
         if tp is not None and price <= tp:
             return finish(row, "TP", times[i], trade_r(entry, tp, alert.sl), tp)
     if not is_full_path_covered(covered_until, entry_time_ms, timeout_s) or last_i is None:
@@ -618,8 +621,9 @@ def eval_ladder(
             for open_slice in hit:
                 weight = float(open_slice["weight"])
                 tp_price = float(open_slice["tp"])
-                realized.append(weight * trade_r(entry, tp_price, alert.sl))
-                exit_notional += weight * tp_price
+                exit_price = price if i == entry_i + 1 and tp_price >= entry else tp_price
+                realized.append(weight * trade_r(entry, exit_price, alert.sl))
+                exit_notional += weight * exit_price
             open_slices = [s for s in open_slices if s not in hit]
             last_event = (f"TP{hit[-1]['idx']}", i, exit_notional)
             if not open_slices:
