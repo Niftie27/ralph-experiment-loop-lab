@@ -1,0 +1,818 @@
+{
+  "generatedAt": "2026-10-17T11:48:15.727Z",
+  "finishedAt": "2026-10-17T11:51:42.035Z",
+  "runtimeSeconds": 206.308,
+  "period": "research",
+  "entryMode": "next_open",
+  "dataStart": "2021-10-18T00:00:00.000Z",
+  "dataEnd": "2025-10-17T00:00:00.000Z",
+  "costs": {
+    "feeBpsPerSide": 4,
+    "slippageBpsPerSide": 3
+  },
+  "gates": {
+    "minSample": 80,
+    "minOutOfSampleSample": 20,
+    "minDeflatedSharpe": 0.35,
+    "minProfitFactor": 1.15,
+    "minExpectancyR": 0.05,
+    "minOutOfSampleExpectancyR": 0.01,
+    "minBaselineExpectancyLiftR": 0.01,
+    "maxDrawdownR": 18,
+    "maxWorstSliceExpectancyR": -0.25
+  },
+  "limits": {
+    "maxVariants": 600,
+    "maxMs": 5400000
+  },
+  "stopReason": "exhausted",
+  "trialCount": 919,
+  "trialCountMethod": "max(config floor, historical distinct variants + full queued batch); conservative cross-family proxy, not formal DSR",
+  "history": {
+    "method": "Distinct candidateId:variantId union across matching reports; repeated survivor/verdict rows deduplicated. Historical symbol/timeframe interpretations are unchanged.",
+    "uniqueVariants": 521,
+    "perRule": {
+      "breakout": 88,
+      "rsi_reversion": 130,
+      "ma_reclaim": 99,
+      "funding_reversion": 24,
+      "funding_reversion_trend": 12,
+      "funding_reversion_trend_timeframe": 16,
+      "funding_oi_reversion": 4,
+      "volume_velocity_fade": 148
+    },
+    "perSourceFamily": {
+      "alert_edge_breakdown": 8,
+      "perp_context_reversion": 56,
+      "alert_edge_reversion": 16,
+      "alert_edge_trend_pullback": 2,
+      "alert_edge_breakout": 4,
+      "alert_feedback_velocity": 36,
+      "trend_breakout": 4,
+      "trend_pullback": 1,
+      "mean_reversion": 4,
+      "spam_alt_btc_gated_continuation": 64,
+      "spam_breakout": 72,
+      "spam_alt_btc_gated_fade": 72,
+      "spam_trend_pullback": 32,
+      "spam_mean_reversion": 54,
+      "spam_velocity_fade": 96
+    },
+    "sources": [
+      {
+        "file": "filter-report.json",
+        "uniqueVariants": 131,
+        "perRule": {
+          "breakout": 16,
+          "funding_reversion_trend": 12,
+          "funding_reversion": 24,
+          "funding_reversion_trend_timeframe": 16,
+          "volume_velocity_fade": 52,
+          "funding_oi_reversion": 4,
+          "ma_reclaim": 3,
+          "rsi_reversion": 4
+        }
+      },
+      {
+        "file": "strategy-spam-funnel-btc-first-pass.json",
+        "uniqueVariants": 390,
+        "perRule": {
+          "ma_reclaim": 96,
+          "breakout": 72,
+          "rsi_reversion": 126,
+          "volume_velocity_fade": 96
+        }
+      },
+      {
+        "file": "strategy-spam-survivor-stress.json",
+        "uniqueVariants": 1,
+        "perRule": {
+          "ma_reclaim": 1
+        }
+      }
+    ]
+  },
+  "totals": {
+    "run": 398,
+    "passed": 17,
+    "rejected": 381,
+    "errors": 0,
+    "remaining": 0
+  },
+  "priorErrorItems": [],
+  "perFamily": {
+    "breakout": {
+      "run": 104,
+      "pass": 14,
+      "reject": 90,
+      "error": 0
+    },
+    "rsi_reversion": {
+      "run": 98,
+      "pass": 0,
+      "reject": 98,
+      "error": 0
+    },
+    "ma_reclaim": {
+      "run": 68,
+      "pass": 3,
+      "reject": 65,
+      "error": 0
+    },
+    "funding_reversion": {
+      "run": 0,
+      "pass": 0,
+      "reject": 0,
+      "error": 0
+    },
+    "funding_reversion_trend": {
+      "run": 0,
+      "pass": 0,
+      "reject": 0,
+      "error": 0
+    },
+    "funding_reversion_trend_timeframe": {
+      "run": 0,
+      "pass": 0,
+      "reject": 0,
+      "error": 0
+    },
+    "funding_oi_reversion": {
+      "run": 0,
+      "pass": 0,
+      "reject": 0,
+      "error": 0
+    },
+    "volume_velocity_fade": {
+      "run": 128,
+      "pass": 0,
+      "reject": 128,
+      "error": 0
+    }
+  },
+  "rejectionReasons": {
+    "weak_expectancy_after_costs": 284,
+    "weak_profit_factor": 315,
+    "deflated_sharpe_fail": 300,
+    "drawdown_too_high": 318,
+    "bad_failure_slice": 295,
+    "weak_out_of_sample_expectancy": 321,
+    "weak_walk_forward_out_of_sample": 302,
+    "weak_out_of_sample_baseline_lift": 275,
+    "weak_walk_forward_expectancy": 230,
+    "low_sample": 93,
+    "low_out_of_sample_sample": 90,
+    "weak_walk_forward_baseline_lift": 223,
+    "weak_baseline_lift": 272,
+    "insufficient_walk_forward_folds": 60,
+    "invalid_walk_forward_worst_fold": 38
+  },
+  "top10": [
+    {
+      "id": "h3a-0385-v0",
+      "rule": "volume_velocity_fade",
+      "symbol": "BTC",
+      "timeframe": "4h",
+      "sourceCandidateId": "alert-edge-doge-momentum-reversal-long-v0",
+      "status": "reject",
+      "reasons": [
+        "low_sample",
+        "deflated_sharpe_fail",
+        "low_out_of_sample_sample"
+      ],
+      "trades": 15,
+      "expectancyR": 0.2831,
+      "profitFactor": 1.5291,
+      "outOfSampleTrades": 7,
+      "outOfSampleExpectancyR": 0.4636,
+      "deflatedSharpe": -0.3458
+    },
+    {
+      "id": "h3a-0393-v0",
+      "rule": "volume_velocity_fade",
+      "symbol": "BTC",
+      "timeframe": "4h",
+      "sourceCandidateId": "alert-edge-doge-momentum-reversal-long-v0",
+      "status": "reject",
+      "reasons": [
+        "low_sample",
+        "deflated_sharpe_fail",
+        "low_out_of_sample_sample",
+        "weak_out_of_sample_baseline_lift",
+        "weak_walk_forward_baseline_lift"
+      ],
+      "trades": 12,
+      "expectancyR": 0.4832,
+      "profitFactor": 2.0192,
+      "outOfSampleTrades": 7,
+      "outOfSampleExpectancyR": 0.4636,
+      "deflatedSharpe": -0.2759
+    },
+    {
+      "id": "h3a-0286-v0",
+      "rule": "breakout",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "sourceCandidateId": "alert-edge-xrp-range-breakout-v0",
+      "status": "pass",
+      "reasons": [],
+      "trades": 112,
+      "expectancyR": 0.3206,
+      "profitFactor": 1.6557,
+      "outOfSampleTrades": 66,
+      "outOfSampleExpectancyR": 0.4289,
+      "deflatedSharpe": 1.8109
+    },
+    {
+      "id": "h3a-0298-v0",
+      "rule": "breakout",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "sourceCandidateId": "alert-edge-xrp-range-breakout-v0",
+      "status": "pass",
+      "reasons": [],
+      "trades": 111,
+      "expectancyR": 0.3329,
+      "profitFactor": 1.6882,
+      "outOfSampleTrades": 66,
+      "outOfSampleExpectancyR": 0.4289,
+      "deflatedSharpe": 1.8754
+    },
+    {
+      "id": "h3a-0292-v0",
+      "rule": "breakout",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "sourceCandidateId": "alert-edge-xrp-range-breakout-v0",
+      "status": "pass",
+      "reasons": [],
+      "trades": 101,
+      "expectancyR": 0.2996,
+      "profitFactor": 1.5867,
+      "outOfSampleTrades": 59,
+      "outOfSampleExpectancyR": 0.3775,
+      "deflatedSharpe": 1.5336
+    },
+    {
+      "id": "h3a-0304-v0",
+      "rule": "breakout",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "sourceCandidateId": "alert-edge-xrp-range-breakout-v0",
+      "status": "pass",
+      "reasons": [],
+      "trades": 100,
+      "expectancyR": 0.3131,
+      "profitFactor": 1.6198,
+      "outOfSampleTrades": 59,
+      "outOfSampleExpectancyR": 0.3775,
+      "deflatedSharpe": 1.5992
+    },
+    {
+      "id": "h3a-0364-v0",
+      "rule": "breakout",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "sourceCandidateId": "trend-breakout-volume-v0",
+      "status": "reject",
+      "reasons": [
+        "drawdown_too_high"
+      ],
+      "trades": 545,
+      "expectancyR": 0.1561,
+      "profitFactor": 1.2869,
+      "outOfSampleTrades": 174,
+      "outOfSampleExpectancyR": 0.3647,
+      "deflatedSharpe": 2.4228
+    },
+    {
+      "id": "h3a-0178-v0",
+      "rule": "breakout",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "sourceCandidateId": "spam-btc-volume-breakout-v0",
+      "status": "pass",
+      "reasons": [],
+      "trades": 491,
+      "expectancyR": 0.1625,
+      "profitFactor": 1.3002,
+      "outOfSampleTrades": 161,
+      "outOfSampleExpectancyR": 0.3455,
+      "deflatedSharpe": 2.3714
+    },
+    {
+      "id": "h3a-0186-v0",
+      "rule": "breakout",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "sourceCandidateId": "spam-btc-volume-breakout-v0",
+      "status": "pass",
+      "reasons": [],
+      "trades": 492,
+      "expectancyR": 0.1634,
+      "profitFactor": 1.3024,
+      "outOfSampleTrades": 161,
+      "outOfSampleExpectancyR": 0.3455,
+      "deflatedSharpe": 2.3893
+    },
+    {
+      "id": "h3a-0162-v0",
+      "rule": "breakout",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "sourceCandidateId": "spam-btc-volume-breakout-v0",
+      "status": "pass",
+      "reasons": [],
+      "trades": 492,
+      "expectancyR": 0.1601,
+      "profitFactor": 1.2951,
+      "outOfSampleTrades": 162,
+      "outOfSampleExpectancyR": 0.3369,
+      "deflatedSharpe": 2.3376
+    }
+  ],
+  "skipped": [
+    {
+      "rule": "breakout",
+      "symbol": "BTC",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "breakout",
+      "symbol": "ETH",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "breakout",
+      "symbol": "ETH",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "breakout",
+      "symbol": "SOL",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "breakout",
+      "symbol": "HYPE",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "breakout",
+      "symbol": "HYPE",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "rsi_reversion",
+      "symbol": "BTC",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "rsi_reversion",
+      "symbol": "ETH",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "rsi_reversion",
+      "symbol": "ETH",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "rsi_reversion",
+      "symbol": "SOL",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "rsi_reversion",
+      "symbol": "HYPE",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "rsi_reversion",
+      "symbol": "HYPE",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "ma_reclaim",
+      "symbol": "BTC",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "ma_reclaim",
+      "symbol": "ETH",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "ma_reclaim",
+      "symbol": "ETH",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "ma_reclaim",
+      "symbol": "SOL",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "ma_reclaim",
+      "symbol": "HYPE",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "ma_reclaim",
+      "symbol": "HYPE",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion",
+      "symbol": "BTC",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion",
+      "symbol": "BTC",
+      "timeframe": "4h",
+      "reasons": [
+        "required market unavailable: spot",
+        "missing complete fundingRate"
+      ]
+    },
+    {
+      "rule": "funding_reversion",
+      "symbol": "ETH",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion",
+      "symbol": "ETH",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion",
+      "symbol": "SOL",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "reasons": [
+        "required market unavailable: spot",
+        "missing complete fundingRate"
+      ]
+    },
+    {
+      "rule": "funding_reversion",
+      "symbol": "HYPE",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion",
+      "symbol": "HYPE",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend",
+      "symbol": "BTC",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend",
+      "symbol": "BTC",
+      "timeframe": "4h",
+      "reasons": [
+        "required market unavailable: spot",
+        "missing complete fundingRate"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend",
+      "symbol": "ETH",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend",
+      "symbol": "ETH",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend",
+      "symbol": "SOL",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "reasons": [
+        "required market unavailable: spot",
+        "missing complete fundingRate"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend",
+      "symbol": "HYPE",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend",
+      "symbol": "HYPE",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend_timeframe",
+      "symbol": "BTC",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend_timeframe",
+      "symbol": "BTC",
+      "timeframe": "4h",
+      "reasons": [
+        "required market unavailable: spot",
+        "missing complete fundingRate"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend_timeframe",
+      "symbol": "ETH",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend_timeframe",
+      "symbol": "ETH",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend_timeframe",
+      "symbol": "SOL",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend_timeframe",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "reasons": [
+        "required market unavailable: spot",
+        "missing complete fundingRate"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend_timeframe",
+      "symbol": "HYPE",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_reversion_trend_timeframe",
+      "symbol": "HYPE",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_oi_reversion",
+      "symbol": "BTC",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_oi_reversion",
+      "symbol": "BTC",
+      "timeframe": "4h",
+      "reasons": [
+        "required market unavailable: spot",
+        "missing complete fundingRate",
+        "missing complete openInterestChangePct"
+      ]
+    },
+    {
+      "rule": "funding_oi_reversion",
+      "symbol": "ETH",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_oi_reversion",
+      "symbol": "ETH",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_oi_reversion",
+      "symbol": "SOL",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_oi_reversion",
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "reasons": [
+        "required market unavailable: spot",
+        "missing complete fundingRate",
+        "missing complete openInterestChangePct"
+      ]
+    },
+    {
+      "rule": "funding_oi_reversion",
+      "symbol": "HYPE",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "funding_oi_reversion",
+      "symbol": "HYPE",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "volume_velocity_fade",
+      "symbol": "BTC",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "volume_velocity_fade",
+      "symbol": "ETH",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "volume_velocity_fade",
+      "symbol": "ETH",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "volume_velocity_fade",
+      "symbol": "SOL",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "volume_velocity_fade",
+      "symbol": "HYPE",
+      "timeframe": "1h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    },
+    {
+      "rule": "volume_velocity_fade",
+      "symbol": "HYPE",
+      "timeframe": "4h",
+      "reasons": [
+        "missing frozen research OHLCV"
+      ]
+    }
+  ],
+  "eligibleBeforeCap": 398,
+  "deferredByCap": 0,
+  "initialRegistryLines": 2,
+  "registryLineCount": 400,
+  "registryAppendedRows": 398,
+  "registryPrefixSha256": "676924649f530ca284c43b272a15a09bc71c4ece3ab14bcce3ce79d8e3c6775f",
+  "registryPrefixPreserved": true,
+  "runtimeHashes": {
+    "src/run-queue-r6.sh": "4d69e782c604ad970d00bcdb8da5aad4392c8f1ae28e360ea6fcab0c7f7a9ca4",
+    "src/run-queue.mjs": "a09eaf079e6fc4b424a36dd9d738a8306fab74af5578cc3a5c353770fc291fc8",
+    "src/queue-worker.mjs": "94d3215d47927595dcb0e1ec1f976dae37c520a32ce4840f2cdaf8a3812ae888",
+    "src/research-queue.mjs": "3ae438e06cd251ce21a7cbaaa91e8bafe9cc17d4e8ad81a59a6d371fb6144ee9",
+    "src/spam-candidates.mjs": "1dc59452f182d3499c3cae9f7ba9ee8c96214d162fb542dda85fed4f332d0e77",
+    "src/candidate-spec.mjs": "df59fc5a9848d7ddaabbf9a0b5c695714cae88599c9ff7ab8c6d4bbda87239e2",
+    "src/engine.mjs": "eea6985acab4ee754b369f65a3eed639252fe037d0d8e103a4ad6605fe9e2b5d",
+    "src/h2-contract.mjs": "01fdd8ab9aaae9cfecb78c667421df12503574b989ab372b8d6a955290c70792",
+    "config.default.json": "c92a3c23a19d2b6c7e8f7fd9d343c599e07d24e22e1e3e7348e0374ed29cff5c"
+  },
+  "runtimeMatchesRepo": true,
+  "queueInputSha256": "d91fa214572b1b765a0f0d4a4cdef9ccdce758d7be1e0394bbd60aca7b231685",
+  "integrityErrors": [],
+  "itemErrors": [],
+  "inputContract": "Complete contiguous H2 research OHLCV; RSI/ATR/MA/volume-Z/trend/volatility locally derived. Funding/OI and BTC gate inputs required when declared. Unknown/manual evidence is not substituted. Existing minLookbackDays=1825 is a legacy rolling-fetch target; the explicit H2 research window supersedes it. No holdout is used.",
+  "selectionNote": "Existing grids were historically explored outside this research window. This batch is not independent validation or strategy promotion."
+}

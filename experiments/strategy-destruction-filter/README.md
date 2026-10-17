@@ -99,3 +99,15 @@ Generating candidates is cheap. Survival is expensive. RALPH should discard many
 ## Latest Integration Read
 
 The first liquid alert-edge B-tier bucket candidate, `alert-edge-xrp-range-breakout-v0`, was added on 2026-08-25 with XRP Binance spot data. The latest verified run tests 8 candidates / 69 variants / 0 survivors. The best XRP variant has positive out-of-sample expectancy but fails headline expectancy, profit factor, deflated-Sharpe, drawdown, and baseline-lift gates, so it is rejected rather than paper-promoted.
+
+## H3a bounded research queue
+
+`node src/build-research-queue.mjs` creates `research-queue.json` once (refuses to overwrite an existing queue). It expands only existing seed/spam grids over BTC, ETH, SOL, HYPE and 1h/4h, deduplicates identical parameter/direction/gate tuples, and round-robins available combinations up to 600 items. All 64 combinations are accounted for by queued items or explicit skips. Input checks are local-only and require frozen, complete H2 research candles and every declared feature. Legacy rolling-fetch lookbacks do not override the fixed H2 window.
+
+`node src/run-queue.mjs` processes pending items in order, at most 600 and 90 minutes per invocation. It uses `backtestVariant`, `next_open`, unchanged default costs/gates, and the append-only registry. A deadline-bounded worker handles each item; the first error is persisted and exits nonzero. `running` checkpoints are never retried automatically: inspect the action log, registry and scope first. A lock prevents simultaneous invocations. Smaller invocation limits are supported via `--max-variants` and `--max-ms`.
+
+The runner appends `results/queue-run-YYYY-MM-DD.md` and writes timestamped JSON with family counts, overlapping rejection reasons, top ten OOS expectancy rows (including rejected/low-sample rows), historical trial inventory, frozen input provenance and runtime hashes. Trial count is the historical distinct candidate/variant union plus the whole queued batch, not just the current chunk. Existing deflated Sharpe is a proxy, not formal DSR. Existing grids have selection contamination; no holdout or promotion claim follows.
+
+The authorized detached R6 launch is recorded in `results/h3a-action-log.md`; `src/run-queue-r6.sh` records its exit code. No scheduler is installed. Do not raise MemoryMax or restart after an OOM. Data caches are never committed.
+
+Offline checks: `node --test` (queue validation, cap/deadline, failing-item CLI exit, successful H2 registry append, and existing engine/H2 tests).

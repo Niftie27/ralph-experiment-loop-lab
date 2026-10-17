@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { researchConfig } from "./research-queue.mjs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { validateCandidateSet } from "./candidate-spec.mjs";
@@ -15,7 +16,7 @@ const REPORT_MD = path.join(RESULTS_DIR, "filter-report.md");
 const SURVIVORS_JSON = path.join(RESULTS_DIR, "survivors.json");
 const REJECTED_JSONL = path.join(RESULTS_DIR, "rejected-ideas.jsonl");
 
-const config = JSON.parse(await fs.readFile(CONFIG_PATH, "utf8"));
+const config = researchConfig(JSON.parse(await fs.readFile(CONFIG_PATH, "utf8")));
 const candidates = JSON.parse(await fs.readFile(CANDIDATES_PATH, "utf8"));
 const candidateValidation = validateCandidateSet(candidates);
 if (!candidateValidation.ok) {
@@ -29,7 +30,7 @@ const data = new Map();
 const sources = [];
 for (const symbol of config.data.symbols) {
   for (const timeframe of config.data.timeframes) {
-    const fetched = await fetchConfiguredCandles(symbol, timeframe);
+    const fetched = await fetchConfiguredCandles(symbol, timeframe, config);
     data.set(`${symbol.symbol}|${timeframe.id}`, fetched.candles);
     sources.push({
       symbol: symbol.symbol,
@@ -52,6 +53,8 @@ const runsByVariant = new Map(variants.map((variant) => [variant.variantId, []])
 for (const variant of variants) {
   for (const symbol of config.data.symbols) {
     for (const timeframe of config.data.timeframes) {
+      if (variant.params.symbol && variant.params.symbol !== symbol.symbol) continue;
+      if (variant.params.timeframe && variant.params.timeframe !== timeframe.id) continue;
       const candles = data.get(`${symbol.symbol}|${timeframe.id}`);
       runsByVariant.get(variant.variantId).push(backtestVariant(variant, candles, symbol.symbol, timeframe, config));
     }

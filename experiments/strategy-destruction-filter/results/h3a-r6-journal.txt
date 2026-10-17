@@ -1,0 +1,2 @@
+Started ralph-h3a-20261017.scope - /usr/bin/nice -n 19 ionice -c 3 bash src/run-queue-r6.sh.
+ralph-h3a-20261017.scope: Consumed 1min 42.988s CPU time, 94.1M memory peak, 0B memory swap peak.
