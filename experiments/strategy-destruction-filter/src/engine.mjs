@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import { windowFor, selectWindow, guardHoldout, identityFor, freezeSeries, pathsFor, appendRegistry, sha256 } from './h2-contract.mjs';
+
 export function round(value, digits = 4) {
   return Number.isFinite(value) ? Number(value.toFixed(digits)) : null;
 }
@@ -341,6 +344,25 @@ function finishTrade(rawR, costR, candles, entryIndex, exitIndex, signal, ctx, e
 }
 
 export function backtestVariant(variant, candles, symbol, timeframe, config, options = {}) {
+  const identity = identityFor(variant, symbol, timeframe, config);
+  guardHoldout(config, identity); // Before signal evaluation, simulation, or metrics.
+  candles = selectWindow(candles, config);
+  const frozen = freezeSeries(candles, symbol, timeframe.id, config);
+  const run = backtestVariantCore(variant, frozen.candles, symbol, timeframe, config, options);
+  const stats = statsForTrades(run.trades);
+  const w = windowFor(config);
+  appendRegistry(pathsFor(config).registry, {
+    utcTime: new Date().toISOString(), ...identity, identity,
+    candidateFamily: variant.family ?? variant.candidateId,
+    period: { name: w.period, dataStart: w.dataStart, dataEnd: w.dataEnd },
+    manifestSha256: frozen.manifestSha256,
+    engineSha256: sha256(fs.readFileSync(new URL('./engine.mjs', import.meta.url))),
+    metrics: { trades: stats.sample, expectancyR: stats.expectancyR, profitFactor: stats.profitFactor, maxDrawdownR: stats.maxDrawdownR }
+  });
+  return run;
+}
+
+function backtestVariantCore(variant, candles, symbol, timeframe, config, options = {}) {
   const trades = [];
   const baselineTrades = [];
   const purgedBoundaryTrades = [];

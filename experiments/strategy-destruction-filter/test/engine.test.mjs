@@ -1,6 +1,16 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from 'node:os';
+import path from 'node:path';
+const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'h2-engine-test-'));
+let testRun = 0;
+function backtestVariant(variant, candles, symbol, timeframe, config, options) {
+  const dir = path.join(testRoot, String(testRun++));
+  return registeredBacktestVariant(variant, candles, symbol, timeframe, { ...config,
+    h2Paths: { cache: path.join(dir, 'cache'), manifest: path.join(dir, 'manifest.json'), registry: path.join(dir, 'registry.jsonl') }
+  }, options);
+}
 import {
   cartesianProduct,
   expandCandidate,
@@ -9,7 +19,7 @@ import {
   splitBoundaryBars,
   rollingReturnPct,
   baselineSignalFor,
-  backtestVariant,
+  backtestVariant as registeredBacktestVariant,
   marketContext,
   signalForVariant,
   statsForTrades,
@@ -238,7 +248,7 @@ test("parseBybitKlines normalizes newest-first Bybit rows", () => {
 
 test("funding_oi_reversion only signals with perp context", () => {
   const candles = Array.from({ length: 80 }, (_, index) => ({
-    time: index,
+    time: 1634515200 + index,
     open: 100 + index * 0.2,
     high: 101 + index * 0.2,
     low: 99 + index * 0.2,
@@ -267,7 +277,7 @@ test("funding_oi_reversion only signals with perp context", () => {
 
 test("funding_reversion can test funding-only fades without open interest", () => {
   const candles = Array.from({ length: 80 }, (_, index) => ({
-    time: index,
+    time: 1634515200 + index,
     open: 100 + index * 0.2,
     high: 101 + index * 0.2,
     low: 99 + index * 0.2,
@@ -293,14 +303,14 @@ test("funding_reversion can test funding-only fades without open interest", () =
 
 test("volume_velocity_fade signals contrarian entries after large high-volume moves", () => {
   const candles = Array.from({ length: 90 }, (_, index) => ({
-    time: index,
+    time: 1634515200 + index,
     open: 100 - index * 0.05,
     high: 101 - index * 0.05,
     low: 99 - index * 0.05,
     close: 100 - index * 0.05,
     volume: 100
   }));
-  candles[89] = { time: 89, open: 96, high: 96.5, low: 90, close: 90, volume: 1000 };
+  candles[89] = { time: 1634515200 + 89, open: 96, high: 96.5, low: 90, close: 90, volume: 1000 };
   const ctx = marketContext(candles, 89);
   const signals = signalForVariant({
     rule: "volume_velocity_fade",
@@ -321,7 +331,7 @@ test("volume_velocity_fade signals contrarian entries after large high-volume mo
 
 test("funding_reversion_trend only signals in the requested trend regime", () => {
   const candles = Array.from({ length: 80 }, (_, index) => ({
-    time: index,
+    time: 1634515200 + index,
     open: 100 + index * 0.2,
     high: 101 + index * 0.2,
     low: 99 + index * 0.2,
@@ -349,7 +359,7 @@ test("funding_reversion_trend only signals in the requested trend regime", () =>
 
 test("timeframe-scoped variants skip non-matching backtest runs", () => {
   const candles = Array.from({ length: 90 }, (_, index) => ({
-    time: index,
+    time: 1634515200 + index,
     open: 100 + index * 0.2,
     high: 101 + index * 0.2,
     low: 99 + index * 0.2,
@@ -385,9 +395,9 @@ test("timeframe-scoped variants skip non-matching backtest runs", () => {
 
 test("backtestVariant excludes purged boundary trades from candidate and baseline metrics", () => {
   const candles = Array.from({ length: 100 }, (_, index) => ({
-    time: index,
+    time: 1634515200 + index,
     open: 100,
-    high: 102,
+    high: Math.max(102, 100 + (index >= 60 ? index * 0.05 : 0)),
     low: 99,
     close: 100 + (index >= 60 ? index * 0.05 : 0),
     volume: 100 + index
@@ -420,7 +430,7 @@ test("backtestVariant excludes purged boundary trades from candidate and baselin
 
 test("generic symbol and regime filters narrow candidate backtests", () => {
   const candles = Array.from({ length: 90 }, (_, index) => ({
-    time: index,
+    time: 1634515200 + index,
     open: 100 + index * 0.2,
     high: 101 + index * 0.2,
     low: 99 + index * 0.2,
@@ -693,7 +703,7 @@ test("signal decisions are stable after truncating warmup history", () => {
     const wave = Math.sin(index / 5);
     const close = 100 + index * 0.03 + wave * 2;
     return {
-      time: index,
+      time: 1634515200 + index,
       open: close - 0.2,
       high: close + 0.8,
       low: close - 0.8,
@@ -898,7 +908,7 @@ test("next_open bounds penultimate and last-bar signals without reading past the
 });
 
 test("next_open applies actual entry time, costs and split to matched baseline trades", () => {
-  const candles = Array.from({ length: 100 }, (_, i) => ({ time: i, open: 100 + i, high: 102 + i, low: 99 + i, close: 101 + i, volume: 100 + i }));
+  const candles = Array.from({ length: 100 }, (_, i) => ({ time: 1634515200 + i, open: 100 + i, high: 102 + i, low: 99 + i, close: 101 + i, volume: 100 + i }));
   const variant = { rule: "breakout", directions: ["long"], params: { lookback: 2, volumeZ: -10, rsiMinLong: 0 } };
   // Make close exceed the previous bar's high.
   for (const candle of candles) candle.close = candle.high;

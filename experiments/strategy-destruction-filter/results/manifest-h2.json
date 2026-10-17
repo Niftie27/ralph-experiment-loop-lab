@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "periods": {
+    "research": [
+      "2021-10-18T00:00:00.000Z",
+      "2025-10-17T00:00:00.000Z"
+    ],
+    "holdout": [
+      "2025-10-17T00:00:00.000Z",
+      "2026-10-17T00:00:00.000Z"
+    ]
+  },
+  "series": [
+    {
+      "symbol": "BTC",
+      "timeframe": "4h",
+      "dataStart": "2021-10-18T00:00:00.000Z",
+      "dataEnd": "2025-10-17T00:00:00.000Z",
+      "snapshot": "data/market-cache/h2/054139a779f70677cd698235e88eff4a8c5d55f3487aaf8e5273070a27b60559.json",
+      "firstCandle": "2021-10-18T00:00:00.000Z",
+      "lastCandle": "2025-10-16T20:00:00.000Z",
+      "count": 8760,
+      "sha256": "054139a779f70677cd698235e88eff4a8c5d55f3487aaf8e5273070a27b60559"
+    },
+    {
+      "symbol": "SOL",
+      "timeframe": "4h",
+      "dataStart": "2021-10-18T00:00:00.000Z",
+      "dataEnd": "2025-10-17T00:00:00.000Z",
+      "snapshot": "data/market-cache/h2/d86acd4bbd1ce0048c5d41c67a16faf0270747fb1e395f6c81c063a219bc30fd.json",
+      "firstCandle": "2021-10-18T00:00:00.000Z",
+      "lastCandle": "2025-10-16T20:00:00.000Z",
+      "count": 8760,
+      "sha256": "d86acd4bbd1ce0048c5d41c67a16faf0270747fb1e395f6c81c063a219bc30fd"
+    }
+  ]
+}

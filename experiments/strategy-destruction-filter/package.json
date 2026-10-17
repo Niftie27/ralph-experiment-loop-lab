@@ -29,6 +29,8 @@
     "audit:backtest": "node ../../automation/backtest-readiness-audit.mjs",
     "critic": "node ../../automation/ralph-adversarial-improvement-loop.mjs",
     "verify": "node src/verify-filter.mjs",
-    "test": "node --test"
+    "test": "node --test",
+    "registry:counts": "node src/variant-counts.mjs",
+    "study:h2": "node src/run-h2-sol4h.mjs"
   }
 }

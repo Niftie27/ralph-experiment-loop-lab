@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { fetchBinanceSpotCandles } from "../../btc-eth-alert-edge/src/binance-data.mjs";
+import { windowFor, selectWindow, freezeSeries, cachedSeries } from "./h2-contract.mjs";
+const DEFAULT_CONFIG = JSON.parse(await fs.readFile(new URL("../config.default.json", import.meta.url), "utf8"));
 
 const BYBIT_KLINE_URL = "https://api.bybit.com/v5/market/kline";
 const BYBIT_INSTRUMENTS_URL = "https://api.bybit.com/v5/market/instruments-info";
@@ -10,34 +11,45 @@ const CACHE_DIR = path.resolve(new URL("../data/market-cache", import.meta.url).
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export async function fetchConfiguredCandles(symbolConfig, timeframeConfig) {
-  const provider = symbolConfig.provider || "binance-spot";
-  if (provider === "binance-spot") {
-    const fetched = await fetchBinanceSpotCandles(
-      symbolConfig.binanceSpotSymbol,
-      timeframeConfig.binanceInterval,
-      timeframeConfig.lookbackDays
-    );
-    return {
-      candles: fetched.candles,
-      meta: {
-        ...fetched.meta,
-        source: "binance-public-archive-rest-tail",
-        provider,
-        market: "spot"
-      }
-    };
-  }
-
-  if (provider === "bybit-linear") {
-    const fetched = await fetchBybitLinearCandles(symbolConfig.bybitSymbol, timeframeConfig.bybitInterval, timeframeConfig.lookbackDays);
-    if (symbolConfig.features?.length) {
-      return attachBybitLinearFeatures(fetched, symbolConfig.bybitSymbol, timeframeConfig.bybitInterval, symbolConfig.features);
+export async function fetchConfiguredCandles(symbolConfig, timeframeConfig, config = DEFAULT_CONFIG) {
+  const window = windowFor(config);
+  const symbol = symbolConfig.symbol;
+  const cached = cachedSeries(symbol, timeframeConfig.id, config);
+  if (cached) return cached;
+  let fetched;
+  const source = config.snapshotInputs?.[`${symbol}:${timeframeConfig.id}`];
+  if (source) {
+    fetched = JSON.parse(await fs.readFile(source, 'utf8'));
+  } else if (config.offline) {
+    throw new Error(`No offline snapshot: ${symbol} ${timeframeConfig.id}`);
+  } else if ((symbolConfig.provider ?? 'binance-spot') === 'binance-spot') {
+    // Explicit bounded pagination: never ask the rolling last-N-days v1 loader.
+    const candles = [];
+    let cursor = window.start * 1000;
+    while (cursor < window.end * 1000) {
+      const url = new URL('https://api.binance.com/api/v3/klines');
+      for (const [key, value] of Object.entries({ symbol: symbolConfig.binanceSpotSymbol,
+        interval: timeframeConfig.binanceInterval, startTime: cursor, endTime: window.end * 1000 - 1, limit: 1000 })) url.searchParams.set(key, String(value));
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Fixed Binance window fetch failed: ${response.status}`);
+      const rows = await response.json();
+      if (!rows.length) break;
+      const parsed = rows.map(r => ({ time: Number(r[0]) / 1000, open: Number(r[1]), high: Number(r[2]), low: Number(r[3]), close: Number(r[4]), volume: Number(r[5]) }));
+      const next = parsed.at(-1).time * 1000 + 1;
+      if (next <= cursor) throw new Error('Nonadvancing fixed-window pagination');
+      candles.push(...parsed);
+      cursor = next;
     }
-    return fetched;
-  }
-
-  throw new Error(`Unsupported market-data provider: ${provider}`);
+    fetched = { candles, meta: { source: 'binance-public-rest-fixed-window', market: 'spot' } };
+  } else if (symbolConfig.provider === 'bybit-linear') {
+    fetched = await fetchBybitLinearCandles(symbolConfig.bybitSymbol, timeframeConfig.bybitInterval,
+      (window.end - window.start) / 86400, { startMs: window.start * 1000, endMs: window.end * 1000 - 1, disableCache: true });
+    fetched.candles = selectWindow(fetched.candles, config);
+    if (symbolConfig.features?.length) fetched = await attachBybitLinearFeatures(fetched, symbolConfig.bybitSymbol,
+      timeframeConfig.bybitInterval, symbolConfig.features, { disableCache: true });
+  } else throw new Error(`Unsupported market-data provider: ${symbolConfig.provider}`);
+  const frozen = freezeSeries(fetched.candles, symbol, timeframeConfig.id, config);
+  return { candles: frozen.candles, meta: { ...fetched.meta, ...frozen.entry } };
 }
 
 export async function attachBybitLinearFeatures(fetched, symbol, interval, featureNames, options = {}) {

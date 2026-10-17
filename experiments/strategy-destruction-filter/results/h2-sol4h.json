@@ -1,0 +1,356 @@
+{
+  "generatedAt": "2026-10-17T07:00:54.246Z",
+  "candidateId": "spam-alt-btc-gated-ma-reclaim-v0",
+  "period": "research",
+  "dataStart": "2021-10-18T00:00:00.000Z",
+  "dataEnd": "2025-10-17T00:00:00.000Z",
+  "entryMode": "next_open",
+  "costs": {
+    "feeBpsPerSide": 4,
+    "slippageBpsPerSide": 3
+  },
+  "risk": {
+    "stopAtr": 1.2,
+    "targetR": 1.8
+  },
+  "selectionContamination": "This candidate was selected on data that includes the holdout period; a later holdout run is not clean validation for it.",
+  "holdoutMetricsComputed": false,
+  "inputContract": "Aligned, complete, contiguous SOL/BTC 4h OHLCV present; ATR14, RSI14, MA20/50, volume Z and BTC regime locally derived. No required inputs missing.",
+  "inputs": [
+    {
+      "symbol": "BTC",
+      "h1Sha256": "1abfaa8e39cf5ec3abf212f724f09101d597c20bbd5e156560c3dfac2bffa87e",
+      "archiveSha256": "c812eb23091aee82147ff58125762876ef9573d20b538d88fd915630f381c752",
+      "recoveredResearchCandles": 2,
+      "timeframe": "4h",
+      "dataStart": "2021-10-18T00:00:00.000Z",
+      "dataEnd": "2025-10-17T00:00:00.000Z",
+      "snapshot": "data/market-cache/h2/054139a779f70677cd698235e88eff4a8c5d55f3487aaf8e5273070a27b60559.json",
+      "firstCandle": "2021-10-18T00:00:00.000Z",
+      "lastCandle": "2025-10-16T20:00:00.000Z",
+      "count": 8760,
+      "sha256": "054139a779f70677cd698235e88eff4a8c5d55f3487aaf8e5273070a27b60559"
+    },
+    {
+      "symbol": "SOL",
+      "h1Sha256": "322a7a54bbfa289dc0b3570c27c35eb34911d79ab153a19473701a0beef51ae9",
+      "archiveSha256": "fd36a6bdb01fcb0f1f7620705e3ca5eef56933793a503c4f57db3fce33ac8005",
+      "recoveredResearchCandles": 2,
+      "timeframe": "4h",
+      "dataStart": "2021-10-18T00:00:00.000Z",
+      "dataEnd": "2025-10-17T00:00:00.000Z",
+      "snapshot": "data/market-cache/h2/d86acd4bbd1ce0048c5d41c67a16faf0270747fb1e395f6c81c063a219bc30fd.json",
+      "firstCandle": "2021-10-18T00:00:00.000Z",
+      "lastCandle": "2025-10-16T20:00:00.000Z",
+      "count": 8760,
+      "sha256": "d86acd4bbd1ce0048c5d41c67a16faf0270747fb1e395f6c81c063a219bc30fd"
+    }
+  ],
+  "manifestSha256": "41dc53724f78315658a5e07071db5b1aab4f8811ff7ff37e1849dfea4f11a308",
+  "runtimeHashes": {
+    "src/engine.mjs": "eea6985acab4ee754b369f65a3eed639252fe037d0d8e103a4ad6605fe9e2b5d",
+    "src/h2-contract.mjs": "01fdd8ab9aaae9cfecb78c667421df12503574b989ab372b8d6a955290c70792",
+    "src/market-data.mjs": "8b776041a340ea6461e6c16dd7d76a00d62ba712dd9c1b453325befa5ab93799",
+    "src/run-h2-sol4h.mjs": "bbeca3bc48b1b513e07c231622a569c47366d973bcda0daf4c580b9644ecdec5",
+    "src/run-strategy-spam-survivor-stress.mjs": "5da48c04e07966b632a30a35696fcfda381c4a104bf7d93203f88bdb956055a8",
+    "config.default.json": "c92a3c23a19d2b6c7e8f7fd9d343c599e07d24e22e1e3e7348e0374ed29cff5c",
+    "results/strategy-spam-funnel-btc-first-pass.json": "0797a9517fee14272680d3859e73cad179df1ed914fbd93c971f981c853ba77d"
+  },
+  "gateSourceSha256": "d5a914d06776b2a1058a1aea22c1358dec00ae3a29b595b5f0b68e5d3a86326c",
+  "runtimeNote": "Executed directly from repository sources under R6; no runtime copy, services or watcher changes.",
+  "runs": [
+    {
+      "variant": "base",
+      "variantId": "spam-alt-btc-gated-ma-reclaim-v0#57:base",
+      "params": {
+        "symbol": "SOL",
+        "timeframe": "4h",
+        "fast": 20,
+        "slow": 50,
+        "rsiFloorLong": 45,
+        "rsiCeilShort": 50
+      },
+      "gateMode": "base",
+      "trades": 212,
+      "expectancyR": 0.1157,
+      "profitFactor": 1.2141,
+      "outOfSampleExpectancyR": 0.0707,
+      "maxDrawdownR": 15.2159,
+      "splitMetadata": {
+        "method": "purged_embargo_entry_time",
+        "splitIndexByRun": [
+          {
+            "symbol": "SOL",
+            "timeframe": "4h",
+            "splitIndex": 6132,
+            "cutoffTime": 1722816000,
+            "purgeBars": 12,
+            "embargoBars": 12,
+            "labelHorizonBars": 12,
+            "purgedBoundaryTrades": 0,
+            "purgedBoundaryBaselineTrades": 0,
+            "inSampleTrades": 148,
+            "outOfSampleTrades": 64,
+            "baselineInSampleTrades": 148,
+            "baselineOutOfSampleTrades": 64
+          }
+        ],
+        "purgedBoundaryTrades": 0,
+        "purgedBoundaryBaselineTrades": 0,
+        "inSampleTrades": 148,
+        "outOfSampleTrades": 64,
+        "baselineInSampleTrades": 148,
+        "baselineOutOfSampleTrades": 64
+      },
+      "walkForward": {
+        "method": "equal_trade_count_chronological_folds",
+        "foldCount": 5,
+        "positiveFolds": 4,
+        "positiveBaselineLiftFolds": 2,
+        "positiveOutOfSampleFolds": 2,
+        "minFoldExpectancyR": -0.0621,
+        "folds": [
+          {
+            "fold": 1,
+            "sample": 42,
+            "firstEntryTime": 1636387200,
+            "lastEntryTime": 1661284800,
+            "expectancyR": 0.0874,
+            "profitFactor": 1.1541,
+            "deflatedSharpe": 0.431,
+            "probabilisticSharpe": 0.7497,
+            "maxDrawdownR": 8.9015,
+            "baselineExpectancyR": -0.0472,
+            "expectancyLiftR": 0.1346
+          },
+          {
+            "fold": 2,
+            "sample": 42,
+            "firstEntryTime": 1661313600,
+            "lastEntryTime": 1683748800,
+            "expectancyR": 0.2443,
+            "profitFactor": 1.5309,
+            "deflatedSharpe": 1.2591,
+            "probabilisticSharpe": 0.3862,
+            "maxDrawdownR": 6.648,
+            "baselineExpectancyR": 0.2952,
+            "expectancyLiftR": -0.0509
+          },
+          {
+            "fold": 3,
+            "sample": 43,
+            "firstEntryTime": 1683763200,
+            "lastEntryTime": 1709640000,
+            "expectancyR": -0.0621,
+            "profitFactor": 0.8989,
+            "deflatedSharpe": -0.3201,
+            "probabilisticSharpe": 0.6202,
+            "maxDrawdownR": 10.6596,
+            "baselineExpectancyR": -0.1211,
+            "expectancyLiftR": 0.059
+          },
+          {
+            "fold": 4,
+            "sample": 42,
+            "firstEntryTime": 1709712000,
+            "lastEntryTime": 1731614400,
+            "expectancyR": 0.1586,
+            "profitFactor": 1.2961,
+            "deflatedSharpe": 0.7868,
+            "probabilisticSharpe": 0.1669,
+            "maxDrawdownR": 4.9064,
+            "baselineExpectancyR": 0.3485,
+            "expectancyLiftR": -0.1899
+          },
+          {
+            "fold": 5,
+            "sample": 43,
+            "firstEntryTime": 1731672000,
+            "lastEntryTime": 1759723200,
+            "expectancyR": 0.1537,
+            "profitFactor": 1.2936,
+            "deflatedSharpe": 0.7845,
+            "probabilisticSharpe": 0.1352,
+            "maxDrawdownR": 6.0183,
+            "baselineExpectancyR": 0.3574,
+            "expectancyLiftR": -0.2037
+          }
+        ]
+      },
+      "gateDiagnostics": {
+        "symbol": "SOL",
+        "timeframe": "4h",
+        "mode": "base",
+        "checkedSignals": 361,
+        "passedSignals": 212,
+        "blockedSignals": 149,
+        "regimes": {
+          "BTC_RISK_ON": 134,
+          "BTC_RISK_OFF": 101,
+          "BTC_TRANSITION": 126,
+          "BTC_STALE": 0
+        },
+        "passByDirection": {
+          "long": 124,
+          "short": 88
+        },
+        "blockByDirection": {
+          "long": 74,
+          "short": 75
+        }
+      }
+    },
+    {
+      "variant": "strict_btc_gate",
+      "variantId": "spam-alt-btc-gated-ma-reclaim-v0#57:strict_btc_gate",
+      "params": {
+        "symbol": "SOL",
+        "timeframe": "4h",
+        "fast": 20,
+        "slow": 50,
+        "rsiFloorLong": 45,
+        "rsiCeilShort": 50
+      },
+      "gateMode": "strict",
+      "trades": 163,
+      "expectancyR": 0.1284,
+      "profitFactor": 1.2365,
+      "outOfSampleExpectancyR": 0.1103,
+      "maxDrawdownR": 12.7317,
+      "splitMetadata": {
+        "method": "purged_embargo_entry_time",
+        "splitIndexByRun": [
+          {
+            "symbol": "SOL",
+            "timeframe": "4h",
+            "splitIndex": 6132,
+            "cutoffTime": 1722816000,
+            "purgeBars": 12,
+            "embargoBars": 12,
+            "labelHorizonBars": 12,
+            "purgedBoundaryTrades": 0,
+            "purgedBoundaryBaselineTrades": 0,
+            "inSampleTrades": 112,
+            "outOfSampleTrades": 51,
+            "baselineInSampleTrades": 112,
+            "baselineOutOfSampleTrades": 51
+          }
+        ],
+        "purgedBoundaryTrades": 0,
+        "purgedBoundaryBaselineTrades": 0,
+        "inSampleTrades": 112,
+        "outOfSampleTrades": 51,
+        "baselineInSampleTrades": 112,
+        "baselineOutOfSampleTrades": 51
+      },
+      "walkForward": {
+        "method": "equal_trade_count_chronological_folds",
+        "foldCount": 5,
+        "positiveFolds": 4,
+        "positiveBaselineLiftFolds": 4,
+        "positiveOutOfSampleFolds": 2,
+        "minFoldExpectancyR": -0.0947,
+        "folds": [
+          {
+            "fold": 1,
+            "sample": 32,
+            "firstEntryTime": 1636387200,
+            "lastEntryTime": 1656907200,
+            "expectancyR": 0.1225,
+            "profitFactor": 1.2149,
+            "deflatedSharpe": 0.5164,
+            "probabilisticSharpe": 0.9869,
+            "maxDrawdownR": 7.8726,
+            "baselineExpectancyR": -0.3525,
+            "expectancyLiftR": 0.475
+          },
+          {
+            "fold": 2,
+            "sample": 33,
+            "firstEntryTime": 1660536000,
+            "lastEntryTime": 1687536000,
+            "expectancyR": 0.1846,
+            "profitFactor": 1.374,
+            "deflatedSharpe": 0.8392,
+            "probabilisticSharpe": 0.8718,
+            "maxDrawdownR": 4.8591,
+            "baselineExpectancyR": -0.065,
+            "expectancyLiftR": 0.2496
+          },
+          {
+            "fold": 3,
+            "sample": 32,
+            "firstEntryTime": 1687665600,
+            "lastEntryTime": 1710144000,
+            "expectancyR": -0.0947,
+            "profitFactor": 0.848,
+            "deflatedSharpe": -0.4258,
+            "probabilisticSharpe": 0.3785,
+            "maxDrawdownR": 6.9489,
+            "baselineExpectancyR": -0.0233,
+            "expectancyLiftR": -0.0714
+          },
+          {
+            "fold": 4,
+            "sample": 33,
+            "firstEntryTime": 1713196800,
+            "lastEntryTime": 1731513600,
+            "expectancyR": 0.2829,
+            "profitFactor": 1.5742,
+            "deflatedSharpe": 1.2174,
+            "probabilisticSharpe": 0.9917,
+            "maxDrawdownR": 3.8518,
+            "baselineExpectancyR": -0.2608,
+            "expectancyLiftR": 0.5437
+          },
+          {
+            "fold": 5,
+            "sample": 33,
+            "firstEntryTime": 1731542400,
+            "lastEntryTime": 1759723200,
+            "expectancyR": 0.1397,
+            "profitFactor": 1.2593,
+            "deflatedSharpe": 0.6102,
+            "probabilisticSharpe": 0.5971,
+            "maxDrawdownR": 5.6399,
+            "baselineExpectancyR": 0.0753,
+            "expectancyLiftR": 0.0644
+          }
+        ]
+      },
+      "gateDiagnostics": {
+        "symbol": "SOL",
+        "timeframe": "4h",
+        "mode": "strict",
+        "checkedSignals": 361,
+        "passedSignals": 163,
+        "blockedSignals": 198,
+        "regimes": {
+          "BTC_RISK_ON": 106,
+          "BTC_RISK_OFF": 68,
+          "BTC_TRANSITION": 187,
+          "BTC_STALE": 0
+        },
+        "passByDirection": {
+          "long": 100,
+          "short": 63
+        },
+        "blockByDirection": {
+          "long": 98,
+          "short": 100
+        }
+      }
+    }
+  ],
+  "registryLineCount": 2,
+  "appendedRows": 2,
+  "distinctVariants": {
+    "spam_alt_btc_gated_continuation": 2
+  },
+  "tests": {
+    "total": 46,
+    "passed": 46,
+    "failed": 0,
+    "initialFailure": "45/46: synthetic feature timestamp assertion; fixed once, rerun 46/46."
+  }
+}
