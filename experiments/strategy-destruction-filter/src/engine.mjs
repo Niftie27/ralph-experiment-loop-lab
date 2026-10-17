@@ -283,16 +283,22 @@ function splitSummary(candles, splitIndex, timeframe, splitConfig = {}) {
 }
 
 export function simulateTrade(candles, entryIndex, signal, ctx, timeframe, config) {
-  const entry = candles[entryIndex].close;
+  const nextOpen = config.entryMode === "next_open";
+  const firstExitIndex = entryIndex + 1;
+  if (nextOpen) {
+    if (firstExitIndex >= candles.length) return null;
+    entryIndex = firstExitIndex;
+  }
+  const entry = nextOpen ? candles[entryIndex].open : candles[entryIndex].close;
   const risk = config.risk.stopAtr * ctx.atr14;
   const targetR = config.risk.targetR;
   const stop = signal.direction === "long" ? entry - risk : entry + risk;
   const target = signal.direction === "long" ? entry + risk * targetR : entry - risk * targetR;
-  const maxIndex = Math.min(candles.length - 1, entryIndex + timeframe.maxBars);
+  const maxIndex = Math.min(candles.length - 1, entryIndex + timeframe.maxBars - (nextOpen ? 1 : 0));
   const roundTripCostPct = 2 * (config.costs.feeBpsPerSide + config.costs.slippageBpsPerSide) / 10000;
   const costR = risk > 0 ? (entry * roundTripCostPct) / risk : 0;
 
-  for (let i = entryIndex + 1; i <= maxIndex; i += 1) {
+  for (let i = firstExitIndex; i <= maxIndex; i += 1) {
     const candle = candles[i];
     if (signal.direction === "long") {
       const hitStop = candle.low <= stop;
@@ -375,7 +381,7 @@ export function backtestVariant(variant, candles, symbol, timeframe, config, opt
     if (!ctx) continue;
     for (const signal of signalForVariant(variant, candles, index, ctx)) {
       if (options.signalGate && !options.signalGate({ variant, candles, symbol, timeframe, index, ctx, signal })) continue;
-      const splitLabel = splitLabelForEntryIndex(index, splitIndex, timeframe, splitConfig);
+      const splitLabel = splitLabelForEntryIndex(index + (config.entryMode === "next_open" ? 1 : 0), splitIndex, timeframe, splitConfig);
       const trade = { ...simulateTrade(candles, index, signal, ctx, timeframe, config), split: splitLabel };
       const baselineTrade = {
         ...simulateTrade(candles, index, baselineSignalFor(index, signalOrdinal), ctx, timeframe, config),

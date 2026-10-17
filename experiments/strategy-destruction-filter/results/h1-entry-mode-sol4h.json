@@ -1,0 +1,480 @@
+{
+  "generatedAt": "2026-10-17T06:49:19.630Z",
+  "candidateId": "spam-alt-btc-gated-ma-reclaim-v0",
+  "variantId": "spam-alt-btc-gated-ma-reclaim-v0#57",
+  "params": {
+    "symbol": "SOL",
+    "timeframe": "4h",
+    "fast": 20,
+    "slow": 50,
+    "rsiFloorLong": 45,
+    "rsiCeilShort": 50
+  },
+  "timeframe": {
+    "id": "4h",
+    "binanceInterval": "4h",
+    "bybitInterval": "240",
+    "lookbackDays": 1825,
+    "maxBars": 12
+  },
+  "costs": {
+    "feeBpsPerSide": 4,
+    "slippageBpsPerSide": 3
+  },
+  "risk": {
+    "stopAtr": 1.2,
+    "targetR": 1.8
+  },
+  "sourceUsed": "Copied 266 SOL/BTC 4h public archive CSVs (3785354 bytes) from the existing 61 MB Binance archive cache into the matching gitignored checkout cache; existing engine fetched missing public archives and REST tail once per symbol; froze resulting JSON snapshots. The 46 MB market-cache was Bybit HYPE, not SOL/BTC.",
+  "inputContract": {
+    "present": [
+      "SOL and BTC time/open/high/low/close/volume at aligned contiguous 4h intervals"
+    ],
+    "locallyDerived": [
+      "ATR14",
+      "RSI14",
+      "MA20/50",
+      "volume Z",
+      "trend/volatility",
+      "BTC regime gate"
+    ],
+    "notRequired": [
+      "ATAS",
+      "CVD/delta",
+      "manual levels",
+      "deviations",
+      "funding",
+      "order book"
+    ],
+    "checks": "All fields finite, prices positive, OHLC consistent, volumes nonnegative, exact 4h continuity and identical SOL/BTC time arrays."
+  },
+  "sources": [
+    {
+      "symbol": "BTC",
+      "file": "data/market-cache/h1-BTC-4h.json",
+      "sha256": "1abfaa8e39cf5ec3abf212f724f09101d597c20bbd5e156560c3dfac2bffa87e",
+      "candles": 10950,
+      "firstCandleTime": "2021-10-18T08:00:00.000Z",
+      "lastCandleTime": "2026-10-17T04:00:00.000Z",
+      "meta": {
+        "source": "binance-public-archive-rest-tail",
+        "archiveFilesAttempted": 76,
+        "restTailStart": "2026-09-02T06:47:24.499Z",
+        "provider": "binance-spot",
+        "market": "spot"
+      }
+    },
+    {
+      "symbol": "SOL",
+      "file": "data/market-cache/h1-SOL-4h.json",
+      "sha256": "322a7a54bbfa289dc0b3570c27c35eb34911d79ab153a19473701a0beef51ae9",
+      "candles": 10950,
+      "firstCandleTime": "2021-10-18T08:00:00.000Z",
+      "lastCandleTime": "2026-10-17T04:00:00.000Z",
+      "meta": {
+        "source": "binance-public-archive-rest-tail",
+        "archiveFilesAttempted": 76,
+        "restTailStart": "2026-09-02T06:47:32.030Z",
+        "provider": "binance-spot",
+        "market": "spot"
+      }
+    }
+  ],
+  "runtimeHashes": {
+    "src/engine.mjs": "156a77dadb535cbe8a4289b8be602f5454c02964baa03185577f8979ef512456",
+    "src/run-h1-entry-mode-sol4h.mjs": "d1dfd602a90df0ac3a265848bfce775b7a324db047b89ebe5c0a5b6ad7dc1b15",
+    "src/run-strategy-spam-survivor-stress.mjs": "5da48c04e07966b632a30a35696fcfda381c4a104bf7d93203f88bdb956055a8",
+    "src/market-data.mjs": "3296d99db1f49f0c167515996dbd2143e028c221991126142a8c7eea2f86353e",
+    "config.default.json": "bf9d30df877dd83757d890786b993aa507d5547ac502bb369d0e20b23da90895"
+  },
+  "runtimeNote": "Executed these source files directly from this checkout under R6; no deployed/runtime copies.",
+  "gateSourceSha256": "d5a914d06776b2a1058a1aea22c1358dec00ae3a29b595b5f0b68e5d3a86326c",
+  "gateNote": "Verified: the BTC gate aligns BTC 4h to SOL 4h by candle.time (src/run-strategy-spam-survivor-stress.mjs lines 214-219) and reads no later index. classifyBtcRegime calls marketContext at that index; its indicators use only that index and earlier candles.",
+  "semantics": "signal_close is the default unchanged path. next_open retains signal-bar ATR/gate; entryIndex/time identify next bar; inclusive maxBars horizon starts at entry bar; stop-first includes that bar. Candidate and baseline split/purge labels use actual entry index. No next bar => null; existing backtest signal bounds remain unchanged.",
+  "original": {
+    "generatedAt": "2026-10-04T08:34:07.610Z",
+    "source": "results/strategy-spam-survivor-stress.json",
+    "sources": [
+      {
+        "symbol": "BTC",
+        "timeframe": "4h",
+        "candles": 10950,
+        "firstCandleTime": "2021-10-05T12:00:00.000Z",
+        "lastCandleTime": "2026-10-04T08:00:00.000Z",
+        "source": "binance-public-archive-rest-tail",
+        "market": "spot"
+      },
+      {
+        "symbol": "SOL",
+        "timeframe": "4h",
+        "candles": 10950,
+        "firstCandleTime": "2021-10-05T12:00:00.000Z",
+        "lastCandleTime": "2026-10-04T08:00:00.000Z",
+        "source": "binance-public-archive-rest-tail",
+        "market": "spot"
+      }
+    ],
+    "runs": [
+      {
+        "variant": "base",
+        "trades": 262,
+        "expectancyR": 0.1391,
+        "profitFactor": 1.2595,
+        "maxDrawdownR": 15.2085,
+        "outOfSampleExpectancyR": 0.1089,
+        "direction": {
+          "long": {
+            "trades": 150,
+            "expectancyR": 0.2302,
+            "profitFactor": 1.452,
+            "maxDrawdownR": 11.4036
+          },
+          "short": {
+            "trades": 112,
+            "expectancyR": 0.0169,
+            "profitFactor": 1.0296,
+            "maxDrawdownR": 13.3404
+          }
+        },
+        "directionNote": "Recorded in the original report."
+      },
+      {
+        "variant": "strict_btc_gate",
+        "trades": 196,
+        "expectancyR": 0.1582,
+        "profitFactor": 1.298,
+        "maxDrawdownR": 12.7317,
+        "outOfSampleExpectancyR": 0.142,
+        "direction": null,
+        "directionNote": "not verified: original report does not record strict-gate direction splits."
+      }
+    ]
+  },
+  "runs": [
+    {
+      "variant": "base",
+      "entryMode": "signal_close",
+      "trades": 267,
+      "expectancyR": 0.1263,
+      "profitFactor": 1.2341,
+      "maxDrawdownR": 15.2085,
+      "outOfSampleExpectancyR": 0.0963,
+      "direction": {
+        "long": {
+          "trades": 150,
+          "expectancyR": 0.1977,
+          "profitFactor": 1.3773,
+          "maxDrawdownR": 11.4036
+        },
+        "short": {
+          "trades": 117,
+          "expectancyR": 0.0347,
+          "profitFactor": 1.0621,
+          "maxDrawdownR": 13.3404
+        }
+      },
+      "baseline": {
+        "trades": 267,
+        "expectancyR": 0.0837,
+        "profitFactor": 1.1543,
+        "maxDrawdownR": 14.0931,
+        "outOfSampleExpectancyR": -0.0166
+      },
+      "splitMetadata": {
+        "method": "purged_embargo_entry_time",
+        "splitIndexByRun": [
+          {
+            "symbol": "SOL",
+            "timeframe": "4h",
+            "splitIndex": 7664,
+            "cutoffTime": 1744905600,
+            "purgeBars": 12,
+            "embargoBars": 12,
+            "labelHorizonBars": 12,
+            "purgedBoundaryTrades": 1,
+            "purgedBoundaryBaselineTrades": 1,
+            "inSampleTrades": 187,
+            "outOfSampleTrades": 80,
+            "baselineInSampleTrades": 187,
+            "baselineOutOfSampleTrades": 80
+          }
+        ],
+        "purgedBoundaryTrades": 1,
+        "purgedBoundaryBaselineTrades": 1,
+        "inSampleTrades": 187,
+        "outOfSampleTrades": 80,
+        "baselineInSampleTrades": 187,
+        "baselineOutOfSampleTrades": 80
+      },
+      "gateDiagnostics": {
+        "symbol": "SOL",
+        "timeframe": "4h",
+        "mode": "base",
+        "checkedSignals": 458,
+        "passedSignals": 268,
+        "blockedSignals": 190,
+        "regimes": {
+          "BTC_RISK_ON": 169,
+          "BTC_RISK_OFF": 134,
+          "BTC_TRANSITION": 155,
+          "BTC_STALE": 0
+        },
+        "passByDirection": {
+          "long": 151,
+          "short": 117
+        },
+        "blockByDirection": {
+          "long": 92,
+          "short": 98
+        }
+      }
+    },
+    {
+      "variant": "strict_btc_gate",
+      "entryMode": "signal_close",
+      "trades": 198,
+      "expectancyR": 0.1489,
+      "profitFactor": 1.2792,
+      "maxDrawdownR": 12.7317,
+      "outOfSampleExpectancyR": 0.1295,
+      "direction": {
+        "long": {
+          "trades": 118,
+          "expectancyR": 0.218,
+          "profitFactor": 1.422,
+          "maxDrawdownR": 7.8419
+        },
+        "short": {
+          "trades": 80,
+          "expectancyR": 0.047,
+          "profitFactor": 1.0842,
+          "maxDrawdownR": 10.6656
+        }
+      },
+      "baseline": {
+        "trades": 198,
+        "expectancyR": -0.1053,
+        "profitFactor": 0.8334,
+        "maxDrawdownR": 28.3785,
+        "outOfSampleExpectancyR": -0.0149
+      },
+      "splitMetadata": {
+        "method": "purged_embargo_entry_time",
+        "splitIndexByRun": [
+          {
+            "symbol": "SOL",
+            "timeframe": "4h",
+            "splitIndex": 7664,
+            "cutoffTime": 1744905600,
+            "purgeBars": 12,
+            "embargoBars": 12,
+            "labelHorizonBars": 12,
+            "purgedBoundaryTrades": 0,
+            "purgedBoundaryBaselineTrades": 0,
+            "inSampleTrades": 145,
+            "outOfSampleTrades": 53,
+            "baselineInSampleTrades": 145,
+            "baselineOutOfSampleTrades": 53
+          }
+        ],
+        "purgedBoundaryTrades": 0,
+        "purgedBoundaryBaselineTrades": 0,
+        "inSampleTrades": 145,
+        "outOfSampleTrades": 53,
+        "baselineInSampleTrades": 145,
+        "baselineOutOfSampleTrades": 53
+      },
+      "gateDiagnostics": {
+        "symbol": "SOL",
+        "timeframe": "4h",
+        "mode": "strict",
+        "checkedSignals": 458,
+        "passedSignals": 198,
+        "blockedSignals": 260,
+        "regimes": {
+          "BTC_RISK_ON": 130,
+          "BTC_RISK_OFF": 88,
+          "BTC_TRANSITION": 240,
+          "BTC_STALE": 0
+        },
+        "passByDirection": {
+          "long": 118,
+          "short": 80
+        },
+        "blockByDirection": {
+          "long": 125,
+          "short": 135
+        }
+      }
+    },
+    {
+      "variant": "base",
+      "entryMode": "next_open",
+      "trades": 267,
+      "expectancyR": 0.1262,
+      "profitFactor": 1.234,
+      "maxDrawdownR": 15.2159,
+      "outOfSampleExpectancyR": 0.0964,
+      "direction": {
+        "long": {
+          "trades": 150,
+          "expectancyR": 0.1975,
+          "profitFactor": 1.3768,
+          "maxDrawdownR": 11.4204
+        },
+        "short": {
+          "trades": 117,
+          "expectancyR": 0.0349,
+          "profitFactor": 1.0623,
+          "maxDrawdownR": 13.3396
+        }
+      },
+      "baseline": {
+        "trades": 267,
+        "expectancyR": 0.0838,
+        "profitFactor": 1.1546,
+        "maxDrawdownR": 14.0894,
+        "outOfSampleExpectancyR": -0.0165
+      },
+      "splitMetadata": {
+        "method": "purged_embargo_entry_time",
+        "splitIndexByRun": [
+          {
+            "symbol": "SOL",
+            "timeframe": "4h",
+            "splitIndex": 7664,
+            "cutoffTime": 1744905600,
+            "purgeBars": 12,
+            "embargoBars": 12,
+            "labelHorizonBars": 12,
+            "purgedBoundaryTrades": 1,
+            "purgedBoundaryBaselineTrades": 1,
+            "inSampleTrades": 187,
+            "outOfSampleTrades": 80,
+            "baselineInSampleTrades": 187,
+            "baselineOutOfSampleTrades": 80
+          }
+        ],
+        "purgedBoundaryTrades": 1,
+        "purgedBoundaryBaselineTrades": 1,
+        "inSampleTrades": 187,
+        "outOfSampleTrades": 80,
+        "baselineInSampleTrades": 187,
+        "baselineOutOfSampleTrades": 80
+      },
+      "gateDiagnostics": {
+        "symbol": "SOL",
+        "timeframe": "4h",
+        "mode": "base",
+        "checkedSignals": 458,
+        "passedSignals": 268,
+        "blockedSignals": 190,
+        "regimes": {
+          "BTC_RISK_ON": 169,
+          "BTC_RISK_OFF": 134,
+          "BTC_TRANSITION": 155,
+          "BTC_STALE": 0
+        },
+        "passByDirection": {
+          "long": 151,
+          "short": 117
+        },
+        "blockByDirection": {
+          "long": 92,
+          "short": 98
+        }
+      }
+    },
+    {
+      "variant": "strict_btc_gate",
+      "entryMode": "next_open",
+      "trades": 198,
+      "expectancyR": 0.1486,
+      "profitFactor": 1.2786,
+      "maxDrawdownR": 12.7317,
+      "outOfSampleExpectancyR": 0.1295,
+      "direction": {
+        "long": {
+          "trades": 118,
+          "expectancyR": 0.2177,
+          "profitFactor": 1.4213,
+          "maxDrawdownR": 7.8586
+        },
+        "short": {
+          "trades": 80,
+          "expectancyR": 0.0468,
+          "profitFactor": 1.0838,
+          "maxDrawdownR": 10.6656
+        }
+      },
+      "baseline": {
+        "trades": 198,
+        "expectancyR": -0.1054,
+        "profitFactor": 0.8333,
+        "maxDrawdownR": 28.3888,
+        "outOfSampleExpectancyR": -0.0148
+      },
+      "splitMetadata": {
+        "method": "purged_embargo_entry_time",
+        "splitIndexByRun": [
+          {
+            "symbol": "SOL",
+            "timeframe": "4h",
+            "splitIndex": 7664,
+            "cutoffTime": 1744905600,
+            "purgeBars": 12,
+            "embargoBars": 12,
+            "labelHorizonBars": 12,
+            "purgedBoundaryTrades": 0,
+            "purgedBoundaryBaselineTrades": 0,
+            "inSampleTrades": 145,
+            "outOfSampleTrades": 53,
+            "baselineInSampleTrades": 145,
+            "baselineOutOfSampleTrades": 53
+          }
+        ],
+        "purgedBoundaryTrades": 0,
+        "purgedBoundaryBaselineTrades": 0,
+        "inSampleTrades": 145,
+        "outOfSampleTrades": 53,
+        "baselineInSampleTrades": 145,
+        "baselineOutOfSampleTrades": 53
+      },
+      "gateDiagnostics": {
+        "symbol": "SOL",
+        "timeframe": "4h",
+        "mode": "strict",
+        "checkedSignals": 458,
+        "passedSignals": 198,
+        "blockedSignals": 260,
+        "regimes": {
+          "BTC_RISK_ON": 130,
+          "BTC_RISK_OFF": 88,
+          "BTC_TRANSITION": 240,
+          "BTC_STALE": 0
+        },
+        "passByDirection": {
+          "long": 118,
+          "short": 80
+        },
+        "blockByDirection": {
+          "long": 125,
+          "short": 135
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Current frozen snapshot differs from October 4; comparisons to historical numbers mix data-window and entry-mode effects. Compare the two modes within this snapshot to isolate entry semantics.",
+    "Original REST-tail bytes were not preserved; no claim of exact October 4 snapshot reproduction.",
+    "Engine REST tail includes the latest candle, possibly still open. The snapshot is frozen identically for all four runs; this existing data behavior is unchanged.",
+    "Candle model only; no strategy promotion or execution claim."
+  ],
+  "verification": {
+    "offlineTestsBefore": 31,
+    "offlineTestsAfter": 37,
+    "failures": 0,
+    "runs": 4,
+    "dataHashesUnchangedAfterRuns": true
+  }
+}

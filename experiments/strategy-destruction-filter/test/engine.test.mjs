@@ -829,3 +829,95 @@ function exportedFunctionSource(source, functionName) {
 
   assert.fail(`unterminated body for ${signature}`);
 }
+
+test("signal_close preserves the pre-H1 existing collision fixture byte-for-byte", () => {
+  const candles = [
+    { time: 1, open: 100, high: 101, low: 99, close: 100, volume: 10 },
+    { time: 2, open: 100, high: 104, low: 98, close: 101, volume: 10 }
+  ];
+  const config = { risk: { stopAtr: 1, targetR: 2 }, costs: { feeBpsPerSide: 5, slippageBpsPerSide: 5 } };
+  const expected = '{"entryIndex":0,"exitIndex":1,"entryTime":1,"exitTime":2,"direction":"long","reason":"test","rawR":-1,"netR":-1.2,"costR":0.2,"exitReason":"stop-first-collision","regime":"range|mid-vol","trend":"range","volatility":"mid-vol"}';
+  for (const entryMode of [undefined, "signal_close"]) {
+    const trade = simulateTrade(candles, 0, { direction: "long", reason: "test" },
+      { atr14: 1, trend: "range", volatility: "mid-vol" }, { maxBars: 1 }, { ...config, entryMode });
+    assert.equal(JSON.stringify(trade), expected);
+  }
+});
+
+const h1Config = { entryMode: "next_open", risk: { stopAtr: 1, targetR: 2 }, costs: { feeBpsPerSide: 5, slippageBpsPerSide: 5 } };
+const h1Context = { atr14: 2, trend: "range", volatility: "mid-vol" };
+
+test("next_open prices gap entry and checks entry-bar target for both directions", () => {
+  for (const direction of ["long", "short"]) {
+    const candles = [
+      { time: 1, open: 100, high: 101, low: 99, close: 100 },
+      { time: 2, open: 110, high: direction === "long" ? 114 : 111, low: direction === "short" ? 106 : 109, close: 110 }
+    ];
+    const trade = simulateTrade(candles, 0, { direction }, h1Context, { maxBars: 12 }, h1Config);
+    assert.equal(trade.entryIndex, 1);
+    assert.equal(trade.entryTime, 2);
+    assert.equal(trade.exitIndex, 1);
+    assert.equal(trade.exitReason, "target");
+    assert.equal(trade.rawR, 2);
+    assert.equal(trade.costR, 0.11);
+  }
+});
+
+test("next_open preserves stop-first collisions on the entry bar", () => {
+  const candles = [{ time: 1, close: 100 }, { time: 2, open: 110, high: 115, low: 105, close: 110 }];
+  for (const direction of ["long", "short"]) {
+    const trade = simulateTrade(candles, 0, { direction }, h1Context, { maxBars: 1 }, h1Config);
+    assert.equal(trade.rawR, -1);
+    assert.equal(trade.exitReason, "stop-first-collision");
+    assert.equal(trade.exitIndex, 1);
+  }
+});
+
+test("next_open counts maxBars inclusively from the entry bar", () => {
+  const candles = [{ time: 1, close: 100 },
+    { time: 2, open: 110, high: 111, low: 109, close: 111 },
+    { time: 3, open: 111, high: 111, low: 109, close: 109 },
+    { time: 4, open: 110, high: 120, low: 90, close: 110 }];
+  for (const maxBars of [1, 2]) {
+    const trade = simulateTrade(candles, 0, { direction: "long" }, h1Context, { maxBars }, h1Config);
+    assert.equal(trade.exitReason, "horizon");
+    assert.equal(trade.exitIndex, maxBars);
+    assert.equal(trade.rawR, maxBars === 1 ? 0.5 : -0.5);
+  }
+});
+
+test("next_open bounds penultimate and last-bar signals without reading past the array", () => {
+  const candles = new Proxy([{ time: 1, close: 100 }, { time: 2, open: 110, high: 111, low: 109, close: 110 }], {
+    get(target, key, receiver) {
+      if (/^\d+$/.test(String(key))) assert.ok(Number(key) < target.length, "out-of-bounds read");
+      return Reflect.get(target, key, receiver);
+    }
+  });
+  assert.equal(simulateTrade(candles, 0, { direction: "long" }, h1Context, { maxBars: 12 }, h1Config).exitIndex, 1);
+  assert.equal(simulateTrade(candles, 1, { direction: "long" }, h1Context, { maxBars: 12 }, h1Config), null);
+});
+
+test("next_open applies actual entry time, costs and split to matched baseline trades", () => {
+  const candles = Array.from({ length: 100 }, (_, i) => ({ time: i, open: 100 + i, high: 102 + i, low: 99 + i, close: 101 + i, volume: 100 + i }));
+  const variant = { rule: "breakout", directions: ["long"], params: { lookback: 2, volumeZ: -10, rsiMinLong: 0 } };
+  // Make close exceed the previous bar's high.
+  for (const candle of candles) candle.close = candle.high;
+  const timeframe = { id: "4h", maxBars: 4 };
+  const config = { ...h1Config, evaluation: { split: { method: "purged_embargo_entry_time", inSampleRatio: 0.7 } } };
+  const run = backtestVariant(variant, candles, "SOL", timeframe, config);
+  const trades = [...run.trades, ...run.purgedBoundaryTrades];
+  const baselines = [...run.baselineTrades, ...run.purgedBoundaryBaselineTrades];
+  assert.ok(trades.length > 0);
+  assert.equal(trades.length, baselines.length);
+  assert.equal(Math.max(...trades.map(t => t.entryIndex)), 98);
+  for (let i = 0; i < trades.length; i++) {
+    const trade = trades[i], baseline = baselines[i];
+    assert.equal(baseline.entryTime, trade.entryTime);
+    assert.equal(baseline.entryIndex, trade.entryIndex);
+    assert.equal(baseline.costR, trade.costR);
+    assert.equal(trade.split, splitLabelForEntryIndex(trade.entryIndex, run.split.splitIndex, timeframe, config.evaluation.split));
+    assert.equal(baseline.split, trade.split);
+    const ctx = marketContext(candles, trade.entryIndex - 1);
+    assert.equal(trade.costR, candles[trade.entryIndex].open * 0.002 / ctx.atr14);
+  }
+});
