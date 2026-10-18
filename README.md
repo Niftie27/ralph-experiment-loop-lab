@@ -1,5 +1,12 @@
 # RALPH Research OS
 
+## Start here
+
+- [Live state](docs/state.md) — running services, schedules and open operational issues.
+- [Ledger](docs/ledger.md) — stable item IDs and status (part B pending).
+- [Decisions](docs/decisions.md) — dated decisions and source evidence.
+- [Data catalog](docs/data-catalog.md) — observed datasets, schemas and provenance.
+
 RALPH is a general crypto bot lab and market-structure research OS for DeFi, MEV, benchmarks, data rails, watcher/automation loops, demo-sim and paper-trading experiments, strategy filters, orderflow/backtest tooling, candidate decisions, and research memory.
 
 It is not a trading bot. It does not run live trading, hold wallet keys, use exchange accounts, or start paid infrastructure by default.
