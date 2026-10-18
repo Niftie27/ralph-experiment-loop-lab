@@ -1,6 +1,6 @@
 # Project decisions
 
-Dates are UTC. One row per decision. Seed = Tomas’s L1a instruction (2026-10-18); all 14 seed decisions are preserved. Where a dated source contradicts a seed date, the source date wins. Historical dates not corroborated by a log are explicitly marked below. Sources are sanitized file references; workspace-only sources are not implied to be tracked in this public repo.
+Dates are UTC. One row per decision. Seed = Tomas’s L1a instruction (2026-10-18); all 22 supplied decisions are preserved. Where a dated source contradicts a seed date, the source date wins. Historical dates not corroborated by a log are explicitly marked below. Sources are sanitized file references; workspace-only sources are not implied to be tracked in this public repo.
 
 | Date (UTC) | Decision | Who | Why | Replaces | Source |
 |---|---|---|---|---|---|
@@ -24,6 +24,13 @@ Dates are UTC. One row per decision. Seed = Tomas’s L1a instruction (2026-10-1
 | 2026-10-18 | Preserve byte-identical source mirrors; do not claim a sanitized substitute is R2-equal. | D1b implementation record | Honest source provenance and privacy | — | [S4] mirror/exclusion entry; two public-API exclusions later identified as mistaken by Tomas in L1a |
 | 2026-10-18 | Strategy factory comes right after L1: harness I05 (H3b/H3c) extended with ledger items I48, I49 and I51. | Tomas | Priority | — | Seed (Tomas, L1b) |
 | 2026-10-18 | Adversarial loop runs V6-blind (skips state-of-edge, shadow-PnL and watch-row inputs) until Tomas switches it off after the V6 evaluation | Tomas | V6: no interim looks | — | Tomas, P1 |
+| 2026-10-18 | F1 D1: harness default Binance USD-M futures; spot is a pre-defined comparison; costs 5 + 3 bps per side, every report also at 2x costs; spot trials carry over into the trial count | Tomas | match collectors and venue | spot 4h, 4 + 3 bps | spec F1 v2 |
+| 2026-10-18 | F1 D2: core BTC, ETH, SOL; cross-check XRP, DOGE; HYPE information only (insufficient_history) | Tomas | history length, overfit check | BTC/SOL only | spec F1 v2 |
+| 2026-10-18 | F1 D3: walk-forward 12/3/3 with locked protocol; expanding window as the one locked sensitivity; holdout candidate = procedure's pick on the last 12 research months | Tomas | test the selection procedure | 5 diagnostic folds | spec F1 v2 |
+| 2026-10-18 | F1 D4: pass bar DSR >= 0.95 on effective N from daily equity returns, fixed before F1b; economic gates stay; false-pass rate <= 5 % on null campaigns | Tomas | multiple testing | deflated-Sharpe proxy | spec F1 v2 |
+| 2026-10-18 | F1 D5: H3c pilot 2 specs/day, <= 20 variants/spec, <= 40/day for 3 weeks, weekly review by Tomas; then a monthly trial budget set after F1b | Tomas | statistical budget, not quota | — | spec F1 v2 |
+| 2026-10-18 | F1 D6: NautilusTrader on the PC as a batch worker on hash-verified snapshots; purpose = parity with live code | Tomas | VPS RAM | — | spec F1 v2 |
+| 2026-10-18 | F1 D7: holdout only for frozen candidates after the F1c guard; I08 A and B recomputed on futures research data first; C forward only; min trades + Bonferroni; look budget 5; data after 2026-10-17 sealed as the next test period | Tomas | protect the holdout | H2 guard only | spec F1 v2 |
 
 ## Sources
 
@@ -39,4 +46,4 @@ Dates are UTC. One row per decision. Seed = Tomas’s L1a instruction (2026-10-1
 ## Unresolved
 
 - No independent dated handoff/action-log corroboration was found for the seed rows marked unverified. Their dates remain Tomas’s supplied dates, not guesses.
-- This is a sourced operational seed (14 supplied + 5 found), not an exhaustive historical decision archive. Ledger items belong to part B.
+- This is a sourced operational seed (22 supplied + 5 found), not an exhaustive historical decision archive. Ledger items belong to part B.
