@@ -100,7 +100,7 @@ function parseKlineCsv(csv) {
 }
 
 function parseRestKlines(rows) {
-  return rows.map((row) => ({
+  return rows.filter((row) => Number(row[6]) < Date.now()).map((row) => ({
     time: normalizeTimestampSeconds(Number(row[0])),
     open: Number(row[1]),
     high: Number(row[2]),
@@ -117,19 +117,26 @@ function normalizeTimestampSeconds(value) {
 }
 
 async function fetchRestTail(symbol, interval, startMs) {
-  const url = new URL(BINANCE_REST);
-  url.searchParams.set("symbol", symbol);
-  url.searchParams.set("interval", interval);
-  url.searchParams.set("startTime", String(startMs));
-  url.searchParams.set("limit", "1000");
-  const res = await fetch(url, {
-    headers: {
-      "Accept": "application/json",
-      "User-Agent": "OpenClaw-RALPH-alert-edge/0.1"
-    }
-  });
-  if (!res.ok) throw new Error(`Binance REST klines failed: ${res.status} ${await res.text()}`);
-  return parseRestKlines(await res.json());
+  const candles = [];
+  for (let request = 0; request < 20; request += 1) {
+    const url = new URL(BINANCE_REST);
+    url.searchParams.set("symbol", symbol);
+    url.searchParams.set("interval", interval);
+    url.searchParams.set("startTime", String(startMs));
+    url.searchParams.set("limit", "1000");
+    const res = await fetch(url, {
+      headers: {
+        "Accept": "application/json",
+        "User-Agent": "OpenClaw-RALPH-alert-edge/0.1"
+      }
+    });
+    if (!res.ok) throw new Error(`Binance REST klines failed: ${res.status} ${await res.text()}`);
+    const rows = await res.json();
+    candles.push(...parseRestKlines(rows));
+    if (rows.length < 1000 || Number(rows.at(-1)[6]) >= Date.now()) break;
+    startMs = Number(rows.at(-1)[0]) + 1;
+  }
+  return candles;
 }
 
 export async function fetchBinanceSpotCandles(symbol, interval, lookbackDays) {
