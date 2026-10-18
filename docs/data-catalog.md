@@ -17,13 +17,24 @@ Optional `--pattern NAME GLOB` selects a path pattern; `--metadata-only` suppres
 - **Bytes/day**: stored bytes attributed to the UTC filename date, otherwise mtime, for the seven calendar dates ending on inspection day. Today is partial. These are retained/compressed storage volumes, **not measured network ingress or original historical writes**. Recompression moves mtimes; filename dates avoid that distortion for market partitions.
 - **Complete file**: filename hour/day has ended plus 900 seconds, and mtime is at least 900 seconds old. Collector tapes normally finalize after 10 minutes but can be reopened by very late backfill. This is an eligibility heuristic, not a write lock or proof of immutability. Mutable files are explicitly sampled as snapshots, not called complete. Before/after stat checks detect changes during a read.
 - **Rows/hour**: actual rows of the selected closed hourly file; daily append logs/bars divide by 24 and are labeled daily-average, not a peak or coverage guarantee. Static research tables/profiles and mutable snapshots do not have an ingest rows/hour rate.
+- **Time-field detection (D1b)**: name-matched scalar fields must contain only integer epoch seconds or milliseconds (2000-01-01 inclusive to 2100-01-01 exclusive; nulls ignored). Strings, booleans, floats, durations and microseconds are excluded; mixed non-null types invalidate the field. Nested arrays/objects are checked. Historical catalog time-field lines are narrowed using already-recorded integer extrema, not a fresh outcome-data scan. ISO time strings remain meaningful clocks in producer documentation, but are not integer epoch fields.
 - **Schema**: union across all rows in the selected file, not all historical files. CSV physical types are strings; semantic numeric/boolean units are documented separately. `[]` denotes array elements; `{}` numeric map keys. Null/empty values mean unavailable, not zero. Polymorphic streams need their stream discriminator.
-- **Personal categories**: only category + file count + size. Only aggregate category labels, counts and sizes are reported for personal material; no private contents, record schemas or examples are cataloged. Personal records are excluded from data examples even where they are produced by a market tool.
+- **Personal categories**: only category + file count + size. Only aggregate category labels, counts and sizes are reported for personal material; no private contents, record schemas or examples are cataloged. Personal records are excluded from data examples even where they are produced by a market tool. D102/D106/D109 were explicitly reclassified as research on 2026-10-18; their dedicated structural-only scan below has no examples or outcome aggregates. The default inventory remains conservative metadata-only for these filenames so a routine invocation cannot reveal V6 interim outcomes.
 - A source-code hash identifies inspected code, not proof that an earlier historical file was produced by that exact revision. CLI-driven research may override paths; untraced runs remain not verified.
+
+## Agent access channels
+
+Read-only configuration inspection on 2026-10-18: OpenClaw `mcp.servers` contains:
+
+| Server name | Transport | Enabled |
+|---|---|---|
+| obsidian-vault-files | stdio | true |
+
+No Binance MCP is configured in OpenClaw. Binance access in the inspected producers is direct public REST/WebSocket/archive access, not an MCP server. This is configured-channel evidence, not a connectivity test. URLs, headers, commands, tokens and environment values are intentionally omitted. Other agent/application connectors are not inferred to be OpenClaw MCP configuration.
 
 ## Writers, deployment and all known output families
 
-Runtime entrypoints and their repo copies were hashed read-only. Collector modules, the v1 market watcher, both short watchers, supervisor, reactor, dashboard, data-check, disk-alert, archive and maintenance scripts matched. Their hashes appear in dataset sections. **R2 is not fully established for the entire writer chain:** the feedback/journal indexers and several on-demand analysis scripts exist in the workspace but have no copy in this repo. No deployment repair was attempted under this docs-only task.
+Runtime entrypoints and their repo copies were hashed read-only. Collector modules, the v1 market watcher, both short watchers, supervisor, reactor, dashboard, data-check, disk-alert, archive and maintenance scripts matched. Their hashes appear in dataset sections. **R2 remains partial:** five previously workspace-only downstream scripts were copied byte-for-byte into `tools/workspace-mirror/` on 2026-10-18; see the manifest below. Five excluded scripts remain unmirrored under the explicit privacy/host rule. No runtime file or deployment was changed. A source mirror is not a relocation: relative runtime paths still resolve in the original workspace.
 
 | Trigger / producer | Writes / outputs | Timing and evidence |
 |---|---|---|
@@ -36,14 +47,37 @@ Runtime entrypoints and their repo copies were hashed read-only. Collector modul
 | `crypto-updates-market-watcher.service` → `tools/crypto-updates/realtime-market-watcher.mjs` runtime copy | Under `~/.openclaw/workspace/crypto-updates/runtime/`: `alert-feedback.jsonl`, `paper-trades.jsonl`, `demo-sim-trades.jsonl`, `realtime-market-watcher.pid`, `realtime-market-watcher.log`; calls the two indexers below | Binance **spot** BTC/ETH/SOL `trade`, `depth5@100ms`; Hyperliquid WebSocket HYPE; candle REST and local futures feature enrichment. Not an archival raw feed |
 | Crontab `@reboot` and every minute → `ensure-short-watchers.sh` | `~/.openclaw/workspace/.tmp/{btc-short-watch-82k,zec-hype-short-watch}.{pid,log}`, `short-watchers-supervisor.log` | Supervisor launches only when PID/script check fails; existing scripts poll Bybit public market endpoints. Both watchers and v1 untouched |
 | `bybit-execution-reactor.service` → `bybit-execution-reactor.mjs` | Runtime `bybit-execution-reactor-state.json`, `execution-feedback.jsonl`, `bybit-execution-reactor.log`; journal indexer outputs | Existing read-only private Bybit polling at 30 s. Account records are personal: counts/sizes only; no endpoint was queried here |
-| Workspace `crypto-updates/index-monitor-feedback.mjs` | Runtime `monitor-index.sqlite`; `crypto-updates/monitor-index.yaml`; `crypto-updates/wiki/monitor/index.md`, `daily/<day>.md` | Derived from feedback; triggered by watcher; runtime hash recorded below, repo copy **not verified (absent)** |
-| Workspace `crypto-updates/index-trade-research-journal.mjs` | Runtime `trade-research-journal.json`; `crypto-updates/wiki/trading-journal/` index, daily, alerts, executions, followed-alert-setups, modified-alert-setups, manual-independent-trades, paper-shadow-alerts; workspace research `experiments/btc-eth-alert-edge/results/live-ta-execution-journal.md` | Derived from alert/execution feedback; personal aggregation only; repo copy **not verified (absent)** |
+| Workspace `crypto-updates/index-monitor-feedback.mjs` | Runtime `monitor-index.sqlite`; `crypto-updates/monitor-index.yaml`; `crypto-updates/wiki/monitor/index.md`, `daily/<day>.md` | Derived from feedback; triggered by watcher; runtime hash recorded below, repo mirror verified in the D1b manifest below |
+| Workspace `crypto-updates/index-trade-research-journal.mjs` | Runtime `trade-research-journal.json`; `crypto-updates/wiki/trading-journal/` index, daily, alerts, executions, followed-alert-setups, modified-alert-setups, manual-independent-trades, paper-shadow-alerts; workspace research `experiments/btc-eth-alert-edge/results/live-ta-execution-journal.md` | Derived from alert/execution feedback; personal aggregation only; repo mirror verified in the D1b manifest below |
 | Workspace `analyze-alert-setups.mjs` | Runtime `setup-analysis.json`, `setup-candle-context-cache.json`; setup-analysis YAML/wiki outputs | Public spot/Hyperliquid candles plus local alerts; on-demand; repo copy absent |
 | Workspace `orderflow-spike.mjs`, `orderflow-features.mjs` | Runtime `orderflow-spikes/<run>/{raw-events.jsonl,orderflow.sqlite,manifest.yaml,features-1s.csv,features.sqlite,features-manifest.yaml}`; shell capture logs under `long-captures/` | On-demand public Binance/Hyperliquid experiments; not continuous collector coverage |
-| Workspace `orderflow-alert-replay-alignment.mjs`, `verify-ralph-orderflow-replay.mjs`, `service-health-check.mjs` | Runtime `orderflow-alignment/latest.json` and report; `ralph-replay-checks/<symbol>_<day>.{json,md}`; `service-health-report.json` plus Markdown report | On-demand checks; first script not in repo; other two have matching runtime/repo copies |
+| Workspace `orderflow-alert-replay-alignment.mjs`, `verify-ralph-orderflow-replay.mjs`, `service-health-check.mjs` | Runtime `orderflow-alignment/latest.json` and report; `ralph-replay-checks/<symbol>_<day>.{json,md}`; `service-health-report.json` plus Markdown report | On-demand checks; first script now mirrored with equal hash; other two have matching runtime/repo copies |
 | `tools/alert-eval/*.py`, local `~/ralph-state/a2c_*.py`, one-off research download commands | `~/ralph-state/` evaluation CSV, JSONL, logs/reports; `~/ralph-research-data/` downloads, checksums, manifest and mark candles | File-specific provenance below; some download command producers not recoverable from code/logs and explicitly unresolved |
 | Experiment `src/*.mjs` runners, archive/market loaders, H2 contract | `experiments/*/{data,results,runtime,paper}/` in repo and workspace research checkout; H2 content-addressed JSON, manifest and variant registry | Not all experiments are scheduled. Paths are relative to each script's checkout; copies are separate storage |
 | OpenClaw gateway/node, Obsidian, transcription and backup workflows | Chat/session/voice/memory/backups, generated knowledge/index storage and operational logs | Personal aggregate categories only; outside market collection. No private contents inspected. System/OS journal and package caches are infrastructure, not claimed as market datasets |
+
+## Downstream source mirror verification (D1b)
+
+Source paths below are relative to the workspace except the explicitly external research scripts. Mirrors are stored under `tools/workspace-mirror/<source path>`. No scripts were executed or edited at runtime. Hash equality was checked after copying; full hashes identify bytes, not historical provenance. Public API host literals were also excluded under the literal host rule; sources were not sanitized because that would break byte equality.
+
+| Source | Status | Runtime SHA-256 = repo SHA-256 (mirrored only) |
+|---|---|---|
+| `crypto-updates/index-monitor-feedback.mjs` | mirrored; equal | `066982ce05ad20cddc61ebd8664eb23fac9300deec9da8346f0d9340b1fd3be6` |
+| `crypto-updates/index-trade-research-journal.mjs` | mirrored; equal | `42109565b26a7ee754b98b7a52c9ca687417f3ca529ccdc1601d48439ba68bfa` |
+| `crypto-updates/analyze-alert-setups.mjs` | not mirrored: literal public API host (strict host exclusion; no runtime edits) | — |
+| `crypto-updates/orderflow-spike.mjs` | not mirrored: literal public API host (strict host exclusion; no runtime edits) | — |
+| `crypto-updates/orderflow-features.mjs` | mirrored; equal | `40c96e7c5df2b0f65cc609f386b469baccecfafd13c6e7342222ba2ec06f2458` |
+| `crypto-updates/orderflow-alert-replay-alignment.mjs` | mirrored; equal | `754db289dccf93ce870e6b20eab2515871091b8752960eb1e386bd2f86e868c9` |
+| `scripts/a2b_history_proof.py` | not mirrored: home path, username | — |
+| `~/ralph-state/a2c_bybit_crosscheck.py` | not mirrored: home path, username | — |
+| `~/ralph-state/a2c_minute_basis_remaining.py` | not mirrored: home path, username | — |
+| `ralph-research-os/experiments/volume-velocity-dex-discrepancy/src/normalize-replay-warehouse-rows.mjs` | mirrored; equal (newly traced D144 writer) | `b708776397d8b06486a7005eb681c495efdcab0d7b4755d52c6349e6083e2c14` |
+
+## Scheduler evidence (D1b)
+
+All 11 OpenClaw jobs, including disabled jobs, were listed read-only; all 11 full prompts/payloads were inspected. No job was run or edited. `liquid-crypto-alert-edge-backtest` is enabled, every four hours: its workdir is the workspace root, with npm prefixes `ralph-research-os/experiments/...`. It explicitly runs the two feedback/journal indexers, universe, backtest, demo-sim:all, verify, shadow ledger, wick-feedback and aggtrades-velocity studies, then state-of-edge. These paths target workspace datasets, not the separate public checkout. Weekly maintenance and the adversarial loop target workspace health/automation outputs; autoresearch selects a bounded queue item and does not prove a particular historical cache writer. State-of-edge daily and the ETH/SOL replay job are disabled.
+
+Installed user/system service definitions and the user crontab were read without mutation. Collector, maintenance, upload, checks, disk alert, market watcher and execution reactor entrypoints agree with the writer matrix. Crontab contains the short-watcher supervisor at reboot and every minute, not the unresolved one-off research exports. These trigger inspections do not establish the provenance of arbitrary historical reports.
 
 ## Storage Box: read-only top-two-level size listing
 
@@ -145,8 +179,8 @@ Binance research ZIPs hold daily USD-M aggTrades; Bybit public gzip CSVs hold in
 - Rows/hour: 418,854 rows/hour in sampled closed hourly partition.
 - Newest eligible complete file: `~/data/binance/raw_BTCUSDT_2026-10-17T11Z.jsonl.xz`; inspected file: `~/data/binance/raw_BTCUSDT_2026-10-17T11Z.jsonl.xz`; rows: `418854`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S001](#schema-s001). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `data.E`, `data.T`, `data.e`, `data.time`, `recv_ms`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"recv_ms:integer": [1792234800091, 1792238399941], "data.e:string": ["aggTrade", "markPriceUpdate"], "data.E:integer": [1792234799975, 1792238399808], "data.T:integer": [1792234799974, 1792252800000], "data.time:integer": [1792234802617, 1792238390498]}`.
+- Verified integer epoch time fields: `data.E`, `data.T`, `data.time`, `recv_ms`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"recv_ms:integer": [1792234800091, 1792238399941], "data.E:integer": [1792234799975, 1792238399808], "data.T:integer": [1792234799974, 1792252800000], "data.time:integer": [1792234802617, 1792238390498]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -172,8 +206,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 10,529 rows/hour in sampled closed hourly partition.
 - Newest eligible complete file: `~/data/binance/tape_BTCUSDT_2026-10-17T11Z.csv.gz`; inspected file: `~/data/binance/tape_BTCUSDT_2026-10-17T11Z.csv.gz`; rows: `10529`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S002](#schema-s002). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `Time`, `TradeTimeMs`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"Time:string": ["17.10.2026 11:00:00.058", "17.10.2026 11:59:59.284"], "TradeTimeMs:string": ["1792234800058", "1792238399284"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -199,8 +233,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 3,524 rows/hour in sampled closed hourly partition.
 - Newest eligible complete file: `~/data/binance/book_BTCUSDT_2026-10-17T12Z.jsonl.gz`; inspected file: `~/data/binance/book_BTCUSDT_2026-10-17T12Z.jsonl.gz`; rows: `3524`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S003](#schema-s003). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1792238400027, 1792241999936]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1792238400027, 1792241999936]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -226,8 +260,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 60.00 rows/hour daily-average of sampled partition.
 - Newest eligible complete file: `~/data/features/live_bars_60s_2026-10-16.csv`; inspected file: `~/data/features/live_bars_60s_2026-10-16.csv`; rows: `1440`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S004](#schema-s004). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t_ms`, `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"time:string": ["2026-10-16T00:00:00Z", "2026-10-16T23:59:00Z"], "t_ms:string": ["1792108800000", "1792195140000"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -253,8 +287,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 242.33 rows/hour daily-average of sampled partition.
 - Newest eligible complete file: `~/data/features/live_events_2026-10-16.jsonl`; inspected file: `~/data/features/live_events_2026-10-16.jsonl`; rows: `5816`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S005](#schema-s005). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`, `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1792108800000, 1792195198681], "time:string": ["2026-10-16T00:00:00Z", "2026-10-16T23:59:58Z"]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1792108800000, 1792195198681]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -280,8 +314,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 60.00 rows/hour daily-average of sampled partition.
 - Newest eligible complete file: `~/data/features/live_footprint_60s_2026-10-16.jsonl.gz`; inspected file: `~/data/features/live_footprint_60s_2026-10-16.jsonl.gz`; rows: `1440`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S006](#schema-s006). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1792108800000, 1792195140000]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1792108800000, 1792195140000]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -307,7 +341,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features/all_prices_2026-10-16.csv`; inspected file: `~/data/features/all_prices_2026-10-16.csv`; rows: `21177`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S007](#schema-s007). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -333,8 +367,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/data/features/live_sessions.csv`; rows: `9`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S008](#schema-s008). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `day`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"day:string": ["2026-10-08", "2026-10-16"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -360,7 +394,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/data/features/live.json`; rows: `1`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S009](#schema-s009). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `bars[].t_ms`, `events[].t`, `events[].time`, `footprints[].t`, `generated`, `status.bar.t`, `status.bar_fp.t`, `status.session.day`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -386,7 +420,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/data/features/engine_state.json`; rows: `1`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S010](#schema-s010). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -474,7 +508,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D015 — BTCUSDT legacy rounded tapes
 
 - Purpose: Derived orderflow, profile or restart state.
-- Producer: not verified (historical rounded artifact; original producing command not found). Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: `tools/collector/rebuild_from_raw.py:rebuild_tapes` → `move_existing` moves old tapes into `tape_rounded/<run>/`; original tape bytes come from the collector Recorder. This verifies the archive/move writer, not the exact historical rounded-code revision or invocation (not verified). On-demand rebuild; no scheduled trigger found.
 - Source: Local BTCUSDT USD-M trades/raw/book through orderflow_engine.py.
 - Location/naming: `~/data/binance/tape_rounded/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -493,7 +527,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D016 — BTCUSDT legacy rounded engine
 
 - Purpose: Derived orderflow, profile or restart state.
-- Producer: not verified (historical rounded artifact; original producing command not found). Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: `tools/collector/rebuild_from_raw.py:move_features` → `move_existing` moves offline feature outputs into `engine_rounded/<run>/`; original feature writer is the orderflow engine. Exact historical rounded-code revision/invocation remains not verified. On-demand rebuild; no scheduled trigger found.
 - Source: Local BTCUSDT USD-M trades/raw/book through orderflow_engine.py.
 - Location/naming: `~/data/features/engine_rounded/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -526,8 +560,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 464,717 rows/hour in sampled closed hourly partition.
 - Newest eligible complete file: `~/data/binance-ethusdt/raw_ETHUSDT_2026-10-17T11Z.jsonl.xz`; inspected file: `~/data/binance-ethusdt/raw_ETHUSDT_2026-10-17T11Z.jsonl.xz`; rows: `464717`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S011](#schema-s011). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `data.E`, `data.T`, `data.e`, `data.o.T`, `data.time`, `recv_ms`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"recv_ms:integer": [1792234800092, 1792238399985], "data.e:string": ["aggTrade", "markPriceUpdate"], "data.E:integer": [1792234799976, 1792238399854], "data.T:integer": [1792234799861, 1792252800000], "data.time:integer": [1792234802208, 1792238394191]}`.
+- Verified integer epoch time fields: `data.E`, `data.T`, `data.time`, `recv_ms`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"recv_ms:integer": [1792234800092, 1792238399985], "data.E:integer": [1792234799976, 1792238399854], "data.T:integer": [1792234799861, 1792252800000], "data.time:integer": [1792234802208, 1792238394191]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -553,8 +587,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 12,143 rows/hour in sampled closed hourly partition.
 - Newest eligible complete file: `~/data/binance-ethusdt/tape_ETHUSDT_2026-10-17T11Z.csv.gz`; inspected file: `~/data/binance-ethusdt/tape_ETHUSDT_2026-10-17T11Z.csv.gz`; rows: `12143`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S002](#schema-s002). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `Time`, `TradeTimeMs`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"Time:string": ["17.10.2026 11:00:00.025", "17.10.2026 11:59:59.844"], "TradeTimeMs:string": ["1792234800025", "1792238399844"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -580,8 +614,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 3,536 rows/hour in sampled closed hourly partition.
 - Newest eligible complete file: `~/data/binance-ethusdt/book_ETHUSDT_2026-10-17T12Z.jsonl.gz`; inspected file: `~/data/binance-ethusdt/book_ETHUSDT_2026-10-17T12Z.jsonl.gz`; rows: `3536`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S003](#schema-s003). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1792238400738, 1792241999681]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1792238400738, 1792241999681]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -607,8 +641,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 60.00 rows/hour daily-average of sampled partition.
 - Newest eligible complete file: `~/data/features-ethusdt/live_bars_60s_2026-10-16.csv`; inspected file: `~/data/features-ethusdt/live_bars_60s_2026-10-16.csv`; rows: `1440`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S004](#schema-s004). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t_ms`, `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"time:string": ["2026-10-16T00:00:00Z", "2026-10-16T23:59:00Z"], "t_ms:string": ["1792108800000", "1792195140000"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -634,8 +668,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 4,027.42 rows/hour daily-average of sampled partition.
 - Newest eligible complete file: `~/data/features-ethusdt/live_events_2026-10-16.jsonl`; inspected file: `~/data/features-ethusdt/live_events_2026-10-16.jsonl`; rows: `96658`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S012](#schema-s012). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`, `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1792108800762, 1792195196929], "time:string": ["2026-10-16T00:00:00Z", "2026-10-16T23:59:56Z"]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1792108800762, 1792195196929]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -661,8 +695,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 60.00 rows/hour daily-average of sampled partition.
 - Newest eligible complete file: `~/data/features-ethusdt/live_footprint_60s_2026-10-16.jsonl.gz`; inspected file: `~/data/features-ethusdt/live_footprint_60s_2026-10-16.jsonl.gz`; rows: `1440`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S006](#schema-s006). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1792108800000, 1792195140000]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1792108800000, 1792195140000]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -688,7 +722,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-ethusdt/all_prices_2026-10-16.csv`; inspected file: `~/data/features-ethusdt/all_prices_2026-10-16.csv`; rows: `10133`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S007](#schema-s007). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -714,8 +748,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/data/features-ethusdt/live_sessions.csv`; rows: `8`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S008](#schema-s008). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `day`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"day:string": ["2026-10-09", "2026-10-16"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -741,7 +775,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/data/features-ethusdt/live.json`; rows: `1`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S013](#schema-s013). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `bars[].t_ms`, `events[].t`, `events[].time`, `footprints[].t`, `generated`, `status.bar.t`, `status.bar_fp.t`, `status.session.day`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -767,7 +801,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/data/features-ethusdt/engine_state.json`; rows: `1`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S010](#schema-s010). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -793,8 +827,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-ethusdt/bars_60s.csv`; inspected file: `~/data/features-ethusdt/bars_60s.csv`; rows: `1483`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S004](#schema-s004). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t_ms`, `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"time:string": ["2026-10-09T05:48:00Z", "2026-10-10T06:30:00Z"], "t_ms:string": ["1791524880000", "1791613800000"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -820,8 +854,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-ethusdt/events.jsonl`; inspected file: `~/data/features-ethusdt/events.jsonl`; rows: `56003`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S012](#schema-s012). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`, `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1791524914287, 1791613911696], "time:string": ["2026-10-09T05:48:34Z", "2026-10-10T06:31:51Z"]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1791524914287, 1791613911696]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -847,8 +881,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-ethusdt/footprint_60s.jsonl.gz`; inspected file: `~/data/features-ethusdt/footprint_60s.jsonl.gz`; rows: `1483`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S006](#schema-s006). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1791524880000, 1791613800000]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1791524880000, 1791613800000]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -874,8 +908,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-ethusdt/sessions.csv`; inspected file: `~/data/features-ethusdt/sessions.csv`; rows: `2`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S008](#schema-s008). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `day`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"day:string": ["2026-10-09", "2026-10-10"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -887,7 +921,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D031 — ETHUSDT legacy rounded tapes
 
 - Purpose: Derived orderflow, profile or restart state.
-- Producer: not verified (historical rounded artifact; original producing command not found). Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: `tools/collector/rebuild_from_raw.py:rebuild_tapes` → `move_existing` moves old tapes into `tape_rounded/<run>/`; original tape bytes come from the collector Recorder. This verifies the archive/move writer, not the exact historical rounded-code revision or invocation (not verified). On-demand rebuild; no scheduled trigger found.
 - Source: Local ETHUSDT USD-M trades/raw/book through orderflow_engine.py.
 - Location/naming: `~/data/binance-ethusdt/tape_rounded/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -901,8 +935,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/binance-ethusdt/tape_rounded/tape_ETHUSDT_2026-10-09T12Z.csv`; inspected file: `~/data/binance-ethusdt/tape_rounded/tape_ETHUSDT_2026-10-09T12Z.csv`; rows: `44705`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S002](#schema-s002). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `Time`, `TradeTimeMs`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"Time:string": ["09.10.2026 12:00:00.042", "09.10.2026 12:59:59.917"], "TradeTimeMs:string": ["1791547200042", "1791550799917"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -914,7 +948,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D032 — ETHUSDT legacy rounded engine
 
 - Purpose: Derived orderflow, profile or restart state.
-- Producer: not verified (historical rounded artifact; original producing command not found). Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: `tools/collector/rebuild_from_raw.py:move_features` → `move_existing` moves offline feature outputs into `engine_rounded/<run>/`; original feature writer is the orderflow engine. Exact historical rounded-code revision/invocation remains not verified. On-demand rebuild; no scheduled trigger found.
 - Source: Local ETHUSDT USD-M trades/raw/book through orderflow_engine.py.
 - Location/naming: `~/data/features-ethusdt/engine_rounded/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -928,8 +962,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-ethusdt/engine_rounded/sessions.csv`; inspected file: `~/data/features-ethusdt/engine_rounded/sessions.csv`; rows: `1`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S008](#schema-s008). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `day`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"day:string": ["2026-10-09", "2026-10-09"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -955,8 +989,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 216,041 rows/hour in sampled closed hourly partition.
 - Newest eligible complete file: `~/data/binance-solusdt/raw_SOLUSDT_2026-10-17T11Z.jsonl.xz`; inspected file: `~/data/binance-solusdt/raw_SOLUSDT_2026-10-17T11Z.jsonl.xz`; rows: `216041`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S011](#schema-s011). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `data.E`, `data.T`, `data.e`, `data.o.T`, `data.time`, `recv_ms`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"recv_ms:integer": [1792234800030, 1792238399941], "data.e:string": ["aggTrade", "markPriceUpdate"], "data.E:integer": [1792234799911, 1792238399819], "data.T:integer": [1792234799907, 1792252800000], "data.time:integer": [1792234803978, 1792238384750]}`.
+- Verified integer epoch time fields: `data.E`, `data.T`, `data.time`, `recv_ms`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"recv_ms:integer": [1792234800030, 1792238399941], "data.E:integer": [1792234799911, 1792238399819], "data.T:integer": [1792234799907, 1792252800000], "data.time:integer": [1792234803978, 1792238384750]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -982,8 +1016,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 4,499 rows/hour in sampled closed hourly partition.
 - Newest eligible complete file: `~/data/binance-solusdt/tape_SOLUSDT_2026-10-17T11Z.csv.gz`; inspected file: `~/data/binance-solusdt/tape_SOLUSDT_2026-10-17T11Z.csv.gz`; rows: `4499`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S002](#schema-s002). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `Time`, `TradeTimeMs`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"Time:string": ["17.10.2026 11:00:01.284", "17.10.2026 11:59:59.718"], "TradeTimeMs:string": ["1792234801284", "1792238399718"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1009,8 +1043,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 3,588 rows/hour in sampled closed hourly partition.
 - Newest eligible complete file: `~/data/binance-solusdt/book_SOLUSDT_2026-10-17T12Z.jsonl.gz`; inspected file: `~/data/binance-solusdt/book_SOLUSDT_2026-10-17T12Z.jsonl.gz`; rows: `3588`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S003](#schema-s003). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1792238400174, 1792241999471]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1792238400174, 1792241999471]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1036,8 +1070,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 60.00 rows/hour daily-average of sampled partition.
 - Newest eligible complete file: `~/data/features-solusdt/live_bars_60s_2026-10-16.csv`; inspected file: `~/data/features-solusdt/live_bars_60s_2026-10-16.csv`; rows: `1440`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S004](#schema-s004). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t_ms`, `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"time:string": ["2026-10-16T00:00:00Z", "2026-10-16T23:59:00Z"], "t_ms:string": ["1792108800000", "1792195140000"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1063,8 +1097,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 163.88 rows/hour daily-average of sampled partition.
 - Newest eligible complete file: `~/data/features-solusdt/live_events_2026-10-16.jsonl`; inspected file: `~/data/features-solusdt/live_events_2026-10-16.jsonl`; rows: `3933`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S012](#schema-s012). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`, `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1792108800000, 1792195173342], "time:string": ["2026-10-16T00:00:00Z", "2026-10-16T23:59:33Z"]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1792108800000, 1792195173342]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1090,8 +1124,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 60.00 rows/hour daily-average of sampled partition.
 - Newest eligible complete file: `~/data/features-solusdt/live_footprint_60s_2026-10-16.jsonl.gz`; inspected file: `~/data/features-solusdt/live_footprint_60s_2026-10-16.jsonl.gz`; rows: `1440`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S006](#schema-s006). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1792108800000, 1792195140000]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1792108800000, 1792195140000]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1117,7 +1151,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-solusdt/all_prices_2026-10-16.csv`; inspected file: `~/data/features-solusdt/all_prices_2026-10-16.csv`; rows: `498`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S007](#schema-s007). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1143,8 +1177,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/data/features-solusdt/live_sessions.csv`; rows: `8`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S008](#schema-s008). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `day`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"day:string": ["2026-10-09", "2026-10-16"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1170,7 +1204,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/data/features-solusdt/live.json`; rows: `1`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S014](#schema-s014). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `bars[].t_ms`, `events[].t`, `events[].time`, `footprints[].t`, `generated`, `status.bar.t`, `status.bar_fp.t`, `status.session.day`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1196,7 +1230,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/data/features-solusdt/engine_state.json`; rows: `1`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S010](#schema-s010). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1222,8 +1256,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-solusdt/bars_60s.csv`; inspected file: `~/data/features-solusdt/bars_60s.csv`; rows: `1484`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S004](#schema-s004). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t_ms`, `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"time:string": ["2026-10-09T05:48:00Z", "2026-10-10T06:31:00Z"], "t_ms:string": ["1791524880000", "1791613860000"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1249,8 +1283,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-solusdt/events.jsonl`; inspected file: `~/data/features-solusdt/events.jsonl`; rows: `10751`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S005](#schema-s005). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`, `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1791524880000, 1791613967441], "time:string": ["2026-10-09T05:48:00Z", "2026-10-10T06:32:47Z"]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1791524880000, 1791613967441]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1276,8 +1310,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-solusdt/footprint_60s.jsonl.gz`; inspected file: `~/data/features-solusdt/footprint_60s.jsonl.gz`; rows: `1484`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S006](#schema-s006). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1791524880000, 1791613860000]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1791524880000, 1791613860000]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1303,8 +1337,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-solusdt/sessions.csv`; inspected file: `~/data/features-solusdt/sessions.csv`; rows: `2`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S008](#schema-s008). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `day`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"day:string": ["2026-10-09", "2026-10-10"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1316,7 +1350,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D047 — SOLUSDT legacy rounded tapes
 
 - Purpose: Derived orderflow, profile or restart state.
-- Producer: not verified (historical rounded artifact; original producing command not found). Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: `tools/collector/rebuild_from_raw.py:rebuild_tapes` → `move_existing` moves old tapes into `tape_rounded/<run>/`; original tape bytes come from the collector Recorder. This verifies the archive/move writer, not the exact historical rounded-code revision or invocation (not verified). On-demand rebuild; no scheduled trigger found.
 - Source: Local SOLUSDT USD-M trades/raw/book through orderflow_engine.py.
 - Location/naming: `~/data/binance-solusdt/tape_rounded/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -1330,8 +1364,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/binance-solusdt/tape_rounded/tape_SOLUSDT_2026-10-09T12Z.csv`; inspected file: `~/data/binance-solusdt/tape_rounded/tape_SOLUSDT_2026-10-09T12Z.csv`; rows: `12102`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S002](#schema-s002). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `Time`, `TradeTimeMs`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"Time:string": ["09.10.2026 12:00:00.075", "09.10.2026 12:59:59.998"], "TradeTimeMs:string": ["1791547200075", "1791550799998"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1343,7 +1377,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D048 — SOLUSDT legacy rounded engine
 
 - Purpose: Derived orderflow, profile or restart state.
-- Producer: not verified (historical rounded artifact; original producing command not found). Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: `tools/collector/rebuild_from_raw.py:move_features` → `move_existing` moves offline feature outputs into `engine_rounded/<run>/`; original feature writer is the orderflow engine. Exact historical rounded-code revision/invocation remains not verified. On-demand rebuild; no scheduled trigger found.
 - Source: Local SOLUSDT USD-M trades/raw/book through orderflow_engine.py.
 - Location/naming: `~/data/features-solusdt/engine_rounded/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -1357,8 +1391,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-solusdt/engine_rounded/sessions.csv`; inspected file: `~/data/features-solusdt/engine_rounded/sessions.csv`; rows: `1`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S008](#schema-s008). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `day`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"day:string": ["2026-10-09", "2026-10-09"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1384,8 +1418,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 202,554 rows/hour in sampled closed hourly partition.
 - Newest eligible complete file: `~/data/binance-hypeusdt/raw_HYPEUSDT_2026-10-17T11Z.jsonl.xz`; inspected file: `~/data/binance-hypeusdt/raw_HYPEUSDT_2026-10-17T11Z.jsonl.xz`; rows: `202554`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S011](#schema-s011). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `data.E`, `data.T`, `data.e`, `data.o.T`, `data.time`, `recv_ms`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"recv_ms:integer": [1792234800039, 1792238399961], "data.e:string": ["aggTrade", "markPriceUpdate"], "data.T:integer": [1792234799913, 1792238400000], "data.E:integer": [1792234799913, 1792238399841], "data.time:integer": [1792234802931, 1792238395381]}`.
+- Verified integer epoch time fields: `data.E`, `data.T`, `data.time`, `recv_ms`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"recv_ms:integer": [1792234800039, 1792238399961], "data.T:integer": [1792234799913, 1792238400000], "data.E:integer": [1792234799913, 1792238399841], "data.time:integer": [1792234802931, 1792238395381]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1411,8 +1445,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 9,791 rows/hour in sampled closed hourly partition.
 - Newest eligible complete file: `~/data/binance-hypeusdt/tape_HYPEUSDT_2026-10-17T11Z.csv.gz`; inspected file: `~/data/binance-hypeusdt/tape_HYPEUSDT_2026-10-17T11Z.csv.gz`; rows: `9791`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S002](#schema-s002). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `Time`, `TradeTimeMs`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"Time:string": ["17.10.2026 11:00:00.582", "17.10.2026 11:59:58.293"], "TradeTimeMs:string": ["1792234800582", "1792238398293"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1438,8 +1472,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 3,565 rows/hour in sampled closed hourly partition.
 - Newest eligible complete file: `~/data/binance-hypeusdt/book_HYPEUSDT_2026-10-17T12Z.jsonl.gz`; inspected file: `~/data/binance-hypeusdt/book_HYPEUSDT_2026-10-17T12Z.jsonl.gz`; rows: `3565`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S003](#schema-s003). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1792238400542, 1792241999396]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1792238400542, 1792241999396]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1465,8 +1499,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 60.00 rows/hour daily-average of sampled partition.
 - Newest eligible complete file: `~/data/features-hypeusdt/live_bars_60s_2026-10-16.csv`; inspected file: `~/data/features-hypeusdt/live_bars_60s_2026-10-16.csv`; rows: `1440`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S004](#schema-s004). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t_ms`, `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"time:string": ["2026-10-16T00:00:00Z", "2026-10-16T23:59:00Z"], "t_ms:string": ["1792108800000", "1792195140000"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1492,8 +1526,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 163.04 rows/hour daily-average of sampled partition.
 - Newest eligible complete file: `~/data/features-hypeusdt/live_events_2026-10-16.jsonl`; inspected file: `~/data/features-hypeusdt/live_events_2026-10-16.jsonl`; rows: `3913`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S005](#schema-s005). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`, `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1792108800000, 1792195080000], "time:string": ["2026-10-16T00:00:00Z", "2026-10-16T23:58:00Z"]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1792108800000, 1792195080000]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1519,8 +1553,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 60.00 rows/hour daily-average of sampled partition.
 - Newest eligible complete file: `~/data/features-hypeusdt/live_footprint_60s_2026-10-16.jsonl.gz`; inspected file: `~/data/features-hypeusdt/live_footprint_60s_2026-10-16.jsonl.gz`; rows: `1440`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S006](#schema-s006). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1792108800000, 1792195140000]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1792108800000, 1792195140000]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1546,7 +1580,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-hypeusdt/all_prices_2026-10-16.csv`; inspected file: `~/data/features-hypeusdt/all_prices_2026-10-16.csv`; rows: `4058`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S007](#schema-s007). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1572,8 +1606,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/data/features-hypeusdt/live_sessions.csv`; rows: `8`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S008](#schema-s008). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `day`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"day:string": ["2026-10-09", "2026-10-16"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1599,7 +1633,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/data/features-hypeusdt/live.json`; rows: `1`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S009](#schema-s009). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `bars[].t_ms`, `events[].t`, `events[].time`, `footprints[].t`, `generated`, `status.bar.t`, `status.bar_fp.t`, `status.session.day`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1625,7 +1659,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/data/features-hypeusdt/engine_state.json`; rows: `1`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S010](#schema-s010). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1651,8 +1685,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-hypeusdt/bars_60s.csv`; inspected file: `~/data/features-hypeusdt/bars_60s.csv`; rows: `1445`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S004](#schema-s004). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t_ms`, `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"time:string": ["2026-10-09T06:28:00Z", "2026-10-10T06:32:00Z"], "t_ms:string": ["1791527280000", "1791613920000"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1678,8 +1712,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-hypeusdt/events.jsonl`; inspected file: `~/data/features-hypeusdt/events.jsonl`; rows: `17173`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S012](#schema-s012). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`, `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1791527345749, 1791614002657], "time:string": ["2026-10-09T06:29:05Z", "2026-10-10T06:33:22Z"]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1791527345749, 1791614002657]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1705,8 +1739,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-hypeusdt/footprint_60s.jsonl.gz`; inspected file: `~/data/features-hypeusdt/footprint_60s.jsonl.gz`; rows: `1445`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S006](#schema-s006). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `t`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"t:integer": [1791527280000, 1791613920000]}`.
+- Verified integer epoch time fields: `t`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"t:integer": [1791527280000, 1791613920000]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1732,8 +1766,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-hypeusdt/sessions.csv`; inspected file: `~/data/features-hypeusdt/sessions.csv`; rows: `2`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S008](#schema-s008). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `day`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"day:string": ["2026-10-09", "2026-10-10"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1745,7 +1779,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D063 — HYPEUSDT legacy rounded tapes
 
 - Purpose: Derived orderflow, profile or restart state.
-- Producer: not verified (historical rounded artifact; original producing command not found). Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: `tools/collector/rebuild_from_raw.py:rebuild_tapes` → `move_existing` moves old tapes into `tape_rounded/<run>/`; original tape bytes come from the collector Recorder. This verifies the archive/move writer, not the exact historical rounded-code revision or invocation (not verified). On-demand rebuild; no scheduled trigger found.
 - Source: Local HYPEUSDT USD-M trades/raw/book through orderflow_engine.py.
 - Location/naming: `~/data/binance-hypeusdt/tape_rounded/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -1759,8 +1793,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/binance-hypeusdt/tape_rounded/tape_HYPEUSDT_2026-10-09T12Z.csv`; inspected file: `~/data/binance-hypeusdt/tape_rounded/tape_HYPEUSDT_2026-10-09T12Z.csv`; rows: `16464`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S002](#schema-s002). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `Time`, `TradeTimeMs`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"Time:string": ["09.10.2026 12:00:00.077", "09.10.2026 12:59:59.331"], "TradeTimeMs:string": ["1791547200077", "1791550799331"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1772,7 +1806,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D064 — HYPEUSDT legacy rounded engine
 
 - Purpose: Derived orderflow, profile or restart state.
-- Producer: not verified (historical rounded artifact; original producing command not found). Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: `tools/collector/rebuild_from_raw.py:move_features` → `move_existing` moves offline feature outputs into `engine_rounded/<run>/`; original feature writer is the orderflow engine. Exact historical rounded-code revision/invocation remains not verified. On-demand rebuild; no scheduled trigger found.
 - Source: Local HYPEUSDT USD-M trades/raw/book through orderflow_engine.py.
 - Location/naming: `~/data/features-hypeusdt/engine_rounded/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -1786,8 +1820,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/data/features-hypeusdt/engine_rounded/sessions.csv`; inspected file: `~/data/features-hypeusdt/engine_rounded/sessions.csv`; rows: `1`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S008](#schema-s008). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `day`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"day:string": ["2026-10-09", "2026-10-09"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1813,8 +1847,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-research-data/binance-vision/SOLUSDT-aggTrades-2026-10-13.zip`; inspected file: `~/ralph-research-data/binance-vision/SOLUSDT-aggTrades-2026-10-13.zip`; rows: `321591`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S015](#schema-s015). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `transact_time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"transact_time:string": ["1791849600005", "1791935999427"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1859,8 +1893,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-research-data/bybit-public/SOLUSDT2026-10-13.csv.gz`; inspected file: `~/ralph-research-data/bybit-public/SOLUSDT2026-10-13.csv.gz`; rows: `568373`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S016](#schema-s016). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `timestamp`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"timestamp:string": ["1791849600.0264", "1791935999.0599"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1886,7 +1920,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-research-data/bybit-markkline/BTCUSDT-2026-10-12.csv`; inspected file: `~/ralph-research-data/bybit-markkline/BTCUSDT-2026-10-12.csv`; rows: `996`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S017](#schema-s017). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1912,7 +1946,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/ralph-research-data/manifest.csv`; rows: `215`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S018](#schema-s018). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -1938,7 +1972,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/ralph-state/archive-files.csv`; rows: `2413`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S019](#schema-s019). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2002,7 +2036,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/data/disk-alert-state.json`; rows: `1`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S020](#schema-s020). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2028,7 +2062,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: 3.83 rows/hour daily-average of sampled partition.
 - Newest eligible complete file: `~/ralph-data-checks-repo/data-checks/2026-10-16.csv`; inspected file: `~/ralph-data-checks-repo/data-checks/2026-10-16.csv`; rows: `92`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S021](#schema-s021). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2040,7 +2074,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D075 — Evaluation a3b-report.txt
 
 - Purpose: Alert evaluation/replay outputs or run diagnostics.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: not verified. No exact output-writing/redirection command found in inspected repository/workspace scripts, service definitions, user crontab or OpenClaw job prompts. Filename resemblance to an evaluator is not provenance; outcome/report contents were not opened for this task.
 - Source: Local alert ledger plus Binance/Bybit archives; file-specific source not verified where producer unknown.
 - Location/naming: `~/ralph-state/a3b-report.txt`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2059,7 +2093,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D076 — Evaluation a3c-report.txt
 
 - Purpose: Alert evaluation/replay outputs or run diagnostics.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: not verified. No exact output-writing/redirection command found in inspected repository/workspace scripts, service definitions, user crontab or OpenClaw job prompts. Filename resemblance to an evaluator is not provenance; outcome/report contents were not opened for this task.
 - Source: Local alert ledger plus Binance/Bybit archives; file-specific source not verified where producer unknown.
 - Location/naming: `~/ralph-state/a3c-report.txt`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2078,7 +2112,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D077 — Evaluation a3c-run.log
 
 - Purpose: Alert evaluation/replay outputs or run diagnostics.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: not verified. No exact output-writing/redirection command found in inspected repository/workspace scripts, service definitions, user crontab or OpenClaw job prompts. Filename resemblance to an evaluator is not provenance; outcome/report contents were not opened for this task.
 - Source: Local alert ledger plus Binance/Bybit archives; file-specific source not verified where producer unknown.
 - Location/naming: `~/ralph-state/a3c-run.log`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2097,7 +2131,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D078 — Evaluation a3c-run2.log
 
 - Purpose: Alert evaluation/replay outputs or run diagnostics.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: not verified. No exact output-writing/redirection command found in inspected repository/workspace scripts, service definitions, user crontab or OpenClaw job prompts. Filename resemblance to an evaluator is not provenance; outcome/report contents were not opened for this task.
 - Source: Local alert ledger plus Binance/Bybit archives; file-specific source not verified where producer unknown.
 - Location/naming: `~/ralph-state/a3c-run2.log`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2116,7 +2150,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D079 — Evaluation a3c-smoke.log
 
 - Purpose: Alert evaluation/replay outputs or run diagnostics.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: not verified. No exact output-writing/redirection command found in inspected repository/workspace scripts, service definitions, user crontab or OpenClaw job prompts. Filename resemblance to an evaluator is not provenance; outcome/report contents were not opened for this task.
 - Source: Local alert ledger plus Binance/Bybit archives; file-specific source not verified where producer unknown.
 - Location/naming: `~/ralph-state/a3c-smoke.log`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2140,7 +2174,7 @@ Personal category only: **1 files; 1,975,601 bytes**.
 ### D081 — Evaluation alert-ledger.csv
 
 - Purpose: Alert evaluation/replay outputs or run diagnostics.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: not verified. No exact output-writing/redirection command found in inspected repository/workspace scripts, service definitions, user crontab or OpenClaw job prompts. Filename resemblance to an evaluator is not provenance; outcome/report contents were not opened for this task. pair_telegram_export.py names this file as an input only; it does not establish its producer.
 - Source: Local alert ledger plus Binance/Bybit archives; file-specific source not verified where producer unknown.
 - Location/naming: `~/ralph-state/alert-ledger.csv`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2154,8 +2188,8 @@ Personal category only: **1 files; 1,975,601 bytes**.
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-state/alert-ledger.csv`; inspected file: `~/ralph-state/alert-ledger.csv`; rows: `83`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S022](#schema-s022). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `utc_time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"utc_time:string": ["2026-09-03T17:56:42.041Z", "2026-10-11T17:58:12.186Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2167,7 +2201,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D082 — Evaluation alert-prices.csv
 
 - Purpose: Alert evaluation/replay outputs or run diagnostics.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: not verified. No exact output-writing/redirection command found in inspected repository/workspace scripts, service definitions, user crontab or OpenClaw job prompts. Filename resemblance to an evaluator is not provenance; outcome/report contents were not opened for this task.
 - Source: Local alert ledger plus Binance/Bybit archives; file-specific source not verified where producer unknown.
 - Location/naming: `~/ralph-state/alert-prices.csv`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2181,8 +2215,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-state/alert-prices.csv`; inspected file: `~/ralph-state/alert-prices.csv`; rows: `82`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S023](#schema-s023). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `utc_time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"utc_time:string": ["2026-09-03T17:56:42.041Z", "2026-10-11T17:58:12.186Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2213,8 +2247,8 @@ Personal category only: **1 files; 8,414 bytes**.
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-state/alerts-for-eval.csv`; inspected file: `~/ralph-state/alerts-for-eval.csv`; rows: `83`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S022](#schema-s022). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `utc_time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"utc_time:string": ["2026-09-03T17:56:42.041Z", "2026-10-11T17:58:12.186Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2240,8 +2274,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-state/shadow-trades-a3a-run1.csv`; inspected file: `~/ralph-state/shadow-trades-a3a-run1.csv`; rows: `1728`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S024](#schema-s024). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `entry_time`, `exit_time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"entry_time:string": ["2026-09-09T16:11:53.346Z", "2026-10-11T18:00:12.356Z"], "exit_time:string": ["", "2026-10-12T06:56:45.493Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2267,8 +2301,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-state/shadow-trades-a3a.csv`; inspected file: `~/ralph-state/shadow-trades-a3a.csv`; rows: `1728`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S024](#schema-s024). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `entry_time`, `exit_time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"entry_time:string": ["2026-09-09T16:11:53.346Z", "2026-10-11T18:00:12.356Z"], "exit_time:string": ["", "2026-10-12T06:56:45.493Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2294,8 +2328,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-state/shadow-trades-a3b.csv`; inspected file: `~/ralph-state/shadow-trades-a3b.csv`; rows: `7968`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S024](#schema-s024). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `entry_time`, `exit_time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"entry_time:string": ["2026-09-03T17:56:47.214Z", "2026-10-11T18:00:12.356Z"], "exit_time:string": ["2026-09-03T18:31:15.444Z", "2026-10-12T06:56:45.493Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2321,8 +2355,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-state/shadow-trades-a3c.csv`; inspected file: `~/ralph-state/shadow-trades-a3c.csv`; rows: `7968`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S024](#schema-s024). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `entry_time`, `exit_time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"entry_time:string": ["2026-09-03T17:56:47.214Z", "2026-10-11T18:00:12.356Z"], "exit_time:string": ["2026-09-03T18:31:15.444Z", "2026-10-12T06:56:45.493Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2334,7 +2368,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D089 — Evaluation short-candidates.jsonl
 
 - Purpose: Alert evaluation/replay outputs or run diagnostics.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: not verified. No exact output-writing/redirection command found in inspected repository/workspace scripts, service definitions, user crontab or OpenClaw job prompts. Filename resemblance to an evaluator is not provenance; outcome/report contents were not opened for this task. pair_telegram_export.py names this file as an input only; it does not establish its producer.
 - Source: Local alert ledger plus Binance/Bybit archives; file-specific source not verified where producer unknown.
 - Location/naming: `~/ralph-state/short-candidates.jsonl`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2348,7 +2382,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-state/short-candidates.jsonl`; inspected file: `~/ralph-state/short-candidates.jsonl`; rows: `84`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S025](#schema-s025). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2365,7 +2399,7 @@ Personal category only: **1 files; 4,082 bytes**.
 ### D091 — Evaluation short-watch-alerts.csv
 
 - Purpose: Alert evaluation/replay outputs or run diagnostics.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: not verified. No exact output-writing/redirection command found in inspected repository/workspace scripts, service definitions, user crontab or OpenClaw job prompts. Filename resemblance to an evaluator is not provenance; outcome/report contents were not opened for this task.
 - Source: Local alert ledger plus Binance/Bybit archives; file-specific source not verified where producer unknown.
 - Location/naming: `~/ralph-state/short-watch-alerts.csv`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2379,8 +2413,8 @@ Personal category only: **1 files; 4,082 bytes**.
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-state/short-watch-alerts.csv`; inspected file: `~/ralph-state/short-watch-alerts.csv`; rows: `82`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S026](#schema-s026). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `utc_time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"utc_time:string": ["2026-09-03T17:56:42.041Z", "2026-10-11T17:58:12.186Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2392,7 +2426,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D092 — Evaluation v3-smoke.log
 
 - Purpose: Alert evaluation/replay outputs or run diagnostics.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: not verified. No exact output-writing/redirection command found in inspected repository/workspace scripts, service definitions, user crontab or OpenClaw job prompts. Filename resemblance to an evaluator is not provenance; outcome/report contents were not opened for this task.
 - Source: Local alert ledger plus Binance/Bybit archives; file-specific source not verified where producer unknown.
 - Location/naming: `~/ralph-state/v3-smoke.log`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2411,7 +2445,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D093 — Evaluation v4-report.txt
 
 - Purpose: Alert evaluation/replay outputs or run diagnostics.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: not verified. No exact output-writing/redirection command found in inspected repository/workspace scripts, service definitions, user crontab or OpenClaw job prompts. Filename resemblance to an evaluator is not provenance; outcome/report contents were not opened for this task.
 - Source: Local alert ledger plus Binance/Bybit archives; file-specific source not verified where producer unknown.
 - Location/naming: `~/ralph-state/v4-report.txt`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2430,7 +2464,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D094 — Evaluation v4-run.log
 
 - Purpose: Alert evaluation/replay outputs or run diagnostics.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: not verified. No exact output-writing/redirection command found in inspected repository/workspace scripts, service definitions, user crontab or OpenClaw job prompts. Filename resemblance to an evaluator is not provenance; outcome/report contents were not opened for this task.
 - Source: Local alert ledger plus Binance/Bybit archives; file-specific source not verified where producer unknown.
 - Location/naming: `~/ralph-state/v4-run.log`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2449,7 +2483,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D095 — Evaluation v5-run.log
 
 - Purpose: Alert evaluation/replay outputs or run diagnostics.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: not verified. No exact output-writing/redirection command found in inspected repository/workspace scripts, service definitions, user crontab or OpenClaw job prompts. Filename resemblance to an evaluator is not provenance; outcome/report contents were not opened for this task.
 - Source: Local alert ledger plus Binance/Bybit archives; file-specific source not verified where producer unknown.
 - Location/naming: `~/ralph-state/v5-run.log`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2468,7 +2502,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D096 — Evaluation v6-archive-sizes.csv
 
 - Purpose: Alert evaluation/replay outputs or run diagnostics.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: not verified. No exact output-writing/redirection command found in inspected repository/workspace scripts, service definitions, user crontab or OpenClaw job prompts. Filename resemblance to an evaluator is not provenance; outcome/report contents were not opened for this task.
 - Source: Local alert ledger plus Binance/Bybit archives; file-specific source not verified where producer unknown.
 - Location/naming: `~/ralph-state/v6-archive-sizes.csv`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2482,8 +2516,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-state/v6-archive-sizes.csv`; inspected file: `~/ralph-state/v6-archive-sizes.csv`; rows: `300`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S027](#schema-s027). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `day`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"day:string": ["2026-08-01", "2026-10-14"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2509,8 +2543,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-state/velocity-alerts.csv`; inspected file: `~/ralph-state/velocity-alerts.csv`; rows: `293`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S028](#schema-s028). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `event_time_utc`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"event_time_utc:string": ["2026-08-10T15:13:09.722Z", "2026-10-13T11:22:50.592Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2536,8 +2570,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-state/velocity-excursions-smoke.csv`; inspected file: `~/ralph-state/velocity-excursions-smoke.csv`; rows: `12`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S029](#schema-s029). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `p0_time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"p0_time:string": ["2026-09-03T15:44:21.648Z", "2026-09-21T08:38:17.349Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2563,8 +2597,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-state/velocity-excursions-v5.csv`; inspected file: `~/ralph-state/velocity-excursions-v5.csv`; rows: `293`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S029](#schema-s029). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `p0_time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"p0_time:string": ["2026-08-10T15:13:09.722Z", "2026-10-13T11:22:50.592Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2590,8 +2624,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-state/velocity-trades-smoke.csv`; inspected file: `~/ralph-state/velocity-trades-smoke.csv`; rows: `432`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S030](#schema-s030). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `entry_time`, `exit_time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"entry_time:string": ["2026-09-03T15:44:26.796Z", "2026-09-21T08:40:17.391Z"], "exit_time:string": ["2026-09-03T15:45:06.090Z", "2026-09-21T09:02:10.297Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2617,8 +2651,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-state/velocity-trades-v4.csv`; inspected file: `~/ralph-state/velocity-trades-v4.csv`; rows: `10548`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S030](#schema-s030). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `entry_time`, `exit_time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"entry_time:string": ["2026-08-10T15:13:14.724Z", "2026-10-13T11:24:50.682Z"], "exit_time:string": ["2026-08-10T15:24:54.085Z", "2026-10-13T11:50:12.098Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2629,7 +2663,642 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 
 ### D102 — Watcher alert-feedback.jsonl
 
-Personal category only: **1 files; 2,508,460 bytes**.
+Research data classification approved 2026-10-18. V6 preregistration applies: structural inspection only; no example row, field-value distribution, PnL, win rate or outcome aggregate. Historical/manual variants are included in the schema union without attributing them to the current watcher.
+
+- Purpose: Append-only alert, review and paper/demo event research ledger.
+- Producer: `tools/crypto-updates/realtime-market-watcher.mjs` → appendFeedback; current runtime/repo SHA-256 both `75787e84c0c9e916215d5c201bcfeb6aefdcd0f4995ddcf166ea8e7a5af07f44`. Unit: crypto-updates-market-watcher.service. Legacy manual/backfill writer not verified.
+- Source: public spot/Hyperliquid market events plus local simulated plans/reviews; collector futures context may be embedded. No personal account execution records were read.
+- Location/naming: `~/.openclaw/workspace/crypto-updates/runtime/alert-feedback.jsonl`.
+- Rotation/compression/retention: plain append-only JSONL, no rotation or deletion policy verified in producer code.
+- Row definition: one appended lifecycle/event envelope; heterogeneous records, not one row per independent trade. Message status rows may lack market event time.
+- Consumers: feedback/journal indexers, setup analysis and research tools; schema presence does not authorize interim evaluation.
+- Known gaps/caps: optional nested variants, historical producer revisions not verified; live-feed coverage and independent-trade counts are not established by row count.
+- Observed size: **1 file; 2,593,496 bytes** (2026-10-18 structural scan).
+- First/last local record timestamp (recordedAt): `2026-08-09T23:34:00.000Z` / `2026-10-17T22:45:57.191Z`.
+- First/last available file mtime: `2026-10-17T22:45:57.190122+00:00` / `2026-10-17T22:45:57.190122+00:00`; mtime is not creation time.
+- Stored bytes/day: single mutable file; all retained bytes are attributed to the file mtime day, not daily historical ingress. Historical daily ingress not verified.
+- Rows/hour: not applicable to a mutable heterogeneous research event ledger; not calculated.
+- Newest eligible complete file: none (mutable). Inspected whole current file: `alert-feedback.jsonl`; rows: **995**; unchanged size/mtime during read: **True**.
+- Clock semantics: recordedAt is local append time; eventTime/alertTime and fill/entry/exit/lastEventTime are market-event-derived epoch ms; submittedAt copies entryTime, not real order-send time. ISO companions encode the same clocks. timeExitAt/triggerTime are planned deadlines. generated/generatedIso are local collector snapshot time; ageMs/afterMs/validUntilMs are durations, not epochs. observedAt is event-derived for reviews, with local fallback on finalization.
+- Event-time bounds by available field (timestamps only; absent historical fields are not inferred):
+  - `alert.eventTime`: `2026-08-10T15:13:09.722000+00:00` / `2026-10-17T21:45:36.434000+00:00`.
+  - `close.entryTime`: `2026-09-24T09:34:58.838000+00:00` / `2026-10-16T17:34:03.496000+00:00`.
+  - `close.exitTime`: `2026-09-24T09:35:28.886000+00:00` / `2026-10-16T17:41:38.764000+00:00`.
+  - `close.trade.entryTime`: `2026-09-24T09:34:58.838000+00:00` / `2026-10-16T17:34:03.496000+00:00`.
+  - `close.trade.lastEventTime`: `2026-09-24T09:35:28.886000+00:00` / `2026-10-16T17:41:38.764000+00:00`.
+  - `position.entryTime`: `2026-09-24T09:34:58.838000+00:00` / `2026-10-16T17:34:03.496000+00:00`.
+  - `position.lastEventTime`: `2026-09-24T09:34:58.838000+00:00` / `2026-10-16T17:34:03.496000+00:00`.
+  - `position.submittedAt`: `2026-09-24T09:34:58.838000+00:00` / `2026-10-16T17:34:03.496000+00:00`.
+  - `review.alertTime`: `2026-08-10T15:13:09.722000+00:00` / `2026-10-17T21:45:36.434000+00:00`.
+  - `review.lastEventTime`: `2026-08-10T16:13:35.706000+00:00` / `2026-10-17T22:45:56.585000+00:00`.
+  - `trade.entryTime`: `2026-09-24T09:34:58.838000+00:00` / `2026-10-16T17:34:03.496000+00:00`.
+  - `trade.lastEventTime`: `2026-09-24T09:34:58.838000+00:00` / `2026-10-16T17:34:03.496000+00:00`.
+
+Field semantics source: watcher append helpers; maybeOpenPaperTrade, closePaperTrade, maybeOpenDemoSimPosition, closeDemoSimPosition, paperPnl, startReview, updateReviewStats, finalizeReview, evidenceGate, readOrderflowContext and TA helpers. Collector passthrough fields: tools/collector/orderflow_engine.py. No source record values are shown.
+
+| Field path | Observed types | Unit / clock | Meaning / source boundary |
+|---|---|---|---|
+| `alert` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.assetLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.assetSymbol` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.direction` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.eventTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `alert.evidence` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.evidence.blockers` | array | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.evidence.blockers[]` | string | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.evidence.features` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.evidence.features.aggressiveBuyNotional` | integer / number | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `alert.evidence.features.aggressiveSellNotional` | integer / number | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `alert.evidence.features.bookAgeMs` | integer / null | milliseconds; duration | Window, offset, freshness age or validity duration; not an epoch timestamp. |
+| `alert.evidence.features.bookFresh` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.evidence.features.bookImbalance` | null / number | percent | Bid minus ask depth divided by total depth; evidenceGate multiplies by 100, collector context does not. |
+| `alert.evidence.features.cvdNotional` | integer / number | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `alert.evidence.features.cvdPctOfVolume` | integer / null / number | not verified | Observed field/type only; exact producer unit/meaning not verified. |
+| `alert.evidence.features.depthChangePct` | null / number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `alert.evidence.features.spreadPct` | null / number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `alert.evidence.features.top5DepthNotional` | integer / null / number | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `alert.evidence.features.tradeFlowNotional` | integer / number | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `alert.evidence.features.volumeRecentNotional` | null / number | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `alert.evidence.features.volumeVelocityRatio` | null / number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `alert.evidence.features.windowMs` | integer | milliseconds; duration | Window, offset, freshness age or validity duration; not an epoch timestamp. |
+| `alert.evidence.maxScore` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `alert.evidence.pass` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.evidence.reasons` | array | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.evidence.reasons[]` | string | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.evidence.score` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `alert.fadePlan` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.fadePlan.entryBandLimit` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.fadePlan.entryBandPct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `alert.fadePlan.fadeDirection` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.fadePlan.leverage` | integer | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `alert.fadePlan.lines` | array | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.fadePlan.lines[]` | string | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.fadePlan.marginUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `alert.fadePlan.noChasePrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.fadePlan.notional` | integer | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `alert.fadePlan.stopLossPct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `alert.fadePlan.stopLossPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.fadePlan.stopLossUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `alert.fadePlan.takeProfitPct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `alert.fadePlan.takeProfitPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.fadePlan.takeProfitUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `alert.fadePlan.tradable` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.fadePlan.worstFillPrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.id` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `alert.orderflowContext` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.orderflowContext.ageMs` | integer | milliseconds; duration | Window, offset, freshness age or validity duration; not an epoch timestamp. |
+| `alert.orderflowContext.assetLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.orderflowContext.available` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.orderflowContext.blockers` | array | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.orderflowContext.enabled` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.orderflowContext.features` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.orderflowContext.features.barBought` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.orderflowContext.features.barClose` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.barDelta` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.orderflowContext.features.barHigh` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.barLow` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.barOpen` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.barSold` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.orderflowContext.features.barVelMax` | integer / number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `alert.orderflowContext.features.barVolume` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.orderflowContext.features.bookAskDepth` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.orderflowContext.features.bookBestAsk` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.bookBestBid` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.bookBidDepth` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.orderflowContext.features.bookImbalance` | number | ratio [-1,1] | Bid minus ask depth divided by total depth; evidenceGate multiplies by 100, collector context does not. |
+| `alert.orderflowContext.features.indexPrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.lastPrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.liquidationCount5m` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `alert.orderflowContext.features.liquidationLong5m` | integer / number | base-asset units | Collector rolling five-minute forced-order quantity by liquidated side. |
+| `alert.orderflowContext.features.liquidationShort5m` | integer / number | base-asset units | Collector rolling five-minute forced-order quantity by liquidated side. |
+| `alert.orderflowContext.features.markPrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.oi` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.orderflowContext.features.sessionCvd` | integer / number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.orderflowContext.features.sessionHigh` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.sessionLow` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.sessionOpen` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.sessionPoc` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.sessionVah` | integer | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.sessionVal` | integer | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.sessionVolume` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.orderflowContext.features.sessionVwap` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.features.velocity` | integer / number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `alert.orderflowContext.generated` | integer | epoch ms; local | Collector snapshot generation wall clock; readOrderflowContext propagates it. |
+| `alert.orderflowContext.generatedIso` | string | ISO 8601 UTC; local | Collector snapshot generation wall clock; readOrderflowContext propagates it. |
+| `alert.orderflowContext.maxAgeMs` | integer | milliseconds; duration | Window, offset, freshness age or validity duration; not an epoch timestamp. |
+| `alert.orderflowContext.path` | string | path text; deliberately not displayed | Collector feature-source path; only schema retained. |
+| `alert.orderflowContext.recentEvents` | array | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.orderflowContext.recentEvents[]` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.orderflowContext.recentEvents[].avg_price` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.recentEvents[].bought` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.orderflowContext.recentEvents[].delta` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.orderflowContext.recentEvents[].from` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.recentEvents[].levels` | integer | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.orderflowContext.recentEvents[].liquidated` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.orderflowContext.recentEvents[].price` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.recentEvents[].qty` | integer / number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.orderflowContext.recentEvents[].ratio` | integer / number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `alert.orderflowContext.recentEvents[].side` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.orderflowContext.recentEvents[].sold` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.orderflowContext.recentEvents[].t` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `alert.orderflowContext.recentEvents[].time` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `alert.orderflowContext.recentEvents[].to` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.orderflowContext.recentEvents[].trades` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `alert.orderflowContext.recentEvents[].type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.orderflowContext.recentEvents[].volume` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.orderflowContext.source` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.orderflowContext.stale` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.orderflowContext.symbol` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.orderflowContext.timeframeSeconds` | integer | seconds; duration | Collector bar/event window duration. |
+| `alert.price` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.sendResult` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.sendResult.code` | integer | process exit code | Message subprocess close status, not event time. |
+| `alert.sendResult.stderr` | string | text; deliberately not displayed | Message subprocess output/error; may contain delivery metadata. No content inspected or reproduced. |
+| `alert.sendResult.stdout` | string | text; deliberately not displayed | Message subprocess output/error; may contain delivery metadata. No content inspected or reproduced. |
+| `alert.source` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.available` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.ta.blockers` | array | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.ta.blockers[]` | string | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.ta.breakout` | null / object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.breakout.level` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.breakout.supports` | null / string | not verified | Observed field/type only; exact producer unit/meaning not verified. |
+| `alert.ta.breakout.type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.btcGate` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.btcGate.enforced` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.ta.btcGate.nearProfileEdge` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.ta.btcGate.negative` | array | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.ta.btcGate.negative[]` | string | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.ta.btcGate.pass` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.ta.btcGate.positive` | array | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.ta.btcGate.positive[]` | string | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.ta.btcGate.reason` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.btcGate.regime` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.btcGate.score` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `alert.ta.btcGate.wouldBlock` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.ta.confluenceLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.context` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.context.dailyVwap` | null / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.context.profile` | null / object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.context.profile.poc` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.context.profile.vah` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.context.profile.val` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.context.rsi` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.context.rsi.15m` | number | RSI points [0,100] | Watcher rsi() for the named closed-candle timeframe. |
+| `alert.ta.context.rsi.1h` | number | RSI points [0,100] | Watcher rsi() for the named closed-candle timeframe. |
+| `alert.ta.context.rsi.4h` | number | RSI points [0,100] | Watcher rsi() for the named closed-candle timeframe. |
+| `alert.ta.context.rsi.5m` | number | RSI points [0,100] | Watcher rsi() for the named closed-candle timeframe. |
+| `alert.ta.context.trendline` | null / object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.context.trendline.dynamicResistance` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.context.trendline.dynamicSupport` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.context.trendline.nearResistance` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.ta.context.trendline.nearSupport` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.ta.context.trendline.resistanceDistancePct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `alert.ta.context.trendline.supportDistancePct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `alert.ta.context.trendline.trend` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.context.weeklyVwap` | null / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.deliveryClass` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.entryTriggerHorizon` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.fib` | null / object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.fib.distancePct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `alert.ta.fib.name` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.fib.price` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.holdingHorizon` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.htfBias` | null / string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.invalidation` | string | descriptive text | invalidationForTradeDirection formats the invalidation rule/level as text, not a numeric price. |
+| `alert.ta.levels` | array | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.levels[]` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.levels[].name` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.levels[].price` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.nearestLevel` | null / object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.nearestLevel.distancePct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `alert.ta.nearestLevel.name` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.nearestLevel.price` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.nearestLevels` | array | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.nearestLevels[]` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.nearestLevels[].distancePct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `alert.ta.nearestLevels[].name` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.nearestLevels[].price` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.orderflowContext.ageMs` | integer | milliseconds; duration | Window, offset, freshness age or validity duration; not an epoch timestamp. |
+| `alert.ta.orderflowContext.assetLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.orderflowContext.available` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.ta.orderflowContext.blockers` | array | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.ta.orderflowContext.enabled` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.ta.orderflowContext.features` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.orderflowContext.features.barBought` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.orderflowContext.features.barClose` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.barDelta` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.orderflowContext.features.barHigh` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.barLow` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.barOpen` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.barSold` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.orderflowContext.features.barVelMax` | integer / number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `alert.ta.orderflowContext.features.barVolume` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.orderflowContext.features.bookAskDepth` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.orderflowContext.features.bookBestAsk` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.bookBestBid` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.bookBidDepth` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.orderflowContext.features.bookImbalance` | number | ratio [-1,1] | Bid minus ask depth divided by total depth; evidenceGate multiplies by 100, collector context does not. |
+| `alert.ta.orderflowContext.features.indexPrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.lastPrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.liquidationCount5m` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `alert.ta.orderflowContext.features.liquidationLong5m` | integer / number | base-asset units | Collector rolling five-minute forced-order quantity by liquidated side. |
+| `alert.ta.orderflowContext.features.liquidationShort5m` | integer / number | base-asset units | Collector rolling five-minute forced-order quantity by liquidated side. |
+| `alert.ta.orderflowContext.features.markPrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.oi` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.orderflowContext.features.sessionCvd` | integer / number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.orderflowContext.features.sessionHigh` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.sessionLow` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.sessionOpen` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.sessionPoc` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.sessionVah` | integer | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.sessionVal` | integer | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.sessionVolume` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.orderflowContext.features.sessionVwap` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.features.velocity` | integer / number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `alert.ta.orderflowContext.generated` | integer | epoch ms; local | Collector snapshot generation wall clock; readOrderflowContext propagates it. |
+| `alert.ta.orderflowContext.generatedIso` | string | ISO 8601 UTC; local | Collector snapshot generation wall clock; readOrderflowContext propagates it. |
+| `alert.ta.orderflowContext.maxAgeMs` | integer | milliseconds; duration | Window, offset, freshness age or validity duration; not an epoch timestamp. |
+| `alert.ta.orderflowContext.path` | string | path text; deliberately not displayed | Collector feature-source path; only schema retained. |
+| `alert.ta.orderflowContext.recentEvents` | array | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.orderflowContext.recentEvents[]` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.orderflowContext.recentEvents[].avg_price` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.recentEvents[].bought` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.orderflowContext.recentEvents[].delta` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.orderflowContext.recentEvents[].from` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.recentEvents[].levels` | integer | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.orderflowContext.recentEvents[].liquidated` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.orderflowContext.recentEvents[].price` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.recentEvents[].qty` | integer / number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.orderflowContext.recentEvents[].ratio` | integer / number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `alert.ta.orderflowContext.recentEvents[].side` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.orderflowContext.recentEvents[].sold` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.orderflowContext.recentEvents[].t` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `alert.ta.orderflowContext.recentEvents[].time` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `alert.ta.orderflowContext.recentEvents[].to` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.orderflowContext.recentEvents[].trades` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `alert.ta.orderflowContext.recentEvents[].type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.orderflowContext.recentEvents[].volume` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.orderflowContext.source` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.orderflowContext.stale` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.ta.orderflowContext.symbol` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.orderflowContext.timeframeSeconds` | integer | seconds; duration | Collector bar/event window duration. |
+| `alert.ta.reasons` | array | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.ta.reasons[]` | string | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.ta.score` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `alert.ta.sfp` | null / object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.sfp.level` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.sfp.supports` | string | not verified | Observed field/type only; exact producer unit/meaning not verified. |
+| `alert.ta.sfp.type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.strategy` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.targetOrderflowContext` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.targetOrderflowContext.ageMs` | integer | milliseconds; duration | Window, offset, freshness age or validity duration; not an epoch timestamp. |
+| `alert.ta.targetOrderflowContext.assetLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.targetOrderflowContext.available` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.ta.targetOrderflowContext.blockers` | array | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.ta.targetOrderflowContext.enabled` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.ta.targetOrderflowContext.features` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.targetOrderflowContext.features.barBought` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.targetOrderflowContext.features.barClose` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.barDelta` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.targetOrderflowContext.features.barHigh` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.barLow` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.barOpen` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.barSold` | integer / number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.targetOrderflowContext.features.barVelMax` | integer / number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `alert.ta.targetOrderflowContext.features.barVolume` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.targetOrderflowContext.features.bookAskDepth` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.targetOrderflowContext.features.bookBestAsk` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.bookBestBid` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.bookBidDepth` | integer / number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.targetOrderflowContext.features.bookImbalance` | number | ratio [-1,1] | Bid minus ask depth divided by total depth; evidenceGate multiplies by 100, collector context does not. |
+| `alert.ta.targetOrderflowContext.features.indexPrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.lastPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.liquidationCount5m` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `alert.ta.targetOrderflowContext.features.liquidationLong5m` | integer / number | base-asset units | Collector rolling five-minute forced-order quantity by liquidated side. |
+| `alert.ta.targetOrderflowContext.features.liquidationShort5m` | integer / number | base-asset units | Collector rolling five-minute forced-order quantity by liquidated side. |
+| `alert.ta.targetOrderflowContext.features.markPrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.oi` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.targetOrderflowContext.features.sessionCvd` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.targetOrderflowContext.features.sessionHigh` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.sessionLow` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.sessionOpen` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.sessionPoc` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.sessionVah` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.sessionVal` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.sessionVolume` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.targetOrderflowContext.features.sessionVwap` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.features.velocity` | integer / number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `alert.ta.targetOrderflowContext.generated` | integer | epoch ms; local | Collector snapshot generation wall clock; readOrderflowContext propagates it. |
+| `alert.ta.targetOrderflowContext.generatedIso` | string | ISO 8601 UTC; local | Collector snapshot generation wall clock; readOrderflowContext propagates it. |
+| `alert.ta.targetOrderflowContext.maxAgeMs` | integer | milliseconds; duration | Window, offset, freshness age or validity duration; not an epoch timestamp. |
+| `alert.ta.targetOrderflowContext.path` | string | path text; deliberately not displayed | Collector feature-source path; only schema retained. |
+| `alert.ta.targetOrderflowContext.recentEvents` | array | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.targetOrderflowContext.recentEvents[]` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.targetOrderflowContext.recentEvents[].avg_price` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.recentEvents[].from` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.recentEvents[].levels` | integer | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.targetOrderflowContext.recentEvents[].liquidated` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.targetOrderflowContext.recentEvents[].move_pct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `alert.ta.targetOrderflowContext.recentEvents[].notional_5s` | integer | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `alert.ta.targetOrderflowContext.recentEvents[].price` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.recentEvents[].qty` | integer / number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.ta.targetOrderflowContext.recentEvents[].ratio` | integer / number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `alert.ta.targetOrderflowContext.recentEvents[].side` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.targetOrderflowContext.recentEvents[].t` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `alert.ta.targetOrderflowContext.recentEvents[].time` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `alert.ta.targetOrderflowContext.recentEvents[].to` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.ta.targetOrderflowContext.recentEvents[].type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.targetOrderflowContext.recentEvents[].window_s` | integer | seconds; duration | Collector bar/event window duration. |
+| `alert.ta.targetOrderflowContext.source` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.targetOrderflowContext.stale` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.ta.targetOrderflowContext.symbol` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.targetOrderflowContext.timeframeSeconds` | integer | seconds; duration | Collector bar/event window duration. |
+| `alert.ta.tradeAllowed` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.ta.tradeClass` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.ta.tradeClass.holdingHorizon` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.tradeClass.key` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.tradeClass.label` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.tradeClass.reason` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.tradeDirection` | null / string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.ta.tradeTimeframe` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.targetOrderflowContext` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.targetOrderflowContext.ageMs` | integer | milliseconds; duration | Window, offset, freshness age or validity duration; not an epoch timestamp. |
+| `alert.targetOrderflowContext.assetLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.targetOrderflowContext.available` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.targetOrderflowContext.blockers` | array | text/list of text | Generated evidence, blocker or presentation labels; values intentionally omitted. |
+| `alert.targetOrderflowContext.enabled` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.targetOrderflowContext.features` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.targetOrderflowContext.features.barBought` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.targetOrderflowContext.features.barClose` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.barDelta` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.targetOrderflowContext.features.barHigh` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.barLow` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.barOpen` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.barSold` | integer / number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.targetOrderflowContext.features.barVelMax` | integer / number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `alert.targetOrderflowContext.features.barVolume` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.targetOrderflowContext.features.bookAskDepth` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.targetOrderflowContext.features.bookBestAsk` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.bookBestBid` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.bookBidDepth` | integer / number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.targetOrderflowContext.features.bookImbalance` | number | ratio [-1,1] | Bid minus ask depth divided by total depth; evidenceGate multiplies by 100, collector context does not. |
+| `alert.targetOrderflowContext.features.indexPrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.lastPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.liquidationCount5m` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `alert.targetOrderflowContext.features.liquidationLong5m` | integer / number | base-asset units | Collector rolling five-minute forced-order quantity by liquidated side. |
+| `alert.targetOrderflowContext.features.liquidationShort5m` | integer / number | base-asset units | Collector rolling five-minute forced-order quantity by liquidated side. |
+| `alert.targetOrderflowContext.features.markPrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.oi` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.targetOrderflowContext.features.sessionCvd` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.targetOrderflowContext.features.sessionHigh` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.sessionLow` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.sessionOpen` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.sessionPoc` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.sessionVah` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.sessionVal` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.sessionVolume` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.targetOrderflowContext.features.sessionVwap` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.features.velocity` | integer / number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `alert.targetOrderflowContext.generated` | integer | epoch ms; local | Collector snapshot generation wall clock; readOrderflowContext propagates it. |
+| `alert.targetOrderflowContext.generatedIso` | string | ISO 8601 UTC; local | Collector snapshot generation wall clock; readOrderflowContext propagates it. |
+| `alert.targetOrderflowContext.maxAgeMs` | integer | milliseconds; duration | Window, offset, freshness age or validity duration; not an epoch timestamp. |
+| `alert.targetOrderflowContext.path` | string | path text; deliberately not displayed | Collector feature-source path; only schema retained. |
+| `alert.targetOrderflowContext.recentEvents` | array | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.targetOrderflowContext.recentEvents[]` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.targetOrderflowContext.recentEvents[].avg_price` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.recentEvents[].from` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.recentEvents[].levels` | integer | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `alert.targetOrderflowContext.recentEvents[].liquidated` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.targetOrderflowContext.recentEvents[].move_pct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `alert.targetOrderflowContext.recentEvents[].notional_5s` | integer | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `alert.targetOrderflowContext.recentEvents[].price` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.recentEvents[].qty` | integer / number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `alert.targetOrderflowContext.recentEvents[].ratio` | integer / number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `alert.targetOrderflowContext.recentEvents[].side` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.targetOrderflowContext.recentEvents[].t` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `alert.targetOrderflowContext.recentEvents[].time` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `alert.targetOrderflowContext.recentEvents[].to` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `alert.targetOrderflowContext.recentEvents[].type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.targetOrderflowContext.recentEvents[].window_s` | integer | seconds; duration | Collector bar/event window duration. |
+| `alert.targetOrderflowContext.source` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.targetOrderflowContext.stale` | boolean | boolean | Named gate/availability/support/state flag produced by watcher logic. |
+| `alert.targetOrderflowContext.symbol` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.targetOrderflowContext.timeframeSeconds` | integer | seconds; duration | Collector bar/event window duration. |
+| `alert.thresholdPct` | integer / number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `alert.triggerKind` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.triggerLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `alert.triggerMovePct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `alert.volumeRecentNotional` | null / number | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `alert.volumeVelocityRatio` | null / number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `alert.windowMs` | integer | milliseconds; duration | Window, offset, freshness age or validity duration; not an epoch timestamp. |
+| `classification` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `classification.reason` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `classification.verdict` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `close.alertId` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `close.assetLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close.assetSymbol` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close.entryPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `close.entryTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `close.entryTimeIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `close.equityAfterUsd` | number | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `close.exitPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `close.exitTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `close.exitTimeIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `close.id` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `close.mode` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close.orderId` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `close.paperTradeId` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `close.pnl` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `close.pnl.directionalMovePct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `close.pnl.feesUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `close.pnl.grossPnlUsd` | number | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `close.pnl.netPnlUsd` | number | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `close.pnl.rMultiple` | number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `close.protectiveOrders` | array | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `close.protectiveOrders[]` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `close.protectiveOrders[].id` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `close.protectiveOrders[].status` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close.protectiveOrders[].triggerPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `close.protectiveOrders[].triggerTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `close.protectiveOrders[].triggerTimeIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `close.protectiveOrders[].type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close.reason` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close.side` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close.trade` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `close.trade.alertId` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `close.trade.assetLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close.trade.assetSymbol` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close.trade.entryPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `close.trade.entryTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `close.trade.entryTimeIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `close.trade.htfBias` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close.trade.id` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `close.trade.lastEventTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `close.trade.lastPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `close.trade.leverage` | integer | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `close.trade.marginUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `close.trade.maxAdversePct` | integer / number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `close.trade.maxFavorablePct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `close.trade.notional` | integer | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `close.trade.quantity` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `close.trade.riskUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `close.trade.score` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `close.trade.side` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close.trade.source` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close.trade.stopLossPct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `close.trade.stopLossPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `close.trade.strategy` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close.trade.takeProfitPct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `close.trade.takeProfitPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `close.trade.timeExitAt` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `close.trade.timeExitAtIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `close.trade.tradeTimeframe` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close.trade.type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `close.type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `position` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `position.alertId` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `position.assetLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `position.assetSymbol` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `position.entryPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `position.entryTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `position.entryTimeIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `position.fillStatus` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `position.htfBias` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `position.id` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `position.lastEventTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `position.lastPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `position.leverage` | integer | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `position.marginUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `position.maxAdversePct` | integer | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `position.maxFavorablePct` | integer | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `position.mode` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `position.notional` | integer | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `position.orderId` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `position.paperTradeId` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `position.protectiveOrders` | array | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `position.protectiveOrders[]` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `position.protectiveOrders[].id` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `position.protectiveOrders[].status` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `position.protectiveOrders[].triggerPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `position.protectiveOrders[].triggerTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `position.protectiveOrders[].triggerTimeIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `position.protectiveOrders[].type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `position.quantity` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `position.riskUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `position.score` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `position.side` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `position.source` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `position.stopLossPct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `position.stopLossPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `position.strategy` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `position.submittedAt` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `position.submittedAtIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `position.takeProfitPct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `position.takeProfitPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `position.timeExitAt` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `position.timeExitAtIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `position.tradeTimeframe` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `position.type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `recordedAt` | string | ISO 8601 UTC; local | Append-time wall clock from nowIso() in appendFeedback/appendPaperTrade/appendDemoSim. |
+| `review` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `review.alertPrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `review.alertTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `review.alertTimeIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `review.assetLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `review.assetSymbol` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `review.checkpoints` | array | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `review.checkpoints[]` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `review.checkpoints[].afterMs` | integer | milliseconds; duration | Window, offset, freshness age or validity duration; not an epoch timestamp. |
+| `review.checkpoints[].directionalMovePct` | integer / number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `review.checkpoints[].label` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `review.checkpoints[].movePct` | integer / number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `review.checkpoints[].observedAt` | string | ISO 8601 UTC; event-derived | Review checkpoint/entry mark from market eventTime; finalizeReview may fall back to local nowIso() when no last event exists. |
+| `review.checkpoints[].price` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `review.direction` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `review.entryResearch` | null / object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `review.entryResearch.fadeDirection` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `review.entryResearch.live2m` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `review.entryResearch.live2m.firstInRangeAt` | null / string | ISO 8601 UTC; event-derived | Review checkpoint/entry mark from market eventTime; finalizeReview may fall back to local nowIso() when no last event exists. |
+| `review.entryResearch.live2m.firstInRangePrice` | integer / null / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `review.entryResearch.live2m.label` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `review.entryResearch.live2m.maxPrice` | integer / null / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `review.entryResearch.live2m.minPrice` | integer / null / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `review.entryResearch.live2m.status` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `review.entryResearch.live2m.validUntilMs` | integer | milliseconds; duration | Window, offset, freshness age or validity duration; not an epoch timestamp. |
+| `review.entryResearch.marks` | array | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `review.entryResearch.marks[]` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `review.entryResearch.marks[].afterMs` | integer | milliseconds; duration | Window, offset, freshness age or validity duration; not an epoch timestamp. |
+| `review.entryResearch.marks[].key` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `review.entryResearch.marks[].label` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `review.entryResearch.marks[].observedAt` | string | ISO 8601 UTC; event-derived | Review checkpoint/entry mark from market eventTime; finalizeReview may fall back to local nowIso() when no last event exists. |
+| `review.entryResearch.marks[].price` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `review.entryResearch.marks[].status` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `review.entryResearch.rangeHigh` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `review.entryResearch.rangeLow` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `review.id` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `review.lastEventTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `review.lastPrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `review.maxAdversePct` | integer / number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `review.maxFavorablePct` | integer / number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `review.maxHigh` | number | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `review.maxPrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `review.method` | string | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `review.minLow` | number | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `review.minPrice` | integer / number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `review.source` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `review.triggerKind` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `review.triggerLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `review.triggerMovePct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `review.volumeRecentNotional` | null / number | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `review.volumeVelocityRatio` | null / number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `sendResult` | null | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `sourceAlert` | object | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `sourceAlert.alertPrice` | integer | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `sourceAlert.alertTimeIso` | string | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `sourceAlert.assetLabel` | string | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `sourceAlert.assetSymbol` | string | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `sourceAlert.direction` | string | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `sourceAlert.source` | string | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `sourceAlert.telegramMessageId` | string | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `sourceAlert.triggerKind` | string | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `sourceAlert.triggerLabel` | string | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `sourceAlert.triggerMovePct` | number | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `sourceAlert.volumeRecentNotional` | integer | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `sourceAlert.volumeVelocityRatio` | number | legacy schema | Historical/manual-review variant; exact writer/units not verified in current producer (consumer compatibility exists in index-monitor-feedback). |
+| `trade` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `trade.alertId` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `trade.assetLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `trade.assetSymbol` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `trade.entryPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `trade.entryTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `trade.entryTimeIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `trade.htfBias` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `trade.id` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `trade.lastEventTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `trade.lastPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `trade.leverage` | integer | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `trade.marginUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `trade.maxAdversePct` | integer | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `trade.maxFavorablePct` | integer | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `trade.notional` | integer | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `trade.quantity` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `trade.riskUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `trade.score` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `trade.side` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `trade.source` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `trade.stopLossPct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `trade.stopLossPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `trade.strategy` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `trade.takeProfitPct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `trade.takeProfitPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `trade.timeExitAt` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `trade.timeExitAtIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `trade.tradeTimeframe` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `trade.type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
 
 
 ### D103 — Watcher bybit-execution-reactor-state.json
@@ -2649,7 +3318,93 @@ Personal category only: **1 files; 7 bytes**.
 
 ### D106 — Watcher demo-sim-trades.jsonl
 
-Personal category only: **1 files; 34,156 bytes**.
+Research data classification approved 2026-10-18. V6 preregistration applies: structural inspection only; no example row, field-value distribution, PnL, win rate or outcome aggregate. Historical/manual variants are included in the schema union without attributing them to the current watcher.
+
+- Purpose: Local demo-sim order/position lifecycle research ledger; not exchange execution.
+- Producer: `tools/crypto-updates/realtime-market-watcher.mjs` → appendDemoSim; current runtime/repo SHA-256 both `75787e84c0c9e916215d5c201bcfeb6aefdcd0f4995ddcf166ea8e7a5af07f44`. Unit: crypto-updates-market-watcher.service. Legacy manual/backfill writer not verified.
+- Source: public spot/Hyperliquid market events plus local simulated plans/reviews; collector futures context may be embedded. No personal account execution records were read.
+- Location/naming: `~/.openclaw/workspace/crypto-updates/runtime/demo-sim-trades.jsonl`.
+- Rotation/compression/retention: plain append-only JSONL, no rotation or deletion policy verified in producer code.
+- Row definition: one appended lifecycle/event envelope; heterogeneous records, not one row per independent trade. Message status rows may lack market event time.
+- Consumers: feedback/journal indexers, setup analysis and research tools; schema presence does not authorize interim evaluation.
+- Known gaps/caps: optional nested variants, historical producer revisions not verified; live-feed coverage and independent-trade counts are not established by row count.
+- Observed size: **1 file; 34,156 bytes** (2026-10-18 structural scan).
+- First/last local record timestamp (recordedAt): `2026-09-24T09:35:25.886Z` / `2026-10-16T17:42:12.700Z`.
+- First/last available file mtime: `2026-10-16T17:42:12.698992+00:00` / `2026-10-16T17:42:12.698992+00:00`; mtime is not creation time.
+- Stored bytes/day: single mutable file; all retained bytes are attributed to the file mtime day, not daily historical ingress. Historical daily ingress not verified.
+- Rows/hour: not applicable to a mutable heterogeneous research event ledger; not calculated.
+- Newest eligible complete file: none (mutable). Inspected whole current file: `demo-sim-trades.jsonl`; rows: **44**; unchanged size/mtime during read: **True**.
+- Clock semantics: recordedAt is local append time; eventTime/alertTime and fill/entry/exit/lastEventTime are market-event-derived epoch ms; submittedAt copies entryTime, not real order-send time. ISO companions encode the same clocks. timeExitAt/triggerTime are planned deadlines. generated/generatedIso are local collector snapshot time; ageMs/afterMs/validUntilMs are durations, not epochs. observedAt is event-derived for reviews, with local fallback on finalization.
+- Event-time bounds by available field (timestamps only; absent historical fields are not inferred):
+  - `entryTime`: `2026-09-24T09:34:58.838000+00:00` / `2026-10-16T17:34:03.496000+00:00`.
+  - `exitTime`: `2026-09-24T09:35:28.886000+00:00` / `2026-10-16T17:41:38.764000+00:00`.
+  - `lastEventTime`: `2026-09-24T09:34:58.838000+00:00` / `2026-10-16T17:34:03.496000+00:00`.
+  - `submittedAt`: `2026-09-24T09:34:58.838000+00:00` / `2026-10-16T17:34:03.496000+00:00`.
+
+Field semantics source: watcher append helpers; maybeOpenPaperTrade, closePaperTrade, maybeOpenDemoSimPosition, closeDemoSimPosition, paperPnl, startReview, updateReviewStats, finalizeReview, evidenceGate, readOrderflowContext and TA helpers. Collector passthrough fields: tools/collector/orderflow_engine.py. No source record values are shown.
+
+| Field path | Observed types | Unit / clock | Meaning / source boundary |
+|---|---|---|---|
+| `alertId` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `assetLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `assetSymbol` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `entryPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `entryTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `entryTimeIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `equityAfterUsd` | number | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `exitPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `exitTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `exitTimeIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `fillStatus` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `htfBias` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `id` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `lastEventTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `lastPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `leverage` | integer | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `marginUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `maxAdversePct` | integer | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `maxFavorablePct` | integer | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `mode` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `notional` | integer | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `orderId` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `orderType` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `paperTradeId` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `pnl` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `pnl.directionalMovePct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `pnl.feesUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `pnl.grossPnlUsd` | number | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `pnl.netPnlUsd` | number | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `pnl.rMultiple` | number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `protectiveOrders` | array | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `protectiveOrders[]` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `protectiveOrders[].id` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `protectiveOrders[].status` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `protectiveOrders[].triggerPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `protectiveOrders[].triggerTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `protectiveOrders[].triggerTimeIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `protectiveOrders[].type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `quantity` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `reason` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `recordedAt` | string | ISO 8601 UTC; local | Append-time wall clock from nowIso() in appendFeedback/appendPaperTrade/appendDemoSim. |
+| `riskUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `score` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `sendResult` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `sendResult.code` | integer | process exit code | Message subprocess close status, not event time. |
+| `sendResult.stderr` | string | text; deliberately not displayed | Message subprocess output/error; may contain delivery metadata. No content inspected or reproduced. |
+| `sendResult.stdout` | string | text; deliberately not displayed | Message subprocess output/error; may contain delivery metadata. No content inspected or reproduced. |
+| `side` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `source` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `stopLossPct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `stopLossPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `strategy` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `submittedAt` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `submittedAtIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `takeProfitPct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `takeProfitPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `timeExitAt` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `timeExitAtIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `tradeTimeframe` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
 
 
 ### D107 — Watcher execution-feedback.jsonl
@@ -2664,7 +3419,113 @@ Personal category only: **1 files; 3,481,600 bytes**.
 
 ### D109 — Watcher paper-trades.jsonl
 
-Personal category only: **1 files; 24,261 bytes**.
+Research data classification approved 2026-10-18. V6 preregistration applies: structural inspection only; no example row, field-value distribution, PnL, win rate or outcome aggregate. Historical/manual variants are included in the schema union without attributing them to the current watcher.
+
+- Purpose: Local paper-trade lifecycle research ledger; not exchange execution.
+- Producer: `tools/crypto-updates/realtime-market-watcher.mjs` → appendPaperTrade; current runtime/repo SHA-256 both `75787e84c0c9e916215d5c201bcfeb6aefdcd0f4995ddcf166ea8e7a5af07f44`. Unit: crypto-updates-market-watcher.service. Legacy manual/backfill writer not verified.
+- Source: public spot/Hyperliquid market events plus local simulated plans/reviews; collector futures context may be embedded. No personal account execution records were read.
+- Location/naming: `~/.openclaw/workspace/crypto-updates/runtime/paper-trades.jsonl`.
+- Rotation/compression/retention: plain append-only JSONL, no rotation or deletion policy verified in producer code.
+- Row definition: one appended lifecycle/event envelope; heterogeneous records, not one row per independent trade. Message status rows may lack market event time.
+- Consumers: feedback/journal indexers, setup analysis and research tools; schema presence does not authorize interim evaluation.
+- Known gaps/caps: optional nested variants, historical producer revisions not verified; live-feed coverage and independent-trade counts are not established by row count.
+- Observed size: **1 file; 24,261 bytes** (2026-10-18 structural scan).
+- First/last local record timestamp (recordedAt): `2026-09-24T09:35:25.877Z` / `2026-10-16T17:42:17.693Z`.
+- First/last available file mtime: `2026-10-16T17:42:17.691970+00:00` / `2026-10-16T17:42:17.691970+00:00`; mtime is not creation time.
+- Stored bytes/day: single mutable file; all retained bytes are attributed to the file mtime day, not daily historical ingress. Historical daily ingress not verified.
+- Rows/hour: not applicable to a mutable heterogeneous research event ledger; not calculated.
+- Newest eligible complete file: none (mutable). Inspected whole current file: `paper-trades.jsonl`; rows: **35**; unchanged size/mtime during read: **True**.
+- Clock semantics: recordedAt is local append time; eventTime/alertTime and fill/entry/exit/lastEventTime are market-event-derived epoch ms; submittedAt copies entryTime, not real order-send time. ISO companions encode the same clocks. timeExitAt/triggerTime are planned deadlines. generated/generatedIso are local collector snapshot time; ageMs/afterMs/validUntilMs are durations, not epochs. observedAt is event-derived for reviews, with local fallback on finalization.
+- Event-time bounds by available field (timestamps only; absent historical fields are not inferred):
+  - `entryTime`: `2026-09-24T09:34:58.838000+00:00` / `2026-10-16T17:34:03.496000+00:00`.
+  - `exitTime`: `2026-09-24T09:35:28.886000+00:00` / `2026-10-16T17:41:38.764000+00:00`.
+  - `fillTime`: `2026-10-02T17:24:56.820000+00:00` / `2026-10-02T17:24:56.820000+00:00`.
+  - `lastEventTime`: `2026-09-24T09:34:58.838000+00:00` / `2026-10-16T17:34:03.496000+00:00`.
+  - `trade.entryTime`: `2026-09-24T09:34:58.838000+00:00` / `2026-10-16T17:34:03.496000+00:00`.
+  - `trade.lastEventTime`: `2026-09-24T09:35:28.886000+00:00` / `2026-10-16T17:41:38.764000+00:00`.
+
+Field semantics source: watcher append helpers; maybeOpenPaperTrade, closePaperTrade, maybeOpenDemoSimPosition, closeDemoSimPosition, paperPnl, startReview, updateReviewStats, finalizeReview, evidenceGate, readOrderflowContext and TA helpers. Collector passthrough fields: tools/collector/orderflow_engine.py. No source record values are shown.
+
+| Field path | Observed types | Unit / clock | Meaning / source boundary |
+|---|---|---|---|
+| `alertId` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `assetLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `assetSymbol` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `entryPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `entryTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `entryTimeIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `exitPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `exitTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `exitTimeIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `fillPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `fillTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `fillTimeIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `htfBias` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `id` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `lastEventTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `lastPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `leverage` | integer | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `marginUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `maxAdversePct` | integer | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `maxFavorablePct` | integer | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `maxOpenTrades` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `notional` | integer | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `pnl` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `pnl.directionalMovePct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `pnl.feesUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `pnl.grossPnlUsd` | number | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `pnl.netPnlUsd` | number | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `pnl.rMultiple` | number | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `quantity` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `reason` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `recordedAt` | string | ISO 8601 UTC; local | Append-time wall clock from nowIso() in appendFeedback/appendPaperTrade/appendDemoSim. |
+| `riskUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `score` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `sendResult` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `sendResult.code` | integer | process exit code | Message subprocess close status, not event time. |
+| `sendResult.stderr` | string | text; deliberately not displayed | Message subprocess output/error; may contain delivery metadata. No content inspected or reproduced. |
+| `sendResult.stdout` | string | text; deliberately not displayed | Message subprocess output/error; may contain delivery metadata. No content inspected or reproduced. |
+| `side` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `source` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `stopLossPct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `stopLossPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `strategy` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `takeProfitPct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `takeProfitPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `timeExitAt` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `timeExitAtIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `trade` | object | structural container | Nested variant payload; child field paths below define observed types. Optional/absent fields are not zero. |
+| `trade.alertId` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `trade.assetLabel` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `trade.assetSymbol` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `trade.entryPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `trade.entryTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `trade.entryTimeIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `trade.htfBias` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `trade.id` | string | identifier | Record/link/order/message identifier; values intentionally omitted. |
+| `trade.lastEventTime` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `trade.lastPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `trade.leverage` | integer | dimensionless ratio | Named velocity/baseline ratio, leverage multiplier, or netPnlUsd/riskUsd (rMultiple); no aggregate calculated. |
+| `trade.marginUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `trade.maxAdversePct` | integer / number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `trade.maxFavorablePct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `trade.notional` | integer | quote-currency notional | Price×quantity or signed/aggressor sum over the named window; not a trade count. |
+| `trade.quantity` | number | base-asset units | Quantity, OI or signed bought/sold delta; collector-context fields preserve orderflow_engine units. |
+| `trade.riskUsd` | integer | USD/USDT simulated accounting | Named margin/risk/target/equity/cost amount. paperPnl: gross=notional×directionalMovePct/100; fees=two-sided notional fee; net=gross−fees; equityAfter=margin+net. |
+| `trade.score` | integer | count/score | Gate score, maximum allowed count or event/trade count as named; not a timestamp. |
+| `trade.side` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `trade.source` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `trade.stopLossPct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `trade.stopLossPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `trade.strategy` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `trade.takeProfitPct` | number | percent (100 × fractional move) | Direction-adjusted or raw price/volume change, distance or plan percentage as named; field-level semantics only, no outcome values inspected. |
+| `trade.takeProfitPrice` | number | quote currency / base unit | Price or price level in asset market units; copied/calculated by watcher TA, plan, paper/demo or collector context functions. |
+| `trade.timeExitAt` | integer | epoch ms; event-derived | Market event/fill/exit time; triggerTime/timeExitAt are scheduled event-time deadlines, not observed fills. Source feed may fall back to local clock. |
+| `trade.timeExitAtIso` | string | ISO 8601 UTC; event-derived | Formatted companion of event/fill/deadline time; collector recentEvents.time formats t. |
+| `trade.tradeTimeframe` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `trade.type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `tradeTimeframe` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
+| `type` | string | categorical/text | Named event, asset, direction, strategy or descriptive state label; values intentionally omitted. |
 
 
 ### D110 — Watcher realtime-market-watcher.log
@@ -2722,7 +3583,7 @@ Personal category only: **1 files; 24,261 bytes**.
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/.openclaw/workspace/crypto-updates/runtime/service-health-report.json`; rows: `1`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S031](#schema-s031). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `generatedAt`, `orderflowContexts[].generatedAt`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2748,7 +3609,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/.openclaw/workspace/crypto-updates/runtime/setup-analysis.json`; rows: `1`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S032](#schema-s032). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `alerts_without_finalized_review[].recordedAt`, `call_line_decision.candidates[].trend_contexts.higher_timeframe_uptrend`, `generated_at`, `recommendation_rules[].trend_contexts.higher_timeframe_downtrend`, `recommendation_rules[].trend_contexts.higher_timeframe_uptrend`, `setups[].alert_time`, `setups[].context.alert_candle_time`, `setups[].recorded_at`, `summary.by_trend_context.higher_timeframe_downtrend`, `summary.by_trend_context.higher_timeframe_uptrend`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2774,7 +3635,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `None`; inspected file: `~/.openclaw/workspace/crypto-updates/runtime/setup-candle-context-cache.json`; rows: `1`; read stability: `True`; status: mutable snapshot, not complete.
 - Every observed field/type: [Schema S033](#schema-s033). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `<cache-key>.candles[].time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2797,7 +3658,7 @@ Personal category only: **1 files; 3,777,104 bytes**.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
 - Row definition: one normalized raw exchange event; feature CSV = one source/symbol/time bucket; databases duplicate these tables.
 - Consumers: orderflow-features.mjs; orderflow-alert-replay-alignment.mjs.
-- Known gaps/caps: Finite experiments, not continuous full-history coverage. Workspace producers not copied into repo.
+- Known gaps/caps: Finite experiments, not continuous full-history coverage. Workspace source mirror status is recorded in the D1b manifest; host-bearing orderflow-spike.mjs remains excluded.
 - Observed size: **8 files; 384,081,652 bytes**.
 - First/last available file partition-or-mtime: `2026-08-10T22:49:37.637997+00:00` / `2026-08-22T10:39:38.071215+00:00`. Earliest exchange timestamp across all files **not verified** unless a fixed H2 window is stated above.
 - First/last mtime: `2026-08-10T22:49:37.637997+00:00` / `2026-08-22T10:39:38.071215+00:00`.
@@ -2805,8 +3666,8 @@ Personal category only: **1 files; 3,777,104 bytes**.
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/.openclaw/workspace/crypto-updates/runtime/orderflow-spikes/2026-08-22T08-39-ralph-hl-btc-2h/raw-events.jsonl`; inspected file: `~/.openclaw/workspace/crypto-updates/runtime/orderflow-spikes/2026-08-22T08-39-ralph-hl-btc-2h/raw-events.jsonl`; rows: `855975`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S034](#schema-s034). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `raw.E`, `raw.T`, `raw.e`, `raw.t`, `raw.time`, `ts`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"ts:integer": [1787387962198, 1787395177745]}`.
+- Verified integer epoch time fields: `ts`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"ts:integer": [1787387962198, 1787395177745]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2824,7 +3685,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
 - Row definition: one normalized raw exchange event; feature CSV = one source/symbol/time bucket; databases duplicate these tables.
 - Consumers: orderflow-features.mjs; orderflow-alert-replay-alignment.mjs.
-- Known gaps/caps: Finite experiments, not continuous full-history coverage. Workspace producers not copied into repo.
+- Known gaps/caps: Finite experiments, not continuous full-history coverage. Workspace source mirror status is recorded in the D1b manifest; host-bearing orderflow-spike.mjs remains excluded.
 - Observed size: **6 files; 2,972,060 bytes**.
 - First/last available file partition-or-mtime: `2026-08-10T22:55:58.631695+00:00` / `2026-08-22T10:43:24.872430+00:00`. Earliest exchange timestamp across all files **not verified** unless a fixed H2 window is stated above.
 - First/last mtime: `2026-08-10T22:55:58.631695+00:00` / `2026-08-22T10:43:24.872430+00:00`.
@@ -2832,7 +3693,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/.openclaw/workspace/crypto-updates/runtime/orderflow-spikes/2026-08-22T08-39-ralph-hl-btc-2h/features-1s.csv`; inspected file: `~/.openclaw/workspace/crypto-updates/runtime/orderflow-spikes/2026-08-22T08-39-ralph-hl-btc-2h/features-1s.csv`; rows: `11519`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S035](#schema-s035). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2850,7 +3711,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
 - Row definition: one normalized raw exchange event; feature CSV = one source/symbol/time bucket; databases duplicate these tables.
 - Consumers: orderflow-features.mjs; orderflow-alert-replay-alignment.mjs.
-- Known gaps/caps: Finite experiments, not continuous full-history coverage. Workspace producers not copied into repo.
+- Known gaps/caps: Finite experiments, not continuous full-history coverage. Workspace source mirror status is recorded in the D1b manifest; host-bearing orderflow-spike.mjs remains excluded.
 - Observed size: **14 files; 302,837,760 bytes**.
 - First/last available file partition-or-mtime: `2026-08-10T22:49:37.639997+00:00` / `2026-08-22T10:43:24.823429+00:00`. Earliest exchange timestamp across all files **not verified** unless a fixed H2 window is stated above.
 - First/last mtime: `2026-08-10T22:49:37.639997+00:00` / `2026-08-22T10:43:24.823429+00:00`.
@@ -2869,7 +3730,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
 - Row definition: one normalized raw exchange event; feature CSV = one source/symbol/time bucket; databases duplicate these tables.
 - Consumers: orderflow-features.mjs; orderflow-alert-replay-alignment.mjs.
-- Known gaps/caps: Finite experiments, not continuous full-history coverage. Workspace producers not copied into repo.
+- Known gaps/caps: Finite experiments, not continuous full-history coverage. Workspace source mirror status is recorded in the D1b manifest; host-bearing orderflow-spike.mjs remains excluded.
 - Observed size: **14 files; 11,647 bytes**.
 - First/last available file partition-or-mtime: `2026-08-10T22:49:37.667997+00:00` / `2026-08-22T10:43:24.882430+00:00`. Earliest exchange timestamp across all files **not verified** unless a fixed H2 window is stated above.
 - First/last mtime: `2026-08-10T22:49:37.667997+00:00` / `2026-08-22T10:43:24.882430+00:00`.
@@ -2896,7 +3757,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-experiment-loop-lab/experiments/btc-eth-alert-edge/data/binance-archive-cache/__data__spot__daily__klines__SOLUSDT__4h__SOLUSDT-4h-2026-10-16.zip.csv`; inspected file: `~/ralph-experiment-loop-lab/experiments/btc-eth-alert-edge/data/binance-archive-cache/__data__spot__daily__klines__SOLUSDT__4h__SOLUSDT-4h-2026-10-16.zip.csv`; rows: `6`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S036](#schema-s036). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2908,7 +3769,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D121 — repo btc-eth-alert-edge results
 
 - Purpose: Experiment results/state/report collection.
-- Producer: experiment writer family: `experiments/btc-eth-alert-edge/src/agent-swarm-research.mjs` (sha256 `59a7cb0578dc`), `experiments/btc-eth-alert-edge/src/backtest.mjs` (sha256 `326e16da5377`), `experiments/btc-eth-alert-edge/src/binance-aggtrades-archive.mjs` (sha256 `f1185f2ca6ee`); exact file→runner mapping not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: `experiments/btc-eth-alert-edge/src/universe.mjs` writes the selected universe-summary.md/universe-snapshot.json; backtest.mjs writes edge-snapshot.json/edge-summary.md; paper-dashboard.mjs writes dashboard outputs. Other result families have dedicated demo-sim runners. Selected-file mapping resolved; exhaustive heterogeneous historical mapping not verified. Separate repo checkout, not the cron target.
 - Source: Local experiments and their input caches; symbol/source varies by run.
 - Location/naming: `~/ralph-experiment-loop-lab/experiments/btc-eth-alert-edge/results/**/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2927,7 +3788,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D122 — repo btc-eth-alert-edge paper
 
 - Purpose: Experiment results/state/report collection.
-- Producer: experiment writer family: `experiments/btc-eth-alert-edge/src/agent-swarm-research.mjs` (sha256 `59a7cb0578dc`), `experiments/btc-eth-alert-edge/src/backtest.mjs` (sha256 `326e16da5377`), `experiments/btc-eth-alert-edge/src/binance-aggtrades-archive.mjs` (sha256 `f1185f2ca6ee`); exact file→runner mapping not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: `experiments/btc-eth-alert-edge/src/backtest.mjs:updatePaperSignals` writes paper/signals.json; `src/repair-paper-signal-precision.mjs` can rewrite its price precision. Separate repo checkout; on-demand.
 - Source: Local experiments and their input caches; symbol/source varies by run.
 - Location/naming: `~/ralph-experiment-loop-lab/experiments/btc-eth-alert-edge/paper/**/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2941,8 +3802,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-experiment-loop-lab/experiments/btc-eth-alert-edge/paper/signals.json`; inspected file: `~/ralph-experiment-loop-lab/experiments/btc-eth-alert-edge/paper/signals.json`; rows: `1`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S037](#schema-s037). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `signals[].timeframe`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"updated:string": ["2026-10-04T08:04:29.907Z", "2026-10-04T08:04:29.907Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -2954,7 +3815,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D123 — repo copytrading-address-intake results
 
 - Purpose: Experiment results/state/report collection.
-- Producer: experiment writer family: `experiments/copytrading-address-intake/src/run-hyperliquid-address-intake.mjs` (sha256 `b44cc269a3e7`), `experiments/copytrading-address-intake/src/run-hyperliquid-delay-sample.mjs` (sha256 `c08a2418fa1c`), `experiments/copytrading-address-intake/src/run-hyperliquid-public-route-ledger.mjs` (sha256 `3eb9d22a6477`); exact file→runner mapping not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: `experiments/copytrading-address-intake/src/run-hyperliquid-public-route-ledger.mjs` writes selected hyperliquid-public-route-ledger.md and .json (lines 207–208). Address-intake and delay-sample runners write their output-prefix .json/.md pairs. All use the script-relative results directory; invocation history not verified.
 - Source: Local experiments and their input caches; symbol/source varies by run.
 - Location/naming: `~/ralph-experiment-loop-lab/experiments/copytrading-address-intake/results/**/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2973,7 +3834,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D124 — repo liquidation-q1-baseline-kill-switch results
 
 - Purpose: Experiment results/state/report collection.
-- Producer: experiment writer family: `experiments/liquidation-q1-baseline-kill-switch/src/q1-harness.mjs` (sha256 `94a3d00c27ca`); exact file→runner mapping not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: `experiments/liquidation-q1-baseline-kill-switch/src/q1-harness.mjs` backtest command writes JSON to --out (lines 42–47). CLI can produce major-2026-06.json, but the historical invocation tying this exact file to it is not verified.
 - Source: Local experiments and their input caches; symbol/source varies by run.
 - Location/naming: `~/ralph-experiment-loop-lab/experiments/liquidation-q1-baseline-kill-switch/results/**/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -2987,7 +3848,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-experiment-loop-lab/experiments/liquidation-q1-baseline-kill-switch/results/major-2026-06.json`; inspected file: `~/ralph-experiment-loop-lab/experiments/liquidation-q1-baseline-kill-switch/results/major-2026-06.json`; rows: `1`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S038](#schema-s038). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `generatedAt`, `strategies.drawdownReversal.clusteredDaysPreview[].day`, `strategies.drawdownReversal.exitReasons.time`, `strategies.drawdownReversal.tradesPreview[].entryTime`, `strategies.drawdownReversal.tradesPreview[].exitTime`, `strategies.drawdownReversal.tradesPreview[].signalTime`, `strategies.largeCandleReversal.clusteredDaysPreview[].day`, `strategies.largeCandleReversal.exitReasons.time`, `strategies.largeCandleReversal.tradesPreview[].entryTime`, `strategies.largeCandleReversal.tradesPreview[].exitTime`, `strategies.largeCandleReversal.tradesPreview[].signalTime`, `strategies.liquidationCascade.clusteredDaysPreview[].day`, `strategies.liquidationCascade.exitReasons.time`, `strategies.liquidationCascade.tradesPreview[].signalTime`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -3013,7 +3874,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-experiment-loop-lab/experiments/strategy-destruction-filter/data/market-cache/h1-SOL-4h.json`; inspected file: `~/ralph-experiment-loop-lab/experiments/strategy-destruction-filter/data/market-cache/h1-SOL-4h.json`; rows: `1`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S039](#schema-s039). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `candles[].time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -3039,8 +3900,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/ralph-experiment-loop-lab/experiments/strategy-destruction-filter/data/market-cache/h2/d86acd4bbd1ce0048c5d41c67a16faf0270747fb1e395f6c81c063a219bc30fd.json`; inspected file: `~/ralph-experiment-loop-lab/experiments/strategy-destruction-filter/data/market-cache/h2/d86acd4bbd1ce0048c5d41c67a16faf0270747fb1e395f6c81c063a219bc30fd.json`; rows: `8760`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S040](#schema-s040). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"time:integer": [1634515200, 1760644800]}`.
+- Verified integer epoch time fields: `time`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"time:integer": [1634515200, 1760644800]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -3052,7 +3913,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D127 — repo strategy-destruction-filter results
 
 - Purpose: Experiment results/state/report collection.
-- Producer: experiment writer family: `experiments/strategy-destruction-filter/src/analyze-alert-feedback-velocity.mjs` (sha256 `9781a3a3d7d6`), `experiments/strategy-destruction-filter/src/assess-velocity-replay-adapter.mjs` (sha256 `5cc2e41118d9`), `experiments/strategy-destruction-filter/src/audit-data-rails.mjs` (sha256 `44b4d0be1252`); exact file→runner mapping not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: `experiments/strategy-destruction-filter/src/` runners write named research reports; selected h3a-action-log.md is an operator-maintained action log, not generated by a strategy runner. Exhaustive file-to-writer history not verified.
 - Source: Local experiments and their input caches; symbol/source varies by run.
 - Location/naming: `~/ralph-experiment-loop-lab/experiments/strategy-destruction-filter/results/**/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -3071,7 +3932,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D128 — repo strategy-destruction-filter runtime
 
 - Purpose: Experiment results/state/report collection.
-- Producer: experiment writer family: `experiments/strategy-destruction-filter/src/analyze-alert-feedback-velocity.mjs` (sha256 `9781a3a3d7d6`), `experiments/strategy-destruction-filter/src/assess-velocity-replay-adapter.mjs` (sha256 `5cc2e41118d9`), `experiments/strategy-destruction-filter/src/audit-data-rails.mjs` (sha256 `44b4d0be1252`); exact file→runner mapping not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: runtime/h1-fetch.mjs is a local helper source artifact, not a dataset emitted by the strategy runner. Its authoring command and other heterogeneous runtime writers are not verified.
 - Source: Local experiments and their input caches; symbol/source varies by run.
 - Location/naming: `~/ralph-experiment-loop-lab/experiments/strategy-destruction-filter/runtime/**/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -3090,7 +3951,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D129 — repo volume-velocity-dex-discrepancy results
 
 - Purpose: Experiment results/state/report collection.
-- Producer: experiment writer family: `experiments/volume-velocity-dex-discrepancy/src/run-e2e-latency-baseline.mjs` (sha256 `0c4ec23ff409`); exact file→runner mapping not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: `experiments/volume-velocity-dex-discrepancy/src/run-e2e-latency-baseline.mjs` writes e2e-latency-samples.jsonl, e2e-latency-summary.json and the selected e2e-latency-summary.md (lines 107–109); on-demand, separate repo checkout.
 - Source: Local experiments and their input caches; symbol/source varies by run.
 - Location/naming: `~/ralph-experiment-loop-lab/experiments/volume-velocity-dex-discrepancy/results/**/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -3123,7 +3984,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/data/binance-archive-cache/__data__spot__daily__klines__XRPUSDT__4h__XRPUSDT-4h-2026-10-13.zip.csv`; inspected file: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/data/binance-archive-cache/__data__spot__daily__klines__XRPUSDT__4h__XRPUSDT-4h-2026-10-13.zip.csv`; rows: `6`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S036](#schema-s036). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -3149,8 +4010,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/data/binance-usdm-archive-cache/__data__futures__um__daily__trades__XRPUSDT__XRPUSDT-trades-2026-09-27.zip.csv`; inspected file: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/data/binance-usdm-archive-cache/__data__futures__um__daily__trades__XRPUSDT__XRPUSDT-trades-2026-09-27.zip.csv`; rows: `1766674`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S041](#schema-s041). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"time:string": ["1790467200003", "1790553599172"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -3162,7 +4023,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D132 — workspace cache btc-eth-alert-edge/candles
 
 - Purpose: Reusable offline experiment inputs.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: workspace `ralph-research-os/experiments/btc-eth-alert-edge/src/backtest.mjs:loadCandles` writes data/candles caches via writeJson; Binance input comes from binance-data.mjs. Enabled alert-edge cron invokes npm backtest in this workspace tree.
 - Source: not verified; inspect source/cache metadata.
 - Location/naming: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/data/candles/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -3176,8 +4037,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/data/candles/binance-spot-AVAXUSDT-4h.json`; inspected file: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/data/candles/binance-spot-AVAXUSDT-4h.json`; rows: `2160`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S040](#schema-s040). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"time:integer": [1760889600, 1791979200]}`.
+- Verified integer epoch time fields: `time`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"time:integer": [1760889600, 1791979200]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -3189,7 +4050,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D133 — workspace cache btc-eth-alert-edge/funding
 
 - Purpose: Reusable offline experiment inputs.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: workspace `ralph-research-os/experiments/btc-eth-alert-edge/src/demo-sim-funding-persistence-context-baseline.mjs` writes hyperliquid-funding-history-demo-sim.json via writeJson(FUNDING_CACHE_PATH, cache). Package script demo-sim:funding-persistence; not included in the current cron demo-sim:all command. Historical invocation not verified.
 - Source: not verified; inspect source/cache metadata.
 - Location/naming: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/data/funding/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -3203,7 +4064,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/data/funding/hyperliquid-funding-history-demo-sim.json`; inspected file: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/data/funding/hyperliquid-funding-history-demo-sim.json`; rows: `1`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S042](#schema-s042). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `fundingByCoin.ADA[].time`, `fundingByCoin.ADA[].timeIso`, `fundingByCoin.AVAX[].time`, `fundingByCoin.AVAX[].timeIso`, `fundingByCoin.BNB[].time`, `fundingByCoin.BNB[].timeIso`, `fundingByCoin.BTC[].time`, `fundingByCoin.BTC[].timeIso`, `fundingByCoin.DOGE[].time`, `fundingByCoin.DOGE[].timeIso`, `fundingByCoin.ETH[].time`, `fundingByCoin.ETH[].timeIso`, `fundingByCoin.LINK[].time`, `fundingByCoin.LINK[].timeIso`, `fundingByCoin.SOL[].time`, `fundingByCoin.SOL[].timeIso`, `fundingByCoin.XRP[].time`, `fundingByCoin.XRP[].timeIso`, `requests.endTimeMs`, `requests.startTimeMs`, `window.endTime`, `window.endTimeIso`, `window.startTime`, `window.startTimeIso`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -3215,7 +4076,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D134 — workspace btc-eth-alert-edge results
 
 - Purpose: Experiment results/state/report collection.
-- Producer: experiment writer family: `experiments/btc-eth-alert-edge/src/agent-swarm-research.mjs` (sha256 `59a7cb0578dc`), `experiments/btc-eth-alert-edge/src/backtest.mjs` (sha256 `326e16da5377`), `experiments/btc-eth-alert-edge/src/binance-aggtrades-archive.mjs` (sha256 `f1185f2ca6ee`); exact file→runner mapping not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: workspace `crypto-updates/index-trade-research-journal.mjs` writes the selected live-ta-execution-journal.md; backtest/universe/demo-sim runners write their named result families. Enabled alert-edge cron explicitly invokes these indexers/runners. Full heterogeneous historical mapping not verified; personal journal contents not inspected.
 - Source: Local experiments and their input caches; symbol/source varies by run.
 - Location/naming: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/results/**/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -3234,7 +4095,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D135 — workspace btc-eth-alert-edge paper
 
 - Purpose: Experiment results/state/report collection.
-- Producer: experiment writer family: `experiments/btc-eth-alert-edge/src/agent-swarm-research.mjs` (sha256 `59a7cb0578dc`), `experiments/btc-eth-alert-edge/src/backtest.mjs` (sha256 `326e16da5377`), `experiments/btc-eth-alert-edge/src/binance-aggtrades-archive.mjs` (sha256 `f1185f2ca6ee`); exact file→runner mapping not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: workspace `ralph-research-os/experiments/btc-eth-alert-edge/src/backtest.mjs:updatePaperSignals` writes paper/signals.json; repair-paper-signal-precision.mjs can rewrite it. Both are explicitly reached by the enabled alert-edge cron (backtest and demo-sim:all).
 - Source: Local experiments and their input caches; symbol/source varies by run.
 - Location/naming: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/paper/**/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -3248,8 +4109,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/paper/signals.json`; inspected file: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/paper/signals.json`; rows: `1`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S037](#schema-s037). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `signals[].timeframe`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"updated:string": ["2026-10-14T12:04:36.581Z", "2026-10-14T12:04:36.581Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -3261,7 +4122,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D136 — workspace cache copytrading-address-intake/.
 
 - Purpose: Reusable offline experiment inputs.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: not verified. Public-route-ledger code fetches leaderboard metadata but inspected runners write results, not the selected data/public-leaderboard-addresses-2026-08-30.json seed file. No exact writer found in repo/workspace source, units, crontab or cron prompts; a consumer is not a producer.
 - Source: not verified; inspect source/cache metadata.
 - Location/naming: `~/.openclaw/workspace/ralph-research-os/experiments/copytrading-address-intake/data/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -3275,7 +4136,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/.openclaw/workspace/ralph-research-os/experiments/copytrading-address-intake/data/public-leaderboard-addresses-2026-08-30.json`; inspected file: `~/.openclaw/workspace/ralph-research-os/experiments/copytrading-address-intake/data/public-leaderboard-addresses-2026-08-30.json`; rows: `6`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S043](#schema-s043). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -3287,7 +4148,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D137 — workspace copytrading-address-intake results
 
 - Purpose: Experiment results/state/report collection.
-- Producer: experiment writer family: `experiments/copytrading-address-intake/src/run-hyperliquid-address-intake.mjs` (sha256 `b44cc269a3e7`), `experiments/copytrading-address-intake/src/run-hyperliquid-delay-sample.mjs` (sha256 `c08a2418fa1c`), `experiments/copytrading-address-intake/src/run-hyperliquid-public-route-ledger.mjs` (sha256 `3eb9d22a6477`); exact file→runner mapping not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: workspace `ralph-research-os/experiments/copytrading-address-intake/src/run-hyperliquid-delay-sample.mjs` writes selected output-prefix hyperliquid-wallet-shadow-delay-sample-2026-09-01.md plus JSON (lines 250–251). Other result prefixes are written by intake/route-ledger runners. Exact historical command not verified; no fixed scheduler command found.
 - Source: Local experiments and their input caches; symbol/source varies by run.
 - Location/naming: `~/.openclaw/workspace/ralph-research-os/experiments/copytrading-address-intake/results/**/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -3306,7 +4167,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D138 — workspace cache liquidation-q1-baseline-kill-switch/major-2026-06
 
 - Purpose: Reusable offline experiment inputs.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: workspace `ralph-research-os/experiments/liquidation-q1-baseline-kill-switch/src/q1-harness.mjs:fetchWindow` writes candles.json and liquidations.json under --out (lines 115–118). Exact --out major-2026-06 historical invocation not verified; no fetch or paid API call was made.
 - Source: not verified; inspect source/cache metadata.
 - Location/naming: `~/.openclaw/workspace/ralph-research-os/experiments/liquidation-q1-baseline-kill-switch/data/major-2026-06/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -3320,8 +4181,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/.openclaw/workspace/ralph-research-os/experiments/liquidation-q1-baseline-kill-switch/data/major-2026-06/liquidations.json`; inspected file: `~/.openclaw/workspace/ralph-research-os/experiments/liquidation-q1-baseline-kill-switch/data/major-2026-06/liquidations.json`; rows: `208486`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S044](#schema-s044). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `timestamp`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"timestamp:string": ["2026-06-01T00:43:48.608Z", "2026-06-30T20:10:38.088Z"]}`.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema: none established by the stored inspection evidence.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -3333,7 +4194,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D139 — workspace liquidation-q1-baseline-kill-switch results
 
 - Purpose: Experiment results/state/report collection.
-- Producer: experiment writer family: `experiments/liquidation-q1-baseline-kill-switch/src/q1-harness.mjs` (sha256 `94a3d00c27ca`); exact file→runner mapping not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: workspace `ralph-research-os/experiments/liquidation-q1-baseline-kill-switch/src/q1-harness.mjs` backtest command writes JSON to --out. Historical invocation producing major-2026-06.json is not verified.
 - Source: Local experiments and their input caches; symbol/source varies by run.
 - Location/naming: `~/.openclaw/workspace/ralph-research-os/experiments/liquidation-q1-baseline-kill-switch/results/**/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -3347,7 +4208,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/.openclaw/workspace/ralph-research-os/experiments/liquidation-q1-baseline-kill-switch/results/major-2026-06.json`; inspected file: `~/.openclaw/workspace/ralph-research-os/experiments/liquidation-q1-baseline-kill-switch/results/major-2026-06.json`; rows: `1`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S038](#schema-s038). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `generatedAt`, `strategies.drawdownReversal.clusteredDaysPreview[].day`, `strategies.drawdownReversal.exitReasons.time`, `strategies.drawdownReversal.tradesPreview[].entryTime`, `strategies.drawdownReversal.tradesPreview[].exitTime`, `strategies.drawdownReversal.tradesPreview[].signalTime`, `strategies.largeCandleReversal.clusteredDaysPreview[].day`, `strategies.largeCandleReversal.exitReasons.time`, `strategies.largeCandleReversal.tradesPreview[].entryTime`, `strategies.largeCandleReversal.tradesPreview[].exitTime`, `strategies.largeCandleReversal.tradesPreview[].signalTime`, `strategies.liquidationCascade.clusteredDaysPreview[].day`, `strategies.liquidationCascade.exitReasons.time`, `strategies.liquidationCascade.tradesPreview[].signalTime`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -3359,7 +4220,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D140 — workspace cache strategy-destruction-filter/aggtrades-cache
 
 - Purpose: Reusable offline experiment inputs.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: workspace `ralph-research-os/experiments/strategy-destruction-filter/src/replay-binance-aggtrades-velocity.mjs` builds data/aggtrades-cache/<symbol>-<startMs>-<endMs>.json and writes deduped rows (cacheFile/writeFile). This replay runner is distinct from the cron study:aggtrades-velocity runner; historical trigger not verified.
 - Source: not verified; inspect source/cache metadata.
 - Location/naming: `~/.openclaw/workspace/ralph-research-os/experiments/strategy-destruction-filter/data/aggtrades-cache/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -3373,8 +4234,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/.openclaw/workspace/ralph-research-os/experiments/strategy-destruction-filter/data/aggtrades-cache/ETHUSDT-1787691727789-1787692087789.json`; inspected file: `~/.openclaw/workspace/ralph-research-os/experiments/strategy-destruction-filter/data/aggtrades-cache/ETHUSDT-1787691727789-1787692087789.json`; rows: `11281`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S045](#schema-s045). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"time:integer": [1787691728202, 1787692087787]}`.
+- Verified integer epoch time fields: `time`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"time:integer": [1787691728202, 1787692087787]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -3400,8 +4261,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/.openclaw/workspace/ralph-research-os/experiments/strategy-destruction-filter/data/market-cache/bybit-linear-HYPEUSDT-open-interest-4h-2024-12-05-2026-09-28.json`; inspected file: `~/.openclaw/workspace/ralph-research-os/experiments/strategy-destruction-filter/data/market-cache/bybit-linear-HYPEUSDT-open-interest-4h-2024-12-05-2026-09-28.json`; rows: `3972`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S046](#schema-s046). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"time:integer": [1733414400, 1790596800]}`.
+- Verified integer epoch time fields: `time`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"time:integer": [1733414400, 1790596800]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -3413,7 +4274,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D142 — workspace cache strategy-destruction-filter/planned-level-aggtrades-cache
 
 - Purpose: Reusable offline experiment inputs.
-- Producer: not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: workspace `ralph-research-os/experiments/strategy-destruction-filter/src/run-planned-level-proxy-replay.mjs` builds data/planned-level-aggtrades-cache and writes cacheFile JSON; on-demand, no fixed cron command found.
 - Source: not verified; inspect source/cache metadata.
 - Location/naming: `~/.openclaw/workspace/ralph-research-os/experiments/strategy-destruction-filter/data/planned-level-aggtrades-cache/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -3427,8 +4288,8 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/.openclaw/workspace/ralph-research-os/experiments/strategy-destruction-filter/data/planned-level-aggtrades-cache/BTCUSDT-1790470500000-1790471400000.json`; inspected file: `~/.openclaw/workspace/ralph-research-os/experiments/strategy-destruction-filter/data/planned-level-aggtrades-cache/BTCUSDT-1790470500000-1790471400000.json`; rows: `1717`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S047](#schema-s047). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: `time`. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
-- Selected-file time extrema (typed raw values, not global coverage): `{"time:integer": [1790470501722, 1790471399876]}`.
+- Verified integer epoch time fields: `time`. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
+- Selected-file verified integer epoch extrema (stored inspection evidence, not global coverage): `{"time:integer": [1790470501722, 1790471399876]}`.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -3440,7 +4301,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D143 — workspace strategy-destruction-filter results
 
 - Purpose: Experiment results/state/report collection.
-- Producer: experiment writer family: `experiments/strategy-destruction-filter/src/analyze-alert-feedback-velocity.mjs` (sha256 `9781a3a3d7d6`), `experiments/strategy-destruction-filter/src/assess-velocity-replay-adapter.mjs` (sha256 `5cc2e41118d9`), `experiments/strategy-destruction-filter/src/audit-data-rails.mjs` (sha256 `44b4d0be1252`); exact file→runner mapping not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: workspace `ralph-research-os/experiments/strategy-destruction-filter/src/run-aggtrades-velocity-event-study.mjs` writes the selected aggtrades-velocity-event-study.md/.json; shadow-ledger and wick-feedback runners write their named reports. Enabled alert-edge cron invokes study:aggtrades-velocity, ledger:shadow-pnl and study:wick-feedback. Exhaustive heterogeneous history not verified.
 - Source: Local experiments and their input caches; symbol/source varies by run.
 - Location/naming: `~/.openclaw/workspace/ralph-research-os/experiments/strategy-destruction-filter/results/**/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -3459,7 +4320,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D144 — workspace volume-velocity-dex-discrepancy results
 
 - Purpose: Experiment results/state/report collection.
-- Producer: experiment writer family: `experiments/volume-velocity-dex-discrepancy/src/run-e2e-latency-baseline.mjs` (sha256 `0c4ec23ff409`); exact file→runner mapping not verified. Unit/trigger: writer matrix above; on-demand if not listed as a service.
+- Producer: workspace-only `ralph-research-os/experiments/volume-velocity-dex-discrepancy/src/normalize-replay-warehouse-rows.mjs` writes selected normalized-replay-input.jsonl (DEFAULT_OUTPUT, writeFile at line 20); run-e2e-latency-baseline.mjs writes e2e reports. Normalizer source was absent from the pre-D1b public repo and is now mirrored byte-for-byte; see the D1b hash manifest.
 - Source: Local experiments and their input caches; symbol/source varies by run.
 - Location/naming: `~/.openclaw/workspace/ralph-research-os/experiments/volume-velocity-dex-discrepancy/results/**/*`.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
@@ -3473,7 +4334,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Rows/hour: not applicable/not verified (static, state, profile, personal or unsupported format).
 - Newest eligible complete file: `~/.openclaw/workspace/ralph-research-os/experiments/volume-velocity-dex-discrepancy/results/normalized-replay-input.jsonl`; inspected file: `~/.openclaw/workspace/ralph-research-os/experiments/volume-velocity-dex-discrepancy/results/normalized-replay-input.jsonl`; rows: `2`; read stability: `True`; status: closed-partition sample.
 - Every observed field/type: [Schema S048](#schema-s048). Units and meanings are given there or in the shared dictionary; unresolved meanings explicitly remain not verified.
-- Observed time-field candidates: none. Exchange vs local classification follows the dataset-specific clock notes; unknown fields are **not verified**.
+- Verified integer epoch time fields: none established by the stored inspection evidence. ISO strings, duration fields and event-type labels are not integer epoch fields; other nested candidates require reinspection.
 
 Real selected-file example, shortened (not necessarily valid JSON after shortening):
 
@@ -5512,53 +6373,16 @@ First used by: workspace volume-velocity-dex-discrepancy results.
 - Exact per-field semantics remain not verified wherever marked in the schema register. Older schema variants, full-history event-time extrema and continuity were not scanned. Closed-hour count does not prove coverage.
 - SQLite databases, YAML/checksum/text/report/lock files have count/size metadata but their selected-file row schema/count is not implemented in the stdlib inventory; these are explicit catalog gaps, not silently treated as complete datasets.
 - Some heterogeneous experiment result directories select a newest Markdown report; per-format sub-inventories and every result→runner edge remain unresolved.
-- Remote `ralph/raw/`, `ralph/derived/`: deeper physical locations/file counts/row samples/oldest event time not verified under shallow-listing scope. Code establishes the layout only. Remote `ralph/_test/` and `research/`: producer not verified.
-- R2 whole-chain equality unresolved: workspace index-monitor-feedback, index-trade-research-journal, analyze-alert-setups, orderflow-spike, orderflow-features, orderflow-alert-replay-alignment, a2b_history_proof and local a2c research scripts have no repo copy found. Main deployed collector/watcher/reactor/supervisor/check/maintenance/upload entrypoints do match.
+- Remote `ralph/raw/`, `ralph/derived/`: deeper physical locations/file counts/row samples/oldest event time not verified under shallow-listing scope. Code establishes the layout only. Remote `ralph/_test/`: setup/connectivity test uploads are described by docs/storagebox.md, but exact upload command/writer remains not verified. Remote `research/`: exact writer not verified; archive_upload.py targets ralph/raw and ralph/derived, not this directory. No remote access was attempted in D1b.
+- R2 whole-chain equality remains partial: five mirrors verified in the D1b manifest; five excluded scripts are explicitly listed there. Newly traced workspace normalize-replay-warehouse-rows.mjs is included in the equal-hash mirrors. Main deployed entrypoint equality is the earlier snapshot, not a new all-runtime hash audit.
 - First inventory failed on a non-date cache filename fragment (ValueError: unconverted data remains: 27). One fix requires bounded numeric date tokens and falls back to mtime for invalid dates. Rerun outcome is recorded in Verification below.
 
-Datasets whose producer is not verified (including heterogeneous exact mappings):
+D1b producer reconciliation (source writer mapping, not proof of historical invocation):
 
-- D015: BTCUSDT legacy rounded tapes — producer not verified.
-- D016: BTCUSDT legacy rounded engine — producer not verified.
-- D031: ETHUSDT legacy rounded tapes — producer not verified.
-- D032: ETHUSDT legacy rounded engine — producer not verified.
-- D047: SOLUSDT legacy rounded tapes — producer not verified.
-- D048: SOLUSDT legacy rounded engine — producer not verified.
-- D063: HYPEUSDT legacy rounded tapes — producer not verified.
-- D064: HYPEUSDT legacy rounded engine — producer not verified.
-- D075: Evaluation a3b-report.txt — producer not verified.
-- D076: Evaluation a3c-report.txt — producer not verified.
-- D077: Evaluation a3c-run.log — producer not verified.
-- D078: Evaluation a3c-run2.log — producer not verified.
-- D079: Evaluation a3c-smoke.log — producer not verified.
-- D081: Evaluation alert-ledger.csv — producer not verified.
-- D082: Evaluation alert-prices.csv — producer not verified.
-- D089: Evaluation short-candidates.jsonl — producer not verified.
-- D091: Evaluation short-watch-alerts.csv — producer not verified.
-- D092: Evaluation v3-smoke.log — producer not verified.
-- D093: Evaluation v4-report.txt — producer not verified.
-- D094: Evaluation v4-run.log — producer not verified.
-- D095: Evaluation v5-run.log — producer not verified.
-- D096: Evaluation v6-archive-sizes.csv — producer not verified.
-- D121: repo btc-eth-alert-edge results — producer not verified.
-- D122: repo btc-eth-alert-edge paper — producer not verified.
-- D123: repo copytrading-address-intake results — producer not verified.
-- D124: repo liquidation-q1-baseline-kill-switch results — producer not verified.
-- D127: repo strategy-destruction-filter results — producer not verified.
-- D128: repo strategy-destruction-filter runtime — producer not verified.
-- D129: repo volume-velocity-dex-discrepancy results — producer not verified.
-- D132: workspace cache btc-eth-alert-edge/candles — producer not verified.
-- D133: workspace cache btc-eth-alert-edge/funding — producer not verified.
-- D134: workspace btc-eth-alert-edge results — producer not verified.
-- D135: workspace btc-eth-alert-edge paper — producer not verified.
-- D136: workspace cache copytrading-address-intake/. — producer not verified.
-- D137: workspace copytrading-address-intake results — producer not verified.
-- D138: workspace cache liquidation-q1-baseline-kill-switch/major-2026-06 — producer not verified.
-- D139: workspace liquidation-q1-baseline-kill-switch results — producer not verified.
-- D140: workspace cache strategy-destruction-filter/aggtrades-cache — producer not verified.
-- D142: workspace cache strategy-destruction-filter/planned-level-aggtrades-cache — producer not verified.
-- D143: workspace strategy-destruction-filter results — producer not verified.
-- D144: workspace volume-velocity-dex-discrepancy results — producer not verified.
+- Resolved writer/mover: D015, D016, D031, D032, D047, D048, D063, D064, D122, D129, D132, D133, D135, D140, D142.
+- Selected-file writer or writer family resolved, whole heterogeneous directory or historical invocation still not verified: D121, D123, D124, D127, D128, D134, D137, D138, D139, D143, D144.
+- Producer still not verified after code/unit/crontab/cron review: D075, D076, D077, D078, D079, D081, D082, D089, D091, D092, D093, D094, D095, D096, D136.
+- Storage Box `_test/` exact uploader and `research/` writer: not verified.
 
 Configured patterns with no physical files at inspection (not verified as existing datasets):
 
@@ -5571,6 +6395,8 @@ Configured patterns with no physical files at inspection (not verified as existi
 - D072: Raw deletion ledger.
 
 ## Verification
+
+D1b (2026-10-18): six stdlib inventory regression tests passed under R6; five mirrored modules passed node --check without execution. Restricted structural reads of D102/D106/D109 had stable size/mtime; only schemas, counts and timestamps were retained. Five mirror byte-equality checks passed. 102 historical time-field candidate lines were narrowed using stored integer extrema; no full raw-data or outcome re-evaluation was performed. Services, schedules, research data and runtime source files were unchanged.
 
 R6 inventory rerun emitted all 151 expected dataset records in manifest order with no error records, including the final personal category. The process handle expired during the conversation pause; its exit status was not retained, so completion is verified from the complete parseable output, not a claimed exit code. Synthetic R6 checks passed for bounded/invalid filename dates, numeric cache IDs, compact-day/UTC-hour partitions, plain/gzip/xz readers, nested schema/time ranges, unnamed tape columns, headerless ZIP CSV, privacy-only output, and mutable-file classification. No services or data were changed. Git delivery is reported separately after commit/rebase/push.
 

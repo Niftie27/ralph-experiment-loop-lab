@@ -193,8 +193,30 @@ def rows(path):
             raise ValueError('unsupported format')
 
 
+def epoch_integer(value):
+    """Accept integer epoch seconds or milliseconds, not strings/bools/microseconds.
+
+    Bounds: 2000-01-01 inclusive through 2100-01-01 exclusive, UTC.
+    """
+    return type(value) is int and (
+        946684800 <= value < 4102444800 or
+        946684800000 <= value < 4102444800000)
+
+
+def time_values(value, prefix=''):
+    if isinstance(value, dict):
+        for key, item in value.items():
+            key = '{}' if re.fullmatch(r'-?\d+(?:\.\d+)?', str(key)) else str(key)
+            yield from time_values(item, f'{prefix}.{key}' if prefix else key)
+    elif isinstance(value, list):
+        for item in value:
+            yield from time_values(item, prefix + '[]')
+    elif TIME_FIELD.search(prefix):
+        yield prefix, value
+
+
 def inspect_file(path):
-    schema={}; count=0; example=None; temporal={}; variants={}
+    schema={}; count=0; example=None; temporal={}; variants={}; invalid_times=set()
     for row in rows(path):
         count+=1
         if example is None: example=row
@@ -203,18 +225,21 @@ def inspect_file(path):
         if isinstance(row,dict):
             if 'stream' in row:
                 variants[str(row['stream'])]=variants.get(str(row['stream']),0)+1
-            pairs=list(row.items())
-            if isinstance(row.get('data'),dict): pairs += [('data.'+k,v) for k,v in row['data'].items()]
-            for key,v in pairs:
-                if TIME_FIELD.search(key) and isinstance(v,(str,int,float)) and not isinstance(v,bool):
-                    # Keep typed ranges; strings remain lexical, not parsed dates.
-                    k=key+':'+field_type(v)
-                    if k not in temporal: temporal[k]=[v,v]
-                    else:
-                        temporal[k][0]=min(temporal[k][0],v); temporal[k][1]=max(temporal[k][1],v)
+        for key, value in time_values(row):
+            if value is None:
+                continue
+            if not epoch_integer(value):
+                invalid_times.add(key)
+                continue
+            if key not in temporal:
+                temporal[key] = [value, value]
+            else:
+                temporal[key][0] = min(temporal[key][0], value)
+                temporal[key][1] = max(temporal[key][1], value)
+    temporal = {key: bounds for key, bounds in temporal.items() if key not in invalid_times}
     return {'row_count':count,'fields':{k:sorted(v) for k,v in sorted(schema.items())},
-            'time_fields':[k for k in sorted(schema) if TIME_FIELD.search(k)],
-            'time_ranges':temporal,'example':example,'stream_row_counts':variants}
+            'time_fields':sorted(temporal),
+            'time_ranges':{key + ':integer': bounds for key, bounds in temporal.items()},'example':example,'stream_row_counts':variants}
 
 
 def inventory(name, pattern, cadence, private, now, settle, metadata_only=False):
