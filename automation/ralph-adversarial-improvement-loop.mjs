@@ -3,6 +3,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
+const V6_BLIND = true; // set to false only after the V6 evaluation (ledger I01, I55)
+
 const ROOT = path.resolve(new URL("..", import.meta.url).pathname);
 const WORKSPACE = path.resolve(ROOT, "..");
 const OUT_JSON = path.join(ROOT, "outputs", "ralph-adversarial-improvement-report.json");
@@ -23,7 +25,9 @@ const files = {
 const now = new Date();
 const inputs = Object.fromEntries(await Promise.all(Object.entries(files).map(async ([key, file]) => [
   key,
-  await readJsonOrText(file)
+  V6_BLIND && ["stateOfEdge", "shadowPnl", "watchRowAgingLedger"].includes(key)
+    ? { ok: false, skipped: "v6-blind" }
+    : await readJsonOrText(file)
 ])));
 
 const findings = [
@@ -50,7 +54,8 @@ const report = {
   phases: ["critic", "proposal", "validation_gate", "memory_route", "telegram_gate"],
   inputs: Object.fromEntries(Object.entries(inputs).map(([key, value]) => [key, {
     path: path.relative(ROOT, files[key]),
-    status: value.ok ? "read" : "missing_or_unreadable",
+    status: value.skipped ? "skipped" : value.ok ? "read" : "missing_or_unreadable",
+    ...(value.skipped ? { reason: value.skipped } : {}),
     error: value.ok ? null : value.error
   }])),
   summary: summarize(findings, proposals),
@@ -129,7 +134,9 @@ function criticFindings(inputs) {
     ]));
   }
 
-  if (inputs.stateOfEdge.ok) {
+  if (V6_BLIND) {
+    out.push(finding("v6-blind-state-of-edge-paused", "info", "State-of-edge, shadow-PnL and watch-row inputs are paused until the V6 evaluation.", "validation", []));
+  } else if (inputs.stateOfEdge.ok) {
     const verdict = state.verdict;
     const candidates = state.candidates || [];
     const review = candidates.filter((candidate) => candidate.action === "candidate_review");

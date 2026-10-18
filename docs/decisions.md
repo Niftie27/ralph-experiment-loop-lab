@@ -23,6 +23,7 @@ Dates are UTC. One row per decision. Seed = Tomas’s L1a instruction (2026-10-1
 | 2026-10-17 | H3a batch: no automatic restart/retry; on OOM stop, do not raise MemoryMax. | H3a operating contract | Bounded research resource use | — | [S7] runtime/stop policy (does not authorize new work) |
 | 2026-10-18 | Preserve byte-identical source mirrors; do not claim a sanitized substitute is R2-equal. | D1b implementation record | Honest source provenance and privacy | — | [S4] mirror/exclusion entry; two public-API exclusions later identified as mistaken by Tomas in L1a |
 | 2026-10-18 | Strategy factory comes right after L1: harness I05 (H3b/H3c) extended with ledger items I48, I49 and I51. | Tomas | Priority | — | Seed (Tomas, L1b) |
+| 2026-10-18 | Adversarial loop runs V6-blind (skips state-of-edge, shadow-PnL and watch-row inputs) until Tomas switches it off after the V6 evaluation | Tomas | V6: no interim looks | — | Tomas, P1 |
 
 ## Sources
 
