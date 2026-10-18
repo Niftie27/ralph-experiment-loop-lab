@@ -1,6 +1,6 @@
 # Project decisions
 
-Dates are UTC. One row per decision. Seed = Tomas’s L1a instruction (2026-10-18); all 13 seed decisions are preserved. Where a dated source contradicts a seed date, the source date wins. Historical dates not corroborated by a log are explicitly marked below. Sources are sanitized file references; workspace-only sources are not implied to be tracked in this public repo.
+Dates are UTC. One row per decision. Seed = Tomas’s L1a instruction (2026-10-18); all 14 seed decisions are preserved. Where a dated source contradicts a seed date, the source date wins. Historical dates not corroborated by a log are explicitly marked below. Sources are sanitized file references; workspace-only sources are not implied to be tracked in this public repo.
 
 | Date (UTC) | Decision | Who | Why | Replaces | Source |
 |---|---|---|---|---|---|
@@ -22,6 +22,7 @@ Dates are UTC. One row per decision. Seed = Tomas’s L1a instruction (2026-10-1
 | 2026-10-11 | Retention requires matching archive PASS/local SHA, fresh remote SHA before deletion, deletion audit, and `.jsonl.xz` raw only. | Tomas | Fail closed on unverified archive or wrong raw format | Weaker archive-verification-marker gate | [S2] 17:54–20:57 entries, commits `cc0e7a2` / `27c68e0`; retained by `8ed0178` |
 | 2026-10-17 | H3a batch: no automatic restart/retry; on OOM stop, do not raise MemoryMax. | H3a operating contract | Bounded research resource use | — | [S7] runtime/stop policy (does not authorize new work) |
 | 2026-10-18 | Preserve byte-identical source mirrors; do not claim a sanitized substitute is R2-equal. | D1b implementation record | Honest source provenance and privacy | — | [S4] mirror/exclusion entry; two public-API exclusions later identified as mistaken by Tomas in L1a |
+| 2026-10-18 | Strategy factory comes right after L1: harness I05 (H3b/H3c) extended with ledger items I48, I49 and I51. | Tomas | Priority | — | Seed (Tomas, L1b) |
 
 ## Sources
 
@@ -37,4 +38,4 @@ Dates are UTC. One row per decision. Seed = Tomas’s L1a instruction (2026-10-1
 ## Unresolved
 
 - No independent dated handoff/action-log corroboration was found for the seed rows marked unverified. Their dates remain Tomas’s supplied dates, not guesses.
-- This is a sourced operational seed (13 supplied + 5 found), not an exhaustive historical decision archive. Ledger items belong to part B.
+- This is a sourced operational seed (14 supplied + 5 found), not an exhaustive historical decision archive. Ledger items belong to part B.
