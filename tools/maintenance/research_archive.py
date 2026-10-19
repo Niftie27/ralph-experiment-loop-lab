@@ -278,19 +278,67 @@ def verify(rows, initial):
     return restored
 
 
-def delete_verified(rows, initial, report, report_path):
+def sudo_evidence(path):
+    """Explicit operator-supplied W1 evidence; never excuses our own hits."""
+    age = time.time() - path.stat().st_mtime
+    body = path.read_text()
+    if not 0 <= age < 7200 or not re.search(r'^RESULT: PASS$', body, re.M):
+        raise ArchiveError('R4 sudo evidence stale or not PASS')
+    for field in ('unreadable', 'hits'):
+        values = re.findall(r'(?<!\w)' + field + r'=(\d+)(?!\w)', body)
+        if values != ['0']:
+            raise ArchiveError('R4 sudo evidence incomplete or nonzero')
+    return {'age_seconds': round(age, 2), 'sha256': sha(path), 'status': 'PASS'}
+
+
+def verify_w1b(rows, initial, prior):
+    """W1 remote/restore proof stands by explicit W1b authorization."""
+    if (set(rows) != set(initial) or len(rows) != 636
+            or any(r['status'] != 'PASS' for r in rows.values())
+            or any(sum(k[0] == name for k in rows) != count
+                   for name, count in (('S1', 289), ('S2', 347)))):
+        raise ArchiveError('R4 W1b manifest coverage/count/status failed')
+    proof = json.loads(prior.read_text())
+    if (proof.get('fresh_hashes') != '636/636 PASS'
+            or len(proof.get('restore', [])) != 3
+            or any(r.get('status') != 'PASS' for r in proof['restore'])
+            or any(proof.get(name, {}).get('PASS') != count
+                   for name, count in (('S1', 289), ('S2', 347)))):
+        raise ArchiveError('R4 prior W1 remote/restore evidence incomplete')
+    for i, (key, row) in enumerate(sorted(rows.items()), 1):
+        if (row['stored_sha256'] != row['remote_sha256']
+                or not re.fullmatch('[0-9a-f]{64}', row['remote_sha256'])
+                or int(row['bytes']) != initial[key][2]
+                or sha(ROOTS[key[0]] / key[1]) != row['sha256']):
+            raise ArchiveError('R4 W1b fresh local hash/manifest mismatch')
+        if i % 100 == 0 or i == len(rows):
+            print(json.dumps({'phase': 'fresh-local', 'verified': i, 'total': len(rows)}), flush=True)
+    if inventory() != initial:
+        raise ArchiveError('R4 inventory changed during local verification')
+    return proof['restore']
+
+
+def delete_verified(rows, initial, report, report_path, evidence=None):
     # Fresh inventory and complete /proc scan immediately precede any source unlink.
     if inventory() != initial:
         raise ArchiveError('R4 inventory changed before deletion')
     scan = proc_scan()
-    if scan['status'] != 'PASS':
+    if scan['status'] != 'PASS' and evidence is None:
         time.sleep(1)
         scan = proc_scan()  # one read-only retry; never treat inaccessible as empty
+    if evidence is not None:
+        report['sudo_evidence'] = sudo_evidence(evidence)
+        if not scan['hits']:
+            scan['status'] = 'PASS (sudo evidence + own zero-hit scan)'
     report['proc_scan'] = scan
     save_report(report_path, report)
-    if scan['status'] != 'PASS':
+    if not scan['status'].startswith('PASS'):
         raise ArchiveError('R4 /proc gate not PASS; no local dataset deletion')
     for name, root in ROOTS.items():
+        if evidence is not None:
+            sudo_evidence(evidence)
+            if proc_scan()['hits']:
+                raise ArchiveError('R4 own scan hit before set deletion')
         report[name]['df_before_delete'] = df()
         save_report(report_path, report)
         for key in sorted(rows):
@@ -304,6 +352,7 @@ def delete_verified(rows, initial, report, report_path):
                 path.rmdir()  # only empty dirs; never recursive deletion
         root.rmdir()
         report[name]['df_after_delete'] = df()
+        report[name]['deleted_files'] = sum(k[0] == name for k in rows)
         report[name]['local_removed'] = True
         save_report(report_path, report)
 
@@ -313,7 +362,13 @@ def main():
     parser.add_argument('--manifest', type=Path, required=True)
     parser.add_argument('--report', type=Path, required=True)
     parser.add_argument('--delete-after-r4', action='store_true')
+    parser.add_argument('--w1b-sudo-evidence', type=Path)
+    parser.add_argument('--prior-w1-report', type=Path)
     args = parser.parse_args()
+    if bool(args.w1b_sudo_evidence) != bool(args.prior_w1_report):
+        parser.error('W1b requires both sudo evidence and prior W1 report')
+    if args.prior_w1_report and args.prior_w1_report.resolve() == args.report.resolve():
+        parser.error('Do not overwrite prior W1 evidence')
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     lock = args.manifest.with_suffix('.lock').open('a')
     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -330,23 +385,28 @@ def main():
         for name in ROOTS:
             report[name] = {'files': sum(k[0] == name for k in initial), 'bytes': sum(v[2] for k, v in initial.items() if k[0] == name), 'local_removed': False}
         save_report(args.report, report)
-        pilot = sum(([k for k in sorted(initial) if k[0] == name][:2] for name in ROOTS), [])
-        if len(pilot) != 4:
-            raise ArchiveError('Pilot needs two files per set')
-        archive(pilot, initial, rows, args.manifest, codec)
-        report['pilot'] = '4/4 PASS'
-        save_report(args.report, report)
-        print('PILOT 4/4 PASS', flush=True)
-        archive(sorted(initial), initial, rows, args.manifest, codec)
-        for name in ROOTS:
-            subset = [r for r in rows.values() if r['set'] == name]
-            report[name].update(stored_bytes=sum(int(r['stored_bytes']) for r in subset), PASS=sum(r['status'] == 'PASS' for r in subset), FAIL=sum(r['status'] == 'FAIL' for r in subset))
-        save_report(args.report, report)
-        report['restore'] = verify(rows, initial)
+        if args.w1b_sudo_evidence:
+            sudo_evidence(args.w1b_sudo_evidence)
+            report['restore'] = verify_w1b(rows, initial, args.prior_w1_report)
+            report['remote_verification'] = 'W1 636/636 PASS; retained by W1b authorization'
+        else:
+            pilot = sum(([k for k in sorted(initial) if k[0] == name][:2] for name in ROOTS), [])
+            if len(pilot) != 4:
+                raise ArchiveError('Pilot needs two files per set')
+            archive(pilot, initial, rows, args.manifest, codec)
+            report['pilot'] = '4/4 PASS'
+            save_report(args.report, report)
+            print('PILOT 4/4 PASS', flush=True)
+            archive(sorted(initial), initial, rows, args.manifest, codec)
+            for name in ROOTS:
+                subset = [r for r in rows.values() if r['set'] == name]
+                report[name].update(stored_bytes=sum(int(r['stored_bytes']) for r in subset), PASS=sum(r['status'] == 'PASS' for r in subset), FAIL=sum(r['status'] == 'FAIL' for r in subset))
+            save_report(args.report, report)
+            report['restore'] = verify(rows, initial)
         report['fresh_hashes'] = f'{len(rows)}/{len(rows)} PASS'
         save_report(args.report, report)
         if args.delete_after_r4:
-            delete_verified(rows, initial, report, args.report)
+            delete_verified(rows, initial, report, args.report, args.w1b_sudo_evidence)
             report['df_before_prune'] = df()
             if shutil.which('uv'):
                 retry(lambda: run(['uv', 'cache', 'prune'], stdout=subprocess.PIPE))

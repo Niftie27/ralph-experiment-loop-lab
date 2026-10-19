@@ -1,5 +1,7 @@
 """Small, synthetic safety checks; never touch real research paths or SSH."""
 import csv
+import json
+import os
 import importlib.util
 from pathlib import Path
 import tempfile
@@ -68,6 +70,58 @@ class SafetyTests(unittest.TestCase):
             a.delete_verified(dict.fromkeys(initial), initial, report, self.base / 'report.json')
         self.assertTrue(all(not p.exists() for p in self.roots.values()))
         self.assertTrue(all(report[s]['local_removed'] for s in self.roots))
+
+    def evidence(self, body='RESULT: PASS\nunreadable=0 hits=0\n'):
+        path = self.base / 'sudo.txt'
+        path.write_text(body)
+        return path
+
+    def test_sudo_evidence_rejects_stale_future_and_bad_fields(self):
+        for body in ('RESULT: FAIL\nunreadable=0 hits=0',
+                     'RESULT: PASS\nunreadable=1 hits=0',
+                     'RESULT: PASS\nunreadable=0 hits=10',
+                     'RESULT: PASS\nunreadable=0'):
+            with self.assertRaises(a.ArchiveError):
+                a.sudo_evidence(self.evidence(body))
+        path = self.evidence()
+        for age in (7200, -100):
+            with patch.object(a.time, 'time', return_value=path.stat().st_mtime + age):
+                with self.assertRaises(a.ArchiveError):
+                    a.sudo_evidence(path)
+
+    def test_sudo_evidence_allows_denied_but_never_own_hits(self):
+        initial = a.inventory()
+        report = {s: {} for s in self.roots}
+        evidence = self.evidence()
+        scan = {'hits': ['123:4'], 'inaccessible_pids': ['1'], 'status': 'not verified'}
+        with patch.object(a, 'proc_scan', return_value=scan):
+            with self.assertRaises(a.ArchiveError):
+                a.delete_verified(dict.fromkeys(initial), initial, report, self.base / 'report.json', evidence)
+        self.assertEqual(a.inventory(), initial)
+        scan = {'hits': [], 'inaccessible_pids': ['1'], 'status': 'not verified'}
+        with patch.object(a, 'proc_scan', return_value=scan), patch.object(a, 'df', return_value='synthetic'):
+            a.delete_verified(dict.fromkeys(initial), initial, report, self.base / 'report.json', evidence)
+        self.assertTrue(all(not p.exists() for p in self.roots.values()))
+
+    def test_w1b_count_and_local_hash_gates(self):
+        rows, initial = {}, {}
+        for name, count in (('S1', 289), ('S2', 347)):
+            for i in range(count):
+                key = (name, str(i))
+                initial[key] = (0, 0, 8)
+                rows[key] = {'status': 'PASS', 'bytes': '8', 'sha256': 'a'*64,
+                             'stored_sha256': 'b'*64, 'remote_sha256': 'b'*64}
+        prior = self.base / 'prior.json'
+        prior.write_text(json.dumps({'fresh_hashes': '636/636 PASS',
+            'restore': [{'status': 'PASS'}]*3, 'S1': {'PASS': 289}, 'S2': {'PASS': 347}}))
+        with patch.object(a, 'sha', return_value='a'*64), patch.object(a, 'inventory', return_value=initial):
+            self.assertEqual(len(a.verify_w1b(rows, initial, prior)), 3)
+            rows[('S1', '0')]['sha256'] = 'c'*64
+            with self.assertRaises(a.ArchiveError):
+                a.verify_w1b(rows, initial, prior)
+            rows.pop(('S1', '0'))
+            with self.assertRaises(a.ArchiveError):
+                a.verify_w1b(rows, initial, prior)
 
     def test_source_change_blocks_verify(self):
         initial = a.inventory()
