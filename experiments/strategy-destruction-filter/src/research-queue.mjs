@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { RULE_PARAMETER_KEYS, validateCandidateSet } from './candidate-spec.mjs';
 import { expandCandidate } from './engine.mjs';
-import { PERIODS, cachedSeries } from './h2-contract.mjs';
+import { PERIODS, cachedSeries, instrumentForSymbol, instrumentOf } from './h2-contract.mjs';
 import { spamCandidates } from './spam-candidates.mjs';
 
 export const MAX_VARIANTS = 600;
@@ -17,7 +17,7 @@ export function researchConfig(config) {
   return { ...config, entryMode: 'next_open' };
 }
 const derived = new Set(['ohlcv', 'volume', 'rsi', 'trend', 'volatility', 'movingAverages', 'trendStrength', 'timeframe']);
-export function inputIssues(candidate, snapshot, btcSnapshot, symbol, timeframe, config) {
+export function inputIssues(candidate, snapshot, btcSnapshot, symbol, timeframe, config, instrument = instrumentForSymbol(config, symbol)) {
   if (!snapshot) return ['missing frozen research OHLCV'];
   const candles = snapshot.candles;
   const step = timeframe === '1h' ? 3600 : 14400;
@@ -25,7 +25,7 @@ export function inputIssues(candidate, snapshot, btcSnapshot, symbol, timeframe,
   const issues = [];
   if (candles.length !== (end - start) / step || candles.some((c, i) => c.time !== start + i * step)) issues.push('incomplete research OHLCV coverage');
   if (candles.some(c => !['time','open','high','low','close','volume'].every(k => Number.isFinite(c[k])) || c.low <= 0 || c.volume < 0 || c.low > Math.min(c.open,c.close) || c.high < Math.max(c.open,c.close))) issues.push('invalid OHLCV');
-  const market = symbol === 'HYPE' ? 'linear_perpetual' : 'spot';
+  const market = instrument.market;
   if (!candidate.dataRequirements.markets.includes(market)) issues.push(`required market unavailable: ${market}`);
   for (const feature of candidate.dataRequirements.requiredFeatures) {
     if (derived.has(feature)) continue;
@@ -37,18 +37,19 @@ export function inputIssues(candidate, snapshot, btcSnapshot, symbol, timeframe,
   }
   return issues;
 }
-export function buildQueue(config, seed, lookup = (s,t) => cachedSeries(s,t,config)) {
+export function buildQueue(config, seed, lookup = (s,t,i) => cachedSeries(s,t,config,i)) {
   const templates = [...spamCandidates(), ...seed];
   const validation = validateCandidateSet(templates);
   if (!validation.ok) throw new Error(validation.errors.join('\n'));
+  const instruments = new Map(SYMBOLS.map(s => [s, instrumentForSymbol(config, s)]));
   const snapshots = new Map();
-  for (const s of SYMBOLS) for (const t of TIMEFRAMES) snapshots.set(`${s}:${t}`, lookup(s,t));
+  for (const s of SYMBOLS) for (const t of TIMEFRAMES) snapshots.set(`${s}:${t}`, lookup(s,t,instruments.get(s)));
   const groups = [], skipped = [], excludedTemplates = [], seen = new Set();
   for (const rule of RULES) for (const symbol of SYMBOLS) for (const timeframe of TIMEFRAMES) {
     const items = [], reasons = new Set();
     for (const template of templates.filter(c => c.rule === rule)) {
       const snapshot = snapshots.get(`${symbol}:${timeframe}`);
-      const issues = inputIssues(template, snapshot, snapshots.get(`BTC:${timeframe}`), symbol, timeframe, config);
+      const issues = inputIssues(template, snapshot, snapshots.get(`BTC:${timeframe}`), symbol, timeframe, config, instruments.get(symbol));
       if (issues.length) {
         issues.forEach(r => reasons.add(r));
         excludedTemplates.push({ sourceCandidateId: template.id, rule, symbol, timeframe, reasons: issues });
@@ -59,9 +60,10 @@ export function buildQueue(config, seed, lookup = (s,t) => cachedSeries(s,t,conf
         const signature = JSON.stringify([rule, template.directions, Object.entries(variant.params).sort(), template.dataRequirements.requiredFeatures.includes('btc_regime_gate')]);
         if (seen.has(signature)) continue;
         seen.add(signature);
+        const gated = template.dataRequirements.requiredFeatures.includes('btc_regime_gate');
         items.push({ sourceCandidateId: template.id, sourceFamily: template.family, rule, symbol, timeframe,
-          snapshotSha256: snapshot.meta.sha256,
-          btcSnapshotSha256: template.dataRequirements.requiredFeatures.includes('btc_regime_gate') ? snapshots.get(`BTC:${timeframe}`).meta.sha256 : null,
+          instrument: instruments.get(symbol), snapshotSha256: snapshot.meta.sha256,
+          btcInstrument: gated ? instruments.get('BTC') : null, btcSnapshotSha256: gated ? snapshots.get(`BTC:${timeframe}`).meta.sha256 : null,
           candidate: { ...candidate, parameters: Object.fromEntries(Object.entries(variant.params).map(([k,v]) => [k,[v]])) }, status: 'pending' });
       }
     }
@@ -98,6 +100,13 @@ export function validateQueue(queue) {
     const variants = expandCandidate(item.candidate);
     if (variants.length !== 1 || variants[0].params.symbol !== item.symbol || variants[0].params.timeframe !== item.timeframe) throw new Error('Each queue item must be exactly one matching variant');
     if (!/^[a-f0-9]{64}$/.test(item.snapshotSha256)) throw new Error('Missing frozen input hash');
+    // Items built before F1a-1 carry neither instrument and resolve as Binance spot; newer items carry both
+    // (btcInstrument is null exactly when the item has no BTC gate).
+    if (item.instrument !== undefined || item.btcInstrument !== undefined) {
+      if (!item.instrument || (item.btcSnapshotSha256 ? !item.btcInstrument : item.btcInstrument !== null)) throw new Error('Incomplete data identity on queue item');
+      instrumentOf(item.instrument);
+      if (item.btcInstrument) instrumentOf(item.btcInstrument);
+    }
   }
   return true;
 }
