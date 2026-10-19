@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { windowFor, selectWindow, guardHoldout, identityFor, freezeSeries, pathsFor, appendRegistry, sha256 } from './h2-contract.mjs';
+import { windowFor, selectWindow, guardHoldout, identityFor, freezeSeries, pathsFor, appendRegistry, sha256, instrumentForSymbol } from './h2-contract.mjs';
 
 export function round(value, digits = 4) {
   return Number.isFinite(value) ? Number(value.toFixed(digits)) : null;
@@ -344,10 +344,11 @@ function finishTrade(rawR, costR, candles, entryIndex, exitIndex, signal, ctx, e
 }
 
 export function backtestVariant(variant, candles, symbol, timeframe, config, options = {}) {
-  const identity = identityFor(variant, symbol, timeframe, config);
+  const instrument = options.instrument ?? instrumentForSymbol(config, symbol);
+  const identity = identityFor(variant, symbol, timeframe, config, instrument);
   guardHoldout(config, identity); // Before signal evaluation, simulation, or metrics.
   candles = selectWindow(candles, config);
-  const frozen = freezeSeries(candles, symbol, timeframe.id, config);
+  const frozen = freezeSeries(candles, symbol, timeframe.id, config, instrument);
   const run = backtestVariantCore(variant, frozen.candles, symbol, timeframe, config, options);
   const stats = statsForTrades(run.trades);
   const w = windowFor(config);
