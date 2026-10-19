@@ -2,6 +2,8 @@
 
 Read-only inspection: 2026-10-17 UTC (inventory snapshot from the initial 14:00 UTC work period; documentation finalized after the later continuation). This catalog records **observed storage**, not a claim that each dataset is complete or suitable for a strategy. No collector, watcher, service, scheduler, exchange account, or stored data was changed. Source questions are answered from local code/files; unresolved semantics are marked **not verified**. Public-repository policy: no host/account identifiers, credentials, chat content, session content or voice content.
 
+W1 archive move completed 2026-10-19: D131 and D065–D069 now reside on the box; their local copies were removed after verification. Historical inspection sizes, schemas, examples and local sample paths below remain the 2026-10-17 snapshot, not current local availability. See [W1 manifest](archive-moves/w1-2026-10-19.csv).
+
 ## Method and scope
 
 `tools/data-catalog/inventory.py` uses only the Python standard library, opens data read-only, and prints JSONL to stdout. Run from this checkout:
@@ -52,7 +54,7 @@ Runtime entrypoints and their repo copies were hashed read-only. Collector modul
 | Workspace `analyze-alert-setups.mjs` | Runtime `setup-analysis.json`, `setup-candle-context-cache.json`; setup-analysis YAML/wiki outputs | Public spot/Hyperliquid candles plus local alerts; on-demand; repo copy absent |
 | Workspace `orderflow-spike.mjs`, `orderflow-features.mjs` | Runtime `orderflow-spikes/<run>/{raw-events.jsonl,orderflow.sqlite,manifest.yaml,features-1s.csv,features.sqlite,features-manifest.yaml}`; shell capture logs under `long-captures/` | On-demand public Binance/Hyperliquid experiments; not continuous collector coverage |
 | Workspace `orderflow-alert-replay-alignment.mjs`, `verify-ralph-orderflow-replay.mjs`, `service-health-check.mjs` | Runtime `orderflow-alignment/latest.json` and report; `ralph-replay-checks/<symbol>_<day>.{json,md}`; `service-health-report.json` plus Markdown report | On-demand checks; first script now mirrored with equal hash; other two have matching runtime/repo copies |
-| `tools/alert-eval/*.py`, local `~/ralph-state/a2c_*.py`, one-off research download commands | `~/ralph-state/` evaluation CSV, JSONL, logs/reports; `~/ralph-research-data/` downloads, checksums, manifest and mark candles | File-specific provenance below; some download command producers not recoverable from code/logs and explicitly unresolved |
+| `tools/alert-eval/*.py`, local `~/ralph-state/a2c_*.py`, one-off research download commands | `~/ralph-state/` evaluation outputs remain local; research downloads, checksums, manifest and mark candles now on box `research/ralph-research-data/` (S2); local `~/ralph-research-data/` removed 2026-10-19 | Restore S2 with rsync back to `~/ralph-research-data/` before a2c scripts. [W1 manifest](archive-moves/w1-2026-10-19.csv), also box `research/manifests/w1-2026-10-19.csv`. D131 cache separately on box `research/binance-usdm-archive-cache/` (`zstd -9`; restore rsync + `zstd -d`); `binance-usdm-archive.mjs` re-downloads missing cache files on demand. Historical one-off producer provenance remains not verified |
 | Experiment `src/*.mjs` runners, archive/market loaders, H2 contract | `experiments/*/{data,results,runtime,paper}/` in repo and workspace research checkout; H2 content-addressed JSON, manifest and variant registry | Not all experiments are scheduled. Paths are relative to each script's checkout; copies are separate storage |
 | OpenClaw gateway/node, Obsidian, transcription and backup workflows | Chat/session/voice/memory/backups, generated knowledge/index storage and operational logs | Personal aggregate categories only; outside market collection. No private contents inspected. System/OS journal and package caches are infrastructure, not claimed as market datasets |
 
@@ -1835,7 +1837,10 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Purpose: Historical public trade archive and provenance.
 - Producer: `~/.openclaw/workspace/scripts/a2b_history_proof.py` (sha256 `46f2450b10c9`). Unit/trigger: writer matrix above; on-demand if not listed as a service.
 - Source: data.binance.vision/data/futures/um/daily/aggTrades or public.bybit.com/trading; BTCUSDT/ETHUSDT/SOLUSDT/HYPEUSDT/ZECUSDT.
-- Location/naming: `~/ralph-research-data/binance-vision/*.zip`.
+- Location/naming: box `research/ralph-research-data/binance-vision/*.zip`; original local root `~/ralph-research-data/`.
+- W1 archive move: local copy removed 2026-10-19. Manifest: [docs/archive-moves/w1-2026-10-19.csv](archive-moves/w1-2026-10-19.csv); box copy `research/manifests/w1-2026-10-19.csv`.
+- Restore: rsync back from box `research/ralph-research-data/` to `~/ralph-research-data/`, preserving relative paths and existing compression. The a2c scripts need S2 restored first.
+- Historical snapshot: sizes and local inspected-file paths below describe pre-removal storage, not files currently on disk.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
 - Row definition: one archive aggregate trade (Binance), public trade (Bybit), checksum line or manifest file entry.
 - Consumers: tools/alert-eval/{shadow_trades,velocity_trades,velocity_excursions,export_velocity_alerts}.py.
@@ -1862,7 +1867,10 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Purpose: Historical public trade archive and provenance.
 - Producer: `~/.openclaw/workspace/scripts/a2b_history_proof.py` (sha256 `46f2450b10c9`). Unit/trigger: writer matrix above; on-demand if not listed as a service.
 - Source: data.binance.vision/data/futures/um/daily/aggTrades or public.bybit.com/trading; BTCUSDT/ETHUSDT/SOLUSDT/HYPEUSDT/ZECUSDT.
-- Location/naming: `~/ralph-research-data/binance-vision/*.CHECKSUM`.
+- Location/naming: box `research/ralph-research-data/binance-vision/*.CHECKSUM`; original local root `~/ralph-research-data/`.
+- W1 archive move: local copy removed 2026-10-19. Manifest: [docs/archive-moves/w1-2026-10-19.csv](archive-moves/w1-2026-10-19.csv); box copy `research/manifests/w1-2026-10-19.csv`.
+- Restore: rsync back from box `research/ralph-research-data/` to `~/ralph-research-data/`, preserving relative paths and existing compression. The a2c scripts need S2 restored first.
+- Historical snapshot: sizes and local inspected-file paths below describe pre-removal storage, not files currently on disk.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
 - Row definition: one archive aggregate trade (Binance), public trade (Bybit), checksum line or manifest file entry.
 - Consumers: tools/alert-eval/{shadow_trades,velocity_trades,velocity_excursions,export_velocity_alerts}.py.
@@ -1881,7 +1889,10 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Purpose: Historical public trade archive and provenance.
 - Producer: `~/.openclaw/workspace/scripts/a2b_history_proof.py` (sha256 `46f2450b10c9`). Unit/trigger: writer matrix above; on-demand if not listed as a service.
 - Source: data.binance.vision/data/futures/um/daily/aggTrades or public.bybit.com/trading; BTCUSDT/ETHUSDT/SOLUSDT/HYPEUSDT/ZECUSDT.
-- Location/naming: `~/ralph-research-data/bybit-public/*.csv.gz`.
+- Location/naming: box `research/ralph-research-data/bybit-public/*.csv.gz`; original local root `~/ralph-research-data/`.
+- W1 archive move: local copy removed 2026-10-19. Manifest: [docs/archive-moves/w1-2026-10-19.csv](archive-moves/w1-2026-10-19.csv); box copy `research/manifests/w1-2026-10-19.csv`.
+- Restore: rsync back from box `research/ralph-research-data/` to `~/ralph-research-data/`, preserving relative paths and existing compression. The a2c scripts need S2 restored first.
+- Historical snapshot: sizes and local inspected-file paths below describe pre-removal storage, not files currently on disk.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
 - Row definition: one archive aggregate trade (Binance), public trade (Bybit), checksum line or manifest file entry.
 - Consumers: tools/alert-eval/{shadow_trades,velocity_trades,velocity_excursions,export_velocity_alerts}.py.
@@ -1908,7 +1919,10 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Purpose: Cross-venue mark-price basis checks.
 - Producer: `~/ralph-state/a2c_bybit_crosscheck.py` (sha256 `f03d11444eb3`). Unit/trigger: writer matrix above; on-demand if not listed as a service.
 - Source: Bybit /v5/market/mark-price-kline; BTCUSDT/HYPEUSDT/ZECUSDT.
-- Location/naming: `~/ralph-research-data/bybit-markkline/*.csv`.
+- Location/naming: box `research/ralph-research-data/bybit-markkline/*.csv`; original local root `~/ralph-research-data/`.
+- W1 archive move: local copy removed 2026-10-19. Manifest: [docs/archive-moves/w1-2026-10-19.csv](archive-moves/w1-2026-10-19.csv); box copy `research/manifests/w1-2026-10-19.csv`.
+- Restore: rsync back from box `research/ralph-research-data/` to `~/ralph-research-data/`, preserving relative paths and existing compression. The a2c scripts need S2 restored first.
+- Historical snapshot: sizes and local inspected-file paths below describe pre-removal storage, not files currently on disk.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
 - Row definition: one mark-price candle (start_ms, open, high, low, close).
 - Consumers: a2c_bybit_crosscheck.py; a2c_minute_basis_remaining.py.
@@ -1934,7 +1948,10 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Purpose: Historical public trade archive and provenance.
 - Producer: `~/.openclaw/workspace/scripts/a2b_history_proof.py` (sha256 `46f2450b10c9`). Unit/trigger: writer matrix above; on-demand if not listed as a service.
 - Source: data.binance.vision/data/futures/um/daily/aggTrades or public.bybit.com/trading; BTCUSDT/ETHUSDT/SOLUSDT/HYPEUSDT/ZECUSDT.
-- Location/naming: `~/ralph-research-data/manifest.csv`.
+- Location/naming: box `research/ralph-research-data/manifest.csv`; original local root `~/ralph-research-data/`.
+- W1 archive move: local copy removed 2026-10-19. Manifest: [docs/archive-moves/w1-2026-10-19.csv](archive-moves/w1-2026-10-19.csv); box copy `research/manifests/w1-2026-10-19.csv`.
+- Restore: rsync back from box `research/ralph-research-data/` to `~/ralph-research-data/`, preserving relative paths and existing compression. The a2c scripts need S2 restored first.
+- Historical snapshot: sizes and local inspected-file paths below describe pre-removal storage, not files currently on disk.
 - Rotation/compression/retention: `mutable`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
 - Row definition: one archive aggregate trade (Binance), public trade (Bybit), checksum line or manifest file entry.
 - Consumers: tools/alert-eval/{shadow_trades,velocity_trades,velocity_excursions,export_velocity_alerts}.py.
@@ -3998,7 +4015,10 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 - Purpose: Reusable offline experiment inputs.
 - Producer: `experiments/btc-eth-alert-edge/src/binance-usdm-archive.mjs` (sha256 `3d66cb3ea6d4`). Unit/trigger: writer matrix above; on-demand if not listed as a service.
 - Source: Binance USD-M daily trades.
-- Location/naming: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/data/binance-usdm-archive-cache/*`.
+- Location/naming: box `research/binance-usdm-archive-cache/*.csv.zst` (`zstd -9`); original local root `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/data/binance-usdm-archive-cache/`.
+- W1 archive move: local copy removed 2026-10-19. Manifest: [docs/archive-moves/w1-2026-10-19.csv](archive-moves/w1-2026-10-19.csv); box copy `research/manifests/w1-2026-10-19.csv`.
+- Restore: rsync back from box `research/binance-usdm-archive-cache/` to the original local root, then `zstd -d` the `.zst` files. `binance-usdm-archive.mjs` re-downloads missing files on demand (ENOENT → fetch → cache write).
+- Historical snapshot: sizes and local inspected-file paths below describe pre-removal storage, not files currently on disk.
 - Rotation/compression/retention: `static`; format/compression is encoded by suffix (`gz` gzip, `xz` LZMA, `zip` archive). Hourly tapes/raw are maintained by the hourly service; other retention **not verified**, no automatic deletion assumed.
 - Row definition: one OHLCV candle, archive trade, or cache envelope (see inspected schema).
 - Consumers: experiments/btc-eth-alert-edge/src/*.mjs.
