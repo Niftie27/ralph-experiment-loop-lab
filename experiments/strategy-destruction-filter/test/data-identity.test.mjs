@@ -291,3 +291,22 @@ test('F1a-1 legacy entries load unchanged as source unknown; existing manifest b
   assert.deepEqual(fs.readFileSync(l.h2Paths.manifest), before);
   assert.deepEqual(fs.readFileSync(committed), committedBytes);
 });
+
+test('F1a-1 an identity match returns the persisted manifest entry, not the new source', () => {
+  const c = config();
+  freezeSeries([candle(start)], 'SOL', '4h', c, USDM, { source: ARCHIVE, checksums });
+  const again = freezeSeries([candle(start)], 'SOL', '4h', c, USDM, { source: 'snapshot-input' });
+  assert.deepEqual(again.entry, manifestSeries(c)[0]);
+  assert.deepEqual(again.entry.provenance, { source: ARCHIVE, checksums });
+  // A legacy entry comes back as stored: no provenance, read as legacy-unknown and Binance spot.
+  const l = config(), bytes = JSON.stringify([candle(start)]) + '\n', hash = sha256(bytes);
+  const legacy = { symbol: 'SOL', timeframe: '4h', dataStart: PERIODS.research[0], dataEnd: PERIODS.research[1], snapshot: `data/market-cache/h2/${hash}.json`,
+    firstCandle: PERIODS.research[0], lastCandle: PERIODS.research[0], count: 1, sha256: hash };
+  fs.writeFileSync(l.h2Paths.manifest, JSON.stringify({ schemaVersion: 1, periods: PERIODS, series: [legacy] }, null, 2) + '\n');
+  const before = fs.readFileSync(l.h2Paths.manifest);
+  const legacyAgain = freezeSeries([candle(start)], 'SOL', '4h', l);
+  assert.deepEqual(legacyAgain.entry, legacy);
+  assert.deepEqual(provenanceOf(legacyAgain.entry), { source: 'legacy-unknown' });
+  assert.deepEqual(instrumentOf(legacyAgain.entry), SPOT);
+  assert.deepEqual(fs.readFileSync(l.h2Paths.manifest), before);
+});

@@ -143,7 +143,8 @@ export function freezeSeries(candles, symbol, timeframe, config, instrument = in
     fs.mkdirSync(path.dirname(paths.manifest instanceof URL ? paths.manifest.pathname : paths.manifest), { recursive: true });
     fs.writeFileSync(paths.manifest, JSON.stringify(manifest, null, 2) + '\n');
   }
-  return { candles: Object.freeze(selected.map(c => Object.freeze({ ...c }))), entry,
+  // On an identity match the persisted entry, with its own provenance, is what callers see.
+  return { candles: Object.freeze(selected.map(c => Object.freeze({ ...c }))), entry: same ?? entry,
     manifestSha256: sha256(fs.readFileSync(paths.manifest)) };
 }
 export function cachedSeries(symbol, timeframe, config, instrument = instrumentForSymbol(config, symbol)) {
