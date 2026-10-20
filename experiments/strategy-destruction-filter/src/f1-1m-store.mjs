@@ -1,0 +1,307 @@
+// F1a-2 1m snapshot store (docs/f1/f1a-2-contract.md, A4, A5, A10). Privileged side: it reads source zips of every
+// period, writes snapshots and the 1m manifest, and reports counts, times and hashes only, never prices.
+// Local sources: <zipRoot>/<Vision dir>/<sha256>/<zip> + <zip>.CHECKSUM, one directory per published version.
+// Snapshots: <cacheDir>/<sha256>.bin. Manifest: canonical JSON, entries sorted, written atomically under a lock.
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { createHash, randomUUID } from 'node:crypto';
+import { encodeSnapshot, decodeSnapshot, canonicalJson, SCHEMA_VERSION } from './f1-1m-format.mjs';
+import { verifyZip, readZipMember, parseKlines, planUnits, assembleUnit, unitCoverage } from './vision-source.mjs';
+
+export const MANIFEST_KIND = 'binance_vision_kline_1m_manifest';
+export const SOURCE = 'binance-vision-archive';
+const ENTRY_KEYS = ['bytes', 'contract', 'dataEnd', 'dataStart', 'exchange', 'firstOpenTime', 'lastOpenTime', 'market', 'missingMinutes', 'missingRanges',
+  'period', 'rowCount', 'schemaVersion', 'sha256', 'source', 'sources'];
+const ISO = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.000Z$/;
+const HEX = /^[0-9a-f]{64}$/;
+const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
+export const snapshotPath = (cacheDir, sha) => path.join(cacheDir, `${sha}.bin`);
+const order = (a, b) => a < b ? -1 : a > b ? 1 : 0;
+
+function fsyncDir(dir) { const fd = fs.openSync(dir, 'r'); try { fs.fsyncSync(fd); } finally { fs.closeSync(fd); } }
+// Writes bytes once under their final name (temp file, fsync, hard link: never replaces an existing file). An existing
+// file must already hold exactly these bytes.
+function writeOnce(file, bytes, mode = 0o444) {
+  const expected = sha256(bytes);
+  if (fs.existsSync(file)) {
+    if (sha256(fs.readFileSync(file)) !== expected) throw new Error(`existing file ${path.basename(file)} holds other bytes`);
+    return false;
+  }
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const tmp = `${file}.tmp-${process.pid}-${randomUUID()}`;
+  const fd = fs.openSync(tmp, 'wx', mode);
+  try { fs.writeSync(fd, bytes); fs.fsyncSync(fd); } finally { fs.closeSync(fd); }
+  try { fs.linkSync(tmp, file); }
+  catch (error) {
+    if (error.code !== 'EEXIST') throw error;
+    if (sha256(fs.readFileSync(file)) !== expected) throw new Error(`existing file ${path.basename(file)} holds other bytes`);
+  } finally { fs.unlinkSync(tmp); }
+  fsyncDir(path.dirname(file));
+  return true;
+}
+
+// Local source versions. A zip is stored only after its own CHECKSUM matched, never overwritten.
+const versionDir = (zipRoot, source, sha) => path.join(zipRoot, path.dirname(source.file), sha);
+export function storeSource(zipRoot, source, zipBytes, checksumText) {
+  const sha = verifyZip(zipBytes, checksumText, source.zipName);
+  const dir = versionDir(zipRoot, source, sha);
+  const stored = writeOnce(path.join(dir, source.zipName), zipBytes);
+  writeOnce(path.join(dir, `${source.zipName}.CHECKSUM`), Buffer.from(checksumText));
+  return { sha256: sha, stored };
+}
+export function localVersions(zipRoot, source) {
+  const parent = path.join(zipRoot, path.dirname(source.file));
+  let names;
+  try { names = fs.readdirSync(parent); } catch (error) { if (error.code === 'ENOENT') return []; throw error; }
+  return names.filter(n => HEX.test(n) && fs.existsSync(path.join(parent, n, source.zipName))).sort(order);
+}
+// Evidence that both the zip and its CHECKSUM answered 404 (written by download); only such files can be not_listed.
+const missingMarker = (zipRoot, source) => path.join(zipRoot, path.dirname(source.file), '404', source.zipName);
+export function recordMissing(zipRoot, source) {
+  const file = missingMarker(zipRoot, source);
+  if (!fs.existsSync(file)) writeOnce(file, Buffer.from('404 on the zip and its CHECKSUM\n'), 0o644);
+}
+const recordedMissing = (zipRoot, source) => fs.existsSync(missingMarker(zipRoot, source));
+function readVerifiedSource(zipRoot, source, sha) {
+  const zipFile = path.join(versionDir(zipRoot, source, sha), source.zipName);
+  let checksum;
+  try { checksum = fs.readFileSync(`${zipFile}.CHECKSUM`, 'utf8'); } catch (error) { if (error.code !== 'ENOENT') throw error; }
+  const zip = fs.readFileSync(zipFile);
+  if (verifyZip(zip, checksum, source.zipName) !== sha) throw new Error(`Vision CHECKSUM: ${source.file} is stored under another sha256`);
+  return zip;
+}
+
+// Manifest: {entries, kind, schemaVersion}; entries are immutable, unique and sorted by the A5 key.
+const unitKey = e => [e.exchange, e.market, e.contract, e.period, e.dataStart, e.dataEnd, e.schemaVersion];
+function compareEntries(a, b) {
+  const x = [...unitKey(a), a.sha256], y = [...unitKey(b), b.sha256];
+  for (let i = 0; i < x.length; i++) { const c = typeof x[i] === 'number' ? x[i] - y[i] : order(x[i], y[i]); if (c) return c; }
+  return 0;
+}
+const sameKey = (a, b) => unitKey(a).every((v, i) => v === unitKey(b)[i]);
+function checkEntry(e) {
+  const fail = message => { throw new Error(`1m manifest: entry ${e?.contract} ${e?.period} ${e?.dataStart}: ${message}`); };
+  if (!e || typeof e !== 'object' || Object.keys(e).sort().join() !== ENTRY_KEYS.join()) fail(`keys must be exactly ${ENTRY_KEYS.join(',')}`);
+  if (!['exchange', 'market', 'contract'].every(k => typeof e[k] === 'string' && e[k])) fail('incomplete instrument');
+  if (!['research', 'holdout'].includes(e.period)) fail('unknown period');
+  if (![e.dataStart, e.dataEnd, e.firstOpenTime, e.lastOpenTime].every(t => typeof t === 'string' && ISO.test(t))) fail('times must be ISO strings with .000Z');
+  if (e.schemaVersion !== SCHEMA_VERSION) fail(`unknown schemaVersion ${e.schemaVersion}`);
+  if (!HEX.test(e.sha256)) fail('bad sha256');
+  if (![e.bytes, e.rowCount].every(n => Number.isSafeInteger(n) && n > 0) || !Number.isSafeInteger(e.missingMinutes) || e.missingMinutes < 0) fail('bad counts');
+  if (!Array.isArray(e.missingRanges) || !e.missingRanges.every(r => r && Object.keys(r).sort().join() === 'end,start' && ISO.test(r.start) && ISO.test(r.end))) fail('bad missingRanges');
+  if (e.source !== SOURCE) fail(`source must be ${SOURCE}`);
+  if (!Array.isArray(e.sources) || !e.sources.length || !e.sources.every(s => s && Object.keys(s).sort().join() === 'file,sha256'
+    && typeof s.file === 'string' && /^data\/[A-Za-z0-9_./-]+\.zip$/.test(s.file) && !s.file.includes('..') && HEX.test(s.sha256))) fail('sources must be canonical Vision paths with sha256');
+}
+export function readManifest(file) {
+  let text;
+  try { text = fs.readFileSync(file, 'utf8'); } catch (error) { if (error.code === 'ENOENT') return { entries: [], kind: MANIFEST_KIND, schemaVersion: 1 }; throw error; }
+  let manifest;
+  try { manifest = JSON.parse(text); } catch { throw new Error('1m manifest: not valid JSON'); }
+  if (!manifest || Object.keys(manifest).sort().join() !== 'entries,kind,schemaVersion' || manifest.kind !== MANIFEST_KIND || manifest.schemaVersion !== 1
+    || !Array.isArray(manifest.entries)) throw new Error('1m manifest: unknown kind, schemaVersion or layout');
+  manifest.entries.forEach(checkEntry);
+  for (let i = 1; i < manifest.entries.length; i++) if (compareEntries(manifest.entries[i - 1], manifest.entries[i]) >= 0) throw new Error('1m manifest: entries not sorted or duplicated');
+  return manifest;
+}
+const manifestText = entries => JSON.stringify(JSON.parse(canonicalJson({ entries: [...entries].sort(compareEntries), kind: MANIFEST_KIND, schemaVersion: 1 })), null, 2) + '\n';
+function publishManifest(file, entries) {
+  const tmp = `${file}.tmp`;
+  const fd = fs.openSync(tmp, 'w', 0o644); // under the lock, so a leftover temp file is a crashed writer's and may be replaced
+  try { fs.writeSync(fd, manifestText(entries)); fs.fsyncSync(fd); } finally { fs.closeSync(fd); }
+  fs.renameSync(tmp, file);
+  fsyncDir(path.dirname(file));
+}
+function acquireLock(manifestPath) {
+  const file = `${manifestPath}.lock`, token = randomUUID();
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  let fd;
+  try { fd = fs.openSync(file, 'wx', 0o644); }
+  catch (error) {
+    if (error.code === 'EEXIST') throw new Error(`manifest lock ${path.basename(file)} exists: another writer is running or one crashed; check and remove it by hand`);
+    throw error;
+  }
+  try { fs.writeSync(fd, JSON.stringify({ pid: process.pid, token }) + '\n'); fs.fsyncSync(fd); } finally { fs.closeSync(fd); }
+  return () => { // only ever removes its own lock
+    try { if (JSON.parse(fs.readFileSync(file, 'utf8')).token === token) fs.unlinkSync(file); } catch { /* not ours or gone: leave it */ }
+  };
+}
+
+const unitId = u => ({ contract: u.instrument.contract, period: u.period, dataStart: u.dataStart, dataEnd: u.dataEnd });
+// One unit from verified local sources: missing, failed (with reason), empty, or an entry with its snapshot bytes.
+function buildUnit(unit, zipRoot, parsedCache) {
+  const versions = unit.sources.map(s => [s, localVersions(zipRoot, s)]);
+  const absent = versions.filter(([, v]) => !v.length).map(([s]) => s);
+  if (absent.length) return { status: 'missing', files: absent.map(s => ({ file: s.file, recorded404: recordedMissing(zipRoot, s) })) };
+  const multiple = versions.filter(([, v]) => v.length > 1);
+  if (multiple.length) return { status: 'failed', reason: `more than one local version (version selection rule pending): ${multiple.map(([s, v]) => `${s.file} [${v.join(', ')}]`).join('; ')}` };
+  const inputs = [], sources = [];
+  for (const [s, [sha]] of versions) {
+    const key = `${s.file}@${sha}`;
+    if (!parsedCache.has(key)) parsedCache.set(key, parseKlines(readZipMember(readVerifiedSource(zipRoot, s, sha), s.csvName), s));
+    inputs.push({ file: s.file, parsed: parsedCache.get(key) });
+    sources.push({ file: s.file, sha256: sha });
+  }
+  const { rowCount, columns } = assembleUnit(unit, inputs);
+  const coverage = unitCoverage(unit, columns.open_time);
+  if (!rowCount) return { status: 'empty', coverage };
+  const bytes = encodeSnapshot({ instrument: unit.instrument, period: unit.period, dataStart: unit.dataStart, dataEnd: unit.dataEnd, sources }, columns);
+  const iso = t => new Date(t).toISOString();
+  const entry = { ...unit.instrument, period: unit.period, dataStart: unit.dataStart, dataEnd: unit.dataEnd, schemaVersion: SCHEMA_VERSION, sha256: sha256(bytes),
+    bytes: bytes.length, rowCount, firstOpenTime: iso(columns.open_time[0]), lastOpenTime: iso(columns.open_time[rowCount - 1]), missingMinutes: coverage.missingMinutes,
+    missingRanges: coverage.missingRanges, source: SOURCE, sources: [...sources].sort((a, b) => order(a.file, b.file)) };
+  return { status: 'ok', entry, bytes, coverage };
+}
+
+// Builds every planned unit of the symbols and months. Fail closed per unit; a guard (memory) failure or a lock
+// conflict aborts the run. status: ok | incomplete (a source file missing) | failed (anything else).
+export function buildStore({ symbols, from, to, zipRoot, cacheDir, manifestPath, guard = { check() {} } }) {
+  const results = [];
+  let release, error = null, changed = false;
+  const check = label => { try { guard.check(label); } catch (guardError) { throw Object.assign(guardError, { guard: true }); } };
+  try {
+    const plans = symbols.map(symbol => [symbol, planUnits(symbol, { from, to })]);
+    release = acquireLock(manifestPath);
+    const entries = readManifest(manifestPath).entries;
+    for (const [symbol, units] of plans) {
+      let parsedCache = new Map(), seenSource = false;
+      for (const unit of units) {
+        check(`${unit.instrument.contract} ${unit.dataStart}`);
+        let result;
+        try {
+          result = buildUnit(unit, zipRoot, parsedCache);
+          // Keep only this unit's parsed sources: the split month reuses its zip, nothing else accumulates.
+          parsedCache = new Map([...parsedCache].filter(([key]) => unit.sources.some(s => key.startsWith(`${s.file}@`))));
+          if (result.status === 'ok') {
+            const existing = entries.filter(e => sameKey(e, result.entry));
+            if (existing.some(e => canonicalJson(e) === canonicalJson(result.entry))) {
+              writeOnce(snapshotPath(cacheDir, result.entry.sha256), result.bytes);
+              result = { ...result, status: 'unchanged' };
+            } else if (existing.length) {
+              const otherSources = existing.every(e => canonicalJson(e.sources) !== canonicalJson(result.entry.sources));
+              result = { status: 'failed', reason: otherSources ? 'the manifest entry for this unit uses other source versions (version selection rule pending)'
+                : 'the rebuilt entry differs from the manifest entry for this unit' };
+            } else {
+              check(`${unit.instrument.contract} ${unit.dataStart} write`);
+              writeOnce(snapshotPath(cacheDir, result.entry.sha256), result.bytes);
+              entries.push(result.entry);
+              changed = true;
+              result = { ...result, status: 'built' };
+            }
+          }
+        } catch (unitError) {
+          if (unitError.guard) throw unitError;
+          result = { status: 'failed', reason: unitError.message };
+        }
+        if (result.status !== 'missing') seenSource = true;
+        else if (!seenSource && result.files.every(f => f.recorded404)) result = { ...result, status: 'not_listed' };
+        results.push({ symbol, unit, ...result, bytes: undefined });
+      }
+    }
+    if (changed) publishManifest(manifestPath, entries);
+  } catch (runError) {
+    error = runError.message;
+    // Nothing was published: snapshots written so far are orphans (harmless), not built units.
+    for (const r of results) if (r.status === 'built') Object.assign(r, { status: 'failed', reason: 'not published: the run aborted' });
+  }
+  finally { release?.(); }
+  return summarize('build', results, error);
+}
+
+function mergeRanges(ranges) {
+  const out = [];
+  for (const r of ranges) {
+    if (out.length && out.at(-1).end === r.start) out.at(-1).end = r.end;
+    else out.push({ ...r });
+  }
+  return out;
+}
+function coverageOf(contract, results) {
+  const units = results.filter(r => r.unit.instrument.contract === contract);
+  const built = units.filter(r => r.entry && ['built', 'unchanged'].includes(r.status));
+  const counted = units.filter(r => r.status !== 'not_listed');
+  const expectedMinutes = counted.reduce((n, r) => n + (r.unit.endMs - r.unit.startMs) / 60000, 0);
+  const bars = built.reduce((n, r) => n + r.entry.rowCount, 0);
+  const ranges = counted.flatMap(r => r.entry && ['built', 'unchanged'].includes(r.status) ? r.entry.missingRanges : [{ start: r.unit.dataStart, end: r.unit.dataEnd }]);
+  return { contract, firstSourceFile: built[0]?.entry.sources[0].file ?? null, firstCandle: built[0]?.entry.firstOpenTime ?? null, lastCandle: built.at(-1)?.entry.lastOpenTime ?? null,
+    bars, expectedMinutes, missingMinutes: expectedMinutes - bars, notListed: [...new Set(units.filter(r => r.status === 'not_listed').map(r => r.unit.dataStart.slice(0, 7)))],
+    gaps: counted.filter(r => ['missing', 'empty', 'failed'].includes(r.status)).map(r => ({ period: r.unit.period, dataStart: r.unit.dataStart, dataEnd: r.unit.dataEnd, status: r.status })),
+    missingRanges: mergeRanges(ranges) };
+}
+function summarize(command, results, error) {
+  const count = status => results.filter(r => r.status === status).length;
+  const counts = { units: results.length, built: count('built'), unchanged: count('unchanged'), empty: count('empty'), missing: count('missing'), notListed: count('not_listed'), failed: count('failed') };
+  const status = error || counts.failed ? 'failed' : counts.missing ? 'incomplete' : 'ok';
+  return { command, status, error, counts,
+    failures: results.filter(r => r.status === 'failed').map(r => ({ ...unitId(r.unit), reason: r.reason })),
+    missing: results.filter(r => r.status === 'missing').map(r => ({ ...unitId(r.unit), files: r.files })),
+    coverage: [...new Set(results.map(r => r.unit.instrument.contract))].map(c => coverageOf(c, results)),
+    entries: results.filter(r => r.entry && ['built', 'unchanged'].includes(r.status)).map(r => r.entry) };
+}
+
+// Offline check of everything stored: every zip against its CHECKSUM, every entry's snapshot by hash and header.
+export function verifyStore({ zipRoot, cacheDir, manifestPath }) {
+  const failures = [];
+  let zips = 0, entries = [];
+  const walk = dir => { try { return fs.readdirSync(dir, { withFileTypes: true }); } catch (error) { if (error.code === 'ENOENT') return []; throw error; } };
+  const visit = dir => {
+    for (const d of walk(dir)) {
+      const full = path.join(dir, d.name);
+      if (d.isDirectory()) { if (d.name !== '404') visit(full); continue; }
+      if (!d.name.endsWith('.zip')) continue;
+      zips++;
+      const rel = path.relative(zipRoot, path.dirname(path.dirname(full))).split(path.sep).join('/') + '/' + d.name;
+      try {
+        let checksum;
+        try { checksum = fs.readFileSync(`${full}.CHECKSUM`, 'utf8'); } catch { checksum = undefined; }
+        if (verifyZip(fs.readFileSync(full), checksum, d.name) !== path.basename(dir)) throw new Error('stored under another sha256');
+      } catch (zipError) { failures.push(`${rel}: ${zipError.message}`); }
+    }
+  };
+  visit(zipRoot);
+  try { entries = readManifest(manifestPath).entries; } catch (manifestError) { failures.push(manifestError.message); }
+  for (const e of entries) {
+    try {
+      const bytes = fs.readFileSync(snapshotPath(cacheDir, e.sha256));
+      if (sha256(bytes) !== e.sha256 || bytes.length !== e.bytes) throw new Error('hash or size mismatch');
+      const { header } = decodeSnapshot(bytes);
+      const agree = header.instrument.exchange === e.exchange && header.instrument.market === e.market && header.instrument.contract === e.contract
+        && header.period === e.period && header.dataStart === e.dataStart && header.dataEnd === e.dataEnd && header.rowCount === e.rowCount
+        && header.firstOpenTime === e.firstOpenTime && header.lastOpenTime === e.lastOpenTime && canonicalJson(header.sources) === canonicalJson(e.sources);
+      if (!agree) throw new Error('header disagrees with the manifest entry');
+    } catch (snapshotError) { failures.push(`snapshot ${e.sha256} (${e.contract} ${e.period} ${e.dataStart}): ${snapshotError.code ?? snapshotError.message}`); }
+  }
+  const known = new Set(entries.map(e => `${e.sha256}.bin`));
+  const orphans = walk(cacheDir).filter(d => d.isFile() && !known.has(d.name)).map(d => d.name).sort(order);
+  return { command: 'verify', status: failures.length ? 'failed' : 'ok', counts: { zips, entries: entries.length, orphans: orphans.length }, failures, orphans };
+}
+
+// Offline: rebuild the requested units into a temp store and compare with the reference manifest, read-only.
+export function compareStore({ symbols, from, to, zipRoot, manifestPath }) {
+  let reference;
+  try { reference = readManifest(manifestPath).entries; } catch (error) { return { command: 'compare', status: 'failed', error: error.message, counts: { compared: 0 } }; }
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'f1-1m-compare-'));
+  try {
+    const rebuilt = buildStore({ symbols, from, to, zipRoot, cacheDir: path.join(dir, 'cache'), manifestPath: path.join(dir, 'manifest.json') });
+    const results = [];
+    const scope = new Set(symbols.flatMap(symbol => planUnits(symbol, { from, to })).map(u => canonicalJson(unitId(u))));
+    const id = e => canonicalJson({ contract: e.contract, period: e.period, dataStart: e.dataStart, dataEnd: e.dataEnd });
+    const expected = reference.filter(e => e.exchange === 'binance' && e.market === 'linear_perpetual' && scope.has(id(e)));
+    const missing = [], extra = [], mismatches = [], missingInputs = [];
+    for (const e of expected) {
+      const twin = rebuilt.entries.find(r => sameKey(r, e));
+      if (!twin) {
+        missing.push(id(e));
+        const gap = rebuilt.missing.find(m => canonicalJson({ contract: m.contract, period: m.period, dataStart: m.dataStart, dataEnd: m.dataEnd }) === id(e));
+        if (gap) missingInputs.push(...gap.files.map(f => ({ file: f.file })));
+      } else if (canonicalJson(twin) !== canonicalJson(e)) mismatches.push(`${id(e)}: entry differs`);
+      else results.push(id(e));
+    }
+    for (const r of rebuilt.entries) if (!expected.some(e => sameKey(r, e))) extra.push(id(r));
+    const compared = results.length + mismatches.length;
+    const failed = missing.length || extra.length || mismatches.length || missingInputs.length || rebuilt.counts.failed || !compared;
+    return { command: 'compare', status: failed ? 'failed' : 'ok', error: rebuilt.error, counts: { expected: expected.length, rebuilt: rebuilt.entries.length, compared, matched: results.length },
+      missing, extra, mismatches, missingInputs, failures: rebuilt.failures };
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+}
