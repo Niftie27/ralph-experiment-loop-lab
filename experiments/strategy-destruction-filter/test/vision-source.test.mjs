@@ -130,8 +130,23 @@ test('F1a-2 klines: errors name the row and time, never a price; sparse rows sta
   assert.deepEqual(Array.from(sparse.columns.open_time), [T[0], T[3]]);
 });
 
+test('F1a-2 klines: every parsed value equals Number() of its token, for short, long, zero-padded and negative-zero decimals', () => {
+  let seed = 7;
+  const rand = n => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed % n; };
+  const digits = n => Array.from({ length: n }, () => rand(10)).join('');
+  const tokens = ['0', '0.0', '-0.000', '00012.5000', '9007199254740993', '123456789012345', '1234567890123456', '0.000000000000000000001234',
+    '42314.00', '12256155.25625', '7414459.86355', '1.7976931348623157', '99999999999999.99'];
+  for (let i = 0; i < 400; i++) tokens.push(`${digits(1 + rand(12))}.${digits(1 + rand(12))}`, digits(1 + rand(18)));
+  const t0 = Date.parse('2024-01-01T00:00:00.000Z');
+  const csv = tokens.map((tok, i) => klineRow(t0 + i * 60000, { volume: tok, quoteVolume: '99999999999999999999', takerBuyVolume: '0', takerBuyQuoteVolume: '0' })).join('\n') + '\n';
+  const { columns } = parseKlines(Buffer.from(csv), JAN);
+  tokens.forEach((tok, i) => assert.ok(Object.is(columns.volume[i], Number(tok)), tok));
+  assert.ok(Object.is(columns.volume[2], -0));
+  assert.equal(columns.quote_volume[0], Number('99999999999999999999'));
+});
+
 const ms = iso => Date.parse(iso);
-const parsedFor = (source, openTimes) => ({ file: source.file, parsed: parseKlines(Buffer.from(klineCsv(openTimes)), source) });
+const parsedFor =(source, openTimes) => ({ file: source.file, parsed: parseKlines(Buffer.from(klineCsv(openTimes)), source) });
 
 test('F1a-2 units: one instrument x calendar month, split at 2025-10-17, 2021-10 from 10-18, 2026-10 from daily files 01-16 only', () => {
   const units = planUnits('BTC');

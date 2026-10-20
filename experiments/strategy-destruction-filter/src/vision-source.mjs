@@ -68,52 +68,91 @@ export function verifyZip(zipBytes, checksumText, zipName) {
 export const KLINE_HEADER = 'open_time,open,high,low,close,volume,close_time,quote_volume,count,taker_buy_volume,taker_buy_quote_volume,ignore';
 export const KLINE_COLUMNS = Object.freeze(['open_time', 'open', 'high', 'low', 'close', 'volume', 'quote_volume', 'count', 'taker_buy_volume', 'taker_buy_quote_volume']);
 const KEPT = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10]; // CSV field index of each kept column; close_time (6) is checked, ignore (11) dropped
-const DECIMAL = /^-?\d+(\.\d+)?$/;
-const MS = /^\d{13}$/; // milliseconds UTC for every date this loader accepts; seconds (10 digits) or microseconds (16) fail
+const POW10 = Array.from({ length: 16 }, (_, k) => 10 ** k); // exact doubles
+// The value of the ASCII token buf[a, b) if it matches -?\d+(\.\d+)?, else NaN. With at most 15 digits the mantissa m
+// and 10^k are exact doubles, so m / 10^k is the correctly rounded value of the decimal, i.e. Number(token); longer
+// tokens go through Number(). Parsing from bytes keeps per-row strings out of the V8 young generation, which
+// otherwise grew to 128 MiB over successive months (measured).
+function decimalAt(buf, a, b) {
+  let i = a, m = 0, digits = 0;
+  const negative = i < b && buf[i] === 0x2d;
+  if (negative) i++;
+  const intStart = i;
+  while (i < b && buf[i] >= 0x30 && buf[i] <= 0x39) { m = m * 10 + buf[i] - 0x30; i++; }
+  if (i === intStart) return NaN;
+  digits = i - intStart;
+  let k = 0;
+  if (i < b && buf[i] === 0x2e) {
+    const fracStart = ++i;
+    while (i < b && buf[i] >= 0x30 && buf[i] <= 0x39) { m = m * 10 + buf[i] - 0x30; i++; }
+    k = i - fracStart;
+    if (!k) return NaN;
+    digits += k;
+  }
+  if (i !== b) return NaN;
+  const value = digits <= 15 ? m / POW10[k] : Number(buf.latin1Slice(negative ? a + 1 : a, b));
+  return negative ? -value : value;
+}
+// Exactly 13 ASCII digits: milliseconds UTC for every date this loader accepts; seconds (10) or microseconds (16) fail.
+function millisAt(buf, a, b) {
+  if (b - a !== 13) return NaN;
+  let v = 0;
+  for (let i = a; i < b; i++) { const d = buf[i] - 0x30; if (d < 0 || d > 9) return NaN; v = v * 10 + d; }
+  return v;
+}
+const digitsOnly = (buf, a, b) => { for (let i = a; i < b; i++) if (buf[i] < 0x30 || buf[i] > 0x39) return false; return b > a; };
 export function parseKlines(csv, { startMs, endMs }) {
-  const text = Buffer.from(csv.buffer, csv.byteOffset, csv.byteLength).toString('latin1');
-  if (!text.endsWith('\n')) throw new Error('Vision klines: file does not end with a newline');
-  const lines = text.slice(0, -1).split('\n');
-  let variant = 'no_header', first = 0;
-  if (lines[0] === KLINE_HEADER) { variant = 'header'; first = 1; }
-  else if (!/^\d/.test(lines[0])) throw new Error('Vision klines: unknown header (expected the exact Vision header or a numeric first row)');
-  const rowCount = lines.length - first;
+  const buf = Buffer.from(csv.buffer, csv.byteOffset, csv.byteLength);
+  if (!buf.length || buf[buf.length - 1] !== 0x0a) throw new Error('Vision klines: file does not end with a newline');
+  let lineCount = 0;
+  for (let p = buf.indexOf(0x0a); p !== -1; p = buf.indexOf(0x0a, p + 1)) lineCount++;
+  const firstEnd = buf.indexOf(0x0a);
+  const firstLine = buf.latin1Slice(0, Math.min(firstEnd, KLINE_HEADER.length + 1));
+  let variant = 'no_header', pos = 0, rowCount = lineCount;
+  if (firstLine === KLINE_HEADER) { variant = 'header'; pos = firstEnd + 1; rowCount--; }
+  else if (!(buf[0] >= 0x30 && buf[0] <= 0x39)) throw new Error('Vision klines: unknown header (expected the exact Vision header or a numeric first row)');
   if (rowCount < 1) throw new Error('Vision klines: no rows');
   const columns = Object.fromEntries(KLINE_COLUMNS.map(name => [name, new Float64Array(rowCount)]));
   const cols = KLINE_COLUMNS.map(name => columns[name]);
+  const starts = new Int32Array(13); // field j spans [starts[j], starts[j + 1] - 1)
   let previous = -Infinity;
   for (let r = 0; r < rowCount; r++) {
-    const line = lines[first + r], row = r + 1;
-    if (line === '') throw new Error(`Vision klines: empty line at row ${row}`);
-    const fields = line.split(',');
-    if (fields.length !== 12) throw new Error(`Vision klines: row ${row} has ${fields.length} fields, expected 12 columns`);
-    if (!MS.test(fields[0]) || !MS.test(fields[6])) throw new Error(`Vision klines: row ${row} timestamp unit is not milliseconds`);
-    const openTime = Number(fields[0]);
-    const at = `row ${row} (${Number.isSafeInteger(openTime) ? new Date(openTime).toISOString() : 'invalid time'})`;
-    const bad = rule => { throw new Error(`Vision klines: ${at}: ${rule}`); };
-    if (!Number.isSafeInteger(openTime) || openTime % 60000 !== 0) bad('open_time not aligned to a minute');
-    if (Number(fields[6]) !== openTime + 59999) bad('close_time is not open_time + 59,999 ms');
-    if (openTime < startMs || openTime >= endMs) bad('open_time outside its source file bounds');
-    if (openTime <= previous) bad('open_time not strictly increasing');
+    const end = buf.indexOf(0x0a, pos), row = r + 1;
+    if (end === pos) throw new Error(`Vision klines: empty line at row ${row}`);
+    let fields = 1;
+    starts[0] = pos;
+    for (let i = pos; i < end; i++) if (buf[i] === 0x2c) { if (fields < 12) starts[fields] = i + 1; fields++; }
+    if (fields !== 12) throw new Error(`Vision klines: row ${row} has ${fields} fields, expected 12 columns`);
+    starts[12] = end + 1;
+    pos = end + 1;
+    const openTime = millisAt(buf, starts[0], starts[1] - 1), closeTime = millisAt(buf, starts[6], starts[7] - 1);
+    if (Number.isNaN(openTime) || Number.isNaN(closeTime)) throw new Error(`Vision klines: row ${row} timestamp unit is not milliseconds`);
+    if (openTime % 60000 !== 0) throw rowError(row, openTime, 'open_time not aligned to a minute');
+    if (closeTime !== openTime + 59999) throw rowError(row, openTime, 'close_time is not open_time + 59,999 ms');
+    if (openTime < startMs || openTime >= endMs) throw rowError(row, openTime, 'open_time outside its source file bounds');
+    if (openTime <= previous) throw rowError(row, openTime, 'open_time not strictly increasing');
     previous = openTime;
     cols[0][r] = openTime;
     for (let c = 1; c < KEPT.length; c++) {
-      const token = fields[KEPT[c]];
-      if (!DECIMAL.test(token) || !Number.isFinite(Number(token))) bad(`${KLINE_COLUMNS[c]} is not a non-empty finite decimal number`);
-      cols[c][r] = Number(token);
+      const value = decimalAt(buf, starts[KEPT[c]], starts[KEPT[c] + 1] - 1);
+      if (!Number.isFinite(value)) throw rowError(row, openTime, `${KLINE_COLUMNS[c]} is not a non-empty finite decimal number`);
+      cols[c][r] = value;
     }
-    const [, open, high, low, close, volume, quoteVolume, count, takerBuy, takerBuyQuote] = cols.map(col => col[r]);
-    if (!/^\d+$/.test(fields[8]) || !Number.isSafeInteger(count)) bad('count must be a safe non-negative integer');
-    if (!(volume >= 0)) bad('volume must be >= 0');
-    if (!(quoteVolume >= 0)) bad('quote_volume must be >= 0');
-    if (!(takerBuy >= 0 && takerBuy <= volume)) bad('taker_buy_volume must be within 0..volume');
-    if (!(takerBuyQuote >= 0 && takerBuyQuote <= quoteVolume)) bad('taker_buy_quote_volume must be within 0..quote_volume');
-    if (!(low > 0)) bad('low must be > 0');
-    if (!(low <= Math.min(open, close))) bad('low above min(open, close)');
-    if (!(high >= Math.max(open, close))) bad('high below max(open, close)');
+    const open = cols[1][r], high = cols[2][r], low = cols[3][r], close = cols[4][r], volume = cols[5][r], quoteVolume = cols[6][r];
+    const count = cols[7][r], takerBuy = cols[8][r], takerBuyQuote = cols[9][r];
+    const rule = !digitsOnly(buf, starts[8], starts[9] - 1) || !Number.isSafeInteger(count) ? 'count must be a safe non-negative integer'
+      : !(volume >= 0) ? 'volume must be >= 0'
+      : !(quoteVolume >= 0) ? 'quote_volume must be >= 0'
+      : !(takerBuy >= 0 && takerBuy <= volume) ? 'taker_buy_volume must be within 0..volume'
+      : !(takerBuyQuote >= 0 && takerBuyQuote <= quoteVolume) ? 'taker_buy_quote_volume must be within 0..quote_volume'
+      : !(low > 0) ? 'low must be > 0'
+      : !(low <= Math.min(open, close)) ? 'low above min(open, close)'
+      : !(high >= Math.max(open, close)) ? 'high below max(open, close)' : null;
+    if (rule) throw rowError(row, openTime, rule);
   }
   return { variant, rowCount, columns };
 }
+const rowError = (row, openTime, rule) => new Error(`Vision klines: row ${row} (${new Date(openTime).toISOString()}): ${rule}`);
 
 // Symbols, instruments and Vision paths are data. Symbol convention: the config symbol (BTC), never the contract.
 export const VISION_SYMBOLS = Object.freeze({ BTC: 'BTCUSDT', ETH: 'ETHUSDT', SOL: 'SOLUSDT', XRP: 'XRPUSDT', DOGE: 'DOGEUSDT', HYPE: 'HYPEUSDT' });
