@@ -1,8 +1,18 @@
 # Live operational state
 
-Updated: 2026-10-18T15:07:41Z. Update after every change.
+Updated: 2026-10-20 (section "Changes since the 2026-10-18 snapshot"); sections (a)-(h) are the 2026-10-18T15:07:41Z snapshot. Update after every change.
 
 Snapshot checked read-only on 2026-10-18 UTC. Services, data, cron and timers were not changed. No V6 interim outcomes were inspected. Hashes below compare files at the configured runtime paths with tracked repo copies, not in-memory code loaded at process start.
+
+## Changes since the 2026-10-18 snapshot
+
+Written 2026-10-20 from verified reports. Sections (a)-(h) below were not re-checked.
+
+- F1 strategy factory: F1a-1 (data identity) merged into main 2026-10-20 as merge commit 7d73008 (PR #1), tests 73/73. F1a-F1e are developed on the PC with Claude Code on branches `f1/<phase>` (decision 2026-10-19). Next phase: F1a-2. Ledger I59.
+- Review loop: every push to a PR branch gets an automatic Codex review on GitHub; one commit per review round, no empty commits; Claude Code's Final report is in the commit body; Claude in chat reviews in the repo before Tomas merges (decisions 2026-10-19 and 2026-10-20). Ledger I68.
+- Maintenance window done 2026-10-19 (W1/W1b, main 6b5a643): USD-M cache D131 and ~/ralph-research-data archived to the Storage Box (636/636 sha256 matches) and removed locally; uv cache pruned. df free 36,953,972,736 B after W1b (12,390,350,848 B before), above the 20 % alert threshold. Ledger I44.
+- Gateway restart 2026-10-20 02:30Z (one-shot transient timer): openclaw-gateway.service restarted, so its start time in table (a) is stale; swap freed by ~1.1 GB, MemAvailable unchanged at ~1.2 GiB. Ledger I56.
+- Pending: OS reboot ("System restart required", 56 updates; restarts the collectors, needs a planned window). Ledger I64.
 
 ## (a) User services
 
