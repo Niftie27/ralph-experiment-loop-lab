@@ -17,13 +17,14 @@ export async function fetchConfiguredCandles(symbolConfig, timeframeConfig, conf
   const instrument = instrumentFor(symbolConfig);
   const cached = cachedSeries(symbol, timeframeConfig.id, config, instrument);
   if (cached) return cached;
-  let fetched;
+  let fetched, provenance;
   // An unqualified SYMBOL:TF input is legacy Binance spot input; other instruments need EXCHANGE:MARKET:CONTRACT:TF.
   const inputs = config.snapshotInputs ?? {};
   const source = inputs[`${instrument.exchange}:${instrument.market}:${instrument.contract}:${timeframeConfig.id}`]
     ?? (sameInstrument(instrument, instrumentOf({}, symbol)) ? inputs[`${symbol}:${timeframeConfig.id}`] : undefined);
   if (source) {
     fetched = JSON.parse(await fs.readFile(source, 'utf8'));
+    provenance = { source: 'snapshot-input' };
   } else if (config.offline) {
     throw new Error(`No offline snapshot: ${symbol} ${timeframeConfig.id}`);
   } else if ((symbolConfig.provider ?? 'binance-spot') === 'binance-spot') {
@@ -52,7 +53,7 @@ export async function fetchConfiguredCandles(symbolConfig, timeframeConfig, conf
     if (symbolConfig.features?.length) fetched = await attachBybitLinearFeatures(fetched, instrument.contract,
       timeframeConfig.bybitInterval, symbolConfig.features, { disableCache: true });
   } else throw new Error(`Unsupported market-data provider: ${symbolConfig.provider}`);
-  const frozen = freezeSeries(fetched.candles, symbol, timeframeConfig.id, config, instrument);
+  const frozen = freezeSeries(fetched.candles, symbol, timeframeConfig.id, config, instrument, provenance ?? { source: fetched.meta.source });
   return { candles: frozen.candles, meta: { ...fetched.meta, ...frozen.entry } };
 }
 

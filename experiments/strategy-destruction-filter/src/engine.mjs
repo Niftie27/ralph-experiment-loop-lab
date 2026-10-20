@@ -348,7 +348,7 @@ export function backtestVariant(variant, candles, symbol, timeframe, config, opt
   const identity = identityFor(variant, symbol, timeframe, config, instrument);
   guardHoldout(config, identity); // Before signal evaluation, simulation, or metrics.
   candles = selectWindow(candles, config);
-  const frozen = freezeSeries(candles, symbol, timeframe.id, config, instrument);
+  const frozen = freezeSeries(candles, symbol, timeframe.id, config, instrument, options.provenance);
   const run = backtestVariantCore(variant, frozen.candles, symbol, timeframe, config, options);
   const stats = statsForTrades(run.trades);
   const w = windowFor(config);

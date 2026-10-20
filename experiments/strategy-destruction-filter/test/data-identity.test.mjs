@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { PERIODS, freezeSeries, cachedSeries, sha256, appendRegistry, registryRows, guardHoldout, identityFor,
-  instrumentFor, instrumentForSymbol, instrumentOf, sameInstrument } from '../src/h2-contract.mjs';
+  instrumentFor, instrumentForSymbol, instrumentOf, sameInstrument, provenanceOf } from '../src/h2-contract.mjs';
 import { backtestVariant } from '../src/engine.mjs';
 import { fetchConfiguredCandles } from '../src/market-data.mjs';
 import { buildQueue, validateQueue, researchConfig } from '../src/research-queue.mjs';
@@ -220,4 +220,74 @@ test('F1a-1 the queue worker resolves only the item instrument; legacy items res
   const spotRun = runQueue(spotOnly);
   assert.equal(spotRun.exitCode, 1);
   assert.match(spotRun.report.itemErrors[0].error, /missing frozen research OHLCV/);
+});
+
+// Provenance: every new manifest entry records where its candles came from, outside the key and the bytes.
+const ARCHIVE = 'binance-vision-archive';
+const checksums = [{ file: 'SOLUSDT-4h-2021-10.zip', sha256: 'a'.repeat(64) }];
+const manifestSeries = c => JSON.parse(fs.readFileSync(c.h2Paths.manifest, 'utf8')).series;
+
+test('F1a-1 a new manifest entry records its source; provenance changes neither the key nor the bytes', async () => {
+  const rest = config(), archive = config(), plain = config();
+  const a = freezeSeries([candle(start)], 'SOL', '4h', rest, SPOT, { source: 'binance-public-rest-fixed-window' });
+  const b = freezeSeries([candle(start)], 'SOL', '4h', archive, USDM, { source: ARCHIVE, checksums });
+  const d = freezeSeries([candle(start)], 'SOL', '4h', plain);
+  assert.deepEqual(manifestSeries(rest)[0].provenance, { source: 'binance-public-rest-fixed-window' });
+  assert.deepEqual(manifestSeries(archive)[0].provenance, { source: ARCHIVE, checksums });
+  assert.deepEqual(manifestSeries(plain)[0].provenance, { source: 'caller-supplied' });
+  assert.deepEqual(cachedSeries('SOL', '4h', archive, USDM).meta.provenance, { source: ARCHIVE, checksums });
+  for (const frozen of [a, b, d]) assert.equal(frozen.entry.sha256, sha256(JSON.stringify([candle(start)]) + '\n'));
+  // Same key and bytes from another source: no new entry, nothing rewritten; other bytes still conflict.
+  const before = fs.readFileSync(rest.h2Paths.manifest);
+  freezeSeries([candle(start)], 'SOL', '4h', rest, SPOT, { source: 'snapshot-input' });
+  assert.deepEqual(fs.readFileSync(rest.h2Paths.manifest), before);
+  assert.throws(() => freezeSeries([candle(start, 100.5)], 'SOL', '4h', rest, SPOT, { source: ARCHIVE, checksums }), /different bytes/);
+  // The fixed loader and the engine pass their source on.
+  const offline = config(), input = path.join(path.dirname(offline.h2Paths.registry), 'input.json');
+  fs.writeFileSync(input, JSON.stringify({ candles: [candle(start)], meta: { source: 'binance-public-rest-fixed-window' } }));
+  const loaded = await fetchConfiguredCandles({ symbol: 'SOL' }, tf, { ...offline, offline: true, snapshotInputs: { 'SOL:4h': input } });
+  assert.deepEqual(loaded.meta.provenance, { source: 'snapshot-input' });
+  assert.deepEqual(manifestSeries(offline)[0].provenance, { source: 'snapshot-input' });
+  const engine = config(), rows = Array.from({ length: 100 }, (_, i) => candle(end - (100 - i) * 14400));
+  backtestVariant(variant, rows, 'SOL', tf, engine, { instrument: USDM, provenance: { source: ARCHIVE, checksums } });
+  assert.deepEqual(manifestSeries(engine)[0].provenance, { source: ARCHIVE, checksums });
+});
+
+test('F1a-1 an archive source without verified checksums, or an unknown source, is rejected before any write', () => {
+  const c = config();
+  for (const provenance of [{ source: ARCHIVE }, { source: ARCHIVE, checksums: [] }, { source: ARCHIVE, checksums: [{ file: 'SOLUSDT-4h-2021-10.zip' }] },
+    { source: ARCHIVE, checksums: [{ file: 'SOLUSDT-4h-2021-10.zip', sha256: 'not-a-checksum' }] }, { source: ARCHIVE, checksums: [{ sha256: 'a'.repeat(64) }] }]) {
+    assert.throws(() => freezeSeries([candle(start)], 'SOL', '4h', c, USDM, provenance), /verified checksums/);
+  }
+  for (const provenance of [null, {}, { source: 'legacy-unknown' }, { source: 'binance-vision' }]) {
+    assert.throws(() => freezeSeries([candle(start)], 'SOL', '4h', c, USDM, provenance), /Unknown snapshot source/);
+  }
+  assert.ok(!fs.existsSync(c.h2Paths.manifest) && !fs.existsSync(c.h2Paths.cache));
+});
+
+test('F1a-1 legacy entries load unchanged as source unknown; existing manifest bytes are never rewritten', () => {
+  const committed = new URL('results/manifest-h2.json', root), committedBytes = fs.readFileSync(committed);
+  assert.equal(sha256(committedBytes), '41dc53724f78315658a5e07071db5b1aab4f8811ff7ff37e1849dfea4f11a308');
+  const legacy = JSON.parse(committedBytes).series;
+  for (const s of legacy) assert.ok(!('provenance' in s) && provenanceOf(s).source === 'legacy-unknown');
+  // A new entry appended to a copy of the committed manifest leaves the old bytes as an exact prefix.
+  const c = config(), tail = '\n  ]\n}\n';
+  fs.writeFileSync(c.h2Paths.manifest, committedBytes);
+  freezeSeries([candle(start)], 'SOL', '4h', c, USDM, { source: ARCHIVE, checksums });
+  const after = fs.readFileSync(c.h2Paths.manifest, 'utf8'), old = committedBytes.toString('utf8');
+  assert.ok(old.endsWith(tail) && after.startsWith(old.slice(0, -tail.length)));
+  assert.deepEqual(manifestSeries(c).slice(0, 2), legacy);
+  assert.deepEqual(manifestSeries(c)[2].provenance, { source: ARCHIVE, checksums });
+  // A legacy entry is served with its read-time provenance; re-freezing the same bytes rewrites nothing.
+  const l = config(), bytes = JSON.stringify([candle(start)]) + '\n', hash = sha256(bytes);
+  fs.mkdirSync(l.h2Paths.cache, { recursive: true });
+  fs.writeFileSync(path.join(l.h2Paths.cache, `${hash}.json`), bytes);
+  fs.writeFileSync(l.h2Paths.manifest, JSON.stringify({ schemaVersion: 1, periods: PERIODS, series: [{ symbol: 'SOL', timeframe: '4h',
+    dataStart: PERIODS.research[0], dataEnd: PERIODS.research[1], snapshot: `data/market-cache/h2/${hash}.json`,
+    firstCandle: PERIODS.research[0], lastCandle: PERIODS.research[0], count: 1, sha256: hash }] }, null, 2) + '\n');
+  const before = fs.readFileSync(l.h2Paths.manifest);
+  assert.deepEqual(cachedSeries('SOL', '4h', l).meta.provenance, { source: 'legacy-unknown' });
+  freezeSeries([candle(start)], 'SOL', '4h', l, SPOT, { source: 'binance-public-rest-fixed-window' });
+  assert.deepEqual(fs.readFileSync(l.h2Paths.manifest), before);
+  assert.deepEqual(fs.readFileSync(committed), committedBytes);
 });

@@ -97,8 +97,25 @@ export function distinctVariants(rows) {
   }
   return Object.fromEntries([...families].map(([family, ids]) => [family, ids.size]));
 }
-export function freezeSeries(candles, symbol, timeframe, config, instrument = instrumentForSymbol(config, symbol)) {
+// Snapshot provenance: where the candles came from, stored on each new manifest entry. Not part of the manifest
+// key, the snapshot bytes or the SHA-256. Unknown source names fail closed; archive sources must list the published
+// SHA-256 checksums their files were verified against. Candles handed straight to freezeSeries are 'caller-supplied'.
+const SOURCES = Object.freeze({
+  'binance-public-rest-fixed-window': 'rest', 'bybit-v5-linear-kline': 'rest',
+  'snapshot-input': 'input', 'caller-supplied': 'input', 'binance-vision-archive': 'archive'
+});
+function checkedProvenance(provenance) {
+  if (!SOURCES[provenance?.source]) throw new Error(`Unknown snapshot source: ${provenance?.source}`);
+  if (SOURCES[provenance.source] !== 'archive') return { source: provenance.source };
+  const checksums = provenance.checksums;
+  if (!Array.isArray(checksums) || !checksums.length || !checksums.every(c => typeof c?.file === 'string' && c.file && /^[0-9a-f]{64}$/.test(c.sha256))) throw new Error('Archive snapshot requires verified checksums');
+  return { source: provenance.source, checksums: checksums.map(c => ({ file: c.file, sha256: c.sha256 })) };
+}
+// Entries written before provenance carry none and read as legacy, source unknown; they are never rewritten.
+export const provenanceOf = entry => entry.provenance ?? { source: 'legacy-unknown' };
+export function freezeSeries(candles, symbol, timeframe, config, instrument = instrumentForSymbol(config, symbol), provenance = { source: 'caller-supplied' }) {
   const id = complete(instrument);
+  const origin = checkedProvenance(provenance);
   const selected = selectWindow(candles, config);
   if (!selected.length) throw new Error(`Empty fixed window: ${symbol} ${timeframe}`);
   for (let i = 0; i < selected.length; i++) {
@@ -116,7 +133,7 @@ export function freezeSeries(candles, symbol, timeframe, config, instrument = in
   } else fs.writeFileSync(file, bytes, { flag: 'wx', mode: 0o444 });
   const w = windowFor(config);
   const entry = { symbol, ...id, timeframe, dataStart: w.dataStart, dataEnd: w.dataEnd, snapshot: `data/market-cache/h2/${filename}`,
-    firstCandle: new Date(selected[0].time * 1000).toISOString(), lastCandle: new Date(selected.at(-1).time * 1000).toISOString(), count: selected.length, sha256: hash };
+    firstCandle: new Date(selected[0].time * 1000).toISOString(), lastCandle: new Date(selected.at(-1).time * 1000).toISOString(), count: selected.length, sha256: hash, provenance: origin };
   let manifest = { schemaVersion: 1, periods: PERIODS, series: [] };
   if (fs.existsSync(paths.manifest)) manifest = JSON.parse(fs.readFileSync(paths.manifest, 'utf8'));
   const same = manifest.series.find(s => s.symbol === symbol && s.timeframe === timeframe && s.dataStart === w.dataStart && s.dataEnd === w.dataEnd && sameInstrument(instrumentOf(s), id));
@@ -139,5 +156,5 @@ export function cachedSeries(symbol, timeframe, config, instrument = instrumentF
   const file = path.join(paths.cache instanceof URL ? paths.cache.pathname : paths.cache, `${entry.sha256}.json`);
   const bytes = fs.readFileSync(file);
   if (sha256(bytes) !== entry.sha256) throw new Error('Snapshot hash mismatch');
-  return { candles: JSON.parse(bytes), meta: { source: 'h2-frozen-snapshot', ...entry, ...id } };
+  return { candles: JSON.parse(bytes), meta: { source: 'h2-frozen-snapshot', ...entry, ...id, provenance: provenanceOf(entry) } };
 }

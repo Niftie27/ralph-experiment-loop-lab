@@ -39,7 +39,24 @@ A record with only some of the three fields fails with `Incomplete data identity
 | | `buildQueue` | Looks up each symbol with its instrument; new items record `instrument` and `btcInstrument` (null without a BTC gate) |
 | | `validateQueue` | Items without both fields are legacy Binance spot; partial or mixed instruments are rejected |
 | `src/queue-worker.mjs` | worker | Resolves the item and BTC-gate snapshots and the registry identity by the item instrument |
-| `test/data-identity.test.mjs` | 11 tests | New |
+| `test/data-identity.test.mjs` | 14 tests | New (3 of them for provenance, below) |
+
+### Provenance (PR #1, review round 1)
+
+Each new manifest entry also records where its candles came from, as `provenance: { source, checksums? }`. Provenance is not part of the manifest key, and it does not change the snapshot bytes or their SHA-256.
+
+| Source | Written by |
+| --- | --- |
+| `binance-public-rest-fixed-window`, `bybit-v5-linear-kline` | `fetchConfiguredCandles`, REST fetch (the names the fetchers already use in `meta.source`) |
+| `snapshot-input` | `fetchConfiguredCandles`, offline input from `config.snapshotInputs` |
+| `binance-vision-archive` | Future archive loader (Binance Vision download phase). Must list `checksums: [{ file, sha256 }]`, the published SHA-256 checksums each file was verified against |
+| `caller-supplied` | `freezeSeries` or `backtestVariant` called directly with candles and no stated source (the default) |
+
+- An archive source with no checksums, or with any checksum that is not a 64-hex SHA-256, is rejected before anything is written.
+- Any other source name is also rejected before any write (fail closed).
+- `backtestVariant` passes `options.provenance` through to `freezeSeries`.
+- Entries written before this change have no `provenance` and are never rewritten. `provenanceOf` reads them as `{ source: 'legacy-unknown' }`, and `cachedSeries` puts that value in its meta.
+- Same key and same bytes from a different source: no new entry is added and the first entry's provenance stays.
 
 Not changed: snapshot bytes and hashes, the manifest and registry files, `research-queue.json`, costs, gates, windows, holdout logic, default market (Binance spot). The engine hash recorded in new registry rows (`engineSha256`) changes because `engine.mjs` changed.
 
@@ -51,6 +68,7 @@ Not changed: snapshot bytes and hashes, the manifest and registry files, `resear
 | --- | --- | --- | --- |
 | Baseline at `7238f6c` | 58 | 58 | 0 |
 | After F1a-1 | 69 | 69 | 0 |
+| After review round 1 (provenance) | 72 | 72 | 0 |
 
 New tests (`test/data-identity.test.mjs`):
 
@@ -65,6 +83,15 @@ New tests (`test/data-identity.test.mjs`):
 9. `buildQueue` looks up each symbol by its instrument and records it on every item; a futures-only SOL snapshot yields no spot SOL item.
 10. `validateQueue` rejects incomplete instruments and keeps the committed legacy queue valid.
 11. The queue worker resolves only the item instrument; a legacy item is not answered by futures bytes, a futures item not by spot bytes (same bytes, different key).
+12. New entries carry their source:
+    - REST, archive with checksums, default `caller-supplied`, offline loader input (`snapshot-input`), and `backtestVariant` passing it on.
+    - The snapshot SHA-256 is the same for every source.
+    - The same key and bytes from another source add nothing and rewrite nothing.
+13. An archive source without valid checksums, or an unknown source, is rejected before any write.
+14. Legacy entries read as `legacy-unknown`:
+    - The committed manifest keeps SHA-256 `41dc5372…a308`.
+    - A new entry appended to a copy of it leaves the old bytes as an exact prefix.
+    - Re-freezing a legacy entry rewrites nothing.
 
 No behavior change, checked on real data (snapshots rebuilt from Binance Vision, see below, in a temp dir outside the repo):
 
