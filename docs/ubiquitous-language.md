@@ -1,6 +1,6 @@
 # Ubiquitous language
 
-Last updated: 2026-08-30
+Last updated: 2026-10-19
 
 This is the shared RALPH vocabulary for Tomas, the agent, Obsidian notes, and code-facing specs.
 
@@ -86,6 +86,38 @@ This is the shared RALPH vocabulary for Tomas, the agent, Obsidian notes, and co
 | Operator modification quality | Whether Tomas's changes improved or worsened an alert-derived plan. | `operatorModificationQuality` | Evaluated only in modified-alert executions. |
 | Manual baseline | Tomas's independent trade outcomes used as comparison context. | `manualBaseline` | Evaluated separately from RALPH alert quality. |
 
+## Data identity and factory (F1)
+
+Sources: [factory spec F1](factory-spec-f1.md), [F1a-1 data identity](f1/f1a-1-identity.md) and the code in `experiments/strategy-destruction-filter`.
+
+| Term | Definition | Canonical spelling in code | Notes |
+|------|------------|----------------------------|-------|
+| Instrument | The traded series a snapshot or registry row belongs to: exchange, market type and contract together. | `instrument` | Part of every snapshot key and registry identity, so spot data never answers a futures request or the reverse. Resolved from the symbol's provider config; stored records are read with `instrumentOf`. |
+| Exchange | Venue that publishes the market data. | `exchange` | Values today: `binance`, `bybit`. |
+| Market type | Instrument class on the exchange. | `market` | Values: `spot`, `linear_perpetual` (USDT-margined perpetual: Binance USD-M and Bybit linear, told apart by exchange). Same values as a candidate's `dataRequirements.markets`. |
+| Contract | The exchange's instrument symbol: a spot pair or a derivative contract. | `contract` | Example `BTCUSDT`; defaults to `<SYMBOL>USDT`. |
+| Manifest | List of frozen series: symbol, instrument, timeframe, window, snapshot file, first and last candle, count and SHA-256. | `manifest` | `results/manifest-h2.json`. Entries are added, never changed. |
+| Legacy record | Manifest entry, registry row or queue item written before F1a-1, without exchange, market type or contract. | not in code yet | Read as Binance spot `<SYMBOL>USDT` and never rewritten: the 2 H2 manifest entries, 400 registry rows and 398 H3a queue items. |
+| Snapshot | Frozen, content-addressed candle series for one symbol, instrument, timeframe and window; the file name is its SHA-256. | `snapshot` | Written once, read-only. A changed source checksum creates a new snapshot, never an overwrite. |
+| Variant | One concrete parameter set of a candidate, expanded from its grid, on one symbol and timeframe. | `variant` | `variantId`; a queue item is exactly one variant. |
+| Variant registry | Append-only log with one row per backtest run: identity (variant, parameters, symbol, instrument, timeframe, entry mode, costs, risk), period, manifest and engine hashes, metrics. | `registry` | `results/variant-registry.jsonl`; the identity comes from `identityFor`. Raw N is read from it from F1b on. |
+| Trial | One counted evaluation of a distinct variant, pass or fail; an exact rerun is not a new trial. | `trialCount` | Raw N = trials in the full registry history across markets; the registry separates reserved grid size, evaluated unique trials and technical repeats. Today `trialCount` is a proxy: distinct variants in earlier reports plus the queued batch. |
+| Effective N | Number of independent trials, from clustering the correlation of trials' daily returns (López de Prado). | not in code yet | Reported beside raw N; the DSR bar uses it. |
+| Family | Named group of related candidates and their variants. | `family` | Registry rows: `candidateFamily`; queue items: `sourceFamily`. A new hypothesis spec must differ from earlier ones by family or context. |
+| Funnel | The six F1 stages a variant passes, one gate each: generate, sieve, robustness, holdout, realistic replay, demo-sim. | not in code yet | A variant moves on only through its gate; a rejection is final but stays in the registry. |
+| Gate | Pass/fail condition a variant must meet to leave a funnel stage. | `gates` | Sieve gates today in `config.default.json`, e.g. min 80 trades, PF ≥ 1.15, expectancy ≥ 0.05 R, max drawdown 18 R. |
+| Research window | Fixed period for all research runs: 2021-10-18 to 2025-10-17 (UTC, end exclusive). | `research` | `PERIODS.research`. Data after 2026-10-17 is sealed as the next forward test period; research windows never extend into it. |
+| Holdout | Locked period 2025-10-17 to 2026-10-17, opened only for a frozen candidate with a pre-registration hash, one recorded look each, inside a fixed look budget. | `holdout` | `PERIODS.holdout`, `guardHoldout`. Today the guard checks only `--final` and a matching research registry row; F1c adds the rest. Look budget 5 (D7). |
+| Pre-registration | Written record of a frozen candidate and its pass criteria, made before its holdout look; its hash is required for the look. | not in code yet | F1c enforces it in code. V6 has its own pre-registration document. |
+| Walk-forward | Locked F1 protocol: choose on 12 months, test on the next 3, roll by 3 (12 test windows, 2022-10-18 to 2025-10-17), judged on the stitched out-of-sample result. | not in code yet | An expanding training window is the one locked sensitivity: reported, never used to choose. |
+| Selection procedure | Family plus a selection rule fixed in advance that picks inside the training window only: the centre of a stable plateau, or nothing. | not in code yet | Walk-forward tests the procedure, not one variant. Its pick on the last 12 research months is the holdout candidate. |
+| Null campaign | Research campaign of random strategies run through the whole funnel to measure the false-pass rate. | not in code yet | Hundreds are run; the false-pass rate must be ≤ 5 % (D4). |
+| Planted edge | A known edge built into a test so that the evaluation must find it. | not in code yet | F1b acceptance; how it is planted is not specified yet. |
+| Deflated Sharpe ratio (DSR) | Sharpe ratio corrected for the number of trials, computed on daily equity returns. | not in code yet | Pass bar: DSR ≥ 0.95 on effective N (D4); economic gates stay necessary. |
+| TA building block | Shared candle function (HTF trend, swings, SFP/sweep, key levels, fib, VWAP, volume profile, confluence score) used by the backtest and later by live code. | not in code yet | Each must pass a lookahead test; its parameters count as trials. |
+| Entry style | How a variant enters once its setup is armed: `limit_at_level`, `confirm_close`, `confirm_sfp`, `confirm_bos`, `confirm_retest`, `next_open`, `signal_close`. | `entryMode` | Only `signal_close` and `next_open` exist in code; the others come in F1e on 1m bars. The entry style is its own variant axis. |
+| Ambiguous fill | Trade whose stop and target both fall inside one bar; the stop counts first. | `stop-first-collision` | Spec name `ambiguous_fill` (1m bars) is not in code yet; the current engine marks the same case `stop-first-collision`. |
+
 ## Synonyms to kill
 
 | Variations found | Preferred term | Reason |
@@ -97,6 +129,9 @@ This is the shared RALPH vocabulary for Tomas, the agent, Obsidian notes, and co
 | source search, wheel scan, prior-art check | Wheel gate | One gate before build/custom expansion. |
 | paper alert, shadow alert, unexecuted alert | Paper/shadow alert | Keep non-executed outcomes separate from real trades. |
 | fast scalp, quick trade, violent-move trade | Fast trade | Trade class, not a guarantee of speed or profitability. |
+| entry mode, entry style | Entry style | Spec term; code keeps `entryMode` until F1e adds the new styles. |
+| stop-first collision, ambiguous fill | Ambiguous fill | Spec name for the same stop-first rule on finer bars. |
+| USD-M perpetual, USDT-margined perpetual, linear perp, perp | Linear perpetual (`linear_perpetual`) | One market type; the venue belongs in exchange. |
 
 ## Homonyms to disambiguate
 
@@ -110,9 +145,18 @@ This is the shared RALPH vocabulary for Tomas, the agent, Obsidian notes, and co
 | Full TA | Verbose alert text vs multi-timeframe scenario map | Use `Full TA` only when it includes HTF, mid-TF, LTF, alternatives, invalidation, and trade-class fit. |
 | Alert | Compact Telegram summary vs full Obsidian record | Use `alert summary` and `full analysis record` when the distinction matters. |
 | Interesting | Useful for research vs worth interrupting Tomas | Use `research event` for internal notes and `actionable alert` or `risk/context event` for Telegram. |
+| Family | Candidate family (`family`, `candidateFamily`) vs rule family in the H3a queue report (`perFamily`, "Counts by rule family", keyed by the eight rules) | Use `family` for the candidate family and `rule` for the eight rule names. |
+| Walk-forward | F1 rolling 12/3/3 selection protocol vs existing diagnostic folds (`walkForward`, `walkForwardDiagnostics`: 5 equal-trade-count chronological folds over existing trades, no re-selection) | Use `walk-forward` for the F1 protocol and `diagnostic folds` for the existing split. |
+| Deflated Sharpe | DSR on effective N from daily returns (F1 bar) vs `deflatedSharpe` (per-trade multiple-testing proxy, gate 0.35) | Use `DSR` for the F1 bar and `deflated-Sharpe proxy` for the existing value. |
+| Gate | Pass/fail condition of a funnel stage (`gates`) vs signal filter (`btc_regime_gate`, `signalGate`) vs wheel gate | Use `gate` for pass/fail conditions, `context filter` for signal filters, `wheel gate` as defined above. |
+| Funnel | F1 six-stage funnel vs the earlier strategy spam funnel (`run-strategy-spam-funnel.mjs`, a first-pass grid study) | Use `funnel` for F1 and `spam funnel` for the earlier study. |
+| Candidate | Strategy candidate (hypothesis with parameter grids, `candidate`) vs holdout candidate (one frozen variant picked by the selection procedure) | Use `frozen candidate` for the holdout case. |
+| Out-of-sample | Last 30 % of the research window in the 70/30 split (`outOfSample`) vs walk-forward test windows vs holdout | Use `out-of-sample split`, `test window` and `holdout` respectively. |
+| Snapshot | Frozen content-addressed series vs offline raw inputs (`snapshotInputs`) that get frozen into one | Use `snapshot` only for frozen bytes; call `snapshotInputs` offline inputs. |
 
 ## Terms I am guessing about
 
 | Term | What I think it means | Need confirmation |
 |------|-----------------------|-------------------|
 | Source sufficiency | Enough sources means no obvious wheel is ignored and at least 3 independent relevant sources exist at T1. | Treat this as default unless Tomas later makes it stricter. |
+| Planted edge | An edge deliberately built into a test series or strategy that a sound evaluation must find; the spec names only the acceptance ("a planted edge is found"). | How it is planted (synthetic series, injected returns or a known strategy) is to be fixed in F1b. |
