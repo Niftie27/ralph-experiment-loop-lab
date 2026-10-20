@@ -1,6 +1,6 @@
 # Ubiquitous language
 
-Last updated: 2026-10-19
+Last updated: 2026-10-20
 
 This is the shared RALPH vocabulary for Tomas, the agent, Obsidian notes, and code-facing specs.
 
@@ -28,10 +28,11 @@ This is the shared RALPH vocabulary for Tomas, the agent, Obsidian notes, and co
 | HTF context | Higher-timeframe structure: trend, major liquidity, regime, large levels, and thesis invalidation. | `htfContext` | Determines whether an alert is only a scalp trigger or part of a larger idea. |
 | Mid-TF setup | Intraday/session structure: range, VWAP/value, acceptance/rejection, likely paths. | `midTfSetup` | Bridges strategic context and execution trigger. |
 | LTF trigger | Low-timeframe entry evidence such as volume velocity, wick shock, sweep, orderflow, or breakout/retest. | `ltfTrigger` | Often suitable for fast trades; insufficient alone for medium/long trade thesis. |
-| Trade class | Intended holding-period and management family. | `tradeClass` | Canonical values: `fast`, `medium`, `long_running`, `no_trade`. |
+| Trade class | Alert TA holding-period family used by the watcher and Full TA. | `tradeClass` | Canonical values: `fast`, `medium`, `long_running`, `no_trade`. Alerts only; the factory's cost classes are the strategy class. |
 | Entry trigger horizon | How quickly the initial alert/entry evidence decays. | `entryTriggerHorizon` | Separate from holding horizon; a 30-second trigger can still start a longer thesis only when HTF/mid-TF context supports it. |
 | Holding horizon | How long the trade thesis is expected to remain valid after entry. | `holdingHorizon` | Used to classify fast, medium, and long-running trades. |
-| Fast trade | LTF-driven trade with expected hold from seconds to 30 minutes. | `fastTrade` | Volume velocity and wick shock usually belong here unless higher context upgrades the idea. |
+| Fast trade | Alert trade class with expected hold from seconds to 30 minutes. | `fastTrade` | Alert TA only, not the factory's fast scalp class. Volume velocity and wick shock usually belong here unless higher context upgrades the idea. |
+| Strategy class | Factory cost class of a strategy by holding time: intraday and swing (minutes to days, F1), fast scalp (seconds, later), HFT (sub-second, out of F1). | not in code yet | Sets the backtest cost model (spec "Robust evaluation", I52); a class whose round-trip cost exceeds its typical target cannot exist. Not the alert `tradeClass`. |
 | Medium trade | Intraday trade with expected hold from 30 minutes to 8 hours. | `mediumTrade` | Requires mid-TF setup plus LTF trigger; should not rely on volume velocity alone. |
 | Long-running trade | HTF-led trade with expected hold from 8 hours to multiple days or weeks. | `longRunningTrade` | LTF trigger is entry timing only; thesis, invalidation, and exit logic must come from HTF/mid-TF context. |
 | No-trade scenario | Explicit outcome where none of the trade classes has enough evidence. | `noTradeScenario` | Full TA must be allowed to conclude no trade. |
@@ -128,7 +129,7 @@ Sources: [factory spec F1](factory-spec-f1.md), [F1a-1 data identity](f1/f1a-1-i
 | big picture, macro chart, higher timeframe | HTF context | Avoid vague chart commentary. |
 | source search, wheel scan, prior-art check | Wheel gate | One gate before build/custom expansion. |
 | paper alert, shadow alert, unexecuted alert | Paper/shadow alert | Keep non-executed outcomes separate from real trades. |
-| fast scalp, quick trade, violent-move trade | Fast trade | Trade class, not a guarantee of speed or profitability. |
+| quick trade, violent-move trade | Fast trade | Alert trade class, not a guarantee of speed or profitability. "Fast scalp" is a strategy class, not a synonym. |
 | entry mode, entry style | Entry style | Spec term; code keeps `entryMode` until F1e adds the new styles. |
 | stop-first collision, ambiguous fill | Ambiguous fill | Spec name for the same stop-first rule on finer bars. |
 | USD-M perpetual, USDT-margined perpetual, linear perp, perp | Linear perpetual (`linear_perpetual`) | One market type; the venue belongs in exchange. |
@@ -138,9 +139,10 @@ Sources: [factory spec F1](factory-spec-f1.md), [F1a-1 data identity](f1/f1a-1-i
 | Shared term | Contexts it appears in | Proposed renames |
 |-------------|------------------------|------------------|
 | Alert | Event notification vs trade recommendation | Use `alert` for the message and `strategy candidate` for tested edge. |
-| Signal | Raw trigger vs validated edge | Use `trigger` for raw event; use `candidate` only after explicit hypothesis. |
+| Signal | Alert raw trigger vs factory rule output (`signalForVariant` returns an array of `{direction, reason}` objects, possibly empty, at a closed bar; `signalGate` may veto a signal) vs validated edge | Alerts: `trigger` for the raw event. Factory: `signal` is a variant's rule output at a closed bar and `signalGate` a context filter (see Gate). Neither is an edge; `candidate` only after an explicit hypothesis. |
 | Shadow | Paper alert outcome vs wallet shadowing | Use `paper/shadow alert` for alert journal; use `wallet shadowing` for copying/following wallets. |
-| Execution | Real exchange fill vs simulated fill | Use `execution` for real captured fill; use `paper fill` for simulated result. |
+| Execution | Real exchange fill vs simulated fill (alert journal or backtest) | `execution` only for a real captured fill; `paper fill` for a simulated alert outcome; `backtest fill` for a factory fill rule (fill rate, `limit_at_level`, `ambiguous_fill`). "Fill" inside a backtest spec means backtest fill. |
+| Fast | Alert trade class `fast` (seconds to 30 min) vs factory strategy class fast scalp (seconds, maker fees and limit fills only) | `fast trade` for the alert class, `fast scalp` for the strategy class. |
 | Demo | Local paper simulation vs exchange demo/testnet account | Use `local paper` for no-account simulation; use `demo/testnet` when an exchange/broker account or API key is involved. |
 | Full TA | Verbose alert text vs multi-timeframe scenario map | Use `Full TA` only when it includes HTF, mid-TF, LTF, alternatives, invalidation, and trade-class fit. |
 | Alert | Compact Telegram summary vs full Obsidian record | Use `alert summary` and `full analysis record` when the distinction matters. |
