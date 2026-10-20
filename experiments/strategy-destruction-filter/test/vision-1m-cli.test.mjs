@@ -1,0 +1,177 @@
+// F1a-2: the Vision 1m CLI: download, verify, build, compare, exit codes and the memory guard (docs/f1/f1a-2-contract.md, A8, A10).
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { main } from '../src/vision-1m.mjs';
+import { planUnits } from '../src/vision-source.mjs';
+import { makeZip, klineCsv, minutes, checksumText } from '../test-support/vision-fixtures.mjs';
+
+const HOST = 'https://data.binance.vision/';
+function workspace() {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vision-1m-cli-test-'));
+  return { dir, args: ['--data-dir', path.join(dir, 'data'), '--manifest', path.join(dir, 'results', 'manifest-f1-1m.json')] };
+}
+const sourceOf = (symbol, month) => planUnits(symbol, { from: month, to: month })[0].sources[0];
+// Published files: Vision path -> bytes. Responses can be overridden per URL with a list of statuses or functions.
+function vision(published = {}, overrides = {}) {
+  const calls = [];
+  let inFlight = 0, maxInFlight = 0;
+  const fetch = async (url, init = {}) => {
+    calls.push(String(url));
+    inFlight++; maxInFlight = Math.max(maxInFlight, inFlight);
+    try {
+      await new Promise(resolve => setImmediate(resolve));
+      const u = new URL(String(url)), key = u.pathname.slice(1);
+      const queue = overrides[String(url)];
+      const next = Array.isArray(queue) ? queue.shift() : queue;
+      if (typeof next === 'function') return next(url, init);
+      if (typeof next === 'number') return new Response(next >= 300 && next < 400 ? null : 'x', { status: next });
+      if (u.origin !== 'https://data.binance.vision' || !(key in published)) return new Response('<Error>NoSuchKey</Error>', { status: 404 });
+      return new Response(published[key], { status: 200, headers: { 'content-length': String(published[key].length) } });
+    } finally { inFlight--; }
+  };
+  return { fetch, calls, get maxInFlight() { return maxInFlight; } };
+}
+function publish(published, symbol, month, openTimes) {
+  const source = sourceOf(symbol, month);
+  const zip = makeZip([{ name: source.csvName, data: klineCsv(openTimes) }]);
+  published[source.file] = zip;
+  published[`${source.file}.CHECKSUM`] = Buffer.from(checksumText(zip, source.zipName));
+  return source;
+}
+async function run(argv, net = vision()) {
+  let out = '';
+  const code = await main(argv, { fetch: net.fetch, stdout: { write: s => { out += s; } }, sleep: async () => {} });
+  return { code, summary: out ? JSON.parse(out) : null, out };
+}
+const rows = month => minutes(`${month}-02T00:00:00.000Z`, 3);
+
+test('F1a-2 cli: usage errors exit 2 (command, flags, symbols, months, ceiling above 512 MiB)', async () => {
+  const w = workspace();
+  for (const argv of [[], ['fetch'], ['build', '--symbol', 'BTC'], ['build', '--symbols', 'BTCUSDT'], ['build', '--symbols', 'btc'], ['build', '--from', '2024-13'],
+    ['build', '--from', '2024-03', '--to', '2024-02'], ['build', '--to', '2026-11'], ['build', '--from', '2021-09'], ['build', '--max-rss-mib', '1024'],
+    ['build', '--max-rss-mib', '0'], ['build', '--symbols'], ['build', '--data-dir']]) {
+    const { code, summary } = await run([...argv, ...w.args]);
+    assert.equal(code, 2, argv.join(' '));
+    assert.equal(summary.status, 'usage');
+  }
+});
+
+test('F1a-2 cli download: sequential HTTPS to data.binance.vision only, every file verified, already verified files skipped', async () => {
+  const w = workspace(), published = {};
+  publish(published, 'BTC', '2024-01', rows('2024-01'));
+  publish(published, 'BTC', '2024-02', rows('2024-02'));
+  const net = vision(published);
+  const first = await run(['download', '--symbols', 'BTC', '--from', '2024-01', '--to', '2024-02', ...w.args], net);
+  assert.equal(first.code, 0);
+  assert.deepEqual(first.summary.counts, { expected: 2, downloaded: 2, skipped: 0, verified: 2, gaps: 0, notListed: 0, failed: 0 });
+  assert.ok(net.calls.every(url => url.startsWith(HOST)));
+  assert.equal(net.maxInFlight, 1);
+  assert.deepEqual(net.calls, ['2024-01', '2024-02'].flatMap(m => [`${HOST}data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-${m}.zip.CHECKSUM`,
+    `${HOST}data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-${m}.zip`]));
+  const again = vision(published);
+  const second = await run(['download', '--symbols', 'BTC', '--from', '2024-01', '--to', '2024-02', ...w.args], again);
+  assert.equal(second.code, 0);
+  assert.deepEqual(second.summary.counts, { expected: 2, downloaded: 0, skipped: 2, verified: 2, gaps: 0, notListed: 0, failed: 0 });
+  assert.ok(again.calls.every(url => url.endsWith('.CHECKSUM')));
+  assert.ok(!first.out.includes(w.dir) && !first.out.includes(os.homedir()));
+  assert.equal(first.summary.runtime.node, process.version);
+});
+
+test('F1a-2 cli download: 404 on both before the first file is not_listed (exit 0); after it a gap (exit 3); on one of the pair a failure (exit 1)', async () => {
+  const w = workspace(), published = {};
+  publish(published, 'HYPE', '2025-05', minutes('2025-05-30T07:00:00.000Z', 2));
+  const listing = await run(['download', '--symbols', 'HYPE', '--from', '2025-03', '--to', '2025-05', ...w.args], vision(published));
+  assert.equal(listing.code, 0);
+  assert.deepEqual(listing.summary.notListed, { HYPEUSDT: ['2025-03', '2025-04'] });
+  assert.equal(listing.summary.firstFiles.HYPEUSDT, 'data/futures/um/monthly/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05.zip');
+  const gap = await run(['download', '--symbols', 'HYPE', '--from', '2025-05', '--to', '2025-06', ...w.args], vision(published));
+  assert.equal(gap.code, 3);
+  assert.deepEqual(gap.summary.gaps, ['data/futures/um/monthly/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-06.zip']);
+  const half = workspace(), onlyZip = {};
+  const s = publish(onlyZip, 'ETH', '2024-01', rows('2024-01'));
+  delete onlyZip[`${s.file}.CHECKSUM`];
+  const noChecksum = await run(['download', '--symbols', 'ETH', '--from', '2024-01', '--to', '2024-01', ...half.args], vision(onlyZip));
+  assert.equal(noChecksum.code, 1);
+  assert.match(noChecksum.summary.failures[0], /CHECKSUM 404/);
+  const onlyChecksum = {};
+  publish(onlyChecksum, 'ETH', '2024-01', rows('2024-01'));
+  delete onlyChecksum[s.file];
+  assert.equal((await run(['download', '--symbols', 'ETH', '--from', '2024-01', '--to', '2024-01', ...workspace().args], vision(onlyChecksum))).code, 1);
+});
+
+test('F1a-2 cli download: finite retries with backoff for 5xx, timeouts and truncated bodies, then exit 1; a transient error recovers', async () => {
+  const published = {};
+  const s = publish(published, 'SOL', '2024-03', rows('2024-03'));
+  const url = `${HOST}${s.file}`;
+  const flaky = vision(published, { [url]: [503, 502] });
+  assert.equal((await run(['download', '--symbols', 'SOL', '--from', '2024-03', '--to', '2024-03', ...workspace().args], flaky)).code, 0);
+  assert.equal(flaky.calls.filter(u => u === url).length, 3);
+  const down = vision(published, { [url]: [503, 503, 503, 503, 503] });
+  const failed = await run(['download', '--symbols', 'SOL', '--from', '2024-03', '--to', '2024-03', ...workspace().args], down);
+  assert.equal(failed.code, 1);
+  assert.equal(down.calls.filter(u => u === url).length, 4);
+  const timeout = () => { throw Object.assign(new Error('The operation was aborted due to timeout'), { name: 'TimeoutError' }); };
+  const slow = vision(published, { [url]: [timeout, timeout, timeout, timeout] });
+  assert.equal((await run(['download', '--symbols', 'SOL', '--from', '2024-03', '--to', '2024-03', ...workspace().args], slow)).code, 1);
+  const short = () => new Response(published[s.file].subarray(0, 10), { status: 200, headers: { 'content-length': String(published[s.file].length) } });
+  const truncated = vision(published, { [url]: [short, short, short, short] });
+  const cut = await run(['download', '--symbols', 'SOL', '--from', '2024-03', '--to', '2024-03', ...workspace().args], truncated);
+  assert.equal(cut.code, 1);
+  assert.equal(truncated.calls.filter(u => u === url).length, 4);
+  const dns = () => { throw Object.assign(new TypeError('fetch failed'), { cause: { code: 'ENOTFOUND' } }); };
+  assert.equal((await run(['download', '--symbols', 'SOL', '--from', '2024-03', '--to', '2024-03', ...workspace().args], vision(published, { [url]: [dns, dns, dns, dns] }))).code, 1);
+});
+
+test('F1a-2 cli download: redirects only to data.binance.vision over HTTPS; a tampered zip is never stored', async () => {
+  const published = {};
+  const s = publish(published, 'XRP', '2024-04', rows('2024-04'));
+  const url = `${HOST}${s.file}`;
+  const away = vision(published, { [url]: () => new Response(null, { status: 302, headers: { location: 'https://example.com/x.zip' } }) });
+  const w = workspace();
+  const refused = await run(['download', '--symbols', 'XRP', '--from', '2024-04', '--to', '2024-04', ...w.args], away);
+  assert.equal(refused.code, 1);
+  assert.ok(!away.calls.some(u => u.includes('example.com')));
+  const plain = vision(published, { [url]: () => new Response(null, { status: 301, headers: { location: `http://data.binance.vision/${s.file}` } }) });
+  assert.equal((await run(['download', '--symbols', 'XRP', '--from', '2024-04', '--to', '2024-04', ...workspace().args], plain)).code, 1);
+  const moved = vision(published, { [url]: () => new Response(null, { status: 302, headers: { location: `/${s.file}?v=1` } }) });
+  assert.equal((await run(['download', '--symbols', 'XRP', '--from', '2024-04', '--to', '2024-04', ...workspace().args], moved)).code, 0);
+  const evil = { ...published, [s.file]: Buffer.concat([published[s.file], Buffer.from('x')]) };
+  const t = workspace();
+  const tampered = await run(['download', '--symbols', 'XRP', '--from', '2024-04', '--to', '2024-04', ...t.args], vision(evil));
+  assert.equal(tampered.code, 1);
+  assert.match(tampered.summary.failures[0], /sha256 mismatch/);
+  assert.ok(!fs.existsSync(path.join(t.dir, 'data', 'vision', path.dirname(s.file))) || fs.readdirSync(path.join(t.dir, 'data', 'vision', path.dirname(s.file))).length === 0);
+});
+
+test('F1a-2 cli build, verify and compare: exit 0 ok, 3 incomplete, 1 failure; the memory guard exits 1 before any write', async () => {
+  const w = workspace(), published = {};
+  publish(published, 'DOGE', '2024-05', rows('2024-05'));
+  publish(published, 'DOGE', '2024-06', rows('2024-06'));
+  assert.equal((await run(['download', '--symbols', 'DOGE', '--from', '2024-05', '--to', '2024-06', ...w.args], vision(published))).code, 0);
+  const guarded = await run(['build', '--symbols', 'DOGE', '--from', '2024-05', '--to', '2024-06', '--max-rss-mib', '1', ...w.args]);
+  assert.equal(guarded.code, 1);
+  assert.match(guarded.summary.error, /memory ceiling/);
+  assert.ok(!fs.existsSync(path.join(w.dir, 'results', 'manifest-f1-1m.json')));
+  assert.ok(!fs.existsSync(path.join(w.dir, 'data', 'market-cache', 'f1-1m')) || fs.readdirSync(path.join(w.dir, 'data', 'market-cache', 'f1-1m')).length === 0);
+  const built = await run(['build', '--symbols', 'DOGE', '--from', '2024-05', '--to', '2024-06', ...w.args]);
+  assert.equal(built.code, 0);
+  assert.equal(built.summary.counts.built, 2);
+  assert.ok(built.summary.memory.maxRssMiB > 0 && built.summary.memory.ceilingMiB === 512);
+  assert.equal((await run(['build', '--symbols', 'DOGE', '--from', '2024-05', '--to', '2024-07', ...w.args])).code, 3);
+  assert.equal((await run(['verify', ...w.args])).code, 0);
+  assert.equal((await run(['compare', '--symbols', 'DOGE', '--from', '2024-05', '--to', '2024-06', ...w.args])).code, 0);
+  assert.equal((await run(['compare', '--symbols', 'DOGE', '--from', '2024-08', '--to', '2024-08', ...w.args])).code, 1);
+  const zip = path.join(w.dir, 'data', 'vision', path.dirname(sourceOf('DOGE', '2024-05').file));
+  const [sha] = fs.readdirSync(zip).filter(n => /^[0-9a-f]{64}$/.test(n));
+  const file = path.join(zip, sha, 'DOGEUSDT-1m-2024-05.zip');
+  fs.chmodSync(file, 0o644); fs.appendFileSync(file, 'x');
+  assert.equal((await run(['verify', ...w.args])).code, 1);
+  assert.equal((await run(['compare', '--symbols', 'DOGE', '--from', '2024-05', '--to', '2024-06', ...w.args])).code, 1);
+  fs.rmSync(path.join(zip, sha), { recursive: true });
+  const noInput = await run(['compare', '--symbols', 'DOGE', '--from', '2024-05', '--to', '2024-06', ...w.args]);
+  assert.equal(noInput.code, 1);
+  assert.equal(noInput.summary.missingInputs.length, 1);
+});
