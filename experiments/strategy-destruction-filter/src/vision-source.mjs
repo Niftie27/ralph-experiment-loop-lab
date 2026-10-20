@@ -2,6 +2,7 @@
 // Node built-ins only. Every check fails closed: a file that fails gives no rows at all.
 import zlib from 'node:zlib';
 import { createHash } from 'node:crypto';
+import { PERIODS } from './h2-contract.mjs';
 
 export const MAX_MEMBER_BYTES = 64 * 1024 * 1024;
 const fail = message => { throw new Error(`Vision zip: ${message}`); };
@@ -112,4 +113,97 @@ export function parseKlines(csv, { startMs, endMs }) {
     if (!(high >= Math.max(open, close))) bad('high below max(open, close)');
   }
   return { variant, rowCount, columns };
+}
+
+// Symbols, instruments and Vision paths are data. Symbol convention: the config symbol (BTC), never the contract.
+export const VISION_SYMBOLS = Object.freeze({ BTC: 'BTCUSDT', ETH: 'ETHUSDT', SOL: 'SOLUSDT', XRP: 'XRPUSDT', DOGE: 'DOGEUSDT', HYPE: 'HYPEUSDT' });
+const VISION_ROOTS = Object.freeze({ 'binance:linear_perpetual': 'data/futures/um' });
+const usage = message => Object.assign(new Error(message), { usage: true });
+export function visionInstrument(symbol) {
+  if (typeof symbol !== 'string' || !Object.hasOwn(VISION_SYMBOLS, symbol)) throw usage(`Unknown symbol ${JSON.stringify(symbol)}; use one of ${Object.keys(VISION_SYMBOLS).join(',')}`);
+  return { exchange: 'binance', market: 'linear_perpetual', contract: VISION_SYMBOLS[symbol] };
+}
+
+// The F1a range in milliseconds, parsed from the locked PERIODS strings (windowFor works in seconds; never used here).
+const MS_PERIODS = Object.freeze(Object.fromEntries(Object.entries(PERIODS).map(([name, [a, b]]) => [name, [Date.parse(a), Date.parse(b)]])));
+export const F1A_RANGE = Object.freeze({ startMs: MS_PERIODS.research[0], endMs: MS_PERIODS.holdout[1] });
+const FIRST_MONTH = '2021-10', LAST_MONTH = '2026-10', DAILY_MONTH = '2026-10'; // the month without a monthly file yet
+const iso = t => new Date(t).toISOString();
+const monthIndex = month => {
+  const m = typeof month === 'string' ? /^(\d{4})-(\d\d)$/.exec(month) : null;
+  if (!m || +m[2] < 1 || +m[2] > 12) throw usage(`Invalid month ${JSON.stringify(month)}; use YYYY-MM`);
+  return +m[1] * 12 + (+m[2] - 1);
+};
+const monthStart = index => Date.UTC(Math.floor(index / 12), index % 12, 1);
+const monthName = index => `${Math.floor(index / 12)}-${String(index % 12 + 1).padStart(2, '0')}`;
+
+function source(instrument, kind, label, startMs, endMs) {
+  const root = VISION_ROOTS[`${instrument.exchange}:${instrument.market}`];
+  const base = `${instrument.contract}-1m-${label}`;
+  const file = `${root}/${kind}/klines/${instrument.contract}/1m/${base}.zip`;
+  return { file, checksumFile: `${file}.CHECKSUM`, zipName: `${base}.zip`, csvName: `${base}.csv`, startMs, endMs };
+}
+// Units for the inclusive source months from..to: one per instrument x calendar month, clipped to the F1a range and
+// split at the period boundary; 2026-10 is built from the daily files 01..16 only.
+export function planUnits(symbol, { from = FIRST_MONTH, to = LAST_MONTH } = {}) {
+  const instrument = visionInstrument(symbol);
+  const a = monthIndex(from), b = monthIndex(to);
+  if (a < monthIndex(FIRST_MONTH) || b > monthIndex(LAST_MONTH)) throw usage(`Months must lie inside ${FIRST_MONTH}..${LAST_MONTH} (data after 2026-10-17 is sealed)`);
+  if (a > b) throw usage(`--from ${from} is after --to ${to}`);
+  const units = [];
+  for (let m = a; m <= b; m++) {
+    const startMs = monthStart(m), endMs = monthStart(m + 1);
+    let sources;
+    if (monthName(m) === DAILY_MONTH) {
+      sources = [];
+      for (let day = startMs; day < F1A_RANGE.endMs; day += 86400000) sources.push(source(instrument, 'daily', iso(day).slice(0, 10), day, day + 86400000));
+    } else sources = [source(instrument, 'monthly', monthName(m), startMs, endMs)];
+    for (const [period, [p0, p1]] of Object.entries(MS_PERIODS)) {
+      const s = Math.max(startMs, p0, F1A_RANGE.startMs), e = Math.min(endMs, p1, F1A_RANGE.endMs);
+      if (s < e) units.push({ symbol, instrument, period, dataStart: iso(s), dataEnd: iso(e), startMs: s, endMs: e, sources });
+    }
+  }
+  return units;
+}
+
+// Concatenates the parsed rows of a unit's sources in source-file order and clips them to [startMs, endMs).
+export function assembleUnit(unit, inputs) {
+  const byFile = new Map();
+  for (const { file, parsed } of inputs) {
+    if (!unit.sources.some(s => s.file === file)) throw new Error(`Vision unit: ${file} is not a source of this unit`);
+    if (byFile.has(file)) throw new Error(`Vision unit: duplicate source ${file}`);
+    byFile.set(file, parsed);
+  }
+  const ordered = [...byFile.keys()].sort((x, y) => x < y ? -1 : x > y ? 1 : 0).map(file => byFile.get(file));
+  const ranges = ordered.map(p => {
+    const t = p.columns.open_time;
+    let i = 0, j = t.length;
+    while (i < j && t[i] < unit.startMs) i++;
+    while (j > i && t[j - 1] >= unit.endMs) j--;
+    return [p, i, j];
+  });
+  const rowCount = ranges.reduce((n, [, i, j]) => n + j - i, 0);
+  const columns = Object.fromEntries(KLINE_COLUMNS.map(name => [name, new Float64Array(rowCount)]));
+  let offset = 0, previous = -Infinity;
+  for (const [p, i, j] of ranges) {
+    for (const name of KLINE_COLUMNS) columns[name].set(p.columns[name].subarray(i, j), offset);
+    if (j > i && p.columns.open_time[i] <= previous) throw new Error('Vision unit: sources overlap or are out of order');
+    if (j > i) previous = p.columns.open_time[j - 1];
+    offset += j - i;
+  }
+  return { rowCount, columns };
+}
+
+// Missing minutes over the whole unit, leading and trailing gaps included, ranges end-exclusive. open_time is the
+// validated, strictly increasing, minute-aligned column of the unit (possibly empty).
+export function unitCoverage(unit, openTime) {
+  const missingRanges = [];
+  let cursor = unit.startMs;
+  for (const t of openTime) {
+    if (t > cursor) missingRanges.push({ start: iso(cursor), end: iso(t) });
+    cursor = t + 60000;
+  }
+  if (cursor < unit.endMs) missingRanges.push({ start: iso(cursor), end: iso(unit.endMs) });
+  const expectedMinutes = (unit.endMs - unit.startMs) / 60000;
+  return { expectedMinutes, rowCount: openTime.length, missingMinutes: expectedMinutes - openTime.length, missingRanges };
 }
