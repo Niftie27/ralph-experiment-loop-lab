@@ -858,3 +858,17 @@ test('F1a-2 r6 store: readManifest accepts the first and last candle derived fro
   rejects(s, hype)({ firstOpenTime: '2025-05-30T10:29:00.000Z' }, /firstOpenTime lies in a missing range/);
   rejects(s, hype)({ firstOpenTime: '2025-05-30T10:31:00.000Z' }, /firstOpenTime must be the first present minute/);
 });
+
+// Review round 7: an entry's sources are sorted by file and unique, as format v1 requires of the snapshot header.
+test('F1a-2 r7 store: readManifest rejects unsorted sources and a duplicate file (same or other sha256); a built filled unit is accepted', () => {
+  const { s } = filledJanuary();
+  const [entry] = readManifest(s.manifestPath).entries;
+  const [daily, monthly] = entry.sources;
+  assert.deepEqual([daily.file < monthly.file, entry.sources.length], [true, 2]);
+  const reject = rejects(s, entry);
+  for (const sources of [[monthly, daily], [daily, daily, monthly], [daily, { file: daily.file, sha256: 'f'.repeat(64) }, monthly], [daily, monthly, monthly]]) {
+    reject({ sources }, /^Error: 1m manifest: entry BTCUSDT research 2024-01-01T00:00:00\.000Z: sources must be sorted by file without a duplicate file$/);
+  }
+  writeEntries(s, [entry]);
+  assert.deepEqual(readManifest(s.manifestPath).entries, [entry]);
+});

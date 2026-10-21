@@ -142,6 +142,8 @@ function checkEntry(e) {
   if (e.source !== SOURCE) fail(`source must be ${SOURCE}`);
   if (!Array.isArray(e.sources) || !e.sources.length || !e.sources.every(s => s && Object.keys(s).sort().join() === 'file,sha256'
     && typeof s.file === 'string' && /^data\/[A-Za-z0-9_./-]+\.zip$/.test(s.file) && !s.file.includes('..') && HEX.test(s.sha256))) fail('sources must be canonical Vision paths with sha256');
+  // As format v1 requires of the snapshot header (and the builder writes): sorted by file, one entry per file.
+  for (let i = 1; i < e.sources.length; i++) if (order(e.sources[i - 1].file, e.sources[i].file) >= 0) fail('sources must be sorted by file without a duplicate file');
   // Round 5 fields and their consistency with the unit (plan approval point 7). These are consistency checks, not
   // proof: compare, which rebuilds from the sources, stays the authority.
   const unit = plannedUnit(e);

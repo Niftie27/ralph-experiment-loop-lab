@@ -414,3 +414,16 @@ test('F1a-2 r5 merge: quarantined in both gives two records and one missing minu
     { file: monthlyFile, openTime: iso(t[2]), rule }, { file: day3.file, openTime: iso(t[3]), rule }]);
   assert.equal(unitCoverage(JAN24, out.columns.open_time).missingMinutes, 31 * 1440 - 2);
 });
+
+// Review round 7: the row count is bounded by the minutes of the source file before anything is allocated.
+test('F1a-2 r7 klines: a file with more rows than the minutes of its source bounds fails before any row is parsed; a full day still parses', () => {
+  const day = dailyOf(JAN24, '2024-01-03');
+  // 1,440 short lines reach row parsing (a row error); 1,441 fail on the count, before any row is read.
+  assert.throws(() => parseKlines(Buffer.from('1\n'.repeat(1440)), day), /row 1 has 1 fields/);
+  assert.throws(() => parseKlines(Buffer.from('1\n'.repeat(1441)), day), /^Error: Vision klines: 1441 rows exceed the 1440 minutes of the source file$/);
+  assert.throws(() => parseKlines(Buffer.from(KLINE_HEADER + '\n' + '1\n'.repeat(1441)), day), /1441 rows exceed the 1440 minutes/);
+  assert.throws(() => parseKlines(Buffer.from('1\n'.repeat(31 * 1440 + 1)), JAN), /44641 rows exceed the 44640 minutes of the source file/);
+  assert.throws(() => parseKlines(Buffer.from('1\n'.repeat(31 * 1440)), JAN), /row 1 has 1 fields/);
+  const full = parseKlines(Buffer.from(klineCsv(minutes('2024-01-03T00:00:00.000Z', 1440))), day);
+  assert.deepEqual([full.rowCount, full.columns.open_time.at(-1)], [1440, ms('2024-01-03T23:59:00.000Z')]);
+});

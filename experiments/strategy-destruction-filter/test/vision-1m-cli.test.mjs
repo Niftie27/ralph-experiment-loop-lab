@@ -637,3 +637,20 @@ test('F1a-2 r6 cli: a manifest entry whose first or last candle disagrees with i
   assert.equal(verify.code, 1);
   assert.match(verify.summary.failures.join('\n'), /lastOpenTime must be the last present minute/);
 });
+
+test('F1a-2 r7 cli: download exits 1 before any request on a manifest whose entry lists its sources out of order', async () => {
+  const w = workspace(), { published, range } = sparseJanuary();
+  const args = [...range, ...w.args];
+  assert.equal((await run(['download', ...args], vision(published))).code, 0);
+  assert.equal((await run(['build', ...args])).code, 0);
+  const manifestFile = path.join(w.dir, 'results', 'manifest-f1-1m.json');
+  const manifest = JSON.parse(fs.readFileSync(manifestFile, 'utf8'));
+  assert.equal(manifest.entries[0].sources.length, 2); // the fill daily of 2024-01-02, then the monthly file
+  manifest.entries[0].sources.reverse();
+  fs.writeFileSync(manifestFile, JSON.stringify(manifest, null, 2) + '\n');
+  const net = vision(published);
+  const download = await run(['download', ...args], net);
+  assert.equal(download.code, 1);
+  assert.match(download.summary.error, /sources must be sorted by file without a duplicate file/);
+  assert.deepEqual(net.calls, []);
+});

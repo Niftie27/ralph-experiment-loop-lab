@@ -118,6 +118,10 @@ export function parseKlines(csv, { startMs, endMs }) {
   if (firstLine === KLINE_HEADER) { variant = 'header'; pos = firstEnd + 1; rowCount--; }
   else if (!(buf[0] >= 0x30 && buf[0] <= 0x39)) throw new Error('Vision klines: unknown header (expected the exact Vision header or a numeric first row)');
   if (rowCount < 1) throw new Error('Vision klines: no rows');
+  // Every row, accepted or quarantined, has its own minute inside [startMs, endMs): more rows than minutes can never be
+  // valid, and the columns below are sized by rowCount, so the file fails before anything is allocated.
+  const minutes = (endMs - startMs) / 60000;
+  if (rowCount > minutes) throw new Error(`Vision klines: ${rowCount} rows exceed the ${minutes} minutes of the source file`);
   const columns = Object.fromEntries(KLINE_COLUMNS.map(name => [name, new Float64Array(rowCount)]));
   const cols = KLINE_COLUMNS.map(name => columns[name]);
   const starts = new Int32Array(13); // field j spans [starts[j], starts[j + 1] - 1)
