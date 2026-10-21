@@ -47,6 +47,12 @@ async function run(argv, net = vision()) {
   return { code, summary: out ? JSON.parse(out) : null, out };
 }
 const rows = month => minutes(`${month}-02T00:00:00.000Z`, 3);
+// The stored version directory of a source: the one that holds its zip (the Vision directory holds every month's).
+const versionFile = (w, source) => {
+  const dir = path.join(w.dir, 'data', 'vision', path.dirname(source.file));
+  const [sha] = fs.readdirSync(dir).filter(n => /^[0-9a-f]{64}$/.test(n) && fs.existsSync(path.join(dir, n, source.zipName)));
+  return path.join(dir, sha, source.zipName);
+};
 
 test('F1a-2 cli: usage errors exit 2 (command, flags, symbols, months, ceiling above 512 MiB)', async () => {
   const w = workspace();
@@ -164,23 +170,16 @@ test('F1a-2 cli build, verify and compare: exit 0 ok, 3 incomplete, 1 failure; t
   assert.equal((await run(['verify', ...w.args])).code, 0);
   assert.equal((await run(['compare', '--symbols', 'DOGE', '--from', '2024-05', '--to', '2024-06', ...w.args])).code, 0);
   assert.equal((await run(['compare', '--symbols', 'DOGE', '--from', '2024-08', '--to', '2024-08', ...w.args])).code, 1);
-  const zip = path.join(w.dir, 'data', 'vision', path.dirname(sourceOf('DOGE', '2024-05').file));
-  const [sha] = fs.readdirSync(zip).filter(n => /^[0-9a-f]{64}$/.test(n));
-  const file = path.join(zip, sha, 'DOGEUSDT-1m-2024-05.zip');
+  const file = versionFile(w, sourceOf('DOGE', '2024-05'));
   fs.chmodSync(file, 0o644); fs.appendFileSync(file, 'x');
   assert.equal((await run(['verify', ...w.args])).code, 1);
   assert.equal((await run(['compare', '--symbols', 'DOGE', '--from', '2024-05', '--to', '2024-06', ...w.args])).code, 1);
-  fs.rmSync(path.join(zip, sha), { recursive: true });
+  fs.rmSync(path.dirname(file), { recursive: true });
   const noInput = await run(['compare', '--symbols', 'DOGE', '--from', '2024-05', '--to', '2024-06', ...w.args]);
   assert.equal(noInput.code, 1);
   assert.equal(noInput.summary.missingInputs.length, 1);
 });
 
-const versionFile = (w, source) => {
-  const dir = path.join(w.dir, 'data', 'vision', path.dirname(source.file));
-  const [sha] = fs.readdirSync(dir).filter(n => /^[0-9a-f]{64}$/.test(n) && fs.existsSync(path.join(dir, n, source.zipName)));
-  return path.join(dir, sha, source.zipName);
-};
 const classes = summary => summary.units.map(u => [u.contract, u.dataStart.slice(0, 7), u.class]);
 
 test('F1a-2 cli download: a missing or corrupt local CHECKSUM beside a verified zip is repaired, and build then succeeds', async () => {
