@@ -112,3 +112,7 @@ Binding from 2026-10-21, after the Codex review of 0392097 on PR #2: a local ver
 - For (b) and the unit rule, any local version still counts, because there it can only block not_listed.
 - A local version that fails the check is not an error of the listing rule: it only stops counting for (c). The build of its own unit fails as it does now.
 - Check lazily: stop at the first later source that is verified evidence, so a normal run hashes at most one extra zip per instrument.
+
+## Amendment 2026-10-21, review round 4 (holdout seal: integrity metadata)
+
+The Codex finding on f9f5838 (verify's coverage report includes holdout entries) is declined by Tomas on 2026-10-21. The A6 seal protects outcomes, not data integrity. Integrity metadata of holdout units may be stored, checked and reported: file availability (present, gap, not_listed), CHECKSUM and snapshot verification, row counts, missing minutes, missing ranges, and the open times of the first and last candle. It is needed to know before pre-registration whether the holdout is complete. Sealed until the pre-registered evaluation: open, high, low and close prices, volumes and trade counts, and anything computed from candle values (returns, volatility, ranges, statistics, signals, metrics). Errors and logs for holdout units never contain prices (A6 unchanged). The approved manifest entry fields are unchanged.
