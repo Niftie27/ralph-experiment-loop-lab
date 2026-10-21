@@ -51,6 +51,24 @@ test('F1a-2 store: a source is stored only after its CHECKSUM matches, read-only
   assert.equal(sha256(fs.readFileSync(file)), sha256(zip));
 });
 
+test('F1a-2 store: storeSource writes the CHECKSUM first (temp file, rename), so a crash while the zip is written leaves no version; a corrupt CHECKSUM is replaced', t => {
+  const s = store(), source = sourceOf('BTC', '2024-12');
+  const zip = zipFor(source, fourRows('2024-12')), text = checksumText(zip, source.zipName);
+  const file = zipPathOf(s, source, sha256(zip));
+  const link = t.mock.method(fs, 'linkSync', () => { throw Object.assign(new Error('simulated crash'), { code: 'EIO' }); });
+  assert.throws(() => storeSource(s.zipRoot, source, zip, text), /simulated crash/);
+  link.mock.restore();
+  assert.equal(fs.readFileSync(`${file}.CHECKSUM`, 'utf8'), text);
+  assert.deepEqual(files(path.dirname(file)), [`${source.zipName}.CHECKSUM`]);
+  assert.deepEqual(localVersions(s.zipRoot, source), []);
+  assert.deepEqual(storeSource(s.zipRoot, source, zip, text), { sha256: sha256(zip), stored: true });
+  fs.chmodSync(`${file}.CHECKSUM`, 0o644); fs.writeFileSync(`${file}.CHECKSUM`, 'corrupt');
+  assert.deepEqual(storeSource(s.zipRoot, source, zip, text), { sha256: sha256(zip), stored: false });
+  assert.equal(fs.readFileSync(`${file}.CHECKSUM`, 'utf8'), text);
+  assert.equal(fs.statSync(`${file}.CHECKSUM`).mode & 0o777, 0o444);
+  assert.deepEqual(files(path.dirname(file)), [source.zipName, `${source.zipName}.CHECKSUM`]);
+});
+
 test('F1a-2 store: build writes one snapshot per unit and a canonical, sorted manifest with full identity and provenance', () => {
   const s = store();
   const a = put(s, 'BTC', '2024-01', fourRows('2024-01')), b = put(s, 'BTC', '2024-02', fourRows('2024-02')), c = put(s, 'ETH', '2024-01', fourRows('2024-01'));

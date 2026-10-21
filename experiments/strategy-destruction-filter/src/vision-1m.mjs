@@ -11,7 +11,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { planUnits, visionInstrument, parseChecksum, MAX_MEMBER_BYTES, VISION_SYMBOLS } from './vision-source.mjs';
-import { storeSource, recordMissing, localVersions, buildStore, verifyStore, compareStore, readManifest } from './f1-1m-store.mjs';
+import { storeSource, persistChecksum, recordMissing, localVersions, buildStore, verifyStore, compareStore, readManifest } from './f1-1m-store.mjs';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const VISION_ORIGIN = 'https://data.binance.vision';
@@ -113,7 +113,7 @@ async function get(file, kind, { fetch: fetchImpl, sleep }) {
 
 async function download({ symbols, from, to, zipRoot }, guard, deps) {
   const counts = { expected: 0, downloaded: 0, skipped: 0, verified: 0, gaps: 0, notListed: 0, failed: 0 };
-  const gaps = [], notListed = {}, firstFiles = {}, failures = [];
+  const gaps = [], notListed = {}, firstFiles = {}, repaired = [], failures = [];
   for (const symbol of symbols) {
     const contract = VISION_SYMBOLS[symbol];
     const sources = [...new Map(planUnits(symbol, { from, to }).flatMap(u => u.sources).map(s => [s.file, s])).values()];
@@ -138,6 +138,8 @@ async function download({ symbols, from, to, zipRoot }, guard, deps) {
         if (localVersions(zipRoot, source).includes(sha)) {
           const local = fs.readFileSync(path.join(zipRoot, path.dirname(source.file), sha, source.zipName));
           if (createHash('sha256').update(local).digest('hex') !== sha) throw new Error(`${source.file}: stored copy fails its CHECKSUM`);
+          // A missing or corrupt local CHECKSUM (a crash between the two writes of an older store) is restored.
+          if (persistChecksum(zipRoot, source, sha, text)) repaired.push(source.checksumFile);
           counts.skipped++; counts.verified++;
           continue;
         }
@@ -156,7 +158,7 @@ async function download({ symbols, from, to, zipRoot }, guard, deps) {
       else { gaps.push(source.file); counts.gaps++; }
     }
   }
-  return { command: 'download', status: counts.failed ? 'failed' : counts.gaps ? 'incomplete' : 'ok', counts, gaps, notListed, firstFiles, failures };
+  return { command: 'download', status: counts.failed ? 'failed' : counts.gaps ? 'incomplete' : 'ok', counts, gaps, notListed, firstFiles, repaired, failures };
 }
 
 function verify(options) {
@@ -180,9 +182,9 @@ export async function main(argv, deps = {}) {
     guard = memoryGuard(options.maxRssMiB);
     try {
       if (options.command === 'download') summary = await download(options, guard, io);
-      else if (options.command === 'build') { const { entries, ...rest } = buildStore({ ...options, guard }); summary = rest; void entries; }
-      else if (options.command === 'verify') summary = verify(options);
-      else summary = compareStore(options);
+      else if (options.command === 'build') { const { entries, units, ...rest } = buildStore({ ...options, guard }); summary = rest; void entries; void units; }
+      else if (options.command === 'verify') summary = verify({ ...options, guard });
+      else summary = compareStore({ ...options, guard });
     } catch (error) {
       summary = { command: options.command, status: 'failed', error: error.message };
     }

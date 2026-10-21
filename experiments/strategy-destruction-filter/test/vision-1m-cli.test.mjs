@@ -175,3 +175,88 @@ test('F1a-2 cli build, verify and compare: exit 0 ok, 3 incomplete, 1 failure; t
   assert.equal(noInput.code, 1);
   assert.equal(noInput.summary.missingInputs.length, 1);
 });
+
+const versionFile = (w, source) => {
+  const dir = path.join(w.dir, 'data', 'vision', path.dirname(source.file));
+  const [sha] = fs.readdirSync(dir).filter(n => /^[0-9a-f]{64}$/.test(n) && fs.existsSync(path.join(dir, n, source.zipName)));
+  return path.join(dir, sha, source.zipName);
+};
+const classes = summary => summary.units.map(u => [u.contract, u.dataStart.slice(0, 7), u.class]);
+
+test('F1a-2 cli download: a missing or corrupt local CHECKSUM beside a verified zip is repaired, and build then succeeds', async () => {
+  const w = workspace(), published = {};
+  const may = publish(published, 'ETH', '2024-05', rows('2024-05')), june = publish(published, 'ETH', '2024-06', rows('2024-06'));
+  const range = ['--symbols', 'ETH', '--from', '2024-05', '--to', '2024-06', ...w.args];
+  assert.equal((await run(['download', ...range], vision(published))).code, 0);
+  fs.rmSync(`${versionFile(w, may)}.CHECKSUM`);
+  const corrupt = `${versionFile(w, june)}.CHECKSUM`;
+  fs.chmodSync(corrupt, 0o644); fs.writeFileSync(corrupt, 'corrupt\n');
+  assert.equal((await run(['build', ...range])).code, 1);
+  const again = await run(['download', ...range], vision(published));
+  assert.equal(again.code, 0);
+  assert.deepEqual(again.summary.counts, { expected: 2, downloaded: 0, skipped: 2, verified: 2, gaps: 0, notListed: 0, failed: 0 });
+  assert.deepEqual(again.summary.repaired, [may.checksumFile, june.checksumFile]);
+  for (const source of [may, june]) assert.equal(fs.readFileSync(`${versionFile(w, source)}.CHECKSUM`, 'utf8'), published[source.checksumFile].toString());
+  const built = await run(['build', ...range]);
+  assert.equal(built.code, 0);
+  assert.equal(built.summary.counts.built, 2);
+  assert.deepEqual((await run(['download', ...range], vision(published))).summary.repaired, []);
+});
+
+test('F1a-2 cli compare: an in-scope unit absent from the reference and missing locally without recorded 404 evidence is a missing input (exit 1)', async () => {
+  const w = workspace(), published = {};
+  publish(published, 'BTC', '2024-05', rows('2024-05'));
+  assert.equal((await run(['download', '--symbols', 'BTC', '--from', '2024-05', '--to', '2024-05', ...w.args], vision(published))).code, 0);
+  assert.equal((await run(['build', '--symbols', 'BTC', '--from', '2024-05', '--to', '2024-05', ...w.args])).code, 0);
+  const compare = await run(['compare', '--symbols', 'BTC', '--from', '2024-05', '--to', '2024-06', ...w.args]);
+  assert.equal(compare.code, 1);
+  assert.deepEqual(classes(compare.summary), [['BTCUSDT', '2024-05', 'matched'], ['BTCUSDT', '2024-06', 'missing_input']]);
+  assert.deepEqual(compare.summary.missingInputs, [{ file: 'data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2024-06.zip' }]);
+});
+
+test('F1a-2 cli compare: with recorded 404 evidence after the first file it is a gap (exit 3); a reference entry without its input fails even with 404 evidence (exit 1)', async () => {
+  const w = workspace(), published = {};
+  publish(published, 'BTC', '2024-05', rows('2024-05'));
+  const range = ['--symbols', 'BTC', '--from', '2024-05', '--to', '2024-06', ...w.args];
+  assert.equal((await run(['download', ...range], vision(published))).code, 3);
+  assert.equal((await run(['build', ...range])).code, 3);
+  const gap = await run(['compare', ...range]);
+  assert.equal(gap.code, 3);
+  assert.equal(gap.summary.status, 'incomplete');
+  assert.deepEqual(classes(gap.summary), [['BTCUSDT', '2024-05', 'matched'], ['BTCUSDT', '2024-06', 'gap']]);
+  const june = publish(published, 'BTC', '2024-06', rows('2024-06'));
+  assert.equal((await run(['download', ...range], vision(published))).code, 0);
+  assert.equal((await run(['build', ...range])).code, 0);
+  fs.rmSync(path.dirname(versionFile(w, june)), { recursive: true });
+  const lost = await run(['compare', ...range]);
+  assert.equal(lost.code, 1);
+  assert.deepEqual(classes(lost.summary), [['BTCUSDT', '2024-05', 'matched'], ['BTCUSDT', '2024-06', 'missing_input']]);
+});
+
+test('F1a-2 cli compare: a month before the first file with recorded 404 evidence is not_listed and does not change the exit code (exit 0)', async () => {
+  const w = workspace(), published = {};
+  publish(published, 'HYPE', '2025-05', minutes('2025-05-30T07:00:00.000Z', 2));
+  const range = ['--symbols', 'HYPE', '--from', '2025-04', '--to', '2025-05', ...w.args];
+  assert.equal((await run(['download', ...range], vision(published))).code, 0);
+  assert.equal((await run(['build', ...range])).code, 0);
+  const compare = await run(['compare', ...range]);
+  assert.equal(compare.code, 0);
+  assert.deepEqual(classes(compare.summary), [['HYPEUSDT', '2025-04', 'not_listed'], ['HYPEUSDT', '2025-05', 'matched']]);
+});
+
+test('F1a-2 cli verify and compare: the memory guard is checked between files and units and stops the run (exit 1)', async () => {
+  const w = workspace(), published = {};
+  publish(published, 'SOL', '2024-07', rows('2024-07'));
+  publish(published, 'SOL', '2024-08', rows('2024-08'));
+  const range = ['--symbols', 'SOL', '--from', '2024-07', '--to', '2024-08', ...w.args];
+  assert.equal((await run(['download', ...range], vision(published))).code, 0);
+  assert.equal((await run(['build', ...range])).code, 0);
+  const verify = await run(['verify', '--max-rss-mib', '1', ...w.args]);
+  assert.equal(verify.code, 1);
+  assert.match(verify.summary.error, /memory ceiling/);
+  assert.ok(verify.summary.counts.zips < 2, `verify checked ${verify.summary.counts.zips} of 2 zips`);
+  const compare = await run(['compare', '--max-rss-mib', '1', ...range]);
+  assert.equal(compare.code, 1);
+  assert.match(compare.summary.error, /memory ceiling/);
+  assert.ok(compare.summary.counts.processed < compare.summary.counts.units, JSON.stringify(compare.summary.counts));
+});

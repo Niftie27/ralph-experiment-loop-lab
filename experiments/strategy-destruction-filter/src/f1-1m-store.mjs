@@ -7,7 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
 import { encodeSnapshot, decodeSnapshot, canonicalJson, SCHEMA_VERSION } from './f1-1m-format.mjs';
-import { verifyZip, readZipMember, parseKlines, planUnits, assembleUnit, unitCoverage } from './vision-source.mjs';
+import { verifyZip, parseChecksum, readZipMember, parseKlines, planUnits, assembleUnit, unitCoverage } from './vision-source.mjs';
 
 export const MANIFEST_KIND = 'binance_vision_kline_1m_manifest';
 export const SOURCE = 'binance-vision-archive';
@@ -40,14 +40,35 @@ function writeOnce(file, bytes, mode = 0o444) {
   fsyncDir(path.dirname(file));
   return true;
 }
+// Writes bytes under their final name by temp file, fsync and rename, replacing whatever was there.
+function replaceFile(file, bytes, mode = 0o444) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const tmp = `${file}.tmp-${process.pid}-${randomUUID()}`;
+  const fd = fs.openSync(tmp, 'wx', mode);
+  try { fs.writeSync(fd, bytes); fs.fsyncSync(fd); } finally { fs.closeSync(fd); }
+  fs.renameSync(tmp, file);
+  fsyncDir(path.dirname(file));
+}
 
-// Local source versions. A zip is stored only after its own CHECKSUM matched, never overwritten.
+// Local source versions. A zip is stored only after its own CHECKSUM matched, never overwritten. The CHECKSUM is
+// written first, so a zip under its final name always has its CHECKSUM beside it; a crash in between leaves a
+// CHECKSUM without a zip, which is no version and is completed by the next store.
 const versionDir = (zipRoot, source, sha) => path.join(zipRoot, path.dirname(source.file), sha);
+// Puts the published CHECKSUM text beside version sha; a missing or different local CHECKSUM is replaced atomically.
+// Returns whether it wrote.
+export function persistChecksum(zipRoot, source, sha, checksumText) {
+  if (parseChecksum(checksumText, source.zipName) !== sha) throw new Error(`Vision CHECKSUM: ${source.checksumFile} does not name ${sha}`);
+  const file = path.join(versionDir(zipRoot, source, sha), `${source.zipName}.CHECKSUM`);
+  let local;
+  try { local = fs.readFileSync(file, 'utf8'); } catch (error) { if (error.code !== 'ENOENT') throw error; }
+  if (local === checksumText) return false;
+  replaceFile(file, Buffer.from(checksumText));
+  return true;
+}
 export function storeSource(zipRoot, source, zipBytes, checksumText) {
   const sha = verifyZip(zipBytes, checksumText, source.zipName);
-  const dir = versionDir(zipRoot, source, sha);
-  const stored = writeOnce(path.join(dir, source.zipName), zipBytes);
-  writeOnce(path.join(dir, `${source.zipName}.CHECKSUM`), Buffer.from(checksumText));
+  persistChecksum(zipRoot, source, sha, checksumText);
+  const stored = writeOnce(path.join(versionDir(zipRoot, source, sha), source.zipName), zipBytes);
   return { sha256: sha, stored };
 }
 export function localVersions(zipRoot, source) {
@@ -237,21 +258,24 @@ function summarize(command, results, error) {
     failures: results.filter(r => r.status === 'failed').map(r => ({ ...unitId(r.unit), reason: r.reason })),
     missing: results.filter(r => r.status === 'missing').map(r => ({ ...unitId(r.unit), files: r.files })),
     coverage: [...new Set(results.map(r => r.unit.instrument.contract))].map(c => coverageOf(c, results)),
-    entries: results.filter(r => r.entry && ['built', 'unchanged'].includes(r.status)).map(r => r.entry) };
+    entries: results.filter(r => r.entry && ['built', 'unchanged'].includes(r.status)).map(r => r.entry),
+    units: results.map(r => ({ ...unitId(r.unit), status: r.status, files: r.files })) };
 }
 
 // Offline check of everything stored: every zip against its CHECKSUM, every entry's snapshot by hash and header.
-export function verifyStore({ zipRoot, cacheDir, manifestPath }) {
+// The guard (memory) is checked before each file; when it trips, verify stops and reports what it checked so far.
+export function verifyStore({ zipRoot, cacheDir, manifestPath, guard = { check() {} } }) {
   const failures = [];
-  let zips = 0, entries = [];
+  let zips = 0, checked = 0, entries = [];
   const walk = dir => { try { return fs.readdirSync(dir, { withFileTypes: true }); } catch (error) { if (error.code === 'ENOENT') return []; throw error; } };
   const visit = dir => {
     for (const d of walk(dir)) {
       const full = path.join(dir, d.name);
       if (d.isDirectory()) { if (d.name !== '404') visit(full); continue; }
       if (!d.name.endsWith('.zip')) continue;
-      zips++;
       const rel = path.relative(zipRoot, path.dirname(path.dirname(full))).split(path.sep).join('/') + '/' + d.name;
+      guard.check(rel);
+      zips++;
       try {
         let checksum;
         try { checksum = fs.readFileSync(`${full}.CHECKSUM`, 'utf8'); } catch { checksum = undefined; }
@@ -259,49 +283,70 @@ export function verifyStore({ zipRoot, cacheDir, manifestPath }) {
       } catch (zipError) { failures.push(`${rel}: ${zipError.message}`); }
     }
   };
-  visit(zipRoot);
-  try { entries = readManifest(manifestPath).entries; } catch (manifestError) { failures.push(manifestError.message); }
-  for (const e of entries) {
-    try {
-      const bytes = fs.readFileSync(snapshotPath(cacheDir, e.sha256));
-      if (sha256(bytes) !== e.sha256 || bytes.length !== e.bytes) throw new Error('hash or size mismatch');
-      const { header } = decodeSnapshot(bytes);
-      const agree = header.instrument.exchange === e.exchange && header.instrument.market === e.market && header.instrument.contract === e.contract
-        && header.period === e.period && header.dataStart === e.dataStart && header.dataEnd === e.dataEnd && header.rowCount === e.rowCount
-        && header.firstOpenTime === e.firstOpenTime && header.lastOpenTime === e.lastOpenTime && canonicalJson(header.sources) === canonicalJson(e.sources);
-      if (!agree) throw new Error('header disagrees with the manifest entry');
-    } catch (snapshotError) { failures.push(`snapshot ${e.sha256} (${e.contract} ${e.period} ${e.dataStart}): ${snapshotError.code ?? snapshotError.message}`); }
+  try {
+    visit(zipRoot);
+    try { entries = readManifest(manifestPath).entries; } catch (manifestError) { failures.push(manifestError.message); }
+    for (const e of entries) {
+      guard.check(`snapshot ${e.sha256}`);
+      checked++;
+      try {
+        const bytes = fs.readFileSync(snapshotPath(cacheDir, e.sha256));
+        if (sha256(bytes) !== e.sha256 || bytes.length !== e.bytes) throw new Error('hash or size mismatch');
+        const { header } = decodeSnapshot(bytes);
+        const agree = header.instrument.exchange === e.exchange && header.instrument.market === e.market && header.instrument.contract === e.contract
+          && header.period === e.period && header.dataStart === e.dataStart && header.dataEnd === e.dataEnd && header.rowCount === e.rowCount
+          && header.firstOpenTime === e.firstOpenTime && header.lastOpenTime === e.lastOpenTime && canonicalJson(header.sources) === canonicalJson(e.sources);
+        if (!agree) throw new Error('header disagrees with the manifest entry');
+      } catch (snapshotError) { failures.push(`snapshot ${e.sha256} (${e.contract} ${e.period} ${e.dataStart}): ${snapshotError.code ?? snapshotError.message}`); }
+    }
+  } catch (error) {
+    return { command: 'verify', status: 'failed', error: error.message, counts: { zips, entries: checked }, failures, orphans: [] };
   }
   const known = new Set(entries.map(e => `${e.sha256}.bin`));
   const orphans = walk(cacheDir).filter(d => d.isFile() && !known.has(d.name)).map(d => d.name).sort(order);
   return { command: 'verify', status: failures.length ? 'failed' : 'ok', counts: { zips, entries: entries.length, orphans: orphans.length }, failures, orphans };
 }
 
-// Offline: rebuild the requested units into a temp store and compare with the reference manifest, read-only.
-export function compareStore({ symbols, from, to, zipRoot, manifestPath }) {
+// Offline: rebuild the requested units into a temp store and compare with the reference manifest, read-only. Every
+// in-scope unit gets one class: matched; mismatched (the rebuilt entry differs, or a reference entry rebuilds to no
+// rows); extra (rebuilt, not in the reference); missing_input (a source missing locally without recorded 404
+// evidence, or the unit is in the reference); gap (not in the reference, a source 404 after the first file);
+// not_listed (not in the reference, 404 before the first file, D6); empty (not in the reference, sources present, no
+// rows); failed (the unit's rebuild failed). Status: failed on any mismatched, extra, missing_input or failed unit, an
+// aborted rebuild (memory guard) or zero compared entries; otherwise incomplete on any gap; otherwise ok.
+export function compareStore({ symbols, from, to, zipRoot, manifestPath, guard = { check() {} } }) {
   let reference;
   try { reference = readManifest(manifestPath).entries; } catch (error) { return { command: 'compare', status: 'failed', error: error.message, counts: { compared: 0 } }; }
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'f1-1m-compare-'));
   try {
-    const rebuilt = buildStore({ symbols, from, to, zipRoot, cacheDir: path.join(dir, 'cache'), manifestPath: path.join(dir, 'manifest.json') });
-    const results = [];
-    const scope = new Set(symbols.flatMap(symbol => planUnits(symbol, { from, to })).map(u => canonicalJson(unitId(u))));
+    const rebuilt = buildStore({ symbols, from, to, zipRoot, cacheDir: path.join(dir, 'cache'), manifestPath: path.join(dir, 'manifest.json'), guard });
     const id = e => canonicalJson({ contract: e.contract, period: e.period, dataStart: e.dataStart, dataEnd: e.dataEnd });
+    const planned = symbols.flatMap(symbol => planUnits(symbol, { from, to })).map(u => id(unitId(u)));
+    if (rebuilt.error) return { command: 'compare', status: 'failed', error: rebuilt.error, counts: { units: planned.length, processed: rebuilt.counts.units, compared: 0 } };
+    const scope = new Set(planned);
     const expected = reference.filter(e => e.exchange === 'binance' && e.market === 'linear_perpetual' && scope.has(id(e)));
-    const missing = [], extra = [], mismatches = [], missingInputs = [];
-    for (const e of expected) {
-      const twin = rebuilt.entries.find(r => sameKey(r, e));
-      if (!twin) {
-        missing.push(id(e));
-        const gap = rebuilt.missing.find(m => canonicalJson({ contract: m.contract, period: m.period, dataStart: m.dataStart, dataEnd: m.dataEnd }) === id(e));
-        if (gap) missingInputs.push(...gap.files.map(f => ({ file: f.file })));
-      } else if (canonicalJson(twin) !== canonicalJson(e)) mismatches.push(`${id(e)}: entry differs`);
-      else results.push(id(e));
+    const byKey = new Map(rebuilt.units.map(u => [id(u), u]));
+    const units = [], missing = [], extra = [], mismatches = [], missingInputs = [];
+    for (const key of planned) {
+      const u = byKey.get(key) ?? { status: 'failed' }, refs = expected.filter(e => id(e) === key), twin = rebuilt.entries.find(r => id(r) === key);
+      let cls;
+      if (!twin && refs.length) missing.push(key);
+      if (twin && !refs.length) { cls = 'extra'; extra.push(key); }
+      else if (twin) {
+        cls = refs.length === 1 && canonicalJson(refs[0]) === canonicalJson(twin) ? 'matched' : 'mismatched';
+        if (cls === 'mismatched') mismatches.push(`${key}: ${refs.length > 1 ? `${refs.length} reference entries` : 'entry differs'}`);
+      } else if (u.files && (refs.length || !u.files.every(f => f.recorded404))) { cls = 'missing_input'; missingInputs.push(...u.files.map(f => ({ file: f.file }))); }
+      else if (u.status === 'failed') cls = 'failed';
+      else if (refs.length) { cls = 'mismatched'; mismatches.push(`${key}: the rebuild has no rows`); }
+      else cls = { missing: 'gap', not_listed: 'not_listed', empty: 'empty' }[u.status];
+      units.push({ ...JSON.parse(key), class: cls });
     }
-    for (const r of rebuilt.entries) if (!expected.some(e => sameKey(r, e))) extra.push(id(r));
-    const compared = results.length + mismatches.length;
-    const failed = missing.length || extra.length || mismatches.length || missingInputs.length || rebuilt.counts.failed || !compared;
-    return { command: 'compare', status: failed ? 'failed' : 'ok', error: rebuilt.error, counts: { expected: expected.length, rebuilt: rebuilt.entries.length, compared, matched: results.length },
-      missing, extra, mismatches, missingInputs, failures: rebuilt.failures };
+    const n = cls => units.filter(u => u.class === cls).length;
+    const compared = n('matched') + n('mismatched');
+    const failed = ['mismatched', 'extra', 'missing_input', 'failed'].some(n) || !compared;
+    return { command: 'compare', status: failed ? 'failed' : n('gap') ? 'incomplete' : 'ok', error: rebuilt.error,
+      counts: { units: units.length, expected: expected.length, rebuilt: rebuilt.entries.length, compared, matched: n('matched'), mismatched: n('mismatched'), extra: n('extra'),
+        missingInput: n('missing_input'), gap: n('gap'), notListed: n('not_listed'), empty: n('empty'), failed: n('failed') },
+      units, missing, extra, mismatches, missingInputs, failures: rebuilt.failures };
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 }
