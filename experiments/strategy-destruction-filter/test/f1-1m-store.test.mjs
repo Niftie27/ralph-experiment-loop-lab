@@ -178,6 +178,8 @@ test('F1a-2 store: a unit whose manifest entry used other source versions fails 
 
 test('F1a-2 store: recorded 404s before the first file are not_listed; later missing files are gaps (incomplete); empty units are gaps but complete', () => {
   const s = store();
+  // The listing rule needs 404 evidence for every earlier month from the F1a range start.
+  for (const unit of planUnits('HYPE', { from: '2021-10', to: '2025-02' })) recordMissing(s.zipRoot, unit.sources[0]);
   for (const month of ['2025-03', '2025-04']) recordMissing(s.zipRoot, sourceOf('HYPE', month));
   put(s, 'HYPE', '2025-05', minutes('2025-05-30T07:00:00.000Z', 3));
   recordMissing(s.zipRoot, sourceOf('HYPE', '2025-07'));

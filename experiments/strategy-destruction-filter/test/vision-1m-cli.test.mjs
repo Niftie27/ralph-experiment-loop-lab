@@ -89,6 +89,8 @@ test('F1a-2 cli download: sequential HTTPS to data.binance.vision only, every fi
 test('F1a-2 cli download: 404 on both before the first file is not_listed (exit 0); after it a gap (exit 3); on one of the pair a failure (exit 1)', async () => {
   const w = workspace(), published = {};
   publish(published, 'HYPE', '2025-05', minutes('2025-05-30T07:00:00.000Z', 2));
+  // The listing rule needs 404 evidence for every earlier month from the F1a range start; no file yet: all gaps.
+  assert.equal((await run(['download', '--symbols', 'HYPE', '--from', '2021-10', '--to', '2025-02', ...w.args], vision(published))).code, 3);
   const listing = await run(['download', '--symbols', 'HYPE', '--from', '2025-03', '--to', '2025-05', ...w.args], vision(published));
   assert.equal(listing.code, 0);
   assert.deepEqual(listing.summary.notListed, { HYPEUSDT: ['2025-03', '2025-04'] });
@@ -236,6 +238,8 @@ test('F1a-2 cli compare: a month before the first file with recorded 404 evidenc
   const w = workspace(), published = {};
   publish(published, 'HYPE', '2025-05', minutes('2025-05-30T07:00:00.000Z', 2));
   const range = ['--symbols', 'HYPE', '--from', '2025-04', '--to', '2025-05', ...w.args];
+  // The listing rule needs 404 evidence for every earlier month from the F1a range start; no file yet: all gaps.
+  assert.equal((await run(['download', '--symbols', 'HYPE', '--from', '2021-10', '--to', '2025-03', ...w.args], vision(published))).code, 3);
   assert.equal((await run(['download', ...range], vision(published))).code, 0);
   assert.equal((await run(['build', ...range])).code, 0);
   const compare = await run(['compare', ...range]);
@@ -258,4 +262,142 @@ test('F1a-2 cli verify and compare: the memory guard is checked between files an
   assert.equal(compare.code, 1);
   assert.match(compare.summary.error, /memory ceiling/);
   assert.ok(compare.summary.counts.processed < compare.summary.counts.units, JSON.stringify(compare.summary.counts));
+});
+
+// Listing rule (contract amendment 2026-10-21): not_listed needs (a)-(c) proven by recorded evidence over the F1a range.
+const BTC_MONTHLY = 'data/futures/um/monthly/klines/BTCUSDT/1m';
+function publishSource(published, source, openTimes) {
+  const zip = makeZip([{ name: source.csvName, data: klineCsv(openTimes) }]);
+  published[source.file] = zip;
+  published[source.checksumFile] = Buffer.from(checksumText(zip, source.zipName));
+}
+// BTC answers 404 on both files for every month 2021-10..2024-05; 2024-06 is published and downloaded.
+async function listedFromJune() {
+  const w = workspace(), published = {};
+  publish(published, 'BTC', '2024-06', rows('2024-06'));
+  const download = await run(['download', '--symbols', 'BTC', '--from', '2021-10', '--to', '2024-06', ...w.args], vision(published));
+  return { w, published, download };
+}
+
+test('F1a-2 listing: a unit with any present source is never not_listed (2026-10 with day 16 a recorded 404): missing, a gap, exit 3', async () => {
+  const w = workspace(), published = {};
+  const days = planUnits('SOL', { from: '2026-10', to: '2026-10' })[0].sources;
+  for (const s of days.slice(0, 15)) publishSource(published, s, minutes(new Date(s.startMs).toISOString(), 2));
+  const range = ['--symbols', 'SOL', '--from', '2026-10', '--to', '2026-10', ...w.args];
+  const download = await run(['download', ...range], vision(published));
+  assert.equal(download.code, 3);
+  assert.deepEqual([download.summary.gaps, download.summary.notListed], [[days[15].file], {}]);
+  const build = await run(['build', ...range]);
+  assert.equal(build.code, 3);
+  const unit = { contract: 'SOLUSDT', period: 'holdout', dataStart: '2026-10-01T00:00:00.000Z', dataEnd: '2026-10-17T00:00:00.000Z' };
+  assert.deepEqual(build.summary.missing, [{ ...unit, files: [{ file: days[15].file, recorded404: true }] }]);
+  const [coverage] = build.summary.coverage;
+  assert.deepEqual([coverage.gaps, coverage.notListed], [[{ period: 'holdout', dataStart: unit.dataStart, dataEnd: unit.dataEnd, status: 'missing' }], []]);
+  assert.deepEqual(coverage.missingRanges, [{ start: unit.dataStart, end: unit.dataEnd }]);
+});
+
+test('F1a-2 listing: a 404 at --from is a gap when the earlier months carry no evidence (BTC 2024-05 missing, 2024-06 present): download, build, compare exit 3', async () => {
+  const w = workspace(), published = {};
+  publish(published, 'BTC', '2024-06', rows('2024-06'));
+  const range = ['--symbols', 'BTC', '--from', '2024-05', '--to', '2024-06', ...w.args];
+  const download = await run(['download', ...range], vision(published));
+  assert.equal(download.code, 3);
+  assert.deepEqual([download.summary.gaps, download.summary.notListed], [[`${BTC_MONTHLY}/BTCUSDT-1m-2024-05.zip`], {}]);
+  assert.equal((await run(['build', ...range])).code, 3);
+  const compare = await run(['compare', ...range]);
+  assert.equal(compare.code, 3);
+  assert.deepEqual(classes(compare.summary), [['BTCUSDT', '2024-05', 'gap'], ['BTCUSDT', '2024-06', 'matched']]);
+});
+
+test('F1a-2 listing: with 404 evidence for every month from 2021-10, 2024-05 before the first file (2024-06) is not_listed; download, build, compare exit 0', async () => {
+  const { w, download } = await listedFromJune();
+  assert.equal(download.code, 0);
+  assert.deepEqual([download.summary.notListed.BTCUSDT.length, download.summary.notListed.BTCUSDT.at(-1), download.summary.gaps], [32, '2024-05', []]);
+  const range = ['--symbols', 'BTC', '--from', '2021-10', '--to', '2024-06', ...w.args];
+  const build = await run(['build', ...range]);
+  assert.equal(build.code, 0);
+  assert.equal(build.summary.counts.notListed, 32);
+  const compare = await run(['compare', ...range]);
+  assert.equal(compare.code, 0);
+  assert.deepEqual(classes(compare.summary).slice(-2), [['BTCUSDT', '2024-05', 'not_listed'], ['BTCUSDT', '2024-06', 'matched']]);
+});
+
+test('F1a-2 listing: evidence outside the selection counts: after that download, build of 2024-05 alone is not_listed (exit 0)', async () => {
+  const { w } = await listedFromJune();
+  const build = await run(['build', '--symbols', 'BTC', '--from', '2024-05', '--to', '2024-05', ...w.args]);
+  assert.equal(build.code, 0);
+  assert.deepEqual(build.summary.counts, { units: 1, built: 0, unchanged: 0, empty: 0, missing: 0, notListed: 1, failed: 0 });
+});
+
+test('F1a-2 listing: after that download, a single-month download of 2024-05 is not_listed (exit 0)', async () => {
+  const { w, published } = await listedFromJune();
+  const single = await run(['download', '--symbols', 'BTC', '--from', '2024-05', '--to', '2024-05', ...w.args], vision(published));
+  assert.equal(single.code, 0);
+  assert.deepEqual([single.summary.notListed, single.summary.gaps], [{ BTCUSDT: ['2024-05'] }, []]);
+});
+
+test('F1a-2 listing: the same single-month download in a store without the earlier 404 markers is a gap (exit 3)', async () => {
+  const w = workspace(), published = {};
+  publish(published, 'BTC', '2024-06', rows('2024-06'));
+  assert.equal((await run(['download', '--symbols', 'BTC', '--from', '2024-06', '--to', '2024-06', ...w.args], vision(published))).code, 0);
+  const single = await run(['download', '--symbols', 'BTC', '--from', '2024-05', '--to', '2024-05', ...w.args], vision(published));
+  assert.equal(single.code, 3);
+  assert.deepEqual([single.summary.notListed, single.summary.gaps], [{}, [`${BTC_MONTHLY}/BTCUSDT-1m-2024-05.zip`]]);
+});
+
+test('F1a-2 listing: HYPE --from 2025-01 without evidence for 2021-10..2024-12: 2025-01..04 are gaps (download and build exit 3)', async () => {
+  const w = workspace(), published = {};
+  publish(published, 'HYPE', '2025-05', minutes('2025-05-30T07:00:00.000Z', 2));
+  const range = ['--symbols', 'HYPE', '--from', '2025-01', '--to', '2025-05', ...w.args];
+  const download = await run(['download', ...range], vision(published));
+  assert.equal(download.code, 3);
+  assert.deepEqual([download.summary.notListed, download.summary.gaps.map(f => f.slice(-11, -4))], [{}, ['2025-01', '2025-02', '2025-03', '2025-04']]);
+  const build = await run(['build', ...range]);
+  assert.equal(build.code, 3);
+  assert.deepEqual(build.summary.coverage[0].gaps.map(g => [g.dataStart.slice(0, 7), g.status]), [['2025-01', 'missing'], ['2025-02', 'missing'], ['2025-03', 'missing'], ['2025-04', 'missing']]);
+});
+
+test('F1a-2 listing: an instrument with no file at all keeps every recorded 404 a gap (download and build exit 3; compare: zero compared, exit 1)', async () => {
+  const w = workspace();
+  const range = ['--symbols', 'XRP', '--from', '2021-10', '--to', '2021-12', ...w.args];
+  const download = await run(['download', ...range], vision({}));
+  assert.equal(download.code, 3);
+  assert.deepEqual([download.summary.counts.gaps, download.summary.counts.notListed], [3, 0]);
+  const build = await run(['build', ...range]);
+  assert.equal(build.code, 3);
+  assert.deepEqual([build.summary.counts.missing, build.summary.counts.notListed], [3, 0]);
+  const compare = await run(['compare', ...range]);
+  assert.equal(compare.code, 1);
+  assert.deepEqual(compare.summary.units.map(u => u.class), ['gap', 'gap', 'gap']);
+});
+
+test('F1a-2 listing: download reads the 1m manifest as evidence; a present but invalid manifest exits 1 before any request', async () => {
+  const w = workspace(), published = {};
+  publish(published, 'BTC', '2024-06', rows('2024-06'));
+  fs.mkdirSync(path.join(w.dir, 'results'), { recursive: true });
+  fs.writeFileSync(path.join(w.dir, 'results', 'manifest-f1-1m.json'), '{"entries":');
+  const net = vision(published);
+  const download = await run(['download', '--symbols', 'BTC', '--from', '2024-06', '--to', '2024-06', ...w.args], net);
+  assert.equal(download.code, 1);
+  assert.match(download.summary.error, /manifest/);
+  assert.deepEqual(net.calls, []);
+  assert.ok(!download.out.includes(w.dir));
+});
+
+test('F1a-2 listing: a manifest entry proves an earlier source exists after its zip is gone (download, build and compare with the reference: gap, exit 3)', async () => {
+  const w = workspace(), published = {};
+  const april = publish(published, 'BTC', '2024-04', rows('2024-04'));
+  assert.equal((await run(['download', '--symbols', 'BTC', '--from', '2024-04', '--to', '2024-04', ...w.args], vision(published))).code, 0);
+  assert.equal((await run(['build', '--symbols', 'BTC', '--from', '2024-04', '--to', '2024-04', ...w.args])).code, 0);
+  fs.rmSync(path.dirname(versionFile(w, april)), { recursive: true });
+  delete published[april.file]; delete published[april.checksumFile];
+  publish(published, 'BTC', '2024-06', rows('2024-06'));
+  const download = await run(['download', '--symbols', 'BTC', '--from', '2021-10', '--to', '2024-06', ...w.args], vision(published));
+  assert.equal(download.code, 3);
+  assert.deepEqual([download.summary.notListed.BTCUSDT.length, download.summary.gaps], [30, [`${BTC_MONTHLY}/BTCUSDT-1m-2024-04.zip`, `${BTC_MONTHLY}/BTCUSDT-1m-2024-05.zip`]]);
+  const range = ['--symbols', 'BTC', '--from', '2024-05', '--to', '2024-06', ...w.args];
+  assert.equal((await run(['build', ...range])).code, 3);
+  const compare = await run(['compare', ...range]);
+  assert.equal(compare.code, 3);
+  assert.deepEqual(classes(compare.summary), [['BTCUSDT', '2024-05', 'gap'], ['BTCUSDT', '2024-06', 'matched']]);
 });

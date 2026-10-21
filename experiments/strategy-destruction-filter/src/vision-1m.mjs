@@ -11,7 +11,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { planUnits, visionInstrument, parseChecksum, MAX_MEMBER_BYTES, VISION_SYMBOLS } from './vision-source.mjs';
-import { storeSource, persistChecksum, recordMissing, localVersions, buildStore, verifyStore, compareStore, readManifest } from './f1-1m-store.mjs';
+import { storeSource, persistChecksum, recordMissing, localVersions, notListedSources, buildStore, verifyStore, compareStore, readManifest } from './f1-1m-store.mjs';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const VISION_ORIGIN = 'https://data.binance.vision';
@@ -111,14 +111,18 @@ async function get(file, kind, { fetch: fetchImpl, sleep }) {
   throw new Error(`${file}: ${last} after ${ATTEMPTS} attempts`);
 }
 
-async function download({ symbols, from, to, zipRoot }, guard, deps) {
+async function download({ symbols, from, to, zipRoot, manifestPath }, guard, deps) {
+  // The 1m manifest is listing evidence, read without the lock: an absent file has no entries; an unreadable or
+  // invalid one stops the run before any request (never a silent "no evidence").
+  let entries;
+  try { entries = readManifest(manifestPath).entries; }
+  catch (error) { throw new Error(`the 1m manifest (listing evidence) cannot be read: ${error.code ?? error.message}`); }
   const counts = { expected: 0, downloaded: 0, skipped: 0, verified: 0, gaps: 0, notListed: 0, failed: 0 };
   const gaps = [], notListed = {}, firstFiles = {}, repaired = [], failures = [];
   for (const symbol of symbols) {
     const contract = VISION_SYMBOLS[symbol];
     const sources = [...new Map(planUnits(symbol, { from, to }).flatMap(u => u.sources).map(s => [s.file, s])).values()];
-    const misses = [];
-    let found = false;
+    const misses = [], fetched = new Set();
     for (const source of sources) {
       counts.expected++;
       guard.check(source.file);
@@ -127,11 +131,11 @@ async function download({ symbols, from, to, zipRoot }, guard, deps) {
         const checksum = await get(source.checksumFile, 'checksum', deps);
         if (checksum.status === 404) {
           const zip = await get(source.file, 'zip', deps);
-          if (zip.status === 404) { recordMissing(zipRoot, source); misses.push({ source, beforeFirst: !found }); continue; }
-          found = true;
+          if (zip.status === 404) { recordMissing(zipRoot, source); misses.push(source); continue; }
+          fetched.add(source.file);
           throw new Error(`${source.file}: CHECKSUM 404 but the zip exists`);
         }
-        found = true;
+        fetched.add(source.file);
         firstFiles[contract] ??= source.file;
         const text = checksum.bytes.toString('latin1');
         const sha = parseChecksum(text, source.zipName);
@@ -152,9 +156,10 @@ async function download({ symbols, from, to, zipRoot }, guard, deps) {
         failures.push(error.message.startsWith(source.file) ? error.message : `${source.file}: ${error.message}`);
       }
     }
-    // D6: misses before the first existing file are not_listed; if no file exists at all, every miss is a gap.
-    for (const { source, beforeFirst } of misses) {
-      if (found && beforeFirst) { (notListed[contract] ??= []).push(new Date(source.startMs).toISOString().slice(0, 7)); counts.notListed++; }
+    // Listing rule (D6 as amended 2026-10-21): evidence over the whole F1a range, not only the requested months.
+    const listing = notListedSources(symbol, { zipRoot, entries, fetched });
+    for (const source of misses) {
+      if (listing.has(source.file)) { (notListed[contract] ??= []).push(new Date(source.startMs).toISOString().slice(0, 7)); counts.notListed++; }
       else { gaps.push(source.file); counts.gaps++; }
     }
   }

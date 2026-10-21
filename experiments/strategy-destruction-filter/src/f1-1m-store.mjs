@@ -84,6 +84,25 @@ export function recordMissing(zipRoot, source) {
   if (!fs.existsSync(file)) writeOnce(file, Buffer.from('404 on the zip and its CHECKSUM\n'), 0o644);
 }
 const recordedMissing = (zipRoot, source) => fs.existsSync(missingMarker(zipRoot, source));
+// The listing rule (docs/f1/f1a-2-contract.md, amendment 2026-10-21), the one implementation used by download, build
+// and compare. Over every source of the instrument in the F1a range, in time order, a missing source is not_listed
+// only if (a) it and every earlier source have a recorded 404, (b) none of them exists (local version, manifest entry,
+// 200 in this run) and (c) a later source exists. A source of a unit with any present source is never not_listed.
+// Evidence outside the requested months counts; missing evidence never counts. Returns the not_listed source files.
+export function notListedSources(symbol, { zipRoot, entries = [], fetched = new Set() }) {
+  const units = planUnits(symbol);
+  const sources = [...new Map(units.flatMap(u => u.sources).map(s => [s.file, s])).values()];
+  const inManifest = new Set(entries.flatMap(e => e.sources.map(s => s.file)));
+  const present = new Set(sources.filter(s => fetched.has(s.file) || inManifest.has(s.file) || localVersions(zipRoot, s).length).map(s => s.file));
+  const result = new Set();
+  if (!present.size) return result; // (c): no file of the instrument exists, so every miss is a gap
+  for (const s of sources) {
+    if (present.has(s.file) || !recordedMissing(zipRoot, s)) break; // (a) or (b) fails here and for every later source
+    result.add(s.file);
+  }
+  for (const u of units) if (u.sources.some(s => present.has(s.file))) for (const s of u.sources) result.delete(s.file);
+  return result;
+}
 function readVerifiedSource(zipRoot, source, sha) {
   const zipFile = path.join(versionDir(zipRoot, source, sha), source.zipName);
   let checksum;
@@ -176,8 +195,9 @@ function buildUnit(unit, zipRoot, parsedCache) {
 }
 
 // Builds every planned unit of the symbols and months. Fail closed per unit; a guard (memory) failure or a lock
-// conflict aborts the run. status: ok | incomplete (a source file missing) | failed (anything else).
-export function buildStore({ symbols, from, to, zipRoot, cacheDir, manifestPath, guard = { check() {} } }) {
+// conflict aborts the run. status: ok | incomplete (a source file missing) | failed (anything else). A missing unit is
+// not_listed when all its sources are (listing rule); listingEntries adds manifest evidence (compare's reference).
+export function buildStore({ symbols, from, to, zipRoot, cacheDir, manifestPath, guard = { check() {} }, listingEntries = [] }) {
   const results = [];
   let release, error = null, changed = false;
   const check = label => { try { guard.check(label); } catch (guardError) { throw Object.assign(guardError, { guard: true }); } };
@@ -186,7 +206,8 @@ export function buildStore({ symbols, from, to, zipRoot, cacheDir, manifestPath,
     release = acquireLock(manifestPath);
     const entries = readManifest(manifestPath).entries;
     for (const [symbol, units] of plans) {
-      let parsedCache = new Map(), seenSource = false;
+      const notListed = notListedSources(symbol, { zipRoot, entries: [...entries, ...listingEntries] });
+      let parsedCache = new Map();
       for (const unit of units) {
         check(`${unit.instrument.contract} ${unit.dataStart}`);
         let result;
@@ -215,8 +236,7 @@ export function buildStore({ symbols, from, to, zipRoot, cacheDir, manifestPath,
           if (unitError.guard) throw unitError;
           result = { status: 'failed', reason: unitError.message };
         }
-        if (result.status !== 'missing') seenSource = true;
-        else if (!seenSource && result.files.every(f => f.recorded404)) result = { ...result, status: 'not_listed' };
+        if (result.status === 'missing' && unit.sources.every(s => notListed.has(s.file))) result = { ...result, status: 'not_listed' };
         results.push({ symbol, unit, ...result, bytes: undefined });
       }
     }
@@ -310,16 +330,17 @@ export function verifyStore({ zipRoot, cacheDir, manifestPath, guard = { check()
 // Offline: rebuild the requested units into a temp store and compare with the reference manifest, read-only. Every
 // in-scope unit gets one class: matched; mismatched (the rebuilt entry differs, or a reference entry rebuilds to no
 // rows); extra (rebuilt, not in the reference); missing_input (a source missing locally without recorded 404
-// evidence, or the unit is in the reference); gap (not in the reference, a source 404 after the first file);
-// not_listed (not in the reference, 404 before the first file, D6); empty (not in the reference, sources present, no
-// rows); failed (the unit's rebuild failed). Status: failed on any mismatched, extra, missing_input or failed unit, an
-// aborted rebuild (memory guard) or zero compared entries; otherwise incomplete on any gap; otherwise ok.
+// evidence, or the unit is in the reference); gap (not in the reference, recorded 404s the listing rule does not make
+// not_listed); not_listed (not in the reference, listing rule with the reference manifest as evidence); empty (not in
+// the reference, sources present, no rows); failed (the unit's rebuild failed). Status: failed on any mismatched,
+// extra, missing_input or failed unit, an aborted rebuild (memory guard) or zero compared entries; otherwise
+// incomplete on any gap; otherwise ok.
 export function compareStore({ symbols, from, to, zipRoot, manifestPath, guard = { check() {} } }) {
   let reference;
   try { reference = readManifest(manifestPath).entries; } catch (error) { return { command: 'compare', status: 'failed', error: error.message, counts: { compared: 0 } }; }
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'f1-1m-compare-'));
   try {
-    const rebuilt = buildStore({ symbols, from, to, zipRoot, cacheDir: path.join(dir, 'cache'), manifestPath: path.join(dir, 'manifest.json'), guard });
+    const rebuilt = buildStore({ symbols, from, to, zipRoot, cacheDir: path.join(dir, 'cache'), manifestPath: path.join(dir, 'manifest.json'), guard, listingEntries: reference });
     const id = e => canonicalJson({ contract: e.contract, period: e.period, dataStart: e.dataStart, dataEnd: e.dataEnd });
     const planned = symbols.flatMap(symbol => planUnits(symbol, { from, to })).map(u => id(unitId(u)));
     if (rebuilt.error) return { command: 'compare', status: 'failed', error: rebuilt.error, counts: { units: planned.length, processed: rebuilt.counts.units, compared: 0 } };

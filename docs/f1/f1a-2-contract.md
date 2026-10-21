@@ -66,3 +66,40 @@ Approved: modules, paths, header unit strings, manifest entry fields, tests, com
 7. TDD evidence: every code commit body states the new tests' red count before the implementation and green count after, plus the full-suite total.
 8. Push earlier: push after commit 9 (measurement gate; results only in the commit body; do not commit results/manifest-f1-1m.json or any snapshot then) and tell Tomas to open the PR. The full download, build, manifest and docs/f1/f1a-2-vision-1m.md come only after the Codex review is clean, built from a clean store (remove your own earlier outputs first).
 9. Final report additionally: total disk usage of the zips and of the snapshots on the PC.
+
+## Amendment 2026-10-21, review round 2 (listing rule)
+
+Binding from 2026-10-21. It replaces the selection-relative not_listed rule (a 404 before the first file found in the same invocation) after the Codex review of 9a996e9 on PR #2, and makes "months before the first file stay not_listed" (plan approval point 6) and the exit code 3 (point 4) depend on recorded evidence. Rule and evidence sources, verbatim as Tomas sent them:
+
+- A missing source (404 recorded on both the zip and its CHECKSUM) is not_listed only if (a), (b) and (c) are ALL supported by recorded evidence; otherwise it is a gap:
+  (a) it and every earlier source of the same instrument from the F1a range start (2021-10-18) have recorded 404 markers;
+  (b) no earlier source exists: no local version, no manifest entry using it, no 200 in this run;
+  (c) at least one later source exists: a local version, a manifest entry, or a 200 in this run.
+- Evidence outside --from/--to counts. Missing or unreadable evidence never counts toward not_listed.
+- A gap may become not_listed only when (a)-(c) are fully supported.
+- A unit is not_listed only if every one of its sources is not_listed. A unit with any present source is never not_listed: its missing sources are gaps, the unit status is missing, and the run exits 3.
+- Implement the rule once and use it in download, build and compare.
+  - compare uses the reference manifest as manifest evidence, because its rebuild manifest is temporary. Keep the round-1 rules: missing_input without 404 evidence -> exit 1; a reference entry without a rebuilt twin -> exit 1.
+  - download reads the manifest read-only, without the lock. An absent file means no entries. A present but unreadable or invalid file means exit 1 with a clear message.
+
+Clarifications 1-3 of Tomas's answer "A" (verbatim):
+
+1. Rule wording
+   - not_listed requires (a), (b) and (c) all supported by recorded evidence.
+   - Missing or unreadable evidence never counts toward not_listed.
+   - A result that is a gap today may become not_listed only when (a)-(c) are fully supported, as in your example.
+   - Add test 4b: after test 3, a single-month download of 2024-05 gives not_listed and exit 0.
+   - Add a test: the same single-month download in a store WITHOUT the earlier 404 markers gives a gap and exit 3.
+
+2. HYPE / contract point 6
+   - Your reading is right: "months before the first file stay not_listed" applies only when "before the first file" is proven by (a)-(c). A selection-relative first file is exactly finding 2.
+   - Add a test: HYPE --from 2025-01 without evidence for 2021-10..2024-12 gives 2025-01..04 as gaps and exit 3.
+
+3. Evidence sources
+   - compare uses the reference manifest, because its rebuild manifest is temporary.
+   - download reads the manifest read-only, without the lock:
+     - absent file = no entries;
+     - present but unreadable or invalid = exit 1 with a clear message, never a silent "no evidence".
+   - Add a test for the invalid-manifest case.
+
+"Your example" in point 1: after a download of 2021-10..2024-06 in which every month up to 2024-05 answered 404 on both files and 2024-06 exists, a download of 2024-05 alone was a gap (exit 3) under the old rule and is not_listed (exit 0) under this one.
