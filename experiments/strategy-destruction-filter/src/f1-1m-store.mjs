@@ -7,12 +7,13 @@ import os from 'node:os';
 import path from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
 import { encodeSnapshot, decodeSnapshot, canonicalJson, SCHEMA_VERSION } from './f1-1m-format.mjs';
-import { verifyZip, parseChecksum, readZipMember, parseKlines, planUnits, assembleUnit, unitCoverage } from './vision-source.mjs';
+import { verifyZip, parseChecksum, readZipMember, parseKlines, planUnits, assembleUnit, unitCoverage, visionSource, QUARANTINE_RULES, VISION_SYMBOLS } from './vision-source.mjs';
 
 export const MANIFEST_KIND = 'binance_vision_kline_1m_manifest';
 export const SOURCE = 'binance-vision-archive';
-const ENTRY_KEYS = ['bytes', 'contract', 'dataEnd', 'dataStart', 'exchange', 'firstOpenTime', 'lastOpenTime', 'market', 'missingMinutes', 'missingRanges',
-  'period', 'rowCount', 'schemaVersion', 'sha256', 'source', 'sources'];
+const ENTRY_KEYS = ['bytes', 'contract', 'dataEnd', 'dataStart', 'exchange', 'filledRanges', 'firstOpenTime', 'lastOpenTime', 'market', 'missingMinutes', 'missingRanges',
+  'period', 'quarantinedRows', 'rowCount', 'schemaVersion', 'sha256', 'source', 'sources'];
+const MINUTE_MS = 60000, DAY_MS = 86400000;
 const ISO = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.000Z$/;
 const HEX = /^[0-9a-f]{64}$/;
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -140,6 +141,63 @@ function checkEntry(e) {
   if (e.source !== SOURCE) fail(`source must be ${SOURCE}`);
   if (!Array.isArray(e.sources) || !e.sources.length || !e.sources.every(s => s && Object.keys(s).sort().join() === 'file,sha256'
     && typeof s.file === 'string' && /^data\/[A-Za-z0-9_./-]+\.zip$/.test(s.file) && !s.file.includes('..') && HEX.test(s.sha256))) fail('sources must be canonical Vision paths with sha256');
+  // Round 5 fields and their consistency with the unit (plan approval point 7). These are consistency checks, not
+  // proof: compare, which rebuilds from the sources, stays the authority.
+  const unit = plannedUnit(e);
+  if (!unit) fail('not a planned unit (contract, period, dataStart, dataEnd)');
+  const missing = checkedRanges(e.missingRanges, unit);
+  if (!missing) fail('missingRanges must be sorted, maximal, non-empty, minute-aligned ranges inside the unit');
+  if (rangeMinutes(missing) !== e.missingMinutes || e.rowCount + e.missingMinutes !== (unit.endMs - unit.startMs) / MINUTE_MS) fail('missing minutes disagree with missingRanges, rowCount or the unit');
+  const filled = checkedRanges(e.filledRanges, unit);
+  if (!filled) fail('filledRanges must be sorted, maximal, non-empty, minute-aligned ranges inside the unit');
+  if (filled.some(([s, t]) => missing.some(([a, b]) => s < b && a < t))) fail('filledRanges overlap missingRanges');
+  const files = new Set(e.sources.map(s => s.file));
+  if (!Array.isArray(e.quarantinedRows)) fail('quarantinedRows must be a list');
+  e.quarantinedRows.forEach((q, i) => {
+    if (!q || typeof q !== 'object' || Object.keys(q).sort().join() !== 'file,openTime,rule' || !files.has(q.file) || !isMinute(q.openTime) || !QUARANTINE_RULES.includes(q.rule)) {
+      fail('quarantinedRows records need exactly file (one of the sources), openTime (ISO on a whole minute) and a known rule');
+    }
+    const t = Date.parse(q.openTime);
+    if (!missing.some(([a, b]) => a <= t && t < b)) fail('a quarantined minute must lie in missingRanges');
+    const p = e.quarantinedRows[i - 1];
+    if (p && (order(p.openTime, q.openTime) || order(p.file, q.file)) >= 0) fail('quarantinedRows must be sorted by openTime, then file, without duplicates');
+  });
+  const base = new Set(unit.sources.map(s => s.file));
+  if (![...base].every(f => files.has(f))) fail('sources must include the base sources of the unit');
+  const fills = e.sources.filter(s => !base.has(s.file));
+  if (unit.sources[0].kind !== 'monthly') {
+    if (fills.length || filled.length) fail('a unit built from base dailies has no fill sources or filledRanges');
+    return;
+  }
+  const touches = (ranges, d) => ranges.some(([a, b]) => d < b && d + DAY_MS > a);
+  const dayOf = new Map();
+  for (let d = unit.startMs; d < unit.endMs; d += DAY_MS) dayOf.set(visionSource(unit.instrument, 'daily', d).file, d);
+  for (const s of fills) if (!dayOf.has(s.file) || !touches([...missing, ...filled], dayOf.get(s.file))) fail('a fill source must be the daily of a unit day without a monthly candle');
+  for (const [file, d] of dayOf) if (touches(filled, d) && !files.has(file)) fail('a filled day needs its daily in sources');
+}
+const isMinute = t => typeof t === 'string' && ISO.test(t) && new Date(Date.parse(t)).toISOString() === t && Date.parse(t) % MINUTE_MS === 0;
+// Sorted, maximal (never adjacent), non-empty, minute-aligned [start, end) ranges inside the unit, as [startMs, endMs]
+// pairs; null if the list is anything else.
+function checkedRanges(list, unit) {
+  if (!Array.isArray(list)) return null;
+  const out = [];
+  for (const r of list) {
+    if (!r || typeof r !== 'object' || Object.keys(r).sort().join() !== 'end,start' || !isMinute(r.start) || !isMinute(r.end)) return null;
+    const a = Date.parse(r.start), b = Date.parse(r.end);
+    if (a >= b || a < unit.startMs || b > unit.endMs || (out.length && a <= out.at(-1)[1])) return null;
+    out.push([a, b]);
+  }
+  return out;
+}
+const rangeMinutes = ranges => ranges.reduce((n, [a, b]) => n + (b - a) / MINUTE_MS, 0);
+// The planned unit an entry claims to be (instrument, period and bounds), with its base sources; null if none.
+function plannedUnit(e) {
+  const symbol = Object.keys(VISION_SYMBOLS).find(k => VISION_SYMBOLS[k] === e.contract);
+  if (!symbol) return null;
+  let units;
+  try { units = planUnits(symbol, { from: e.dataStart.slice(0, 7), to: e.dataStart.slice(0, 7) }); } catch { return null; }
+  return units.find(u => u.instrument.exchange === e.exchange && u.instrument.market === e.market && u.period === e.period
+    && u.dataStart === e.dataStart && u.dataEnd === e.dataEnd) ?? null;
 }
 export function readManifest(file) {
   let text;
@@ -197,7 +255,7 @@ function buildUnit(unit, zipRoot, parsedCache) {
   const iso = t => new Date(t).toISOString();
   const entry = { ...unit.instrument, period: unit.period, dataStart: unit.dataStart, dataEnd: unit.dataEnd, schemaVersion: SCHEMA_VERSION, sha256: sha256(bytes),
     bytes: bytes.length, rowCount, firstOpenTime: iso(columns.open_time[0]), lastOpenTime: iso(columns.open_time[rowCount - 1]), missingMinutes: coverage.missingMinutes,
-    missingRanges: coverage.missingRanges, source: SOURCE, sources: [...sources].sort((a, b) => order(a.file, b.file)) };
+    missingRanges: coverage.missingRanges, quarantinedRows: [], filledRanges: [], source: SOURCE, sources: [...sources].sort((a, b) => order(a.file, b.file)) };
   return { status: 'ok', entry, bytes, coverage };
 }
 

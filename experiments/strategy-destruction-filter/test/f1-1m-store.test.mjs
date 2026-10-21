@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { storeSource, recordMissing, localVersions, readManifest, buildStore, verifyStore, compareStore, snapshotPath } from '../src/f1-1m-store.mjs';
-import { planUnits } from '../src/vision-source.mjs';
+import { planUnits, visionSource } from '../src/vision-source.mjs';
 import { decodeSnapshot } from '../src/f1-1m-format.mjs';
 import { makeZip, klineCsv, klineRow, minutes, checksumText, sha256, KLINE_HEADER } from '../test-support/vision-fixtures.mjs';
 
@@ -26,8 +26,8 @@ const build = (s, options = {}) => buildStore({ zipRoot: s.zipRoot, cacheDir: s.
 const files = dir => { try { return fs.readdirSync(dir).sort(); } catch { return []; } };
 const bytesOf = s => ({ manifest: fs.readFileSync(s.manifestPath, 'utf8'), snapshots: files(s.cacheDir).map(f => [f, sha256(fs.readFileSync(path.join(s.cacheDir, f)))]) });
 const zipPathOf = (s, source, sha) => path.join(s.zipRoot, path.dirname(source.file), sha, source.zipName);
-const ENTRY_KEYS = ['bytes', 'contract', 'dataEnd', 'dataStart', 'exchange', 'firstOpenTime', 'lastOpenTime', 'market', 'missingMinutes', 'missingRanges',
-  'period', 'rowCount', 'schemaVersion', 'sha256', 'source', 'sources'];
+const ENTRY_KEYS = ['bytes', 'contract', 'dataEnd', 'dataStart', 'exchange', 'filledRanges', 'firstOpenTime', 'lastOpenTime', 'market', 'missingMinutes', 'missingRanges',
+  'period', 'quarantinedRows', 'rowCount', 'schemaVersion', 'sha256', 'source', 'sources'];
 
 test('F1a-2 store: a source is stored only after its CHECKSUM matches, read-only under <Vision dir>/<sha256>/, never overwritten', () => {
   const s = store(), source = sourceOf('BTC', '2024-01');
@@ -87,6 +87,7 @@ test('F1a-2 store: build writes one snapshot per unit and a canonical, sorted ma
     dataStart: '2024-01-01T00:00:00.000Z', dataEnd: '2024-02-01T00:00:00.000Z', schemaVersion: 1, sha256: undefined, bytes: undefined, rowCount: 4,
     firstOpenTime: '2024-01-03T00:00:00.000Z', lastOpenTime: '2024-01-03T00:03:00.000Z', missingMinutes: 44636,
     missingRanges: [{ start: '2024-01-01T00:00:00.000Z', end: '2024-01-03T00:00:00.000Z' }, { start: '2024-01-03T00:04:00.000Z', end: '2024-02-01T00:00:00.000Z' }],
+    quarantinedRows: [], filledRanges: [],
     source: 'binance-vision-archive', sources: [{ file: 'data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2024-01.zip', sha256: a.sha256 }] });
   const bytes = fs.readFileSync(snapshotPath(s.cacheDir, entry.sha256));
   assert.equal(sha256(bytes), entry.sha256);
@@ -303,13 +304,17 @@ test('F1a-2 store: compare rebuilds offline and fails on missing, extra or misma
   assert.equal(ok.counts.compared, 2);
   const edited = JSON.parse(reference);
   const write = manifest => { fs.writeFileSync(s.manifestPath, JSON.stringify(manifest, null, 2) + '\n'); };
-  write({ ...edited, entries: [{ ...edited.entries[0], missingMinutes: edited.entries[0].missingMinutes - 1 }, edited.entries[1]] });
+  write({ ...edited, entries: [{ ...edited.entries[0], bytes: edited.entries[0].bytes + 1 }, edited.entries[1]] });
   assert.match(compare().mismatches.join('\n'), /2024-01/);
   write({ ...edited, entries: [edited.entries[0]] });
   const extra = compare();
   assert.equal(extra.status, 'failed');
   assert.equal(extra.extra.length, 1);
-  write({ ...edited, entries: [...edited.entries, { ...edited.entries[1], dataStart: '2024-03-01T00:00:00.000Z', dataEnd: '2024-04-01T00:00:00.000Z' }] });
+  // A consistent reference entry for March (January's entry moved by 60 days) whose input is missing locally.
+  const shift = t => new Date(Date.parse(t) + 60 * 86400000).toISOString(), first = edited.entries[0];
+  const march = { ...first, dataStart: '2024-03-01T00:00:00.000Z', dataEnd: '2024-04-01T00:00:00.000Z', firstOpenTime: shift(first.firstOpenTime), lastOpenTime: shift(first.lastOpenTime),
+    missingRanges: first.missingRanges.map(r => ({ start: shift(r.start), end: shift(r.end) })), sources: [{ ...first.sources[0], file: first.sources[0].file.replace('2024-01', '2024-03') }] };
+  write({ ...edited, entries: [...edited.entries, march] });
   const missing = compare({ to: '2024-03' });
   assert.equal(missing.status, 'failed');
   assert.ok(missing.missing.length === 1 && missing.missingInputs.length === 1);
@@ -348,4 +353,96 @@ test('F1a-2 store: failures and summaries for holdout units carry counts, times 
   const ok = store();
   put(ok, 'SOL', '2026-02', fourRows('2026-02'));
   assert.doesNotMatch(JSON.stringify(build(ok, { symbols: ['SOL'], from: '2026-02', to: '2026-02' })), /42331\.9|42335\.8|42289\.6|289\.641|175\.211|12256155\./);
+});
+
+// Round 5 entry schema (contract amendment round 5, Q3 and F6; plan approval point 7).
+const writeEntries = (s, entries) => fs.writeFileSync(s.manifestPath, JSON.stringify({ entries, kind: 'binance_vision_kline_1m_manifest', schemaVersion: 1 }, null, 2) + '\n');
+const BTC_USDM = { exchange: 'binance', market: 'linear_perpetual', contract: 'BTCUSDT' };
+const dailyOf = day => visionSource(BTC_USDM, 'daily', Date.parse(`${day}T00:00:00.000Z`)).file;
+function builtJanuary() {
+  const s = store();
+  put(s, 'BTC', '2024-01', fourRows('2024-01')); // 2024-01-03T00:00..00:03
+  assert.equal(build(s, { symbols: ['BTC'], from: '2024-01', to: '2024-01' }).status, 'ok');
+  return { s, entry: readManifest(s.manifestPath).entries[0] };
+}
+const rejects = (s, entry) => (over, pattern) => {
+  writeEntries(s, [{ ...entry, ...over }]);
+  assert.throws(() => readManifest(s.manifestPath), pattern, JSON.stringify(over));
+};
+
+test('F1a-2 r5 store: entries carry quarantinedRows and filledRanges; checkEntry rejects bad keys, foreign files, off-minute, out-of-unit, unsorted or duplicate records, unknown rules, and non-maximal, overlapping or missing-range ranges', () => {
+  const { s, entry } = builtJanuary();
+  assert.deepEqual([entry.quarantinedRows, entry.filledRanges], [[], []]);
+  const monthly = entry.sources[0].file, day3 = dailyOf('2024-01-03');
+  const q = (openTime, rule = 'volume must be >= 0', file = monthly) => ({ file, openTime, rule });
+  const valid = { ...entry, quarantinedRows: [q('2024-01-01T00:00:00.000Z'), q('2024-01-03T00:05:00.000Z', 'high below max(open, close)', day3), q('2024-01-03T00:05:00.000Z')],
+    filledRanges: [{ start: '2024-01-03T00:00:00.000Z', end: '2024-01-03T00:02:00.000Z' }], sources: [{ file: day3, sha256: 'a'.repeat(64) }, ...entry.sources] };
+  writeEntries(s, [valid]);
+  assert.deepEqual(readManifest(s.manifestPath).entries, [valid]);
+  const reject = rejects(s, valid);
+  for (const rows of [{}, [{ ...q('2024-01-01T00:00:00.000Z'), value: 1 }], [q('2024-01-01T00:00:00.000Z', undefined, dailyOf('2024-01-05'))],
+    [q('2024-01-01T00:00:30.000Z')], [q('2024-01-01T00:00:00Z')], [q('2024-02-01T00:00:00.000Z')], [q('2024-01-03T00:01:00.000Z')],
+    [q('2024-01-01T00:00:00.000Z', 'volume must be > 0')], [q('2024-01-02T00:00:00.000Z'), q('2024-01-01T00:00:00.000Z')],
+    [q('2024-01-01T00:00:00.000Z'), q('2024-01-01T00:00:00.000Z')], [q('2024-01-03T00:05:00.000Z'), q('2024-01-03T00:05:00.000Z', undefined, day3)]]) {
+    reject({ quarantinedRows: rows }, /quarantinedRows|quarantined minute/);
+  }
+  const r = (start, end) => ({ start: `2024-01-03T${start}:00.000Z`, end: `2024-01-03T${end}:00.000Z` });
+  for (const ranges of [{}, [{ ...r('00:00', '00:01'), minutes: 1 }], [{ start: '2024-01-03T00:00:30.000Z', end: '2024-01-03T00:01:00.000Z' }], [r('00:01', '00:01')],
+    [r('00:01', '00:00')], [r('00:00', '00:01'), r('00:01', '00:02')], [r('00:02', '00:03'), r('00:00', '00:01')], [r('00:00', '00:02'), r('00:01', '00:03')],
+    [r('00:03', '00:05')], [{ start: '2024-01-31T23:59:00.000Z', end: '2024-02-01T00:01:00.000Z' }]]) {
+    reject({ filledRanges: ranges }, /filledRanges/);
+  }
+});
+
+test('F1a-2 r5 store: a manifest with the old key set is rejected by readManifest, build and verify', () => {
+  const { s, entry } = builtJanuary();
+  const { quarantinedRows, filledRanges, ...old } = entry;
+  void quarantinedRows; void filledRanges;
+  writeEntries(s, [old]);
+  assert.throws(() => readManifest(s.manifestPath), /keys must be exactly/);
+  const rebuilt = build(s, { symbols: ['BTC'], from: '2024-01', to: '2024-01' });
+  assert.equal(rebuilt.status, 'failed');
+  assert.match(rebuilt.error, /keys must be exactly/);
+  const verified = verifyStore(s);
+  assert.equal(verified.status, 'failed');
+  assert.match(verified.failures.join('\n'), /keys must be exactly/);
+});
+
+test('F1a-2 r5 store: checkEntry consistency: planned unit, missingRanges sorted, maximal, inside the unit and equal to missingMinutes, rowCount + missingMinutes = unit minutes, fill dailies on lacking days, no fills for base dailies', () => {
+  const { s, entry } = builtJanuary();
+  const reject = rejects(s, entry);
+  const m = (start, end) => ({ start: `${start}:00.000Z`, end: `${end}:00.000Z` });
+  reject({ missingRanges: [m('2024-01-03T00:04', '2024-02-01T00:00'), m('2024-01-01T00:00', '2024-01-03T00:00')] }, /missingRanges/);
+  reject({ missingRanges: [m('2024-01-01T00:00', '2024-01-02T00:00'), m('2024-01-02T00:00', '2024-01-03T00:00'), m('2024-01-03T00:04', '2024-02-01T00:00')] }, /missingRanges/);
+  reject({ missingRanges: [{ start: '2024-01-01T00:00:30.000Z', end: '2024-01-03T00:00:00.000Z' }, m('2024-01-03T00:04', '2024-02-01T00:00')] }, /missingRanges/);
+  reject({ missingRanges: [m('2023-12-31T23:59', '2024-01-03T00:00'), m('2024-01-03T00:04', '2024-02-01T00:00')] }, /missingRanges/);
+  reject({ missingRanges: [m('2024-01-01T00:00', '2024-01-01T00:00'), m('2024-01-01T00:01', '2024-01-03T00:00'), m('2024-01-03T00:04', '2024-02-01T00:00')] }, /missingRanges/);
+  reject({ missingMinutes: entry.missingMinutes - 1 }, /missing minutes/);
+  reject({ rowCount: entry.rowCount + 1 }, /missing minutes/);
+  reject({ dataEnd: '2024-01-31T00:00:00.000Z' }, /planned unit/);
+  reject({ period: 'holdout' }, /planned unit/);
+  reject({ contract: 'PEPEUSDT' }, /planned unit/);
+  reject({ sources: [{ file: entry.sources[0].file.replace('2024-01', '2024-02'), sha256: entry.sources[0].sha256 }] }, /base source/);
+  // A nearly complete January: only 2024-01-01 lacks minutes, so only that day may carry a fill daily.
+  const dense = { ...entry, rowCount: 43200, missingMinutes: 1440, missingRanges: [m('2024-01-01T00:00', '2024-01-02T00:00')], firstOpenTime: '2024-01-02T00:00:00.000Z', lastOpenTime: '2024-01-31T23:59:00.000Z' };
+  const withDaily = (...days) => [...days.map(d => ({ file: dailyOf(d), sha256: 'b'.repeat(64) })), entry.sources[0]];
+  writeEntries(s, [{ ...dense, sources: withDaily('2024-01-01') }]);
+  assert.equal(readManifest(s.manifestPath).entries.length, 1);
+  const denseReject = rejects(s, dense);
+  denseReject({ sources: withDaily('2024-01-05') }, /fill source/);
+  denseReject({ sources: [{ file: dailyOf('2024-02-01'), sha256: 'b'.repeat(64) }, entry.sources[0]] }, /fill source/);
+  denseReject({ sources: [{ file: dailyOf('2024-01-01').replaceAll('BTCUSDT', 'ETHUSDT'), sha256: 'b'.repeat(64) }, entry.sources[0]] }, /fill source/);
+  denseReject({ filledRanges: [m('2024-01-05T00:00', '2024-01-05T00:10')] }, /filled day/);
+  writeEntries(s, [{ ...dense, filledRanges: [m('2024-01-05T00:00', '2024-01-05T00:10')], sources: withDaily('2024-01-01', '2024-01-05') }]);
+  assert.equal(readManifest(s.manifestPath).entries.length, 1);
+  // 2026-10 is built from its 16 base dailies: missing minutes, but never a fill source or filledRanges.
+  const days = planUnits('BTC', { from: '2026-10', to: '2026-10' })[0].sources.map(src => ({ file: src.file, sha256: 'c'.repeat(64) }));
+  const daily = { ...entry, period: 'holdout', dataStart: '2026-10-01T00:00:00.000Z', dataEnd: '2026-10-17T00:00:00.000Z', firstOpenTime: '2026-10-01T00:00:00.000Z',
+    lastOpenTime: '2026-10-16T23:59:00.000Z', rowCount: 16 * 1440 - 10, missingMinutes: 10, missingRanges: [m('2026-10-05T00:00', '2026-10-05T00:10')], sources: days };
+  writeEntries(s, [daily]);
+  assert.equal(readManifest(s.manifestPath).entries.length, 1);
+  const dailyReject = rejects(s, daily);
+  dailyReject({ filledRanges: [m('2026-10-01T00:00', '2026-10-01T00:01')] }, /base dailies/);
+  dailyReject({ sources: [...days, { file: dailyOf('2026-10-20'), sha256: 'c'.repeat(64) }].sort((x, y) => x.file < y.file ? -1 : 1) }, /base dailies/);
+  dailyReject({ sources: days.slice(1) }, /base source/);
 });

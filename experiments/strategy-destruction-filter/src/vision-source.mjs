@@ -67,6 +67,10 @@ export function verifyZip(zipBytes, checksumText, zipName) {
 // the row and its open time, never a price.
 export const KLINE_HEADER = 'open_time,open,high,low,close,volume,close_time,quote_volume,count,taker_buy_volume,taker_buy_quote_volume,ignore';
 export const KLINE_COLUMNS = Object.freeze(['open_time', 'open', 'high', 'low', 'close', 'volume', 'quote_volume', 'count', 'taker_buy_volume', 'taker_buy_quote_volume']);
+// The value rules a row can break without failing its file (contract amendment round 5, Q1), in the fixed order in
+// which the first broken one is recorded. The texts are part of the manifest: never reword them.
+export const QUARANTINE_RULES = Object.freeze(['volume must be >= 0', 'quote_volume must be >= 0', 'taker_buy_volume must be within 0..volume',
+  'taker_buy_quote_volume must be within 0..quote_volume', 'low must be > 0', 'low above min(open, close)', 'high below max(open, close)']);
 const KEPT = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10]; // CSV field index of each kept column; close_time (6) is checked, ignore (11) dropped
 const POW10 = Array.from({ length: 16 }, (_, k) => 10 ** k); // exact doubles
 // The value of the ASCII token buf[a, b) if it matches -?\d+(\.\d+)?, else NaN. With at most 15 digits the mantissa m
@@ -180,7 +184,14 @@ function source(instrument, kind, label, startMs, endMs) {
   const root = VISION_ROOTS[`${instrument.exchange}:${instrument.market}`];
   const base = `${instrument.contract}-1m-${label}`;
   const file = `${root}/${kind}/klines/${instrument.contract}/1m/${base}.zip`;
-  return { file, checksumFile: `${file}.CHECKSUM`, zipName: `${base}.zip`, csvName: `${base}.csv`, startMs, endMs };
+  return { file, checksumFile: `${file}.CHECKSUM`, zipName: `${base}.zip`, csvName: `${base}.csv`, kind, startMs, endMs };
+}
+const DAY_MS = 86400000;
+// The Vision source of an instrument for the UTC month ('monthly') or day ('daily') that starts at startMs.
+export function visionSource(instrument, kind, startMs) {
+  const d = new Date(startMs);
+  return kind === 'monthly' ? source(instrument, kind, iso(startMs).slice(0, 7), startMs, Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1))
+    : source(instrument, kind, iso(startMs).slice(0, 10), startMs, startMs + DAY_MS);
 }
 // Units for the inclusive source months from..to: one per instrument x calendar month, clipped to the F1a range and
 // split at the period boundary; 2026-10 is built from the daily files 01..16 only.

@@ -36,8 +36,11 @@ function plant(s, meta, openTimes, entryOver = {}) {
   const sha = sha256(bytes);
   fs.mkdirSync(s.cacheDir, { recursive: true });
   fs.writeFileSync(snapshotPath(s.cacheDir, sha), bytes);
+  // Coverage fields consistent with the entry's rowCount (the manifest checks them), so the reader's own checks are reached.
+  const missing = (ms(meta.dataEnd) - ms(meta.dataStart)) / 60000 - (entryOver.rowCount ?? n);
   const entry = { ...meta.instrument, period: meta.period, dataStart: meta.dataStart, dataEnd: meta.dataEnd, schemaVersion: 1, sha256: sha, bytes: bytes.length,
-    rowCount: n, firstOpenTime: new Date(openTimes[0]).toISOString(), lastOpenTime: new Date(openTimes.at(-1)).toISOString(), missingMinutes: 0, missingRanges: [],
+    rowCount: n, firstOpenTime: new Date(openTimes[0]).toISOString(), lastOpenTime: new Date(openTimes.at(-1)).toISOString(), missingMinutes: missing,
+    missingRanges: missing ? [{ start: meta.dataStart, end: new Date(ms(meta.dataStart) + missing * 60000).toISOString() }] : [], quarantinedRows: [], filledRanges: [],
     source: 'binance-vision-archive', sources: meta.sources, ...entryOver };
   const manifest = readManifest(s.manifestPath);
   const entries = sortEntries([...manifest.entries.filter(e => !(e.contract === entry.contract && e.dataStart === entry.dataStart && e.period === entry.period)), entry]);
