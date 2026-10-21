@@ -817,3 +817,44 @@ test('F1a-2 r5 store: unavailable fill days derived from the entry alone: monthl
   assert.deepEqual(entryDailyFill({ ...jan, period: 'holdout', dataStart: '2026-10-01T00:00:00.000Z', dataEnd: '2026-10-17T00:00:00.000Z', missingRanges: [r('2026-10-05T00:00', '2026-10-06T00:00')], filledRanges: [], sources: days }),
     { filledMinutes: 0, sources: [], unavailableAtBuild: [] });
 });
+
+// Review round 6: the first and last candle of an entry follow from its missingRanges (plan approval point 7).
+test('F1a-2 r6 store: readManifest rejects a firstOpenTime or lastOpenTime outside the unit, reversed, inside a missing range, or not the first or last present minute', () => {
+  const { s, entry } = builtJanuary(); // present 2024-01-03T00:00..00:03; missing before and after
+  assert.deepEqual([entry.firstOpenTime, entry.lastOpenTime], ['2024-01-03T00:00:00.000Z', '2024-01-03T00:03:00.000Z']);
+  const reject = rejects(s, entry), at = t => `2024-01-${t}:00.000Z`;
+  for (const [over, pattern] of [
+    [{ firstOpenTime: '2023-12-31T23:59:00.000Z' }, /firstOpenTime lies outside its unit/], [{ firstOpenTime: '2024-02-01T00:00:00.000Z' }, /firstOpenTime lies outside its unit/],
+    [{ lastOpenTime: '2024-02-01T00:00:00.000Z' }, /lastOpenTime lies outside its unit/], [{ lastOpenTime: '2023-12-31T23:59:00.000Z' }, /lastOpenTime lies outside its unit/],
+    [{ firstOpenTime: at('03T00:03'), lastOpenTime: at('03T00:00') }, /firstOpenTime must be the first present minute/],
+    [{ firstOpenTime: at('02T00:00') }, /firstOpenTime lies in a missing range/], [{ lastOpenTime: at('10T00:00') }, /lastOpenTime lies in a missing range/],
+    [{ firstOpenTime: at('03T00:01') }, /firstOpenTime must be the first present minute/], [{ lastOpenTime: at('03T00:02') }, /lastOpenTime must be the last present minute/]]) {
+    reject(over, pattern);
+  }
+  writeEntries(s, [{ ...entry, firstOpenTime: at('03T00:01') }]);
+  try { readManifest(s.manifestPath); assert.fail('expected a rejection'); }
+  catch (error) { assert.match(error.message, /^1m manifest: entry BTCUSDT research 2024-01-01T00:00:00.000Z: /); assert.doesNotMatch(error.message, /4233|4231|4228/); }
+});
+
+test('F1a-2 r6 store: readManifest accepts the first and last candle derived from missingRanges: leading (the HYPE 2025-05 shape), trailing, both, none', () => {
+  const s = store();
+  fs.mkdirSync(path.dirname(s.manifestPath), { recursive: true });
+  const m = (start, end) => ({ start: `${start}:00.000Z`, end: `${end}:00.000Z` });
+  const unit = (contract, month, days, over) => ({ bytes: 1, contract, dataEnd: '', dataStart: `${month}-01T00:00:00.000Z`, exchange: 'binance', filledRanges: [], market: 'linear_perpetual',
+    period: 'research', quarantinedRows: [], schemaVersion: 1, sha256: 'd'.repeat(64), source: 'binance-vision-archive', ...over,
+    rowCount: days * 1440 - (over.missingMinutes ?? 0), missingMinutes: over.missingMinutes ?? 0 });
+  const hype = unit('HYPEUSDT', '2025-05', 31, { dataEnd: '2025-06-01T00:00:00.000Z', missingMinutes: 42390, missingRanges: [m('2025-05-01T00:00', '2025-05-30T10:30')],
+    firstOpenTime: '2025-05-30T10:30:00.000Z', lastOpenTime: '2025-05-31T23:59:00.000Z', sources: [{ file: sourceOf('HYPE', '2025-05').file, sha256: 'e'.repeat(64) }] });
+  const jan = over => unit('BTCUSDT', '2024-01', 31, { dataEnd: '2024-02-01T00:00:00.000Z', sources: [{ file: sourceOf('BTC', '2024-01').file, sha256: 'e'.repeat(64) }], ...over });
+  const accepted = [hype,
+    jan({ missingMinutes: 12 * 1440, missingRanges: [m('2024-01-20T00:00', '2024-02-01T00:00')], firstOpenTime: '2024-01-01T00:00:00.000Z', lastOpenTime: '2024-01-19T23:59:00.000Z' }),
+    jan({ missingMinutes: 2 * 1440, missingRanges: [m('2024-01-01T00:00', '2024-01-02T00:00'), m('2024-01-31T00:00', '2024-02-01T00:00')], firstOpenTime: '2024-01-02T00:00:00.000Z', lastOpenTime: '2024-01-30T23:59:00.000Z' }),
+    jan({ missingMinutes: 0, missingRanges: [], firstOpenTime: '2024-01-01T00:00:00.000Z', lastOpenTime: '2024-01-31T23:59:00.000Z' }),
+    jan({ missingMinutes: 1440, missingRanges: [m('2024-01-10T00:00', '2024-01-11T00:00')], firstOpenTime: '2024-01-01T00:00:00.000Z', lastOpenTime: '2024-01-31T23:59:00.000Z' })];
+  for (const entry of accepted) {
+    writeEntries(s, [entry]);
+    assert.deepEqual(readManifest(s.manifestPath).entries, [entry], entry.contract);
+  }
+  rejects(s, hype)({ firstOpenTime: '2025-05-30T10:29:00.000Z' }, /firstOpenTime lies in a missing range/);
+  rejects(s, hype)({ firstOpenTime: '2025-05-30T10:31:00.000Z' }, /firstOpenTime must be the first present minute/);
+});

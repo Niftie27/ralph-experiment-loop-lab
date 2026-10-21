@@ -618,3 +618,22 @@ test('F1a-2 r5 cli verify: unavailableAtBuild is the state recorded in the entry
   assert.ok(verify.summary.coverage[0].dailyFill.unavailableAtBuild.includes(btcDay('2024-01-31')));
   assert.deepEqual(verify.summary.coverage[0].dailyFill.sources, [btcDay('2024-01-02')]);
 });
+
+test('F1a-2 r6 cli: a manifest entry whose first or last candle disagrees with its missingRanges: download exits 1 before any request, verify reports a failure', async () => {
+  const w = workspace(), { published, range } = sparseJanuary();
+  const args = [...range, ...w.args];
+  assert.equal((await run(['download', ...args], vision(published))).code, 0);
+  assert.equal((await run(['build', ...args])).code, 0);
+  const manifestFile = path.join(w.dir, 'results', 'manifest-f1-1m.json');
+  const manifest = JSON.parse(fs.readFileSync(manifestFile, 'utf8'));
+  manifest.entries[0].lastOpenTime = '2024-01-02T00:01:00.000Z'; // a present minute, but not the last one (00:04 after the fill)
+  fs.writeFileSync(manifestFile, JSON.stringify(manifest, null, 2) + '\n');
+  const net = vision(published);
+  const download = await run(['download', ...args], net);
+  assert.equal(download.code, 1);
+  assert.match(download.summary.error, /manifest/);
+  assert.deepEqual(net.calls, []);
+  const verify = await run(['verify', ...w.args]);
+  assert.equal(verify.code, 1);
+  assert.match(verify.summary.failures.join('\n'), /lastOpenTime must be the last present minute/);
+});

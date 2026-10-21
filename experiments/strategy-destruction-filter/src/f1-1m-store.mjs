@@ -148,6 +148,16 @@ function checkEntry(e) {
   if (!unit) fail('not a planned unit (contract, period, dataStart, dataEnd)');
   const missing = checkedRanges(e.missingRanges, unit);
   if (!missing) fail('missingRanges must be sorted, maximal, non-empty, minute-aligned ranges inside the unit');
+  // The present minutes are the unit minus missingRanges (rowCount > 0): the first and last candle follow from them.
+  const first = missing[0]?.[0] === unit.startMs ? missing[0][1] : unit.startMs;
+  const last = missing.at(-1)?.[1] === unit.endMs ? missing.at(-1)[0] - MINUTE_MS : unit.endMs - MINUTE_MS;
+  for (const [key, expected, which] of [['firstOpenTime', first, 'first'], ['lastOpenTime', last, 'last']]) {
+    if (e[key] === new Date(expected).toISOString()) continue;
+    const t = Date.parse(e[key]);
+    if (t < unit.startMs || t >= unit.endMs) fail(`${key} lies outside its unit`);
+    if (missing.some(([a, b]) => a <= t && t < b)) fail(`${key} lies in a missing range`);
+    fail(`${key} must be the ${which} present minute of the unit (derived from missingRanges)`);
+  }
   if (rangeMinutes(missing) !== e.missingMinutes || e.rowCount + e.missingMinutes !== (unit.endMs - unit.startMs) / MINUTE_MS) fail('missing minutes disagree with missingRanges, rowCount or the unit');
   const filled = checkedRanges(e.filledRanges, unit);
   if (!filled) fail('filledRanges must be sorted, maximal, non-empty, minute-aligned ranges inside the unit');

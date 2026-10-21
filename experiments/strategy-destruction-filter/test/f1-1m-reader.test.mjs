@@ -43,12 +43,15 @@ function plant(s, meta, openTimes, entryOver = {}) {
   const sha = sha256(bytes);
   fs.mkdirSync(s.cacheDir, { recursive: true });
   fs.writeFileSync(snapshotPath(s.cacheDir, sha), bytes);
-  // Coverage fields consistent with the entry's rowCount (the manifest checks them), so the reader's own checks are reached.
-  const missing = (ms(meta.dataEnd) - ms(meta.dataStart)) / 60000 - (entryOver.rowCount ?? n);
+  // missingRanges: the exact complement of the planted open times inside the unit (the manifest checks the coverage
+  // fields and derives the first and last candle from them).
+  const iso = t => new Date(t).toISOString(), startMs = ms(meta.dataStart), endMs = ms(meta.dataEnd), missingRanges = [];
+  let cursor = startMs;
+  for (const t of openTimes.filter(x => x >= startMs && x < endMs)) { if (t > cursor) missingRanges.push({ start: iso(cursor), end: iso(t) }); cursor = t + 60000; }
+  if (cursor < endMs) missingRanges.push({ start: iso(cursor), end: iso(endMs) });
   const entry = { ...meta.instrument, period: meta.period, dataStart: meta.dataStart, dataEnd: meta.dataEnd, schemaVersion: 1, sha256: sha, bytes: bytes.length,
-    rowCount: n, firstOpenTime: new Date(openTimes[0]).toISOString(), lastOpenTime: new Date(openTimes.at(-1)).toISOString(), missingMinutes: missing,
-    missingRanges: missing ? [{ start: meta.dataStart, end: new Date(ms(meta.dataStart) + missing * 60000).toISOString() }] : [], quarantinedRows: [], filledRanges: [],
-    source: 'binance-vision-archive', sources: meta.sources, ...entryOver };
+    rowCount: n, firstOpenTime: iso(openTimes[0]), lastOpenTime: iso(openTimes.at(-1)), missingMinutes: missingRanges.reduce((k, r) => k + (ms(r.end) - ms(r.start)) / 60000, 0),
+    missingRanges, quarantinedRows: [], filledRanges: [], source: 'binance-vision-archive', sources: meta.sources, ...entryOver };
   const manifest = readManifest(s.manifestPath);
   const entries = sortEntries([...manifest.entries.filter(e => !(e.contract === entry.contract && e.dataStart === entry.dataStart && e.period === entry.period)), entry]);
   fs.writeFileSync(s.manifestPath, JSON.stringify({ entries, kind: manifest.kind, schemaVersion: 1 }, null, 2) + '\n');
