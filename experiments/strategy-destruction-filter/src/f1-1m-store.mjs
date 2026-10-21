@@ -405,8 +405,11 @@ function summarize(command, results, error) {
 
 // Offline check of everything stored: every zip against its CHECKSUM, every entry's snapshot by hash and header.
 // The guard (memory) is checked before each file; when it trips, verify stops and reports what it checked so far.
+// Every {file, sha256} an entry references (amendment round 5, F8) must be a zip this walk verified: the walk's check
+// is readVerifiedSource's (CHECKSUM present and parsed, sha256 equal to it and to the directory name). counts.sources
+// counts unique pairs; the two 2025-10 units share theirs.
 export function verifyStore({ zipRoot, cacheDir, manifestPath, guard = { check() {} } }) {
-  const failures = [];
+  const failures = [], passed = new Set(), referenced = new Set();
   let zips = 0, checked = 0, entries = [];
   const walk = dir => { try { return fs.readdirSync(dir, { withFileTypes: true }); } catch (error) { if (error.code === 'ENOENT') return []; throw error; } };
   const visit = dir => {
@@ -421,6 +424,7 @@ export function verifyStore({ zipRoot, cacheDir, manifestPath, guard = { check()
         let checksum;
         try { checksum = fs.readFileSync(`${full}.CHECKSUM`, 'utf8'); } catch { checksum = undefined; }
         if (verifyZip(fs.readFileSync(full), checksum, d.name) !== path.basename(dir)) throw new Error('stored under another sha256');
+        passed.add(`${rel}@${path.basename(dir)}`);
       } catch (zipError) { failures.push(`${rel}: ${zipError.message}`); }
     }
   };
@@ -439,13 +443,36 @@ export function verifyStore({ zipRoot, cacheDir, manifestPath, guard = { check()
           && header.firstOpenTime === e.firstOpenTime && header.lastOpenTime === e.lastOpenTime && canonicalJson(header.sources) === canonicalJson(e.sources);
         if (!agree) throw new Error('header disagrees with the manifest entry');
       } catch (snapshotError) { failures.push(`snapshot ${e.sha256} (${e.contract} ${e.period} ${e.dataStart}): ${snapshotError.code ?? snapshotError.message}`); }
+      for (const s of e.sources) {
+        const key = `${s.file}@${s.sha256}`;
+        if (referenced.has(key)) continue;
+        referenced.add(key);
+        if (!passed.has(key)) failures.push(`source ${key} of ${e.contract} ${e.period} ${e.dataStart}: not a verified local version`);
+      }
     }
   } catch (error) {
     return { command: 'verify', status: 'failed', error: error.message, counts: { zips, entries: checked }, failures, orphans: [] };
   }
   const known = new Set(entries.map(e => `${e.sha256}.bin`));
   const orphans = walk(cacheDir).filter(d => d.isFile() && !known.has(d.name)).map(d => d.name).sort(order);
-  return { command: 'verify', status: failures.length ? 'failed' : 'ok', counts: { zips, entries: entries.length, orphans: orphans.length }, failures, orphans };
+  return { command: 'verify', status: failures.length ? 'failed' : 'ok', counts: { zips, entries: entries.length, orphans: orphans.length, sources: referenced.size }, failures, orphans };
+}
+// Daily fill of an entry, from the entry alone (plan approval point 6): only for a monthly base, the fill days are
+// the unit days that a missingRanges or filledRanges range touches (half-open: a range ending at midnight adds no
+// day); unavailableAtBuild are those without their daily in sources. It is the state recorded at build time, not
+// current availability; units without an entry (empty, missing, failed) are not represented.
+export function entryDailyFill(e) {
+  const unit = plannedUnit(e);
+  const filledMinutes = rangeMinutes(e.filledRanges.map(r => [Date.parse(r.start), Date.parse(r.end)]));
+  if (!unit || unit.sources[0].kind !== 'monthly') return { filledMinutes, sources: [], unavailableAtBuild: [] };
+  const base = new Set(unit.sources.map(s => s.file)), files = new Set(e.sources.map(s => s.file));
+  const ranges = [...e.missingRanges, ...e.filledRanges].map(r => [Date.parse(r.start), Date.parse(r.end)]);
+  const unavailableAtBuild = [];
+  for (let day = unit.startMs; day < unit.endMs; day += DAY_MS) {
+    const file = visionSource(unit.instrument, 'daily', day).file;
+    if (!files.has(file) && ranges.some(([a, b]) => day < b && day + DAY_MS > a)) unavailableAtBuild.push(file);
+  }
+  return { filledMinutes, sources: e.sources.map(s => s.file).filter(f => !base.has(f)).sort(order), unavailableAtBuild };
 }
 
 // Offline: rebuild the requested units into a temp store and compare with the reference manifest, read-only. Every
@@ -489,6 +516,6 @@ export function compareStore({ symbols, from, to, zipRoot, manifestPath, guard =
     return { command: 'compare', status: failed ? 'failed' : n('gap') ? 'incomplete' : 'ok', error: rebuilt.error,
       counts: { units: units.length, expected: expected.length, rebuilt: rebuilt.entries.length, compared, matched: n('matched'), mismatched: n('mismatched'), extra: n('extra'),
         missingInput: n('missing_input'), gap: n('gap'), notListed: n('not_listed'), empty: n('empty'), failed: n('failed') },
-      units, missing, extra, mismatches, missingInputs, failures: rebuilt.failures };
+      units, missing, extra, mismatches, missingInputs, failures: rebuilt.failures, coverage: rebuilt.coverage };
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 }

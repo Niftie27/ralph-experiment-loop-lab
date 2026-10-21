@@ -13,7 +13,8 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { planUnits, visionInstrument, parseChecksum, readZipMember, parseKlines, fillSources, MAX_MEMBER_BYTES, VISION_SYMBOLS } from './vision-source.mjs';
-import { storeSource, persistChecksum, recordMissing, localVersions, notListedSources, buildStore, verifyStore, compareStore, readManifest } from './f1-1m-store.mjs';
+import { storeSource, persistChecksum, recordMissing, localVersions, notListedSources, buildStore, verifyStore, compareStore, readManifest, quarantineReport,
+  entryDailyFill } from './f1-1m-store.mjs';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const VISION_ORIGIN = 'https://data.binance.vision';
@@ -221,10 +222,14 @@ function verify(options) {
   try { entries = readManifest(options.manifestPath).entries; } catch { entries = []; }
   const coverage = [...new Set(entries.map(e => e.contract))].map(contract => {
     const own = entries.filter(e => e.contract === contract).sort((a, b) => a.dataStart < b.dataStart ? -1 : 1);
+    const fill = own.map(entryDailyFill);
     return { contract, entries: own.length, firstCandle: own[0].firstOpenTime, lastCandle: own.at(-1).lastOpenTime,
-      bars: own.reduce((n, e) => n + e.rowCount, 0), missingMinutes: own.reduce((n, e) => n + e.missingMinutes, 0) };
+      bars: own.reduce((n, e) => n + e.rowCount, 0), missingMinutes: own.reduce((n, e) => n + e.missingMinutes, 0),
+      quarantine: quarantineReport(own.flatMap(e => e.quarantinedRows)),
+      dailyFill: { filledMinutes: fill.reduce((n, f) => n + f.filledMinutes, 0), sources: fill.flatMap(f => f.sources).sort(),
+        unavailableAtBuild: fill.flatMap(f => f.unavailableAtBuild).sort() } };
   });
-  return { ...summary, coverage };
+  return { ...summary, coverage, reportScope: 'manifest entries only: empty, missing and failed units are not represented; unavailableAtBuild is the state recorded at build time' };
 }
 
 const EXIT = { ok: 0, failed: 1, usage: 2, incomplete: 3 };

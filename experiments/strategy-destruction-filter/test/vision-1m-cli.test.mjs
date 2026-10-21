@@ -576,3 +576,45 @@ test('F1a-2 r5 cli download: an injected memory guard trip before a monthly pars
     assert.equal(net.calls.some(url => url.includes('2024-01-04')), label.startsWith('fill'), label);
   }
 });
+
+// verify and compare reports (contract amendment round 5, Q5 and F8; plan approval points 6 and 9).
+test('F1a-2 r5 cli: a holdout month with a filled gap and a quarantined row: download, build, verify and compare exit 0, report quarantine and daily fill per symbol, and print no values', async () => {
+  const w = workspace(), published = {};
+  const valid = { open: '187.4321', high: '187.9999', low: '186.9876', close: '187.0001' }, quarantined = { ...valid, high: '187.1234' };
+  const t = minutes('2026-01-05T00:00:00.000Z', 4);
+  const month = publishCsv(published, sourceOf('SOL', '2026-01'), KLINE_HEADER + '\n' + [klineRow(t[0], valid), klineRow(t[1], quarantined), klineRow(t[3], valid)].join('\n') + '\n');
+  const day5 = publishCsv(published, dayOf('SOL', '2026-01-05'), KLINE_HEADER + '\n' + [klineRow(t[0], valid), klineRow(t[2], valid), klineRow(t[3], valid)].join('\n') + '\n');
+  const range = ['--symbols', 'SOL', '--from', '2026-01', '--to', '2026-01', ...w.args];
+  const outputs = [];
+  for (const command of ['download', 'build', 'verify', 'compare']) {
+    const r = await run([command, ...range], vision(published));
+    assert.equal(r.code, 0, `${command}: ${r.out}`);
+    outputs.push(r);
+  }
+  const [, build, verify, compare] = outputs.map(r => r.summary);
+  const record = { file: month.file, openTime: '2026-01-05T00:01:00.000Z', rule: 'high below max(open, close)' };
+  const unavailable = Array.from({ length: 31 }, (_, i) => `2026-01-${String(i + 1).padStart(2, '0')}`).filter(d => d !== '2026-01-05').map(d => `${DAILY}/SOLUSDT/1m/SOLUSDT-1m-${d}.zip`);
+  for (const summary of [build, compare]) {
+    assert.deepEqual(summary.coverage[0].quarantine, { sourceRows: 1, uniqueMinutes: 1, rows: [record] });
+    assert.deepEqual(summary.coverage[0].dailyFill, { filledMinutes: 1, sources: [day5.file], unavailable });
+  }
+  assert.deepEqual(verify.coverage[0].quarantine, { sourceRows: 1, uniqueMinutes: 1, rows: [record] });
+  assert.deepEqual(verify.coverage[0].dailyFill, { filledMinutes: 1, sources: [day5.file], unavailableAtBuild: unavailable });
+  assert.match(verify.reportScope, /empty, missing and failed units are not represented/);
+  assert.deepEqual(verify.counts, { zips: 2, entries: 1, orphans: 0, sources: 2 });
+  for (const r of outputs) assert.doesNotMatch(r.out, /187\.|186\./);
+});
+
+test('F1a-2 r5 cli verify: unavailableAtBuild is the state recorded in the entry, not current availability: a daily stored since stays listed', async () => {
+  const w = workspace(), { published, range } = sparseJanuary();
+  const args = [...range, ...w.args];
+  assert.equal((await run(['download', ...args], vision(published))).code, 0);
+  assert.equal((await run(['build', ...args])).code, 0);
+  publishCsv(published, dayOf('BTC', '2024-01-31'), klineCsv(minutes('2024-01-31T00:00:00.000Z', 2)));
+  assert.equal((await run(['download', ...args], vision(published))).summary.fills.counts.downloaded, 1);
+  const verify = await run(['verify', ...w.args]);
+  assert.equal(verify.code, 0);
+  assert.equal(verify.summary.counts.zips, 3);
+  assert.ok(verify.summary.coverage[0].dailyFill.unavailableAtBuild.includes(btcDay('2024-01-31')));
+  assert.deepEqual(verify.summary.coverage[0].dailyFill.sources, [btcDay('2024-01-02')]);
+});

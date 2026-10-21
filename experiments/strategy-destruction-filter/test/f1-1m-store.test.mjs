@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { storeSource, recordMissing, localVersions, readManifest, buildStore, verifyStore, compareStore, snapshotPath } from '../src/f1-1m-store.mjs';
+import { storeSource, recordMissing, localVersions, readManifest, buildStore, verifyStore, compareStore, snapshotPath, entryDailyFill } from '../src/f1-1m-store.mjs';
 import { planUnits, visionSource } from '../src/vision-source.mjs';
 import { decodeSnapshot } from '../src/f1-1m-format.mjs';
 import { makeZip, klineCsv, klineRow, minutes, checksumText, sha256, KLINE_HEADER } from '../test-support/vision-fixtures.mjs';
@@ -732,4 +732,88 @@ test('F1a-2 r5 store: a fill daily published after a build changes the sources: 
   assert.equal(result.status, 'failed');
   assert.equal(result.failures[0].reason, 'the manifest entry for this unit uses other source versions (version selection rule pending)');
   assert.deepEqual(bytesOf(s), before);
+});
+
+// verify and compare (contract amendment round 5, F8 and Q5; plan approval points 6 and 8).
+function filledJanuary() {
+  const s = store();
+  const t = minutes('2024-01-03T00:00:00.000Z', 4);
+  const month = put(s, 'BTC', '2024-01', [t[0], t[3]]);
+  const day3 = putDaily(s, 'BTC', '2024-01-03', t);
+  assert.equal(build(s, JAN).status, 'ok');
+  return { s, month, day3 };
+}
+const compareJanuary = s => compareStore({ zipRoot: s.zipRoot, manifestPath: s.manifestPath, symbols: ['BTC'], from: '2024-01', to: '2024-01' });
+
+test('F1a-2 r5 store: verify checks every referenced source (unique file and sha256 pairs) and fails on a deleted referenced zip, monthly or fill daily, and on tampered new fields', () => {
+  const { s, month, day3 } = filledJanuary();
+  const ok = verifyStore(s);
+  assert.equal(ok.status, 'ok');
+  assert.deepEqual(ok.counts, { zips: 2, entries: 1, orphans: 0, sources: 2 });
+  for (const gone of [day3, month]) {
+    const t = filledJanuary();
+    const victim = gone === day3 ? t.day3 : t.month;
+    fs.rmSync(path.dirname(zipPathOf(t.s, victim.source, victim.sha256)), { recursive: true });
+    const verified = verifyStore(t.s);
+    assert.equal(verified.status, 'failed');
+    assert.deepEqual(verified.failures, [`source ${victim.source.file}@${victim.sha256} of BTCUSDT research 2024-01-01T00:00:00.000Z: not a verified local version`]);
+  }
+  const tampered = JSON.parse(fs.readFileSync(s.manifestPath, 'utf8'));
+  tampered.entries[0].filledRanges = [{ start: '2024-01-03T00:01:00.000Z', end: '2024-01-03T00:02:00.000Z' }, { start: '2024-01-03T00:02:00.000Z', end: '2024-01-03T00:03:00.000Z' }];
+  fs.writeFileSync(s.manifestPath, JSON.stringify(tampered, null, 2) + '\n');
+  assert.match(verifyStore(s).failures.join('\n'), /filledRanges/);
+  // The two 2025-10 units share their monthly file: one pair.
+  const split = store();
+  put(split, 'DOGE', '2025-10', minutes('2025-10-16T23:58:00.000Z', 4));
+  assert.equal(build(split, { symbols: ['DOGE'], from: '2025-10', to: '2025-10' }).status, 'ok');
+  assert.deepEqual(verifyStore(split).counts, { zips: 1, entries: 2, orphans: 0, sources: 1 });
+});
+
+test('F1a-2 r5 store: compare matches a filled unit and reports mismatched when the reference lists a fill daily that is unavailable locally, or misses one published since', () => {
+  const { s, day3 } = filledJanuary();
+  const ok = compareJanuary(s);
+  assert.deepEqual([ok.status, ok.counts.matched], ['ok', 1]);
+  assert.deepEqual(ok.coverage[0].dailyFill.sources, [day3.source.file]);
+  // The reference lists daily 01-03; locally it is gone and its 404 marker remains: the rebuild differs.
+  fs.rmSync(path.dirname(zipPathOf(s, day3.source, day3.sha256)), { recursive: true });
+  const lost = compareJanuary(s);
+  assert.deepEqual([lost.status, lost.counts.mismatched, lost.mismatches], ['failed', 1, [`${JSON.stringify({ contract: 'BTCUSDT', dataEnd: '2024-02-01T00:00:00.000Z', dataStart: '2024-01-01T00:00:00.000Z', period: 'research' })}: entry differs`]]);
+  // A daily published after the build (01-20, unavailable then): the rebuild lists it, so it differs too.
+  const late = filledJanuary();
+  putDaily(late.s, 'BTC', '2024-01-20', minutes('2024-01-20T00:00:00.000Z', 2));
+  assert.deepEqual([compareJanuary(late.s).status, compareJanuary(late.s).counts.mismatched], ['failed', 1]);
+});
+
+test('F1a-2 r5 store: compare: a fill daily without version and marker is a missing input (exit 1)', () => {
+  const { s, day3 } = filledJanuary();
+  fs.rmSync(path.dirname(zipPathOf(s, day3.source, day3.sha256)), { recursive: true });
+  fs.rmSync(path.join(s.zipRoot, path.dirname(day3.source.file), '404', day3.source.zipName));
+  const result = compareJanuary(s);
+  assert.equal(result.status, 'failed');
+  assert.deepEqual([result.counts.missingInput, result.missingInputs], [1, [{ file: day3.source.file }]]);
+});
+
+test('F1a-2 r5 store: unavailable fill days derived from the entry alone: monthly bases only, half-open day projection, deduplicated and sorted', () => {
+  const r = (start, end) => ({ start: `${start}:00.000Z`, end: `${end}:00.000Z` });
+  const jan = { contract: 'BTCUSDT', exchange: 'binance', market: 'linear_perpetual', period: 'research', dataStart: '2024-01-01T00:00:00.000Z', dataEnd: '2024-02-01T00:00:00.000Z',
+    sources: [{ file: dayFile('BTCUSDT', '2024-01-05'), sha256: 'a'.repeat(64) }, { file: sourceOf('BTC', '2024-01').file, sha256: 'b'.repeat(64) }] };
+  const derive = (over) => entryDailyFill({ ...jan, missingRanges: [], filledRanges: [], ...over });
+  // A fully filled day (01-05, its daily present), a range ending at midnight (01-07 only), two ranges in one day (01-09 once).
+  assert.deepEqual(derive({ filledRanges: [r('2024-01-05T00:00', '2024-01-06T00:00')], missingRanges: [r('2024-01-07T12:00', '2024-01-08T00:00'), r('2024-01-09T01:00', '2024-01-09T02:00'),
+    r('2024-01-09T05:00', '2024-01-09T06:00')] }), { filledMinutes: 1440, sources: [dayFile('BTCUSDT', '2024-01-05')], unavailableAtBuild: [dayFile('BTCUSDT', '2024-01-07'), dayFile('BTCUSDT', '2024-01-09')] });
+  // The 2025-10-17 boundary: each unit only its own days.
+  const oct = { ...jan, sources: [{ file: sourceOf('BTC', '2025-10').file, sha256: 'b'.repeat(64) }], filledRanges: [] };
+  assert.deepEqual(entryDailyFill({ ...oct, dataStart: '2025-10-01T00:00:00.000Z', dataEnd: '2025-10-17T00:00:00.000Z', missingRanges: [r('2025-10-16T23:55', '2025-10-17T00:00')] }).unavailableAtBuild,
+    [dayFile('BTCUSDT', '2025-10-16')]);
+  assert.deepEqual(entryDailyFill({ ...oct, period: 'holdout', dataStart: '2025-10-17T00:00:00.000Z', dataEnd: '2025-11-01T00:00:00.000Z', missingRanges: [r('2025-10-17T00:00', '2025-10-17T00:05')] }).unavailableAtBuild,
+    [dayFile('BTCUSDT', '2025-10-17')]);
+  // HYPE 2025-05: the present daily of 05-30 fills nothing; 05-01..29 were unavailable.
+  const hype = entryDailyFill({ contract: 'HYPEUSDT', exchange: 'binance', market: 'linear_perpetual', period: 'research', dataStart: '2025-05-01T00:00:00.000Z', dataEnd: '2025-06-01T00:00:00.000Z',
+    missingRanges: [r('2025-05-01T00:00', '2025-05-30T10:30')], filledRanges: [],
+    sources: [{ file: dayFile('HYPEUSDT', '2025-05-30'), sha256: 'a'.repeat(64) }, { file: sourceOf('HYPE', '2025-05').file, sha256: 'b'.repeat(64) }] });
+  assert.deepEqual(hype, { filledMinutes: 0, sources: [dayFile('HYPEUSDT', '2025-05-30')], unavailableAtBuild: monthDays('2025-05', 29).map(d => dayFile('HYPEUSDT', d)) });
+  // 2026-10 is built from base dailies: missing minutes, but no fill sources and no unavailable days.
+  const days = planUnits('BTC', { from: '2026-10', to: '2026-10' })[0].sources.map(x => ({ file: x.file, sha256: 'c'.repeat(64) }));
+  assert.deepEqual(entryDailyFill({ ...jan, period: 'holdout', dataStart: '2026-10-01T00:00:00.000Z', dataEnd: '2026-10-17T00:00:00.000Z', missingRanges: [r('2026-10-05T00:00', '2026-10-06T00:00')], filledRanges: [], sources: days }),
+    { filledMinutes: 0, sources: [], unavailableAtBuild: [] });
 });
