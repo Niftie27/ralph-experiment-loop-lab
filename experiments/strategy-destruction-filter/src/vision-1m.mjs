@@ -111,6 +111,33 @@ async function get(file, kind, { fetch: fetchImpl, sleep }) {
   throw new Error(`${file}: ${last} after ${ATTEMPTS} attempts`);
 }
 
+// One source, CHECKSUM first: 'missing' (404 on both, marker written), 'skipped' (the matching verified local
+// version, its CHECKSUM repaired if needed) or 'downloaded'. Returns the verified zip bytes; anything else throws.
+// exists(withChecksum) is called as soon as the source is known to exist.
+async function fetchSource(source, zipRoot, deps, exists) {
+  await deps.sleep(PAUSE_MS);
+  const checksum = await get(source.checksumFile, 'checksum', deps);
+  if (checksum.status === 404) {
+    const zip = await get(source.file, 'zip', deps);
+    if (zip.status === 404) { recordMissing(zipRoot, source); return { status: 'missing' }; }
+    exists(false);
+    throw new Error(`${source.file}: CHECKSUM 404 but the zip exists`);
+  }
+  exists(true);
+  const text = checksum.bytes.toString('latin1');
+  const sha = parseChecksum(text, source.zipName);
+  if (localVersions(zipRoot, source).includes(sha)) {
+    const local = fs.readFileSync(path.join(zipRoot, path.dirname(source.file), sha, source.zipName));
+    if (createHash('sha256').update(local).digest('hex') !== sha) throw new Error(`${source.file}: stored copy fails its CHECKSUM`);
+    // A missing or corrupt local CHECKSUM (a crash between the two writes of an older store) is restored.
+    return { status: 'skipped', bytes: local, repaired: persistChecksum(zipRoot, source, sha, text) };
+  }
+  const zip = await get(source.file, 'zip', deps);
+  if (zip.status === 404) throw new Error(`${source.file}: zip 404 but the CHECKSUM exists`);
+  storeSource(zipRoot, source, zip.bytes, text);
+  return { status: 'downloaded', bytes: zip.bytes, repaired: false };
+}
+
 async function download({ symbols, from, to, zipRoot, manifestPath }, guard, deps) {
   // The 1m manifest is listing evidence, read without the lock: an absent file has no entries; an unreadable or
   // invalid one stops the run before any request (never a silent "no evidence").
@@ -127,30 +154,13 @@ async function download({ symbols, from, to, zipRoot, manifestPath }, guard, dep
       counts.expected++;
       guard.check(source.file);
       try {
-        await deps.sleep(PAUSE_MS);
-        const checksum = await get(source.checksumFile, 'checksum', deps);
-        if (checksum.status === 404) {
-          const zip = await get(source.file, 'zip', deps);
-          if (zip.status === 404) { recordMissing(zipRoot, source); misses.push(source); continue; }
+        const result = await fetchSource(source, zipRoot, deps, withChecksum => {
           fetched.add(source.file);
-          throw new Error(`${source.file}: CHECKSUM 404 but the zip exists`);
-        }
-        fetched.add(source.file);
-        firstFiles[contract] ??= source.file;
-        const text = checksum.bytes.toString('latin1');
-        const sha = parseChecksum(text, source.zipName);
-        if (localVersions(zipRoot, source).includes(sha)) {
-          const local = fs.readFileSync(path.join(zipRoot, path.dirname(source.file), sha, source.zipName));
-          if (createHash('sha256').update(local).digest('hex') !== sha) throw new Error(`${source.file}: stored copy fails its CHECKSUM`);
-          // A missing or corrupt local CHECKSUM (a crash between the two writes of an older store) is restored.
-          if (persistChecksum(zipRoot, source, sha, text)) repaired.push(source.checksumFile);
-          counts.skipped++; counts.verified++;
-          continue;
-        }
-        const zip = await get(source.file, 'zip', deps);
-        if (zip.status === 404) throw new Error(`${source.file}: zip 404 but the CHECKSUM exists`);
-        storeSource(zipRoot, source, zip.bytes, text);
-        counts.downloaded++; counts.verified++;
+          if (withChecksum) firstFiles[contract] ??= source.file;
+        });
+        if (result.status === 'missing') { misses.push(source); continue; }
+        if (result.repaired) repaired.push(source.checksumFile);
+        counts[result.status]++; counts.verified++;
       } catch (error) {
         counts.failed++;
         failures.push(error.message.startsWith(source.file) ? error.message : `${source.file}: ${error.message}`);
