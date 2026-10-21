@@ -153,3 +153,54 @@ F10. Memory: download parses one monthly file at a time and releases it; build h
 
 ### Tests (at least)
 Each of the seven value rules quarantines with its exact text; first-rule order on a row with several value failures; the count rule and every structural error still fail; a structural error after a quarantinable row fails; a duplicate open_time right after a quarantined row fails; 10 quarantined rows pass and 11 fail; 6 + 5 across the 2025-10 boundary fail both units; an over-cap daily that fills nothing fails its unit; an all-quarantined unit is empty and its records are in the report; a gap is filled; a mismatch anywhere on a fetched day fails; valid / quarantined fails in both directions; quarantined in both gives two records and one missing minute; a fill with the 404 marker is unavailable, gives no exit 3 and is no listing evidence; a 404 on one of the pair gives 1; a fill without version and marker makes the unit missing; two versions of a fill source fail and outrank a missing one; download derives fills on the cache-hit path; the split month uses only the dailies of each unit's own days; 2026-10 gets no fill; fill sets and common entries are byte-identical for narrow and broad --from/--to, reversed enumeration and a warm rerun; firstSourceFile is a base source; verify fails on a deleted referenced zip and on tampered new fields; compare matches a filled unit and reports mismatched when the reference entry lists a fill daily that is unavailable locally; a manifest with the old key set is rejected; holdout records and every diagnostic path (mismatch, over-cap) contain no values. The 73 old tests stay byte-identical; changed F1a-2 tests are named in the commit body.
+
+## Approval 2026-10-21, round 5 plan (docs/f1/f1a2-r5-plan.md at 8f58ad3)
+
+Binding from 2026-10-21. Merged from Claude's review and a VPS second opinion (main e2b9c92: docs/f1/f1a2-r5-plan-second-opinion.md, sha256 c191dea05a7bb226c42b2d6a8d073641a5211af4c00d633781c967adaf3a7db7) and Tomas's decisions (33) verify reports unavailable fill days derived from the entry and (34) glossary rows in this PR. Approved: plan sections 1-8 with the changes below; deviations 1, 2, 4, 5 and 6; the 34 planned tests plus the additions below; the rerun counts of 323 regression units and 329 entries. Deviation 3 is changed by point 2, deviation 7 is replaced by point 5. Open question 2 is accepted as is (version-selection rule stays an open item).
+
+1. Transport (F2). Fill sources use the base order of src/vision-1m.mjs:131-153: CHECKSUM first; after a CHECKSUM 404 the zip is probed (404 on both = the existing marker = fill unavailable; 404 on one of the pair = 1); after a CHECKSUM 200 the matching verified local version is used or the zip is fetched and verified. The download status is failed on any base failure, any fill failure, or any monthly parse or cap failure; today's status line (src/vision-1m.mjs:166) reads base counts only and must include these.
+
+2. Download counters (deviation 3, changed). Base counts keep their transport meaning and both invariants: verified = downloaded + skipped, and verified + gaps + notListed + failed = expected. A monthly file that is stored and verified but fails parsing or the cap stays verified in the base counts, is counted in fills.counts.monthlyParseFailed and is listed in failures. fills.counts = { expected, downloaded, skipped, verified, unavailable, failed, monthlyParseFailed }.
+
+3. Failure before missing (F5). A unit is missing only after every present dependency is fully validated: versions, readVerifiedSource, parse and quarantine cap. This covers fill dailies as well as base sources: a present fill that fails parsing, CRC or the cap fails the unit even when another fill is absent without a marker, in either enumeration order. Validate one fill at a time and discard it; never hold all daily parses.
+
+4. Empty after merge (Q2). The empty decision comes after the merge. An all-quarantined monthly file still derives and validates its fills; a valid daily row against a quarantined monthly row fails the unit.
+
+5. Parsed cache and memory guard (F10).
+- Prune the parsed cache to the incoming unit's base keys before processing that unit (the split month keeps its shared monthly parse), also after a failed unit. Fill parses are never cached. Today pruning runs after buildUnit (src/f1-1m-store.mjs:224) and is skipped on an exception (:242).
+- guard.check before and after every parse and every merge step, before encoding a snapshot, and before writeOnce on the unchanged path as well (today only the built path checks: :228 versus :235). In build every check goes through the guard-marked check (:210), so a trip aborts the run (:243) instead of failing one unit.
+- Download: every guard check aborts the run; none may become a per-source failure in the catch at src/vision-1m.mjs:154. Add an internal guard injection through main's deps argument (src/vision-1m.mjs:182-187; no CLI flag; the production ceiling is unchanged) and targeted tests: a trip before a monthly parse, after it, and before a fill fetch each stop further requests and give exit 1.
+- Filled rows are staged in typed arrays, not JavaScript row objects.
+
+6. verify and unavailable fill days (Q5, F8, decision 33). verify derives them from the entry alone, only for entries whose base source is a monthly file: the fill days are the UTC days d with dayStart < range.end and dayEnd > range.start for some range in missingRanges or filledRanges (half-open, so a range ending at midnight adds no next day), deduplicated, as canonical daily paths, sorted; the unavailable days are those minus the entry's daily sources. The field is unavailableAtBuild: the state recorded in the entry, not current availability. The verify report states that empty, missing and failed units are not represented. Entries built from base dailies (2026-10) report no fill sources and no unavailable days. Tests: a fully filled day, a range ending at midnight, two ranges in one day, the 2025-10-17 boundary, HYPE's present daily that fills nothing, a 2026-10 entry with missing minutes, a daily present locally but absent from the entry.
+
+7. checkEntry consistency (Q3, F6), in addition to plan section 3:
+- missingRanges: sorted, maximal, non-empty, minute-aligned, inside [dataStart, dataEnd), total equal to missingMinutes; rowCount + missingMinutes equals the unit's minutes.
+- Every quarantinedRows openTime lies inside a missingRanges range.
+- Entries with a monthly base source: every day touched by filledRanges has its daily in sources, and every daily source lies on a day touched by missingRanges or filledRanges.
+- Entries built from base dailies (2026-10): filledRanges is [] and no source is classified as a fill.
+These are consistency checks, not proof; compare stays the source-derived authority.
+
+8. Clarifications.
+- F7: keep the optional handling at src/f1-1m-store.mjs:275 (no built unit gives null).
+- verify counts.sources counts unique {file, sha256} pairs.
+- Open question 2: a daily published after a build changes sources, so build fails with "the manifest entry for this unit uses other source versions" (:232), not the text at :233; compare reports mismatched. Test it.
+
+9. Tests added to plan section 6.
+- A present fill failing parse, CRC or the cap plus another fill absent without a marker: failed, in both enumeration orders.
+- Download transport: CHECKSUM 200 without a local version fetches the zip; CHECKSUM 200 with the local version parses the monthly (cache hit); CHECKSUM 404 probes the zip; both one-of-pair cases give 1; unavailable fills are probed again on a rerun; the rerun assertion filters base requests instead of forbidding every zip request.
+- Accounting: monthly parse failure on fresh and on cached bytes; a fill-only failure with every base ok gives 1; a base gap plus a fill failure gives 1; both base invariants of point 2.
+- Merge: every branch of F4, including absent/quarantined and valid/absent; an all-quarantined monthly with a valid daily fails; parsed-value equality, not byte equality (the same value written differently and a different ignore field agree).
+- Holdout: no values in any diagnostic of all four commands, including the download monthly parse and cap failure.
+- The guard tests of point 5, the derivation tests of point 6, the consistency tests of point 7, the late-daily test of point 8.
+
+10. Later rerun (plan section 8), additions.
+- Before the clean store, the backup must again have sha256 e0606e81ca67532816ed29292ceedde6ec016ca181a4ff2e3d7a4ceeb22fae03 and 328 entries; otherwise stop.
+- If a manifest .lock exists, stop and report; never delete a lock.
+- After the deletion, list the store paths to show they are gone (git status does not show ignored files).
+- Step 3 must also exit 0.
+- Compare by unit key, not totals: the expected quarantine and fill sets of each named unit, and the 323 regression units by key.
+- XRP 2023-11: any missing minute other than 2023-11-30T12:35:00.000Z, or any fill day other than 2023-11-30, is a stop and report. HYPE 2025-05: a fill day 2025-05-31 is a stop and report.
+- Report wall time and maxRSS per step and the zip and snapshot disk totals. The run stays on the PC with the built-in 512 MiB ceiling; no cgroup.
+
+11. Glossary (decision 34). One docs-only commit adds rows to docs/ubiquitous-language.md for base source, fill source, quarantined row and fill unavailable, and a homonym row separating the archive gap fill from the execution or backtest fill (existing rows "Ambiguous fill" and "Execution"). No other row changes.
