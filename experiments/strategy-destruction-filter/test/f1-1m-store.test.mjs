@@ -19,7 +19,19 @@ const zipFor = (source, openTimes, options = {}) => makeZip([{ name: source.csvN
 function put(s, symbol, month, openTimes, options = {}) {
   const source = sourceOf(symbol, month, options.index ?? 0);
   const zip = zipFor(source, openTimes, options);
+  // Round 5: every day of a sparse fixture month is a fill day; without evidence (a version or the 404 marker) its
+  // unit is missing (F5). By default every day of the month gets the marker: fill unavailable.
+  if (source.kind === 'monthly' && options.fillEvidence !== false) {
+    const { instrument } = planUnits(symbol, { from: month, to: month })[0];
+    for (let day = source.startMs; day < source.endMs; day += 86400000) markUnavailable(s.zipRoot, visionSource(instrument, 'daily', day));
+  }
   return { source, zip, ...storeSource(s.zipRoot, source, zip, checksumText(zip, source.zipName)) };
+}
+// The 404 marker at the path recordMissing uses, written without its fsyncs to keep the fixtures fast.
+function markUnavailable(zipRoot, source) {
+  const file = path.join(zipRoot, path.dirname(source.file), '404', source.zipName);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, '404 on the zip and its CHECKSUM\n');
 }
 const fourRows = month => minutes(`${month}-03T00:00:00.000Z`, 4);
 const build = (s, options = {}) => buildStore({ zipRoot: s.zipRoot, cacheDir: s.cacheDir, manifestPath: s.manifestPath, ...options });
@@ -282,8 +294,7 @@ test('F1a-2 store: a run aborted after some snapshots publishes nothing and repo
   const s = store();
   put(s, 'BTC', '2024-10', fourRows('2024-10'));
   put(s, 'BTC', '2024-11', fourRows('2024-11'));
-  let calls = 0;
-  const result = build(s, { symbols: ['BTC'], from: '2024-10', to: '2024-11', guard: { check(label) { if (++calls > 2) throw new Error(`memory ceiling exceeded at ${label}`); } } });
+  const result = build(s, { symbols: ['BTC'], from: '2024-10', to: '2024-11', guard: { check(label) { if (label === 'BTCUSDT 2024-11-01T00:00:00.000Z') throw new Error(`memory ceiling exceeded at ${label}`); } } });
   assert.equal(result.status, 'failed');
   assert.equal(result.counts.built, 0);
   assert.equal(result.counts.failed, 1);
@@ -501,4 +512,224 @@ test('F1a-2 r5 store: 6 + 5 quarantined rows across the 2025-10 boundary fail bo
   const entries = readManifest(ten.manifestPath).entries;
   assert.deepEqual(entries.map(e => [e.period, e.quarantinedRows.length]), [['holdout', 4], ['research', 6]]);
   assert.equal(ok.coverage[0].quarantine.sourceRows, 10);
+});
+
+// Daily fill in the store (contract amendment round 5, F1, F4-F7, F10; plan approval points 3, 4, 5, 8 and 9).
+function putDaily(s, symbol, day, openTimes, options = {}) {
+  const { instrument } = planUnits(symbol, { from: day.slice(0, 7), to: day.slice(0, 7) })[0];
+  const source = visionSource(instrument, 'daily', Date.parse(`${day}T00:00:00.000Z`));
+  const zip = makeZip([{ name: source.csvName, data: options.csv ?? klineCsv(openTimes, options) }], options.zip);
+  return { source, zip, ...storeSource(s.zipRoot, source, zip, checksumText(zip, source.zipName)) };
+}
+const dayFile = (contract, day) => `data/futures/um/daily/klines/${contract}/1m/${contract}-1m-${day}.zip`;
+const monthDays = (month, n) => Array.from({ length: n }, (_, i) => `${month}-${String(i + 1).padStart(2, '0')}`);
+const markDays = (s, days) => { for (const day of days) markUnavailable(s.zipRoot, visionSource(BTC_USDM, 'daily', Date.parse(`${day}T00:00:00.000Z`))); };
+const JAN = { symbols: ['BTC'], from: '2024-01', to: '2024-01' };
+
+test('F1a-2 r5 store: a filled unit lists the monthly file and every present fill daily, also one that fills nothing, in sources, header and entry; unavailable days are reported, not stored', () => {
+  const s = store();
+  const t3 = minutes('2024-01-03T00:00:00.000Z', 4), t5 = minutes('2024-01-05T00:00:00.000Z', 2);
+  const { source: monthly, sha256: monthlySha } = put(s, 'BTC', '2024-01', [t3[0], t3[3], ...t5]);
+  const day3 = putDaily(s, 'BTC', '2024-01-03', t3), day5 = putDaily(s, 'BTC', '2024-01-05', t5);
+  const result = build(s, JAN);
+  assert.equal(result.status, 'ok');
+  const [entry] = readManifest(s.manifestPath).entries;
+  assert.deepEqual(entry.sources, [{ file: day3.source.file, sha256: day3.sha256 }, { file: day5.source.file, sha256: day5.sha256 }, { file: monthly.file, sha256: monthlySha }]);
+  assert.deepEqual([entry.rowCount, entry.filledRanges, entry.quarantinedRows], [6, [{ start: '2024-01-03T00:01:00.000Z', end: '2024-01-03T00:03:00.000Z' }], []]);
+  assert.deepEqual(decodeSnapshot(fs.readFileSync(snapshotPath(s.cacheDir, entry.sha256))).header.sources, entry.sources);
+  const unavailable = monthDays('2024-01', 31).filter(d => d !== '2024-01-03' && d !== '2024-01-05').map(d => dayFile('BTCUSDT', d));
+  assert.deepEqual(result.coverage[0].dailyFill, { filledMinutes: 2, sources: [day3.source.file, day5.source.file], unavailable });
+  assert.ok(!fs.readFileSync(s.manifestPath, 'utf8').includes(dayFile('BTCUSDT', '2024-01-01')));
+});
+
+test('F1a-2 r5 store: a fill with the 404 marker is unavailable (no exit 3, not listing evidence); a fill without version and marker makes the unit missing (recorded404 false)', () => {
+  const s = store();
+  put(s, 'BTC', '2024-01', fourRows('2024-01'));
+  const ok = build(s, JAN);
+  assert.deepEqual([ok.status, ok.counts.built, ok.coverage[0].dailyFill.unavailable.length], ['ok', 1, 31]);
+  // A daily stored for HYPE's April 30 is no evidence that the April monthly file exists: April stays not_listed.
+  const h = store();
+  for (const unit of planUnits('HYPE', { from: '2021-10', to: '2025-04' })) recordMissing(h.zipRoot, unit.sources[0]);
+  put(h, 'HYPE', '2025-05', minutes('2025-05-30T10:30:00.000Z', 2));
+  putDaily(h, 'HYPE', '2025-04-30', minutes('2025-04-30T00:00:00.000Z', 2));
+  const listed = build(h, { symbols: ['HYPE'], from: '2025-03', to: '2025-05' });
+  assert.deepEqual([listed.status, listed.counts.notListed, listed.coverage[0].firstSourceFile], ['ok', 2, sourceOf('HYPE', '2025-05').file]);
+  // No version and no marker for one fill day: the unit is missing, as for an absent base source.
+  const m = store();
+  put(m, 'BTC', '2024-01', fourRows('2024-01'), { fillEvidence: false });
+  markDays(m, monthDays('2024-01', 31).filter(d => d !== '2024-01-20'));
+  const missing = build(m, JAN);
+  assert.equal(missing.status, 'incomplete');
+  assert.deepEqual(missing.missing, [{ contract: 'BTCUSDT', period: 'research', dataStart: '2024-01-01T00:00:00.000Z', dataEnd: '2024-02-01T00:00:00.000Z',
+    files: [{ file: dayFile('BTCUSDT', '2024-01-20'), recorded404: false }] }]);
+});
+
+test('F1a-2 r5 store: two versions, a corrupt version, or a present fill failing parse, CRC or the cap fails the unit and outranks a missing fill, in both enumeration orders', () => {
+  const t = minutes('2024-01-03T00:00:00.000Z', 2);
+  const cases = [
+    ['two versions', s => { putDaily(s, 'BTC', '2024-01-03', t); putDaily(s, 'BTC', '2024-01-03', t.slice(1)); }, /more than one local version/],
+    ['corrupt bytes', s => { const d = putDaily(s, 'BTC', '2024-01-03', t); const f = zipPathOf(s, d.source, d.sha256); fs.chmodSync(f, 0o644); const b = fs.readFileSync(f); b[b.length - 30] ^= 1; fs.writeFileSync(f, b); }, /sha256 mismatch/],
+    ['parse', s => putDaily(s, 'BTC', '2024-01-03', t, { csv: csvRows([klineRow(t[0], { closeTime: String(t[0] + 1) })]) }), /close_time/],
+    ['CRC', s => putDaily(s, 'BTC', '2024-01-03', t, { zip: { crc: 12345 } }), /CRC32/],
+    ['cap', s => putDaily(s, 'BTC', '2024-01-03', [], { csv: csvRows(minutes('2024-01-03T00:00:00.000Z', 11).map(x => klineRow(x, BAD))) }), /more than 10 quarantined rows/]];
+  for (const [name, damage, pattern] of cases) for (const absent of ['2024-01-20', '2024-01-02']) {
+    const s = store();
+    put(s, 'BTC', '2024-01', fourRows('2024-01'), { fillEvidence: false });
+    markDays(s, monthDays('2024-01', 31).filter(d => d !== absent && d !== '2024-01-03'));
+    damage(s);
+    const result = build(s, JAN);
+    assert.equal(result.status, 'failed', `${name}, absent ${absent}`);
+    assert.match(result.failures[0].reason, pattern, `${name}, absent ${absent}`);
+    assert.deepEqual([files(s.cacheDir), fs.existsSync(s.manifestPath)], [[], false], `${name}, absent ${absent}`);
+  }
+});
+
+test('F1a-2 r5 store: an over-cap daily that fills nothing fails its unit', () => {
+  const over = store();
+  put(over, 'BTC', '2024-01', fourRows('2024-01'));
+  putDaily(over, 'BTC', '2024-01-05', [], { csv: csvRows(minutes('2024-01-05T00:00:00.000Z', 11).map(x => klineRow(x, BAD))) });
+  const failed = build(over, JAN);
+  assert.equal(failed.status, 'failed');
+  assert.match(failed.failures[0].reason, /BTCUSDT-1m-2024-01-05|more than 10 quarantined rows in this file/);
+  assert.deepEqual(files(over.cacheDir), []);
+  const ten = store();
+  put(ten, 'BTC', '2024-01', fourRows('2024-01'));
+  const day5 = putDaily(ten, 'BTC', '2024-01-05', [], { csv: csvRows(minutes('2024-01-05T00:00:00.000Z', 10).map(x => klineRow(x, BAD))) });
+  assert.equal(build(ten, JAN).status, 'ok');
+  const [entry] = readManifest(ten.manifestPath).entries;
+  assert.deepEqual([entry.quarantinedRows.length, entry.quarantinedRows.every(q => q.file === day5.source.file), entry.filledRanges, entry.rowCount], [10, true, [], 4]);
+});
+
+test('F1a-2 r5 store: the split month uses only the dailies of each unit\'s own days; no record in both units', () => {
+  const s = store();
+  const at = t => Date.parse(`2025-10-${t}:00.000Z`);
+  const { source: monthly } = put(s, 'DOGE', '2025-10', [], { csv: csvRows([klineRow(at('16T23:57')), klineRow(at('16T23:58'), BAD), klineRow(at('17T00:01'), BAD), klineRow(at('17T00:02'))]) });
+  const d16 = putDaily(s, 'DOGE', '2025-10-16', [at('16T23:57'), at('16T23:59')]), d17 = putDaily(s, 'DOGE', '2025-10-17', [at('17T00:00'), at('17T00:02')]);
+  const result = build(s, { symbols: ['DOGE'], from: '2025-10', to: '2025-10' });
+  assert.equal(result.status, 'ok');
+  const [holdout, research] = readManifest(s.manifestPath).entries;
+  assert.deepEqual([research.sources.map(x => x.file), holdout.sources.map(x => x.file)], [[d16.source.file, monthly.file], [d17.source.file, monthly.file]]);
+  assert.deepEqual([research.filledRanges, holdout.filledRanges], [[{ start: '2025-10-16T23:59:00.000Z', end: '2025-10-17T00:00:00.000Z' }], [{ start: '2025-10-17T00:00:00.000Z', end: '2025-10-17T00:01:00.000Z' }]]);
+  const rule = 'high below max(open, close)';
+  assert.deepEqual([research.quarantinedRows, holdout.quarantinedRows], [[{ file: monthly.file, openTime: '2025-10-16T23:58:00.000Z', rule }], [{ file: monthly.file, openTime: '2025-10-17T00:01:00.000Z', rule }]]);
+  assert.deepEqual(result.coverage[0].quarantine, { sourceRows: 2, uniqueMinutes: 2, rows: [...research.quarantinedRows, ...holdout.quarantinedRows] });
+  assert.deepEqual([result.coverage[0].dailyFill.filledMinutes, result.coverage[0].dailyFill.sources], [2, [d16.source.file, d17.source.file]]);
+});
+
+test('F1a-2 r5 store: fill sets and common entries are byte-identical for narrow and broad selections, reversed enumeration and a warm rerun', () => {
+  const fill = s => {
+    put(s, 'BTC', '2024-01', fourRows('2024-01').filter((_, i) => i !== 1));
+    putDaily(s, 'BTC', '2024-01-03', fourRows('2024-01'));
+    put(s, 'BTC', '2024-02', fourRows('2024-02')); put(s, 'SOL', '2024-01', fourRows('2024-01')); put(s, 'SOL', '2024-02', fourRows('2024-02'));
+  };
+  const broad = store(), narrow = store(), reversed = store();
+  [broad, narrow, reversed].forEach(fill);
+  assert.equal(build(broad, { symbols: ['BTC', 'SOL'], from: '2024-01', to: '2024-02' }).status, 'ok');
+  for (const month of ['2024-02', '2024-01']) assert.equal(build(narrow, { symbols: ['BTC', 'SOL'], from: month, to: month }).status, 'ok');
+  for (const symbol of ['SOL', 'BTC']) assert.equal(build(reversed, { symbols: [symbol], from: '2024-01', to: '2024-02' }).status, 'ok');
+  assert.deepEqual(bytesOf(narrow), bytesOf(broad));
+  assert.deepEqual(bytesOf(reversed), bytesOf(broad));
+  assert.deepEqual(readManifest(broad.manifestPath).entries[0].filledRanges, [{ start: '2024-01-03T00:01:00.000Z', end: '2024-01-03T00:02:00.000Z' }]);
+  const before = bytesOf(broad);
+  const warm = build(broad, { symbols: ['BTC', 'SOL'], from: '2024-01', to: '2024-02' });
+  assert.deepEqual(warm.counts, { units: 4, built: 0, unchanged: 4, empty: 0, missing: 0, notListed: 0, failed: 0 });
+  assert.deepEqual(bytesOf(broad), before);
+});
+
+test('F1a-2 r5 store: firstSourceFile is the base source when a fill daily sorts first', () => {
+  const s = store();
+  put(s, 'ETH', '2024-01', fourRows('2024-01').slice(1));
+  putDaily(s, 'ETH', '2024-01-03', fourRows('2024-01'));
+  const result = build(s, { symbols: ['ETH'], from: '2024-01', to: '2024-01' });
+  assert.equal(readManifest(s.manifestPath).entries[0].sources[0].file, dayFile('ETHUSDT', '2024-01-03'));
+  assert.equal(result.coverage[0].firstSourceFile, sourceOf('ETH', '2024-01').file);
+  assert.equal(build(store(), { symbols: ['ETH'], from: '2024-01', to: '2024-01' }).coverage[0].firstSourceFile, null);
+});
+
+test('F1a-2 r5 store: 2026-10 base dailies record quarantine, get no fill sources and filledRanges []; a corrupt daily outranks a missing one', () => {
+  const s = store();
+  const days = planUnits('XRP', { from: '2026-10', to: '2026-10' })[0].sources;
+  days.forEach(d => putDaily(s, 'XRP', iso10(d.startMs), [], { csv: csvRows(minutes(new Date(d.startMs).toISOString(), 2).map((x, i) => klineRow(x, d.file.endsWith('05.zip') && !i ? BAD : {}))) }));
+  const result = build(s, { symbols: ['XRP'], from: '2026-10', to: '2026-10' });
+  assert.equal(result.status, 'ok');
+  const [entry] = readManifest(s.manifestPath).entries;
+  assert.deepEqual([entry.sources.length, entry.filledRanges, entry.rowCount], [16, [], 31]);
+  assert.deepEqual(entry.quarantinedRows, [{ file: days[4].file, openTime: '2026-10-05T00:00:00.000Z', rule: 'high below max(open, close)' }]);
+  assert.deepEqual(result.coverage[0].dailyFill, { filledMinutes: 0, sources: [], unavailable: [] });
+  // Day 3 corrupt and day 16 absent: failed, not missing.
+  const t = store();
+  const present = days.slice(0, 15).map(d => putDaily(t, 'XRP', iso10(d.startMs), minutes(new Date(d.startMs).toISOString(), 2)));
+  const third = zipPathOf(t, days[2], present[2].sha256);
+  fs.chmodSync(third, 0o644); const b = fs.readFileSync(third); b[b.length - 30] ^= 1; fs.writeFileSync(third, b);
+  const corrupt = build(t, { symbols: ['XRP'], from: '2026-10', to: '2026-10' });
+  assert.equal(corrupt.status, 'failed');
+  assert.match(corrupt.failures[0].reason, /sha256 mismatch/);
+});
+const iso10 = ms => new Date(ms).toISOString().slice(0, 10);
+
+test('F1a-2 r5 store: build report per symbol: quarantined source rows, unique minutes, filled minutes, fill sources and unavailable days', () => {
+  const s = store();
+  const t = minutes('2024-01-03T00:00:00.000Z', 3);
+  const { source: monthly } = put(s, 'BTC', '2024-01', [], { csv: csvRows([klineRow(t[0]), klineRow(t[1], BAD)]) });
+  const day3 = putDaily(s, 'BTC', '2024-01-03', [], { csv: csvRows([klineRow(t[0]), klineRow(t[1], { volume: '-1' }), klineRow(t[2])]) });
+  const result = build(s, JAN);
+  assert.equal(result.status, 'ok');
+  const iso = x => new Date(x).toISOString();
+  assert.deepEqual(result.coverage[0].quarantine, { sourceRows: 2, uniqueMinutes: 1, rows: [
+    { file: day3.source.file, openTime: iso(t[1]), rule: 'volume must be >= 0' }, { file: monthly.file, openTime: iso(t[1]), rule: 'high below max(open, close)' }] });
+  assert.deepEqual(result.coverage[0].dailyFill, { filledMinutes: 1, sources: [day3.source.file], unavailable: monthDays('2024-01', 31).filter(d => d !== '2024-01-03').map(d => dayFile('BTCUSDT', d)) });
+});
+
+test('F1a-2 r5 store: holdout records, fill reports and every diagnostic path (mismatch, valid/quarantined, over-cap) contain no values', () => {
+  const quarantined = { open: '187.4321', high: '187.1234', low: '186.9876', close: '187.0001' }, valid = { ...quarantined, high: '187.9999' };
+  const t = minutes('2026-01-05T00:00:00.000Z', 3);
+  const monthly = s => put(s, 'SOL', '2026-01', [], { csv: csvRows([klineRow(t[0], valid), klineRow(t[2], valid)]) });
+  const cases = [
+    ['mismatch', 'failed', /sources disagree at 2026-01-05T00:00:00.000Z/, s => putDaily(s, 'SOL', '2026-01-05', [], { csv: csvRows([klineRow(t[0], { ...valid, close: '187.0002' })]) })],
+    ['valid/quarantined', 'failed', /quarantined row .* at 2026-01-05T00:00:00.000Z/, s => putDaily(s, 'SOL', '2026-01-05', [], { csv: csvRows([klineRow(t[0], quarantined)]) })],
+    ['over-cap', 'failed', /more than 10 quarantined rows/, s => putDaily(s, 'SOL', '2026-01-06', [], { csv: csvRows(minutes('2026-01-06T00:00:00.000Z', 11).map(x => klineRow(x, quarantined))) })],
+    ['filled', 'ok', /2026-01-05T00:01:00.000Z/, s => putDaily(s, 'SOL', '2026-01-05', [], { csv: csvRows([klineRow(t[0], valid), klineRow(t[1], valid), klineRow(t[2], valid),
+      klineRow(Date.parse('2026-01-05T00:03:00.000Z'), quarantined)]) })]];
+  for (const [name, status, pattern, daily] of cases) {
+    const s = store();
+    monthly(s); daily(s);
+    const result = build(s, { symbols: ['SOL'], from: '2026-01', to: '2026-01' });
+    assert.equal(result.status, status, name);
+    const text = JSON.stringify([result, fs.existsSync(s.manifestPath) ? fs.readFileSync(s.manifestPath, 'utf8') : '']);
+    assert.match(text, pattern, name);
+    assert.doesNotMatch(text, /187\.|186\./, name);
+  }
+});
+
+test('F1a-2 r5 store: the memory guard is checked before and after each parse, the merge and the assembly and before every write; a trip at a fill load aborts the build and publishes nothing', () => {
+  const setup = () => {
+    const s = store();
+    const { source } = put(s, 'BTC', '2024-01', fourRows('2024-01').filter((_, i) => i !== 1));
+    return { s, source, day3: putDaily(s, 'BTC', '2024-01-03', fourRows('2024-01')).source };
+  };
+  const { s, source, day3 } = setup();
+  const labels = [];
+  assert.equal(build(s, { ...JAN, guard: { check(label) { labels.push(label); } } }).status, 'ok');
+  const unit = 'BTCUSDT 2024-01-01T00:00:00.000Z';
+  assert.deepEqual(labels, [unit, `parse ${source.file}`, `parsed ${source.file}`, `parse ${day3.file}`, `parsed ${day3.file}`, `merge ${day3.file}`, `assemble ${unit}`, `encode ${unit}`, `${unit} write`]);
+  labels.length = 0;
+  assert.equal(build(s, { ...JAN, guard: { check(label) { labels.push(label); } } }).counts.unchanged, 1);
+  assert.equal(labels.at(-1), `${unit} write`);
+  const tripped = setup();
+  const result = build(tripped.s, { ...JAN, guard: { check(label) { if (label === `parse ${tripped.day3.file}`) throw new Error('memory ceiling exceeded: 600 MiB > 512 MiB'); } } });
+  assert.equal(result.status, 'failed');
+  assert.match(result.error, /memory ceiling/);
+  assert.deepEqual([files(tripped.s.cacheDir), fs.existsSync(tripped.s.manifestPath), fs.existsSync(`${tripped.s.manifestPath}.lock`)], [[], false, false]);
+});
+
+test('F1a-2 r5 store: a fill daily published after a build changes the sources: the rebuild fails with "uses other source versions" and leaves the store untouched', () => {
+  const s = store();
+  put(s, 'BTC', '2024-01', fourRows('2024-01'));
+  assert.equal(build(s, JAN).status, 'ok');
+  const before = bytesOf(s);
+  putDaily(s, 'BTC', '2024-01-20', minutes('2024-01-20T00:00:00.000Z', 2));
+  const result = build(s, JAN);
+  assert.equal(result.status, 'failed');
+  assert.equal(result.failures[0].reason, 'the manifest entry for this unit uses other source versions (version selection rule pending)');
+  assert.deepEqual(bytesOf(s), before);
 });

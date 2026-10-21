@@ -7,7 +7,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
 import { encodeSnapshot, decodeSnapshot, canonicalJson, SCHEMA_VERSION } from './f1-1m-format.mjs';
-import { verifyZip, parseChecksum, readZipMember, parseKlines, planUnits, assembleUnit, unitCoverage, unitQuarantine, visionSource, QUARANTINE_RULES, VISION_SYMBOLS } from './vision-source.mjs';
+import { verifyZip, parseChecksum, readZipMember, parseKlines, planUnits, assembleUnit, unitCoverage, unitQuarantine, visionSource, fillSources, mergeUnit,
+  QUARANTINE_RULES, VISION_SYMBOLS } from './vision-source.mjs';
 
 export const MANIFEST_KIND = 'binance_vision_kline_1m_manifest';
 export const SOURCE = 'binance-vision-archive';
@@ -235,29 +236,71 @@ function acquireLock(manifestPath) {
 
 const unitId = u => ({ contract: u.instrument.contract, period: u.period, dataStart: u.dataStart, dataEnd: u.dataEnd });
 // One unit from verified local sources: missing, failed (with reason), empty, or an entry with its snapshot bytes.
-function buildUnit(unit, zipRoot, parsedCache) {
+// Dependencies (amendment round 5, F5, plan approval point 3): the base sources, and for a monthly unit the fill
+// dailies derived from it. A unit is missing only after every present dependency passed versions, readVerifiedSource,
+// parsing and the quarantine cap, so a failure outranks a missing source. Fill dailies are validated and merged one
+// at a time and never cached. check is the run's guard check: a trip aborts the run.
+function buildUnit(unit, zipRoot, parsedCache, check) {
+  const multipleVersions = list => `more than one local version (version selection rule pending): ${list.map(([s, v]) => `${s.file} [${v.join(', ')}]`).join('; ')}`;
   const versions = unit.sources.map(s => [s, localVersions(zipRoot, s)]);
-  const absent = versions.filter(([, v]) => !v.length).map(([s]) => s);
-  if (absent.length) return { status: 'missing', files: absent.map(s => ({ file: s.file, recorded404: recordedMissing(zipRoot, s) })) };
   const multiple = versions.filter(([, v]) => v.length > 1);
-  if (multiple.length) return { status: 'failed', reason: `more than one local version (version selection rule pending): ${multiple.map(([s, v]) => `${s.file} [${v.join(', ')}]`).join('; ')}` };
+  if (multiple.length) return { status: 'failed', reason: multipleVersions(multiple) };
   const inputs = [], sources = [];
-  for (const [s, [sha]] of versions) {
+  for (const [s, [sha]] of versions.filter(([, v]) => v.length)) {
     const key = `${s.file}@${sha}`;
-    if (!parsedCache.has(key)) parsedCache.set(key, parseKlines(readZipMember(readVerifiedSource(zipRoot, s, sha), s.csvName), s));
+    if (!parsedCache.has(key)) {
+      check(`parse ${s.file}`);
+      parsedCache.set(key, parseKlines(readZipMember(readVerifiedSource(zipRoot, s, sha), s.csvName), s));
+      check(`parsed ${s.file}`);
+    }
     inputs.push({ file: s.file, parsed: parsedCache.get(key) });
     sources.push({ file: s.file, sha256: sha });
   }
-  const { rowCount, columns } = assembleUnit(unit, inputs);
+  const absent = versions.filter(([, v]) => !v.length).map(([s]) => s);
+  if (absent.length) return { status: 'missing', files: absent.map(s => ({ file: s.file, recorded404: recordedMissing(zipRoot, s) })) };
+  const fill = { fillSources: [], unavailableFills: [] };
+  if (unit.sources[0].kind !== 'monthly') {
+    const { rowCount, columns } = assembleUnit(unit, inputs);
+    return finishUnit(unit, rowCount, columns, sources, unitQuarantine(unit, inputs), [], fill, check);
+  }
+  const present = [], absentFills = [];
+  for (const f of fillSources(unit, inputs[0].parsed.columns.open_time)) {
+    const v = localVersions(zipRoot, f);
+    if (v.length > 1) return { status: 'failed', reason: multipleVersions([[f, v]]) };
+    if (v.length) present.push([f, v[0]]);
+    else if (recordedMissing(zipRoot, f)) fill.unavailableFills.push(f.file);
+    else absentFills.push(f);
+  }
+  const shaOf = new Map(present.map(([f, sha]) => [f.file, sha]));
+  const loadFill = f => {
+    check(`parse ${f.file}`);
+    let parsed;
+    try { parsed = parseKlines(readZipMember(readVerifiedSource(zipRoot, f, shaOf.get(f.file)), f.csvName), f); }
+    catch (error) { throw new Error(`${f.file}: ${error.message}`); }
+    check(`parsed ${f.file}`);
+    return parsed;
+  };
+  if (absentFills.length) {
+    for (const [f] of present) loadFill(f); // validated and dropped: a present failure outranks the missing fill
+    return { status: 'missing', files: absentFills.map(f => ({ file: f.file, recorded404: false })) };
+  }
+  const merged = mergeUnit(unit, inputs[0], present.map(([f]) => f), loadFill, check);
+  fill.fillSources = present.map(([f]) => f.file);
+  return finishUnit(unit, merged.rowCount, merged.columns, [...sources, ...present.map(([f, sha]) => ({ file: f.file, sha256: sha }))], merged.quarantinedRows,
+    merged.filledRanges, fill, check);
+}
+// Coverage after the merge (Q2): an empty unit gets no snapshot or entry but keeps its report fields.
+function finishUnit(unit, rowCount, columns, sources, quarantinedRows, filledRanges, fill, check) {
   const coverage = unitCoverage(unit, columns.open_time);
-  const quarantinedRows = unitQuarantine(unit, inputs);
-  if (!rowCount) return { status: 'empty', coverage, quarantinedRows };
+  const report = { quarantinedRows, filledMinutes: filledRanges.reduce((n, r) => n + (Date.parse(r.end) - Date.parse(r.start)) / MINUTE_MS, 0), ...fill };
+  if (!rowCount) return { status: 'empty', coverage, ...report };
+  check(`encode ${unit.instrument.contract} ${unit.dataStart}`);
   const bytes = encodeSnapshot({ instrument: unit.instrument, period: unit.period, dataStart: unit.dataStart, dataEnd: unit.dataEnd, sources }, columns);
   const iso = t => new Date(t).toISOString();
   const entry = { ...unit.instrument, period: unit.period, dataStart: unit.dataStart, dataEnd: unit.dataEnd, schemaVersion: SCHEMA_VERSION, sha256: sha256(bytes),
     bytes: bytes.length, rowCount, firstOpenTime: iso(columns.open_time[0]), lastOpenTime: iso(columns.open_time[rowCount - 1]), missingMinutes: coverage.missingMinutes,
-    missingRanges: coverage.missingRanges, quarantinedRows, filledRanges: [], source: SOURCE, sources: [...sources].sort((a, b) => order(a.file, b.file)) };
-  return { status: 'ok', entry, bytes, coverage, quarantinedRows };
+    missingRanges: coverage.missingRanges, quarantinedRows, filledRanges, source: SOURCE, sources: [...sources].sort((a, b) => order(a.file, b.file)) };
+  return { status: 'ok', entry, bytes, coverage, ...report };
 }
 
 // Builds every planned unit of the symbols and months. Fail closed per unit; a guard (memory) failure or a lock
@@ -275,15 +318,17 @@ export function buildStore({ symbols, from, to, zipRoot, cacheDir, manifestPath,
       const notListed = notListedSources(symbol, { zipRoot, entries: [...entries, ...listingEntries] });
       let parsedCache = new Map();
       for (const unit of units) {
+        // Before the unit, keep only its own base parses (the split month reuses its monthly file); this also drops
+        // what a failed unit left. Fill dailies are never cached.
+        parsedCache = new Map([...parsedCache].filter(([key]) => unit.sources.some(s => key.startsWith(`${s.file}@`))));
         check(`${unit.instrument.contract} ${unit.dataStart}`);
         let result;
         try {
-          result = buildUnit(unit, zipRoot, parsedCache);
-          // Keep only this unit's parsed sources: the split month reuses its zip, nothing else accumulates.
-          parsedCache = new Map([...parsedCache].filter(([key]) => unit.sources.some(s => key.startsWith(`${s.file}@`))));
+          result = buildUnit(unit, zipRoot, parsedCache, check);
           if (result.status === 'ok') {
             const existing = entries.filter(e => sameKey(e, result.entry));
             if (existing.some(e => canonicalJson(e) === canonicalJson(result.entry))) {
+              check(`${unit.instrument.contract} ${unit.dataStart} write`);
               writeOnce(snapshotPath(cacheDir, result.entry.sha256), result.bytes);
               result = { ...result, status: 'unchanged' };
             } else if (existing.length) {
@@ -331,11 +376,15 @@ function coverageOf(contract, results) {
   const expectedMinutes = counted.reduce((n, r) => n + (r.unit.endMs - r.unit.startMs) / 60000, 0);
   const bars = built.reduce((n, r) => n + r.entry.rowCount, 0);
   const ranges = counted.flatMap(r => r.entry && ['built', 'unchanged'].includes(r.status) ? r.entry.missingRanges : [{ start: r.unit.dataStart, end: r.unit.dataEnd }]);
-  return { contract, firstSourceFile: built[0]?.entry.sources[0].file ?? null, firstCandle: built[0]?.entry.firstOpenTime ?? null, lastCandle: built.at(-1)?.entry.lastOpenTime ?? null,
+  const reported = units.filter(r => ['built', 'unchanged', 'empty'].includes(r.status));
+  // firstSourceFile is the first base source of the first built unit (F7): a fill daily would sort first in sources.
+  return { contract, firstSourceFile: built[0]?.unit.sources[0].file ?? null, firstCandle: built[0]?.entry.firstOpenTime ?? null, lastCandle: built.at(-1)?.entry.lastOpenTime ?? null,
     bars, expectedMinutes, missingMinutes: expectedMinutes - bars, notListed: [...new Set(units.filter(r => r.status === 'not_listed').map(r => r.unit.dataStart.slice(0, 7)))],
     gaps: counted.filter(r => ['missing', 'empty', 'failed'].includes(r.status)).map(r => ({ period: r.unit.period, dataStart: r.unit.dataStart, dataEnd: r.unit.dataEnd, status: r.status })),
     missingRanges: mergeRanges(ranges),
-    quarantine: quarantineReport(units.filter(r => ['built', 'unchanged', 'empty'].includes(r.status)).flatMap(r => r.quarantinedRows)) };
+    quarantine: quarantineReport(reported.flatMap(r => r.quarantinedRows)),
+    dailyFill: { filledMinutes: reported.reduce((n, r) => n + r.filledMinutes, 0), sources: reported.flatMap(r => r.fillSources).sort(order),
+      unavailable: reported.flatMap(r => r.unavailableFills).sort(order) } };
 }
 // Per-symbol quarantine report (amendment round 5, Q5) from unit records, which never repeat across split units.
 export function quarantineReport(records) {

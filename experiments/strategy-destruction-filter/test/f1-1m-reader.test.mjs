@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { openResearch1m } from '../src/f1-1m-reader.mjs';
 import { storeSource, buildStore, readManifest, snapshotPath } from '../src/f1-1m-store.mjs';
-import { planUnits } from '../src/vision-source.mjs';
+import { planUnits, visionSource } from '../src/vision-source.mjs';
 import { encodeSnapshot } from '../src/f1-1m-format.mjs';
 import { cachedSeries } from '../src/h2-contract.mjs';
 import { makeZip, klineCsv, minutes, checksumText, sha256 } from '../test-support/vision-fixtures.mjs';
@@ -21,6 +21,13 @@ function fixture() {
     const source = planUnits('BTC', { from: month, to: month })[0].sources[0];
     const zip = makeZip([{ name: source.csvName, data: klineCsv(openTimes) }]);
     storeSource(s.zipRoot, source, zip, checksumText(zip, source.zipName));
+    // Round 5: every day of these sparse months is a fill day; the 404 marker (at the path recordMissing uses, written
+    // without its fsyncs) makes each one "fill unavailable".
+    for (let day = source.startMs; day < source.endMs; day += 86400000) {
+      const daily = visionSource(BTC, 'daily', day), marker = path.join(s.zipRoot, path.dirname(daily.file), '404', daily.zipName);
+      fs.mkdirSync(path.dirname(marker), { recursive: true });
+      fs.writeFileSync(marker, '404 on the zip and its CHECKSUM\n');
+    }
     assert.notEqual(buildStore({ ...s, symbols: ['BTC'], from: month, to: month }).status, 'failed');
   }
   return s;
