@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { storeSource, recordMissing, localVersions, readManifest, buildStore, verifyStore, compareStore, snapshotPath, entryDailyFill } from '../src/f1-1m-store.mjs';
 import { planUnits, visionSource } from '../src/vision-source.mjs';
-import { decodeSnapshot } from '../src/f1-1m-format.mjs';
+import { decodeSnapshot, snapshotHeader } from '../src/f1-1m-format.mjs';
 import { makeZip, klineCsv, klineRow, minutes, checksumText, sha256, KLINE_HEADER } from '../test-support/vision-fixtures.mjs';
 
 const H2_MANIFEST = new URL('../results/manifest-h2.json', import.meta.url);
@@ -315,7 +315,7 @@ test('F1a-2 store: compare rebuilds offline and fails on missing, extra or misma
   assert.equal(ok.counts.compared, 2);
   const edited = JSON.parse(reference);
   const write = manifest => { fs.writeFileSync(s.manifestPath, JSON.stringify(manifest, null, 2) + '\n'); };
-  write({ ...edited, entries: [{ ...edited.entries[0], bytes: edited.entries[0].bytes + 1 }, edited.entries[1]] });
+  write({ ...edited, entries: [{ ...edited.entries[0], sha256: 'a'.repeat(64) }, edited.entries[1]] });
   assert.match(compare().mismatches.join('\n'), /2024-01/);
   write({ ...edited, entries: [edited.entries[0]] });
   const extra = compare();
@@ -323,7 +323,7 @@ test('F1a-2 store: compare rebuilds offline and fails on missing, extra or misma
   assert.equal(extra.extra.length, 1);
   // A consistent reference entry for March (January's entry moved by 60 days) whose input is missing locally.
   const shift = t => new Date(Date.parse(t) + 60 * 86400000).toISOString(), first = edited.entries[0];
-  const march = { ...first, dataStart: '2024-03-01T00:00:00.000Z', dataEnd: '2024-04-01T00:00:00.000Z', firstOpenTime: shift(first.firstOpenTime), lastOpenTime: shift(first.lastOpenTime),
+  const march = { ...first, sha256: 'c'.repeat(64), dataStart: '2024-03-01T00:00:00.000Z', dataEnd: '2024-04-01T00:00:00.000Z', firstOpenTime: shift(first.firstOpenTime), lastOpenTime: shift(first.lastOpenTime),
     missingRanges: first.missingRanges.map(r => ({ start: shift(r.start), end: shift(r.end) })), sources: [{ ...first.sources[0], file: first.sources[0].file.replace('2024-01', '2024-03') }] };
   write({ ...edited, entries: [...edited.entries, march] });
   const missing = compare({ to: '2024-03' });
@@ -374,6 +374,9 @@ test('F1a-2 store: failures and summaries for holdout units carry counts, times 
 
 // Round 5 entry schema (contract amendment round 5, Q3 and F6; plan approval point 7).
 const writeEntries = (s, entries) => fs.writeFileSync(s.manifestPath, JSON.stringify({ entries, kind: 'binance_vision_kline_1m_manifest', schemaVersion: 1 }, null, 2) + '\n');
+// A hand-made entry with the bytes format v1 gives its fields (round 8: the manifest checks them).
+const withBytes = e => ({ ...e, bytes: snapshotHeader({ instrument: { exchange: e.exchange, market: e.market, contract: e.contract }, period: e.period,
+  dataStart: e.dataStart, dataEnd: e.dataEnd, rowCount: e.rowCount, firstOpenTime: e.firstOpenTime, lastOpenTime: e.lastOpenTime, sources: e.sources }).length });
 const BTC_USDM = { exchange: 'binance', market: 'linear_perpetual', contract: 'BTCUSDT' };
 const dailyOf = day => visionSource(BTC_USDM, 'daily', Date.parse(`${day}T00:00:00.000Z`)).file;
 function builtJanuary() {
@@ -392,8 +395,8 @@ test('F1a-2 r5 store: entries carry quarantinedRows and filledRanges; checkEntry
   assert.deepEqual([entry.quarantinedRows, entry.filledRanges], [[], []]);
   const monthly = entry.sources[0].file, day3 = dailyOf('2024-01-03');
   const q = (openTime, rule = 'volume must be >= 0', file = monthly) => ({ file, openTime, rule });
-  const valid = { ...entry, quarantinedRows: [q('2024-01-01T00:00:00.000Z'), q('2024-01-03T00:05:00.000Z', 'high below max(open, close)', day3), q('2024-01-03T00:05:00.000Z')],
-    filledRanges: [{ start: '2024-01-03T00:00:00.000Z', end: '2024-01-03T00:02:00.000Z' }], sources: [{ file: day3, sha256: 'a'.repeat(64) }, ...entry.sources] };
+  const valid = withBytes({ ...entry, quarantinedRows: [q('2024-01-01T00:00:00.000Z'), q('2024-01-03T00:05:00.000Z', 'high below max(open, close)', day3), q('2024-01-03T00:05:00.000Z')],
+    filledRanges: [{ start: '2024-01-03T00:00:00.000Z', end: '2024-01-03T00:02:00.000Z' }], sources: [{ file: day3, sha256: 'a'.repeat(64) }, ...entry.sources] });
   writeEntries(s, [valid]);
   assert.deepEqual(readManifest(s.manifestPath).entries, [valid]);
   const reject = rejects(s, valid);
@@ -443,19 +446,19 @@ test('F1a-2 r5 store: checkEntry consistency: planned unit, missingRanges sorted
   // A nearly complete January: only 2024-01-01 lacks minutes, so only that day may carry a fill daily.
   const dense = { ...entry, rowCount: 43200, missingMinutes: 1440, missingRanges: [m('2024-01-01T00:00', '2024-01-02T00:00')], firstOpenTime: '2024-01-02T00:00:00.000Z', lastOpenTime: '2024-01-31T23:59:00.000Z' };
   const withDaily = (...days) => [...days.map(d => ({ file: dailyOf(d), sha256: 'b'.repeat(64) })), entry.sources[0]];
-  writeEntries(s, [{ ...dense, sources: withDaily('2024-01-01') }]);
+  writeEntries(s, [withBytes({ ...dense, sources: withDaily('2024-01-01') })]);
   assert.equal(readManifest(s.manifestPath).entries.length, 1);
   const denseReject = rejects(s, dense);
   denseReject({ sources: withDaily('2024-01-05') }, /fill source/);
   denseReject({ sources: [{ file: dailyOf('2024-02-01'), sha256: 'b'.repeat(64) }, entry.sources[0]] }, /fill source/);
   denseReject({ sources: [{ file: dailyOf('2024-01-01').replaceAll('BTCUSDT', 'ETHUSDT'), sha256: 'b'.repeat(64) }, entry.sources[0]] }, /fill source/);
   denseReject({ filledRanges: [m('2024-01-05T00:00', '2024-01-05T00:10')] }, /filled day/);
-  writeEntries(s, [{ ...dense, filledRanges: [m('2024-01-05T00:00', '2024-01-05T00:10')], sources: withDaily('2024-01-01', '2024-01-05') }]);
+  writeEntries(s, [withBytes({ ...dense, filledRanges: [m('2024-01-05T00:00', '2024-01-05T00:10')], sources: withDaily('2024-01-01', '2024-01-05') })]);
   assert.equal(readManifest(s.manifestPath).entries.length, 1);
   // 2026-10 is built from its 16 base dailies: missing minutes, but never a fill source or filledRanges.
   const days = planUnits('BTC', { from: '2026-10', to: '2026-10' })[0].sources.map(src => ({ file: src.file, sha256: 'c'.repeat(64) }));
-  const daily = { ...entry, period: 'holdout', dataStart: '2026-10-01T00:00:00.000Z', dataEnd: '2026-10-17T00:00:00.000Z', firstOpenTime: '2026-10-01T00:00:00.000Z',
-    lastOpenTime: '2026-10-16T23:59:00.000Z', rowCount: 16 * 1440 - 10, missingMinutes: 10, missingRanges: [m('2026-10-05T00:00', '2026-10-05T00:10')], sources: days };
+  const daily = withBytes({ ...entry, period: 'holdout', dataStart: '2026-10-01T00:00:00.000Z', dataEnd: '2026-10-17T00:00:00.000Z', firstOpenTime: '2026-10-01T00:00:00.000Z',
+    lastOpenTime: '2026-10-16T23:59:00.000Z', rowCount: 16 * 1440 - 10, missingMinutes: 10, missingRanges: [m('2026-10-05T00:00', '2026-10-05T00:10')], sources: days });
   writeEntries(s, [daily]);
   assert.equal(readManifest(s.manifestPath).entries.length, 1);
   const dailyReject = rejects(s, daily);
@@ -840,7 +843,7 @@ test('F1a-2 r6 store: readManifest accepts the first and last candle derived fro
   const s = store();
   fs.mkdirSync(path.dirname(s.manifestPath), { recursive: true });
   const m = (start, end) => ({ start: `${start}:00.000Z`, end: `${end}:00.000Z` });
-  const unit = (contract, month, days, over) => ({ bytes: 1, contract, dataEnd: '', dataStart: `${month}-01T00:00:00.000Z`, exchange: 'binance', filledRanges: [], market: 'linear_perpetual',
+  const unit = (contract, month, days, over) => withBytes({ contract, dataEnd: '', dataStart: `${month}-01T00:00:00.000Z`, exchange: 'binance', filledRanges: [], market: 'linear_perpetual',
     period: 'research', quarantinedRows: [], schemaVersion: 1, sha256: 'd'.repeat(64), source: 'binance-vision-archive', ...over,
     rowCount: days * 1440 - (over.missingMinutes ?? 0), missingMinutes: over.missingMinutes ?? 0 });
   const hype = unit('HYPEUSDT', '2025-05', 31, { dataEnd: '2025-06-01T00:00:00.000Z', missingMinutes: 42390, missingRanges: [m('2025-05-01T00:00', '2025-05-30T10:30')],
@@ -871,4 +874,82 @@ test('F1a-2 r7 store: readManifest rejects unsorted sources and a duplicate file
   }
   writeEntries(s, [entry]);
   assert.deepEqual(readManifest(s.manifestPath).entries, [entry]);
+});
+
+// Review round 8: exact key comparison; bytes, unique sha256, quarantine bounds and cap (round 7 sweep, decision 35).
+test('F1a-2 r8 store: a merged key containing a comma is rejected in the manifest top level, an entry, a source, a missingRanges or filledRanges range and a quarantinedRows record', () => {
+  const { s, entry } = builtJanuary();
+  fs.writeFileSync(s.manifestPath, JSON.stringify({ 'entries,kind': [entry], schemaVersion: 1 }) + '\n');
+  assert.throws(() => readManifest(s.manifestPath), /unknown kind, schemaVersion or layout/);
+  const { dataStart, dataEnd, ...rest } = entry;
+  void dataEnd;
+  writeEntries(s, [{ ...rest, 'dataEnd,dataStart': dataStart }]);
+  assert.throws(() => readManifest(s.manifestPath), /keys must be exactly/);
+  const reject = rejects(s, entry);
+  reject({ sources: [{ 'file,sha256': entry.sources[0].file }] }, /sources must be canonical Vision paths with sha256/);
+  reject({ missingRanges: [{ 'end,start': entry.missingRanges[0].start }, entry.missingRanges[1]] }, /bad missingRanges/);
+  reject({ filledRanges: [{ 'end,start': '2024-01-03T00:01:00.000Z' }] }, /filledRanges must be sorted/);
+  reject({ quarantinedRows: [{ 'file,openTime': entry.sources[0].file, rule: 'volume must be >= 0' }] }, /quarantinedRows records need exactly/);
+});
+
+test('F1a-2 r8 store: bytes must equal the format v1 snapshot length; built entries, a filled unit and a quarantined unit are accepted with their built bytes', () => {
+  const { s, entry } = builtJanuary();
+  assert.equal(entry.bytes, fs.statSync(snapshotPath(s.cacheDir, entry.sha256)).size);
+  for (const delta of [1, -1, 8, -8]) rejects(s, entry)({ bytes: entry.bytes + delta }, /bytes must equal the format v1 snapshot length/);
+  const filled = filledJanuary();
+  const [f] = readManifest(filled.s.manifestPath).entries;
+  assert.deepEqual([f.sources.length, f.filledRanges.length, f.bytes], [2, 1, fs.statSync(snapshotPath(filled.s.cacheDir, f.sha256)).size]);
+  const q = store();
+  const t = minutes('2024-03-03T00:00:00.000Z', 3);
+  put(q, 'ETH', '2024-03', t, { csv: csvRows([klineRow(t[0]), klineRow(t[1], BAD), klineRow(t[2])]) });
+  assert.equal(build(q, { symbols: ['ETH'], from: '2024-03', to: '2024-03' }).status, 'ok');
+  const [qe] = readManifest(q.manifestPath).entries;
+  assert.deepEqual([qe.quarantinedRows.length, qe.bytes], [1, fs.statSync(snapshotPath(q.cacheDir, qe.sha256)).size]);
+});
+
+test('F1a-2 r8 store: readManifest rejects two entries of different units with the same sha256', () => {
+  const s = store();
+  put(s, 'BTC', '2024-01', fourRows('2024-01'));
+  put(s, 'BTC', '2024-02', fourRows('2024-02'));
+  assert.equal(build(s, { symbols: ['BTC'], from: '2024-01', to: '2024-02' }).status, 'ok');
+  const [jan, feb] = readManifest(s.manifestPath).entries;
+  writeEntries(s, [jan, { ...feb, sha256: jan.sha256 }]);
+  assert.throws(() => readManifest(s.manifestPath), new RegExp(`^Error: 1m manifest: entries BTCUSDT research 2024-01-01T00:00:00\\.000Z and BTCUSDT research 2024-02-01T00:00:00\\.000Z share sha256 ${jan.sha256}$`));
+});
+
+test('F1a-2 r8 store: a quarantined row must lie inside the file it names: a fill daily its day, a 2026-10 base daily its day', () => {
+  const { s } = filledJanuary(); // sources: the daily of 2024-01-03 and the monthly file; 2024-01-05 is missing
+  const [entry] = readManifest(s.manifestPath).entries;
+  const daily = entry.sources[0].file, rule = 'volume must be >= 0';
+  rejects(s, entry)({ quarantinedRows: [{ file: daily, openTime: '2024-01-05T00:00:00.000Z', rule }] }, /quarantined row at 2024-01-05T00:00:00\.000Z lies outside its file data\/futures\/um\/daily\/klines\/BTCUSDT\/1m\/BTCUSDT-1m-2024-01-03\.zip/);
+  writeEntries(s, [{ ...entry, quarantinedRows: [{ file: daily, openTime: '2024-01-03T00:05:00.000Z', rule }, { file: entry.sources[1].file, openTime: '2024-01-05T00:00:00.000Z', rule }] }]);
+  assert.equal(readManifest(s.manifestPath).entries[0].quarantinedRows.length, 2);
+  const x = store();
+  const days = planUnits('XRP', { from: '2026-10', to: '2026-10' })[0].sources;
+  days.forEach(d => putDaily(x, 'XRP', iso10(d.startMs), minutes(new Date(d.startMs).toISOString(), 2)));
+  assert.equal(build(x, { symbols: ['XRP'], from: '2026-10', to: '2026-10' }).status, 'ok');
+  const [oct] = readManifest(x.manifestPath).entries;
+  rejects(x, oct)({ quarantinedRows: [{ file: days[0].file, openTime: '2026-10-05T00:05:00.000Z', rule }] }, /quarantined row at 2026-10-05T00:05:00\.000Z lies outside its file/);
+  writeEntries(x, [{ ...oct, quarantinedRows: [{ file: days[4].file, openTime: '2026-10-05T00:05:00.000Z', rule }] }]);
+  assert.equal(readManifest(x.manifestPath).entries.length, 1);
+});
+
+test('F1a-2 r8 store: readManifest caps the quarantined rows of one physical file at 10 across entries: 11 in one entry and 6 + 5 across the two 2025-10 units fail, 10 pass', () => {
+  const rule = 'volume must be >= 0';
+  const records = (file, start, n) => Array.from({ length: n }, (_, i) => ({ file, openTime: new Date(Date.parse(start) + i * 60000).toISOString(), rule }));
+  const { s, entry } = builtJanuary(); // 2024-01-01 is missing
+  const monthly = entry.sources[0];
+  rejects(s, entry)({ quarantinedRows: records(monthly.file, '2024-01-01T00:00:00.000Z', 11) },
+    new RegExp(`^Error: 1m manifest: more than 10 quarantined rows recorded for ${monthly.file.replaceAll('.', '\\.')}@${monthly.sha256}$`));
+  writeEntries(s, [{ ...entry, quarantinedRows: records(monthly.file, '2024-01-01T00:00:00.000Z', 10) }]);
+  assert.equal(readManifest(s.manifestPath).entries[0].quarantinedRows.length, 10);
+  const d = store();
+  put(d, 'DOGE', '2025-10', minutes('2025-10-16T23:58:00.000Z', 4));
+  assert.equal(build(d, { symbols: ['DOGE'], from: '2025-10', to: '2025-10' }).status, 'ok');
+  const [holdout, research] = readManifest(d.manifestPath).entries;
+  const file = research.sources[0].file;
+  writeEntries(d, [{ ...holdout, quarantinedRows: records(file, '2025-10-17T01:00:00.000Z', 5) }, { ...research, quarantinedRows: records(file, '2025-10-01T00:00:00.000Z', 6) }]);
+  assert.throws(() => readManifest(d.manifestPath), /more than 10 quarantined rows recorded for data\/futures\/um\/monthly\/klines\/DOGEUSDT\/1m\/DOGEUSDT-1m-2025-10\.zip@/);
+  writeEntries(d, [{ ...holdout, quarantinedRows: records(file, '2025-10-17T01:00:00.000Z', 4) }, { ...research, quarantinedRows: records(file, '2025-10-01T00:00:00.000Z', 6) }]);
+  assert.equal(readManifest(d.manifestPath).entries.length, 2);
 });

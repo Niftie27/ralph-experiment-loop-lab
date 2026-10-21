@@ -21,28 +21,49 @@ export function canonicalJson(value) {
 const fail = message => { throw new Error(`1m snapshot: ${message}`); };
 const isIso = s => typeof s === 'string' && ISO.test(s) && new Date(Date.parse(s)).toISOString() === s;
 const iso = ms => new Date(ms).toISOString();
-const sameKeys = (object, keys) => object && typeof object === 'object' && !Array.isArray(object)
-  && Object.keys(object).sort().join() === [...keys].sort().join();
+// True only for a plain object (not an array, not a class instance) whose own keys, sorted by plain code-unit order,
+// equal the expected keys sorted the same way, element by element: a key containing a comma never stands for two.
+export function hasExactKeys(value, keys) {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return false;
+  const proto = Object.getPrototypeOf(value);
+  if (proto !== Object.prototype && proto !== null) return false;
+  const own = Object.keys(value).sort(), expected = [...keys].sort();
+  return own.length === expected.length && own.every((key, i) => key === expected[i]);
+}
 
 function checkMeta({ instrument, period, dataStart, dataEnd, sources }) {
-  if (!sameKeys(instrument, ['contract', 'exchange', 'market']) || !Object.values(instrument).every(v => typeof v === 'string' && v)) fail('incomplete instrument');
+  if (!hasExactKeys(instrument, ['contract', 'exchange', 'market']) || ![instrument.exchange, instrument.market, instrument.contract].every(v => typeof v === 'string' && v)) {
+    fail('incomplete instrument');
+  }
   if (!PERIOD_NAMES.includes(period)) fail(`unknown period ${period}`);
   if (!isIso(dataStart) || !isIso(dataEnd)) fail('dataStart and dataEnd must be ISO strings with .000Z');
   if (!Array.isArray(sources) || !sources.length) fail('sources must be a non-empty list');
   for (const s of sources) {
-    if (!sameKeys(s, ['file', 'sha256'])) fail('source entries need exactly file and sha256');
+    if (!hasExactKeys(s, ['file', 'sha256'])) fail('source entries need exactly file and sha256');
     if (typeof s.file !== 'string' || !s.file || s.file.startsWith('/') || s.file.split('/').some(p => p === '..' || p === '.' || p === '')) fail('source file must be a canonical relative Vision path');
     if (typeof s.sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(s.sha256)) fail('source sha256 must be 64 lowercase hex');
   }
 }
 const sortedSources = sources => [...sources].map(s => ({ file: s.file, sha256: s.sha256 })).sort((a, b) => a.file < b.file ? -1 : a.file > b.file ? 1 : 0);
 
+// The header bytes of a snapshot (canonical JSON plus the minimal 0-7 spaces that align the columns to 8 bytes) and the
+// file length they give, 12 + header + 8 x columns x rowCount: the one source of the length rule, used by
+// encodeSnapshot and by the manifest's bytes check. Every input is also a manifest entry field.
+export function snapshotHeader({ instrument, period, dataStart, dataEnd, rowCount, firstOpenTime, lastOpenTime, sources }) {
+  const header = { schemaVersion: SCHEMA_VERSION, kind: KIND, instrument: { exchange: instrument.exchange, market: instrument.market, contract: instrument.contract },
+    period, dataStart, dataEnd, columns: COLUMNS.map(c => ({ ...c })), rowCount, firstOpenTime, lastOpenTime, sources: sortedSources(sources) };
+  const json = Buffer.from(canonicalJson(header), 'utf8');
+  const bytes = Buffer.alloc(json.length + (8 - ((12 + json.length) % 8)) % 8, 0x20);
+  json.copy(bytes, 0);
+  return { bytes, length: 12 + bytes.length + 8 * COLUMNS.length * rowCount };
+}
+
 export function encodeSnapshot(meta, columns) {
   checkMeta(meta);
   const sources = sortedSources(meta.sources);
   for (let i = 1; i < sources.length; i++) if (sources[i].file === sources[i - 1].file) fail(`duplicate source file ${sources[i].file}`);
   const names = COLUMNS.map(c => c.name);
-  if (!sameKeys(columns, names)) fail(`columns must be exactly ${names.join(',')}`);
+  if (!hasExactKeys(columns, names)) fail(`columns must be exactly ${names.join(',')}`);
   const rowCount = columns.open_time.length;
   if (!Number.isSafeInteger(rowCount) || rowCount < 1) fail('rowCount must be a positive integer');
   for (const name of names) {
@@ -50,18 +71,14 @@ export function encodeSnapshot(meta, columns) {
     for (let i = 0; i < rowCount; i++) if (!Number.isFinite(columns[name][i])) fail(`non-finite value in ${name} at row ${i}`);
   }
   for (let i = 0; i < rowCount; i++) if (!Number.isSafeInteger(columns.open_time[i])) fail(`open_time must be integer milliseconds (row ${i})`);
-  const header = { schemaVersion: SCHEMA_VERSION, kind: KIND, instrument: { ...meta.instrument }, period: meta.period, dataStart: meta.dataStart,
-    dataEnd: meta.dataEnd, columns: COLUMNS.map(c => ({ ...c })), rowCount, firstOpenTime: iso(columns.open_time[0]),
-    lastOpenTime: iso(columns.open_time[rowCount - 1]), sources };
-  const json = Buffer.from(canonicalJson(header), 'utf8');
-  const pad = (8 - ((12 + json.length) % 8)) % 8;
-  if (json.length + pad > MAX_HEADER_BYTES) fail('header over 64 KiB');
-  const out = Buffer.alloc(12 + json.length + pad + 8 * names.length * rowCount);
+  const { bytes: head, length } = snapshotHeader({ instrument: meta.instrument, period: meta.period, dataStart: meta.dataStart, dataEnd: meta.dataEnd, rowCount,
+    firstOpenTime: iso(columns.open_time[0]), lastOpenTime: iso(columns.open_time[rowCount - 1]), sources });
+  if (head.length > MAX_HEADER_BYTES) fail('header over 64 KiB');
+  const out = Buffer.alloc(length);
   out.write(MAGIC, 0, 'latin1');
-  out.writeUInt32LE(json.length + pad, 8);
-  json.copy(out, 12);
-  out.fill(0x20, 12 + json.length, 12 + json.length + pad);
-  let offset = 12 + json.length + pad;
+  out.writeUInt32LE(head.length, 8);
+  head.copy(out, 12);
+  let offset = 12 + head.length;
   for (const name of names) for (let i = 0; i < rowCount; i++, offset += 8) {
     const v = columns[name][i];
     out.writeDoubleLE(v === 0 ? 0 : v, offset); // -0 === 0, so this writes +0
@@ -85,7 +102,7 @@ export function decodeSnapshot(bytes) {
   try { text = utf8.decode(buf.subarray(12, end)); header = JSON.parse(text); } catch { fail('header is not valid UTF-8 JSON'); }
   if (!header || typeof header !== 'object' || header.schemaVersion !== SCHEMA_VERSION) fail(`Unknown schemaVersion ${header?.schemaVersion}`);
   if (canonicalJson(header) !== text) fail('header is not canonical JSON (key order, whitespace or duplicate keys)');
-  if (!sameKeys(header, HEADER_KEYS)) fail(`header keys must be exactly ${HEADER_KEYS.join(',')}`);
+  if (!hasExactKeys(header, HEADER_KEYS)) fail(`header keys must be exactly ${HEADER_KEYS.join(',')}`);
   if (header.kind !== KIND) fail(`unknown kind ${header.kind}`);
   checkMeta(header);
   if (canonicalJson(header.sources) !== canonicalJson(sortedSources(header.sources))) fail('sources not sorted by file');

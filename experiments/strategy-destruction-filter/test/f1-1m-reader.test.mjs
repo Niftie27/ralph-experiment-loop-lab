@@ -177,3 +177,12 @@ test('F1a-2 reader: every public entry point rejects poisoned options and reques
   const source = fs.readFileSync(new URL('../src/f1-1m-reader.mjs', import.meta.url), 'utf8');
   assert.doesNotMatch(source, /cachedSeries|freezeSeries|market-data/);
 });
+
+test('F1a-2 r8 reader: a merged key containing a comma is rejected in the request and in its instrument', () => {
+  const reader = open(fixture());
+  const window = { dataStart: '2024-02-01T00:00:00.000Z', dataEnd: '2024-02-02T00:00:00.000Z' };
+  assert.throws(() => reader.read({ instrument: BTC, 'dataEnd,dataStart': window.dataEnd }), /request must have exactly instrument, dataStart and dataEnd/);
+  assert.throws(() => reader.read({ 'dataStart,instrument': BTC, dataEnd: window.dataEnd }), /request must have exactly instrument, dataStart and dataEnd/);
+  assert.throws(() => reader.read({ ...window, instrument: { contract: 'BTCUSDT', 'exchange,market': 'binance' } }), /incomplete instrument/);
+  assert.equal(reader.read({ ...window, instrument: BTC }).rowCount, 3);
+});

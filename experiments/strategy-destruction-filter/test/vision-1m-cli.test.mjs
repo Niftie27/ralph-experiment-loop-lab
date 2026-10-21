@@ -654,3 +654,31 @@ test('F1a-2 r7 cli: download exits 1 before any request on a manifest whose entr
   assert.match(download.summary.error, /sources must be sorted by file without a duplicate file/);
   assert.deepEqual(net.calls, []);
 });
+
+test('F1a-2 r8 cli: download exits 1 before any request on a manifest with wrong bytes, a shared sha256, a quarantined row outside its file or more than 10 quarantined rows of one file', async () => {
+  const w = workspace(), { published } = sparseJanuary();
+  publish(published, 'BTC', '2024-02', rows('2024-02'));
+  const args = ['--symbols', 'BTC', '--from', '2024-01', '--to', '2024-02', ...w.args];
+  assert.equal((await run(['download', ...args], vision(published))).code, 0);
+  assert.equal((await run(['build', ...args])).code, 0);
+  const manifestFile = path.join(w.dir, 'results', 'manifest-f1-1m.json');
+  const built = fs.readFileSync(manifestFile, 'utf8');
+  const rule = 'volume must be >= 0';
+  const breaks = [
+    ['bytes', m => { m.entries[0].bytes += 1; }, /bytes must equal the format v1 snapshot length/],
+    ['sha256', m => { m.entries[1].sha256 = m.entries[0].sha256; }, /share sha256/],
+    ['bounds', m => { m.entries[0].quarantinedRows = [{ file: btcDay('2024-01-02'), openTime: '2024-01-05T00:00:00.000Z', rule }]; }, /lies outside its file/],
+    ['cap', m => { m.entries[0].quarantinedRows = Array.from({ length: 11 }, (_, i) => ({ file: sourceOf('BTC', '2024-01').file, openTime: new Date(Date.parse('2024-01-01T00:00:00.000Z') + i * 60000).toISOString(), rule })); },
+      /more than 10 quarantined rows recorded/]];
+  for (const [name, edit, pattern] of breaks) {
+    const manifest = JSON.parse(built);
+    assert.equal(manifest.entries[0].sources[0].file, btcDay('2024-01-02'), name);
+    edit(manifest);
+    fs.writeFileSync(manifestFile, JSON.stringify(manifest, null, 2) + '\n');
+    const net = vision(published);
+    const download = await run(['download', ...args], net);
+    assert.equal(download.code, 1, name);
+    assert.match(download.summary.error, pattern, name);
+    assert.deepEqual(net.calls, [], name);
+  }
+});

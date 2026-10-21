@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import { PERIODS } from './h2-contract.mjs';
-import { decodeSnapshot, canonicalJson, COLUMNS } from './f1-1m-format.mjs';
+import { decodeSnapshot, canonicalJson, hasExactKeys, COLUMNS } from './f1-1m-format.mjs';
 import { readManifest, snapshotPath } from './f1-1m-store.mjs';
 import { planUnits, VISION_SYMBOLS } from './vision-source.mjs';
 
@@ -13,15 +13,14 @@ const RESEARCH = PERIODS.research.map(Date.parse);
 const ISO = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.000Z$/;
 const SYMBOL_OF = Object.fromEntries(Object.entries(VISION_SYMBOLS).map(([symbol, contract]) => [contract, symbol]));
 const fail = message => { throw new Error(`1m reader: ${message}`); };
-const keysAre = (object, keys) => object && typeof object === 'object' && Object.keys(object).sort().join() === [...keys].sort().join();
 const isoTime = s => typeof s === 'string' && ISO.test(s) && new Date(Date.parse(s)).toISOString() === s;
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const monthOf = t => new Date(t).toISOString().slice(0, 7);
 
 function checkRequest(request) {
-  if (!keysAre(request, ['instrument', 'dataStart', 'dataEnd'])) fail('request must have exactly instrument, dataStart and dataEnd');
+  if (!hasExactKeys(request, ['instrument', 'dataStart', 'dataEnd'])) fail('request must have exactly instrument, dataStart and dataEnd');
   const { instrument, dataStart, dataEnd } = request;
-  if (!keysAre(instrument, ['exchange', 'market', 'contract']) || ![instrument.exchange, instrument.market, instrument.contract].every(v => typeof v === 'string' && v)) fail('incomplete instrument');
+  if (!hasExactKeys(instrument, ['exchange', 'market', 'contract']) || ![instrument.exchange, instrument.market, instrument.contract].every(v => typeof v === 'string' && v)) fail('incomplete instrument');
   if (instrument.exchange !== 'binance' || instrument.market !== 'linear_perpetual' || !SYMBOL_OF[instrument.contract]) fail('unsupported instrument (Binance USD-M Vision contracts only)');
   if (!isoTime(dataStart) || !isoTime(dataEnd)) fail('dataStart and dataEnd must be ISO strings with .000Z');
   const start = Date.parse(dataStart), end = Date.parse(dataEnd);

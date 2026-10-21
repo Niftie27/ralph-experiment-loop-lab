@@ -1,7 +1,7 @@
 // F1a-2: columnar 1m snapshot format v1 (docs/f1/f1a-2-contract.md, A2).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { COLUMNS, canonicalJson, encodeSnapshot, decodeSnapshot } from '../src/f1-1m-format.mjs';
+import { COLUMNS, canonicalJson, encodeSnapshot, decodeSnapshot, hasExactKeys, snapshotHeader } from '../src/f1-1m-format.mjs';
 
 const T0 = Date.parse('2024-01-01T00:00:00.000Z');
 const SHA = '21eeac04a76a7a35b10467e5e752fb2f8cff77cdeb57df6b50a23ce8d69bb190';
@@ -142,4 +142,39 @@ test('F1a-2 format v1 decoder rejects a corrupt file before allocating columns',
   reject(nan, /non-finite/);
   const negZero = Buffer.from(good); negZero.writeDoubleLE(-0, 12 + headerLength(good) + 8 * 2 * 5);
   reject(negZero, /-0/);
+});
+
+// Review round 8: exact key comparison, never key lists joined with commas.
+test('F1a-2 r8 format: hasExactKeys compares the sorted own keys of a plain object element by element; a key containing a comma never stands for two keys', () => {
+  assert.equal(hasExactKeys({ b: 1, a: 2 }, ['a', 'b']), true);
+  assert.equal(hasExactKeys(Object.assign(Object.create(null), { a: 1, b: 2 }), ['b', 'a']), true);
+  for (const value of [{ 'a,b': 1 }, { a: 1 }, { a: 1, b: 2, c: 3 }, { a: 1, 'b,': 2 }, ['a', 'b'], null, undefined, 'a,b', new Map([['a', 1], ['b', 2]]),
+    Object.assign(Object.create({ inherited: true }), { a: 1, b: 2 })]) {
+    assert.equal(hasExactKeys(value, ['a', 'b']), false, String(value && JSON.stringify(value)));
+  }
+});
+
+test('F1a-2 r8 format: a merged key such as "exchange,market" is rejected by encodeSnapshot and decodeSnapshot (instrument, source, columns, header keys)', () => {
+  const merged = { contract: 'BTCUSDT', 'exchange,market': 'binance' };
+  assert.throws(() => encodeSnapshot(meta({ instrument: merged }), columns(3)), /incomplete instrument/);
+  assert.throws(() => encodeSnapshot(meta({ sources: [{ 'file,sha256': SHA }] }), columns(3)), /source entries need exactly file and sha256/);
+  const { high, low, ...rest } = columns(3);
+  void low;
+  assert.throws(() => encodeSnapshot(meta(), { ...rest, 'high,low': high }), /columns must be exactly/);
+  const good = encodeSnapshot(meta(), columns(3));
+  assert.throws(() => decodeSnapshot(withHeader(good, h => { h.instrument = merged; })), /incomplete instrument/);
+  assert.throws(() => decodeSnapshot(withHeader(good, h => { h.sources = [{ 'file,sha256': SHA }]; })), /source entries need exactly file and sha256/);
+  assert.throws(() => decodeSnapshot(withHeader(good, h => { h['dataEnd,dataStart'] = h.dataStart; delete h.dataStart; delete h.dataEnd; })), /header keys must be exactly/);
+  assert.throws(() => decodeSnapshot(withHeader(good, h => { h['high,low'] = 1; })), /header keys must be exactly/);
+});
+
+test('F1a-2 r8 format: snapshotHeader gives the header bytes and the file length encodeSnapshot writes', () => {
+  for (const n of [1, 3, 40]) {
+    const m = meta(), c = columns(n), bytes = encodeSnapshot(m, c);
+    const { bytes: head, length } = snapshotHeader({ ...m, rowCount: n, firstOpenTime: new Date(c.open_time[0]).toISOString(), lastOpenTime: new Date(c.open_time.at(-1)).toISOString() });
+    assert.equal(length, bytes.length);
+    assert.equal(length, 12 + head.length + 8 * 10 * n);
+    assert.deepEqual(bytes.subarray(12, 12 + head.length), head);
+    assert.equal((12 + head.length) % 8, 0);
+  }
 });

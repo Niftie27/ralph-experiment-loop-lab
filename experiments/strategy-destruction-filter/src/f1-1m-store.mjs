@@ -6,9 +6,9 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
-import { encodeSnapshot, decodeSnapshot, canonicalJson, SCHEMA_VERSION } from './f1-1m-format.mjs';
+import { encodeSnapshot, decodeSnapshot, canonicalJson, hasExactKeys, snapshotHeader, SCHEMA_VERSION } from './f1-1m-format.mjs';
 import { verifyZip, parseChecksum, readZipMember, parseKlines, planUnits, assembleUnit, unitCoverage, unitQuarantine, visionSource, fillSources, mergeUnit,
-  QUARANTINE_RULES, VISION_SYMBOLS } from './vision-source.mjs';
+  QUARANTINE_RULES, QUARANTINE_CAP, VISION_SYMBOLS } from './vision-source.mjs';
 
 export const MANIFEST_KIND = 'binance_vision_kline_1m_manifest';
 export const SOURCE = 'binance-vision-archive';
@@ -131,16 +131,16 @@ function compareEntries(a, b) {
 const sameKey = (a, b) => unitKey(a).every((v, i) => v === unitKey(b)[i]);
 function checkEntry(e) {
   const fail = message => { throw new Error(`1m manifest: entry ${e?.contract} ${e?.period} ${e?.dataStart}: ${message}`); };
-  if (!e || typeof e !== 'object' || Object.keys(e).sort().join() !== ENTRY_KEYS.join()) fail(`keys must be exactly ${ENTRY_KEYS.join(',')}`);
+  if (!hasExactKeys(e, ENTRY_KEYS)) fail(`keys must be exactly ${ENTRY_KEYS.join(',')}`);
   if (!['exchange', 'market', 'contract'].every(k => typeof e[k] === 'string' && e[k])) fail('incomplete instrument');
   if (!['research', 'holdout'].includes(e.period)) fail('unknown period');
   if (![e.dataStart, e.dataEnd, e.firstOpenTime, e.lastOpenTime].every(t => typeof t === 'string' && ISO.test(t))) fail('times must be ISO strings with .000Z');
   if (e.schemaVersion !== SCHEMA_VERSION) fail(`unknown schemaVersion ${e.schemaVersion}`);
   if (!HEX.test(e.sha256)) fail('bad sha256');
   if (![e.bytes, e.rowCount].every(n => Number.isSafeInteger(n) && n > 0) || !Number.isSafeInteger(e.missingMinutes) || e.missingMinutes < 0) fail('bad counts');
-  if (!Array.isArray(e.missingRanges) || !e.missingRanges.every(r => r && Object.keys(r).sort().join() === 'end,start' && ISO.test(r.start) && ISO.test(r.end))) fail('bad missingRanges');
+  if (!Array.isArray(e.missingRanges) || !e.missingRanges.every(r => hasExactKeys(r, ['end', 'start']) && ISO.test(r.start) && ISO.test(r.end))) fail('bad missingRanges');
   if (e.source !== SOURCE) fail(`source must be ${SOURCE}`);
-  if (!Array.isArray(e.sources) || !e.sources.length || !e.sources.every(s => s && Object.keys(s).sort().join() === 'file,sha256'
+  if (!Array.isArray(e.sources) || !e.sources.length || !e.sources.every(s => hasExactKeys(s, ['file', 'sha256'])
     && typeof s.file === 'string' && /^data\/[A-Za-z0-9_./-]+\.zip$/.test(s.file) && !s.file.includes('..') && HEX.test(s.sha256))) fail('sources must be canonical Vision paths with sha256');
   // As format v1 requires of the snapshot header (and the builder writes): sorted by file, one entry per file.
   for (let i = 1; i < e.sources.length; i++) if (order(e.sources[i - 1].file, e.sources[i].file) >= 0) fail('sources must be sorted by file without a duplicate file');
@@ -165,13 +165,18 @@ function checkEntry(e) {
   if (!filled) fail('filledRanges must be sorted, maximal, non-empty, minute-aligned ranges inside the unit');
   if (filled.some(([s, t]) => missing.some(([a, b]) => s < b && a < t))) fail('filledRanges overlap missingRanges');
   const files = new Set(e.sources.map(s => s.file));
+  // Each file bounds the rows it can hold: a base source its planned bounds, a fill daily its UTC day.
+  const bounds = new Map(unit.sources.map(s => [s.file, [s.startMs, s.endMs]]));
+  if (unit.sources[0].kind === 'monthly') for (let d = unit.startMs; d < unit.endMs; d += DAY_MS) bounds.set(visionSource(unit.instrument, 'daily', d).file, [d, d + DAY_MS]);
   if (!Array.isArray(e.quarantinedRows)) fail('quarantinedRows must be a list');
   e.quarantinedRows.forEach((q, i) => {
-    if (!q || typeof q !== 'object' || Object.keys(q).sort().join() !== 'file,openTime,rule' || !files.has(q.file) || !isMinute(q.openTime) || !QUARANTINE_RULES.includes(q.rule)) {
+    if (!hasExactKeys(q, ['file', 'openTime', 'rule']) || !files.has(q.file) || !isMinute(q.openTime) || !QUARANTINE_RULES.includes(q.rule)) {
       fail('quarantinedRows records need exactly file (one of the sources), openTime (ISO on a whole minute) and a known rule');
     }
     const t = Date.parse(q.openTime);
     if (!missing.some(([a, b]) => a <= t && t < b)) fail('a quarantined minute must lie in missingRanges');
+    const [lo, hi] = bounds.get(q.file) ?? [];
+    if (!(t >= lo && t < hi)) fail(`a quarantined row at ${q.openTime} lies outside its file ${q.file}`);
     const p = e.quarantinedRows[i - 1];
     if (p && (order(p.openTime, q.openTime) || order(p.file, q.file)) >= 0) fail('quarantinedRows must be sorted by openTime, then file, without duplicates');
   });
@@ -180,13 +185,18 @@ function checkEntry(e) {
   const fills = e.sources.filter(s => !base.has(s.file));
   if (unit.sources[0].kind !== 'monthly') {
     if (fills.length || filled.length) fail('a unit built from base dailies has no fill sources or filledRanges');
-    return;
+  } else {
+    const touches = (ranges, d) => ranges.some(([a, b]) => d < b && d + DAY_MS > a);
+    const dayOf = new Map();
+    for (let d = unit.startMs; d < unit.endMs; d += DAY_MS) dayOf.set(visionSource(unit.instrument, 'daily', d).file, d);
+    for (const s of fills) if (!dayOf.has(s.file) || !touches([...missing, ...filled], dayOf.get(s.file))) fail('a fill source must be the daily of a unit day without a monthly candle');
+    for (const [file, d] of dayOf) if (touches(filled, d) && !files.has(file)) fail('a filled day needs its daily in sources');
   }
-  const touches = (ranges, d) => ranges.some(([a, b]) => d < b && d + DAY_MS > a);
-  const dayOf = new Map();
-  for (let d = unit.startMs; d < unit.endMs; d += DAY_MS) dayOf.set(visionSource(unit.instrument, 'daily', d).file, d);
-  for (const s of fills) if (!dayOf.has(s.file) || !touches([...missing, ...filled], dayOf.get(s.file))) fail('a fill source must be the daily of a unit day without a monthly candle');
-  for (const [file, d] of dayOf) if (touches(filled, d) && !files.has(file)) fail('a filled day needs its daily in sources');
+  // Format v1 fixes the snapshot length from fields that are all in the entry. Checked last, so the more specific
+  // checks above keep their messages.
+  const { length } = snapshotHeader({ instrument: { exchange: e.exchange, market: e.market, contract: e.contract }, period: e.period, dataStart: e.dataStart,
+    dataEnd: e.dataEnd, rowCount: e.rowCount, firstOpenTime: e.firstOpenTime, lastOpenTime: e.lastOpenTime, sources: e.sources });
+  if (e.bytes !== length) fail('bytes must equal the format v1 snapshot length (12 + header + 80 x rowCount)');
 }
 const isMinute = t => typeof t === 'string' && ISO.test(t) && new Date(Date.parse(t)).toISOString() === t && Date.parse(t) % MINUTE_MS === 0;
 // Sorted, maximal (never adjacent), non-empty, minute-aligned [start, end) ranges inside the unit, as [startMs, endMs]
@@ -195,7 +205,7 @@ function checkedRanges(list, unit) {
   if (!Array.isArray(list)) return null;
   const out = [];
   for (const r of list) {
-    if (!r || typeof r !== 'object' || Object.keys(r).sort().join() !== 'end,start' || !isMinute(r.start) || !isMinute(r.end)) return null;
+    if (!hasExactKeys(r, ['end', 'start']) || !isMinute(r.start) || !isMinute(r.end)) return null;
     const a = Date.parse(r.start), b = Date.parse(r.end);
     if (a >= b || a < unit.startMs || b > unit.endMs || (out.length && a <= out.at(-1)[1])) return null;
     out.push([a, b]);
@@ -217,10 +227,25 @@ export function readManifest(file) {
   try { text = fs.readFileSync(file, 'utf8'); } catch (error) { if (error.code === 'ENOENT') return { entries: [], kind: MANIFEST_KIND, schemaVersion: 1 }; throw error; }
   let manifest;
   try { manifest = JSON.parse(text); } catch { throw new Error('1m manifest: not valid JSON'); }
-  if (!manifest || Object.keys(manifest).sort().join() !== 'entries,kind,schemaVersion' || manifest.kind !== MANIFEST_KIND || manifest.schemaVersion !== 1
+  if (!hasExactKeys(manifest, ['entries', 'kind', 'schemaVersion']) || manifest.kind !== MANIFEST_KIND || manifest.schemaVersion !== 1
     || !Array.isArray(manifest.entries)) throw new Error('1m manifest: unknown kind, schemaVersion or layout');
   manifest.entries.forEach(checkEntry);
   for (let i = 1; i < manifest.entries.length; i++) if (compareEntries(manifest.entries[i - 1], manifest.entries[i]) >= 0) throw new Error('1m manifest: entries not sorted or duplicated');
+  // Different units never share snapshot bytes (the header holds the unit). One physical source file, {file, sha256},
+  // holds at most QUARANTINE_CAP quarantined rows, counted over all entries (the two 2025-10 units share their monthly file).
+  const bySha = new Map(), quarantined = new Map();
+  for (const e of manifest.entries) {
+    const id = `${e.contract} ${e.period} ${e.dataStart}`;
+    if (bySha.has(e.sha256)) throw new Error(`1m manifest: entries ${bySha.get(e.sha256)} and ${id} share sha256 ${e.sha256}`);
+    bySha.set(e.sha256, id);
+    const shaOf = new Map(e.sources.map(s => [s.file, s.sha256]));
+    for (const q of e.quarantinedRows) {
+      const key = `${q.file}@${shaOf.get(q.file)}`;
+      if (!quarantined.has(key)) quarantined.set(key, new Set());
+      quarantined.get(key).add(q.openTime);
+      if (quarantined.get(key).size > QUARANTINE_CAP) throw new Error(`1m manifest: more than ${QUARANTINE_CAP} quarantined rows recorded for ${key}`);
+    }
+  }
   return manifest;
 }
 const manifestText = entries => JSON.stringify(JSON.parse(canonicalJson({ entries: [...entries].sort(compareEntries), kind: MANIFEST_KIND, schemaVersion: 1 })), null, 2) + '\n';
