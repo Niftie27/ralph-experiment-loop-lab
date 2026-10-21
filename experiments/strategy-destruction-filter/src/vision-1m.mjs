@@ -4,13 +4,15 @@
 //     [--data-dir DIR] [--manifest FILE] [--max-rss-mib N (1..512)]
 // Symbols are config symbols (BTC), never contracts. Months are inclusive source months inside 2021-10..2026-10.
 // download is the only network step: sequential HTTPS GETs to data.binance.vision, finite retries, CHECKSUM first.
+// Each verified monthly file is parsed once to derive its fill days (amendment round 5), fetched the same way; a 404
+// on both files of a fill day is "fill unavailable", never a gap.
 // verify, build and compare are offline. JSON summary on stdout (counts, times, hashes, relative Vision paths only).
 // Exit: 0 ok and complete, 1 any mismatch or failure, 2 usage error, 3 finished but a source file is missing.
 import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { planUnits, visionInstrument, parseChecksum, MAX_MEMBER_BYTES, VISION_SYMBOLS } from './vision-source.mjs';
+import { planUnits, visionInstrument, parseChecksum, readZipMember, parseKlines, fillSources, MAX_MEMBER_BYTES, VISION_SYMBOLS } from './vision-source.mjs';
 import { storeSource, persistChecksum, recordMissing, localVersions, notListedSources, buildStore, verifyStore, compareStore, readManifest } from './f1-1m-store.mjs';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
@@ -45,7 +47,8 @@ function parseArgs(argv) {
 }
 
 // RSS is checked at every step and by a timer while the event loop is free; maxRSS is checked once more at the end.
-function memoryGuard(ceilingMiB) {
+// injected(label) runs first at every check: an internal test seam (main's deps.check), never a CLI option.
+function memoryGuard(ceilingMiB, injected = () => {}) {
   const limit = ceilingMiB * 2 ** 20, samples = [];
   let tripped = null;
   const timer = setInterval(() => { const rss = process.memoryUsage.rss(); if (rss > limit) tripped ??= rss; }, 250);
@@ -53,6 +56,7 @@ function memoryGuard(ceilingMiB) {
   const mib = bytes => Math.round(bytes / 2 ** 20);
   return {
     check(label) {
+      injected(label);
       const rss = process.memoryUsage.rss();
       samples.push(rss);
       if (rss > limit || tripped) throw new Error(`memory ceiling exceeded: ${mib(Math.max(rss, tripped ?? 0))} MiB > ${ceilingMiB} MiB at ${label}`);
@@ -144,15 +148,22 @@ async function download({ symbols, from, to, zipRoot, manifestPath }, guard, dep
   let entries;
   try { entries = readManifest(manifestPath).entries; }
   catch (error) { throw new Error(`the 1m manifest (listing evidence) cannot be read: ${error.code ?? error.message}`); }
+  // Base counts are transport outcomes: verified = downloaded + skipped and verified + gaps + notListed + failed =
+  // expected. Fill sources and monthly parse failures are counted apart (plan approval point 2).
   const counts = { expected: 0, downloaded: 0, skipped: 0, verified: 0, gaps: 0, notListed: 0, failed: 0 };
-  const gaps = [], notListed = {}, firstFiles = {}, repaired = [], failures = [];
+  const fillCounts = { expected: 0, downloaded: 0, skipped: 0, verified: 0, unavailable: 0, failed: 0, monthlyParseFailed: 0 };
+  const gaps = [], notListed = {}, firstFiles = {}, repaired = [], failures = [], unavailable = [];
+  const failure = (source, error) => failures.push(error.message.startsWith(source.file) ? error.message : `${source.file}: ${error.message}`);
+  // Memory guard checks stay outside every try: a trip aborts the run, never a per-source failure.
   for (const symbol of symbols) {
     const contract = VISION_SYMBOLS[symbol];
-    const sources = [...new Map(planUnits(symbol, { from, to }).flatMap(u => u.sources).map(s => [s.file, s])).values()];
+    const units = planUnits(symbol, { from, to });
+    const sources = [...new Map(units.flatMap(u => u.sources).map(s => [s.file, s])).values()];
     const misses = [], fetched = new Set();
     for (const source of sources) {
       counts.expected++;
       guard.check(source.file);
+      let bytes;
       try {
         const result = await fetchSource(source, zipRoot, deps, withChecksum => {
           fetched.add(source.file);
@@ -161,9 +172,35 @@ async function download({ symbols, from, to, zipRoot, manifestPath }, guard, dep
         if (result.status === 'missing') { misses.push(source); continue; }
         if (result.repaired) repaired.push(source.checksumFile);
         counts[result.status]++; counts.verified++;
+        bytes = result.bytes;
       } catch (error) {
         counts.failed++;
-        failures.push(error.message.startsWith(source.file) ? error.message : `${source.file}: ${error.message}`);
+        failure(source, error);
+        continue;
+      }
+      if (source.kind !== 'monthly') continue;
+      // The fill days of this monthly file's units (F1, F2): one parse of the verified bytes (fresh or cached),
+      // released before the fill requests.
+      guard.check(`parse ${source.file}`);
+      let openTime;
+      try { openTime = parseKlines(readZipMember(bytes, source.csvName), source).columns.open_time; }
+      catch (error) { fillCounts.monthlyParseFailed++; failure(source, error); continue; }
+      bytes = null;
+      guard.check(`parsed ${source.file}`);
+      const fills = units.filter(u => u.sources.some(s => s.file === source.file)).flatMap(u => fillSources(u, openTime));
+      openTime = null;
+      for (const fill of fills) {
+        fillCounts.expected++;
+        guard.check(`fill ${fill.file}`);
+        try {
+          const result = await fetchSource(fill, zipRoot, deps, () => {});
+          if (result.status === 'missing') { fillCounts.unavailable++; unavailable.push(fill.file); continue; }
+          if (result.repaired) repaired.push(fill.checksumFile);
+          fillCounts[result.status]++; fillCounts.verified++;
+        } catch (error) {
+          fillCounts.failed++;
+          failure(fill, error);
+        }
       }
     }
     // Listing rule (D6 as amended 2026-10-21): evidence over the whole F1a range, not only the requested months.
@@ -173,7 +210,9 @@ async function download({ symbols, from, to, zipRoot, manifestPath }, guard, dep
       else { gaps.push(source.file); counts.gaps++; }
     }
   }
-  return { command: 'download', status: counts.failed ? 'failed' : counts.gaps ? 'incomplete' : 'ok', counts, gaps, notListed, firstFiles, repaired, failures };
+  const failed = counts.failed || fillCounts.failed || fillCounts.monthlyParseFailed;
+  return { command: 'download', status: failed ? 'failed' : counts.gaps ? 'incomplete' : 'ok', counts, gaps, notListed, firstFiles, repaired, failures,
+    fills: { counts: fillCounts, unavailable } };
 }
 
 function verify(options) {
@@ -194,7 +233,7 @@ export async function main(argv, deps = {}) {
   let summary, guard;
   try {
     const options = parseArgs(argv);
-    guard = memoryGuard(options.maxRssMiB);
+    guard = memoryGuard(options.maxRssMiB, deps.check);
     try {
       if (options.command === 'download') summary = await download(options, guard, io);
       else if (options.command === 'build') { const { entries, units, ...rest } = buildStore({ ...options, guard }); summary = rest; void entries; void units; }

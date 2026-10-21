@@ -5,8 +5,8 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { main } from '../src/vision-1m.mjs';
-import { planUnits } from '../src/vision-source.mjs';
-import { makeZip, klineCsv, minutes, checksumText } from '../test-support/vision-fixtures.mjs';
+import { planUnits, visionSource } from '../src/vision-source.mjs';
+import { makeZip, klineCsv, klineRow, minutes, checksumText, KLINE_HEADER } from '../test-support/vision-fixtures.mjs';
 
 const HOST = 'https://data.binance.vision/';
 function workspace() {
@@ -75,13 +75,18 @@ test('F1a-2 cli download: sequential HTTPS to data.binance.vision only, every fi
   assert.deepEqual(first.summary.counts, { expected: 2, downloaded: 2, skipped: 0, verified: 2, gaps: 0, notListed: 0, failed: 0 });
   assert.ok(net.calls.every(url => url.startsWith(HOST)));
   assert.equal(net.maxInFlight, 1);
-  assert.deepEqual(net.calls, ['2024-01', '2024-02'].flatMap(m => [`${HOST}data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-${m}.zip.CHECKSUM`,
+  // Base requests in order; each sparse month's fill days (round 5) are requested after its zip, before the next month.
+  const monthly = calls => calls.filter(url => url.includes('/monthly/'));
+  assert.deepEqual(monthly(net.calls), ['2024-01', '2024-02'].flatMap(m => [`${HOST}data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-${m}.zip.CHECKSUM`,
     `${HOST}data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-${m}.zip`]));
+  const at = url => net.calls.indexOf(`${HOST}data/futures/um/${url}`);
+  assert.ok(at('monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2024-01.zip') < at('daily/klines/BTCUSDT/1m/BTCUSDT-1m-2024-01-31.zip.CHECKSUM'));
+  assert.ok(at('daily/klines/BTCUSDT/1m/BTCUSDT-1m-2024-01-31.zip') < at('monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2024-02.zip.CHECKSUM'));
   const again = vision(published);
   const second = await run(['download', '--symbols', 'BTC', '--from', '2024-01', '--to', '2024-02', ...w.args], again);
   assert.equal(second.code, 0);
   assert.deepEqual(second.summary.counts, { expected: 2, downloaded: 0, skipped: 2, verified: 2, gaps: 0, notListed: 0, failed: 0 });
-  assert.ok(again.calls.every(url => url.endsWith('.CHECKSUM')));
+  assert.ok(monthly(again.calls).every(url => url.endsWith('.CHECKSUM')));
   assert.ok(!first.out.includes(w.dir) && !first.out.includes(os.homedir()));
   assert.equal(first.summary.runtime.node, process.version);
 });
@@ -436,4 +441,138 @@ test('F1a-2 listing: a single-month download of 2024-05 with a corrupt later ver
   const single = await run(['download', ...mayOnly(w)], vision(published));
   assert.equal(single.code, 3);
   assert.deepEqual([single.summary.notListed, single.summary.gaps], [{}, [`${BTC_MONTHLY}/BTCUSDT-1m-2024-05.zip`]]);
+});
+
+// Daily fill in download (contract amendment round 5, F2, F3, F7; plan approval points 1, 2, 5 and 9).
+const DAILY = 'data/futures/um/daily/klines';
+const dayOf = (symbol, day) => visionSource(planUnits(symbol, { from: day.slice(0, 7), to: day.slice(0, 7) })[0].instrument, 'daily', Date.parse(`${day}T00:00:00.000Z`));
+function publishCsv(published, source, csv) {
+  const zip = makeZip([{ name: source.csvName, data: csv }]);
+  published[source.file] = zip;
+  published[source.checksumFile] = Buffer.from(checksumText(zip, source.zipName));
+  return source;
+}
+const JANUARY = Array.from({ length: 31 }, (_, i) => `2024-01-${String(i + 1).padStart(2, '0')}`);
+const btcDay = day => `${DAILY}/BTCUSDT/1m/BTCUSDT-1m-${day}.zip`;
+function invariants(counts) {
+  assert.equal(counts.verified, counts.downloaded + counts.skipped);
+  assert.equal(counts.verified + counts.gaps + counts.notListed + counts.failed, counts.expected);
+}
+async function runWith(argv, net, check) {
+  let out = '';
+  const code = await main(argv, { fetch: net.fetch, stdout: { write: s => { out += s; } }, sleep: async () => {}, check });
+  return { code, summary: JSON.parse(out) };
+}
+// BTC 2024-01 with 3 rows on 01-02 (every January day lacks minutes) and the daily file of 01-02 published.
+function sparseJanuary() {
+  const published = {};
+  const month = publish(published, 'BTC', '2024-01', rows('2024-01'));
+  const day2 = publishCsv(published, dayOf('BTC', '2024-01-02'), klineCsv(minutes('2024-01-02T00:00:00.000Z', 5)));
+  return { published, month, day2, range: ['--symbols', 'BTC', '--from', '2024-01', '--to', '2024-01'] };
+}
+
+test('F1a-2 r5 cli download: a verified monthly file is parsed and its fill days fetched, CHECKSUM first; a 404 pair is fill unavailable (exit 0), not a gap, not listing evidence', async () => {
+  const w = workspace(), { published, day2, range } = sparseJanuary();
+  const net = vision(published);
+  const first = await run(['download', ...range, ...w.args], net);
+  assert.equal(first.code, 0);
+  assert.deepEqual(first.summary.counts, { expected: 1, downloaded: 1, skipped: 0, verified: 1, gaps: 0, notListed: 0, failed: 0 });
+  assert.deepEqual(first.summary.fills.counts, { expected: 31, downloaded: 1, skipped: 0, verified: 1, unavailable: 30, failed: 0, monthlyParseFailed: 0 });
+  const unavailable = JANUARY.filter(d => d !== '2024-01-02').map(btcDay);
+  assert.deepEqual(first.summary.fills.unavailable, unavailable);
+  assert.deepEqual([first.summary.gaps, first.summary.notListed, first.summary.failures], [[], {}, []]);
+  // CHECKSUM first; the zip after a CHECKSUM 404 (probe) and after a CHECKSUM 200 (fetch); all after the monthly zip.
+  assert.deepEqual(net.calls.filter(u => u.includes('/daily/')), JANUARY.flatMap(d => [`${HOST}${btcDay(d)}.CHECKSUM`, `${HOST}${btcDay(d)}`]));
+  assert.ok(net.calls.indexOf(`${HOST}${btcDay('2024-01-01')}.CHECKSUM`) > net.calls.indexOf(`${HOST}${sourceOf('BTC', '2024-01').file}`));
+  assert.ok(fs.existsSync(versionFile(w, day2)));
+  assert.deepEqual(fs.readdirSync(path.join(w.dir, 'data', 'vision', DAILY, 'BTCUSDT', '1m', '404')).sort(), unavailable.map(f => path.basename(f)));
+});
+
+test('F1a-2 r5 cli download: fills are derived on the cache-hit path too; unavailable fills are probed again on a rerun', async () => {
+  const w = workspace(), { published, range } = sparseJanuary();
+  assert.equal((await run(['download', ...range, ...w.args], vision(published))).code, 0);
+  const again = vision(published);
+  const second = await run(['download', ...range, ...w.args], again);
+  assert.equal(second.code, 0);
+  assert.deepEqual(second.summary.counts, { expected: 1, downloaded: 0, skipped: 1, verified: 1, gaps: 0, notListed: 0, failed: 0 });
+  assert.deepEqual(second.summary.fills.counts, { expected: 31, downloaded: 0, skipped: 1, verified: 1, unavailable: 30, failed: 0, monthlyParseFailed: 0 });
+  const daily = again.calls.filter(u => u.includes('/daily/'));
+  assert.ok(daily.includes(`${HOST}${btcDay('2024-01-31')}.CHECKSUM`) && daily.includes(`${HOST}${btcDay('2024-01-31')}`));
+  assert.ok(daily.includes(`${HOST}${btcDay('2024-01-02')}.CHECKSUM`) && !daily.includes(`${HOST}${btcDay('2024-01-02')}`));
+  // A day published since the first run is fetched now.
+  publishCsv(published, dayOf('BTC', '2024-01-31'), klineCsv(minutes('2024-01-31T00:00:00.000Z', 2)));
+  const third = await run(['download', ...range, ...w.args], vision(published));
+  assert.deepEqual([third.code, third.summary.fills.counts.downloaded, third.summary.fills.counts.unavailable], [0, 1, 29]);
+});
+
+test('F1a-2 r5 cli download: a fill 404 on one of the pair or a failing fill exits 1, also with every base file ok or with a base gap; base counts keep both invariants', async () => {
+  for (const [name, damage, pattern] of [['zip without CHECKSUM', (p, d) => delete p[d.checksumFile], /CHECKSUM 404 but the zip exists/],
+    ['CHECKSUM without zip', (p, d) => delete p[d.file], /zip 404 but the CHECKSUM exists/]]) {
+    const w = workspace(), { published, day2, range } = sparseJanuary();
+    damage(published, day2);
+    const r = await run(['download', ...range, ...w.args], vision(published));
+    assert.equal(r.code, 1, name);
+    assert.equal(r.summary.status, 'failed', name);
+    assert.deepEqual([r.summary.counts.failed, r.summary.fills.counts.failed, r.summary.fills.counts.unavailable], [0, 1, 30], name);
+    assert.match(r.summary.failures.join('\n'), pattern, name);
+    invariants(r.summary.counts);
+  }
+  // A fill failing after the retries next to a base gap (2024-02: 404 on both): failure 1 outranks incomplete 3.
+  const w = workspace(), { published, day2 } = sparseJanuary();
+  const net = vision(published, { [`${HOST}${day2.file}`]: [503, 503, 503, 503] });
+  const r = await run(['download', '--symbols', 'BTC', '--from', '2024-01', '--to', '2024-02', ...w.args], net);
+  assert.equal(r.code, 1);
+  assert.deepEqual([r.summary.counts.gaps, r.summary.counts.failed, r.summary.fills.counts.failed], [1, 0, 1]);
+  assert.match(r.summary.failures.join('\n'), /BTCUSDT-1m-2024-01-02\.zip: HTTP 503 after 4 attempts/);
+  invariants(r.summary.counts);
+});
+
+test('F1a-2 r5 cli download: a monthly file failing parsing or the quarantine cap exits 1 on fresh and cached bytes, stays verified, counts as monthlyParseFailed; holdout diagnostics carry times, never values', async () => {
+  const w = workspace(), published = {};
+  const prices = { open: '187.4321', high: '187.1234', low: '186.9876', close: '187.0001' };
+  const t = minutes('2026-01-05T00:00:00.000Z', 11);
+  publishCsv(published, sourceOf('SOL', '2026-01'), KLINE_HEADER + '\n' + t.map(x => klineRow(x, prices)).join('\n') + '\n');
+  const u = Date.parse('2026-02-05T00:00:00.000Z');
+  publishCsv(published, sourceOf('SOL', '2026-02'), KLINE_HEADER + '\n' + klineRow(u, { ...prices, closeTime: String(u + 1) }) + '\n');
+  const range = ['--symbols', 'SOL', '--from', '2026-01', '--to', '2026-02', ...w.args];
+  for (const [pass, transport] of [['fresh', { downloaded: 2, skipped: 0 }], ['cached', { downloaded: 0, skipped: 2 }]]) {
+    const net = vision(published);
+    const r = await runWith(['download', ...range], net);
+    assert.equal(r.code, 1, pass);
+    assert.deepEqual(r.summary.counts, { expected: 2, ...transport, verified: 2, gaps: 0, notListed: 0, failed: 0 }, pass);
+    invariants(r.summary.counts);
+    assert.deepEqual(r.summary.fills.counts, { expected: 0, downloaded: 0, skipped: 0, verified: 0, unavailable: 0, failed: 0, monthlyParseFailed: 2 }, pass);
+    const failures = r.summary.failures.join('\n');
+    assert.match(failures, /SOLUSDT-1m-2026-01\.zip: Vision klines: row 11 \(2026-01-05T00:10:00\.000Z\): more than 10 quarantined rows in this file/, pass);
+    assert.match(failures, /SOLUSDT-1m-2026-02\.zip: Vision klines: row 1 \(2026-02-05T00:00:00\.000Z\): close_time/, pass);
+    assert.ok(!net.calls.some(url => url.includes('/daily/')), pass);
+    assert.doesNotMatch(JSON.stringify(r.summary), /187\.|186\./, pass);
+  }
+});
+
+test('F1a-2 r5 cli download: firstFiles names base sources only; fill files never appear in gaps or notListed', async () => {
+  const w = workspace(), published = {};
+  publish(published, 'HYPE', '2025-05', minutes('2025-05-30T10:30:00.000Z', 2));
+  publishCsv(published, dayOf('HYPE', '2025-05-30'), klineCsv(minutes('2025-05-30T10:30:00.000Z', 2)));
+  const r = await run(['download', '--symbols', 'HYPE', '--from', '2021-10', '--to', '2025-05', ...w.args], vision(published));
+  assert.equal(r.code, 0);
+  assert.equal(r.summary.firstFiles.HYPEUSDT, 'data/futures/um/monthly/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05.zip');
+  assert.deepEqual([r.summary.gaps, r.summary.notListed.HYPEUSDT.length, r.summary.notListed.HYPEUSDT.at(-1)], [[], 43, '2025-04']);
+  assert.deepEqual(r.summary.fills.counts, { expected: 31, downloaded: 1, skipped: 0, verified: 1, unavailable: 30, failed: 0, monthlyParseFailed: 0 });
+  assert.ok(!JSON.stringify([r.summary.gaps, r.summary.notListed, r.summary.firstFiles]).includes('/daily/'));
+});
+
+test('F1a-2 r5 cli download: an injected memory guard trip before a monthly parse, after it or before a fill fetch aborts the run before any further request (exit 1)', async () => {
+  const published = {};
+  const jan = publish(published, 'BTC', '2024-01', rows('2024-01'));
+  publish(published, 'BTC', '2024-02', rows('2024-02'));
+  for (const label of [`parse ${jan.file}`, `parsed ${jan.file}`, `fill ${btcDay('2024-01-05')}`]) {
+    const net = vision(published);
+    const r = await runWith(['download', '--symbols', 'BTC', '--from', '2024-01', '--to', '2024-02', ...workspace().args], net,
+      l => { if (l === label) throw new Error('memory ceiling exceeded: injected'); });
+    assert.equal(r.code, 1, label);
+    assert.match(r.summary.error, /memory ceiling exceeded: injected/, label);
+    assert.ok(!net.calls.some(url => url.includes('2024-02') || url.includes('2024-01-05') || url.includes('2024-01-06')), label);
+    assert.equal(net.calls.some(url => url.includes('2024-01-04')), label.startsWith('fill'), label);
+  }
 });
