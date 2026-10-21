@@ -89,6 +89,9 @@ const recordedMissing = (zipRoot, source) => fs.existsSync(missingMarker(zipRoot
 // only if (a) it and every earlier source have a recorded 404, (b) none of them exists (local version, manifest entry,
 // 200 in this run) and (c) a later source exists. A source of a unit with any present source is never not_listed.
 // Evidence outside the requested months counts; missing evidence never counts. Returns the not_listed source files.
+// Asymmetric evidence (amendment round 3): for (b) and the unit rule any local version counts, since there it can only
+// block not_listed; for (c) a local version counts only if it passes the build's own check (readVerifiedSource),
+// checked lazily up to the first later source that is evidence, so a normal run hashes at most one extra zip.
 export function notListedSources(symbol, { zipRoot, entries = [], fetched = new Set() }) {
   const units = planUnits(symbol);
   const sources = [...new Map(units.flatMap(u => u.sources).map(s => [s.file, s])).values()];
@@ -100,6 +103,10 @@ export function notListedSources(symbol, { zipRoot, entries = [], fetched = new 
     if (present.has(s.file) || !recordedMissing(zipRoot, s)) break; // (a) or (b) fails here and for every later source
     result.add(s.file);
   }
+  if (!result.size) return result;
+  const verified = (s, sha) => { try { readVerifiedSource(zipRoot, s, sha); return true; } catch { return false; } };
+  const later = sources.slice(result.size).some(s => fetched.has(s.file) || inManifest.has(s.file) || localVersions(zipRoot, s).some(sha => verified(s, sha)));
+  if (!later) return new Set(); // (c) is not proven: a later local version that fails the check is no evidence
   for (const u of units) if (u.sources.some(s => present.has(s.file))) for (const s of u.sources) result.delete(s.file);
   return result;
 }

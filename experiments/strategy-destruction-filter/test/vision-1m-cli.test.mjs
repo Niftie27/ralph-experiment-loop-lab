@@ -401,3 +401,39 @@ test('F1a-2 listing: a manifest entry proves an earlier source exists after its 
   assert.equal(compare.code, 3);
   assert.deepEqual(classes(compare.summary), [['BTCUSDT', '2024-05', 'gap'], ['BTCUSDT', '2024-06', 'matched']]);
 });
+
+// Round 3: a later local version counts for (c) only after the build's own check (CHECKSUM, zip sha256, directory name).
+function damageJune(w, damage) {
+  const june = versionFile(w, sourceOf('BTC', '2024-06'));
+  if (damage === 'zip bytes') { fs.chmodSync(june, 0o644); const b = fs.readFileSync(june); b[b.length - 30] ^= 1; fs.writeFileSync(june, b); }
+  if (damage === 'CHECKSUM removed') fs.rmSync(`${june}.CHECKSUM`);
+  if (damage === 'another 64-hex directory') fs.renameSync(path.dirname(june), path.join(path.dirname(path.dirname(june)), 'f'.repeat(64)));
+}
+const mayOnly = w => ['--symbols', 'BTC', '--from', '2024-05', '--to', '2024-05', ...w.args];
+
+for (const damage of ['zip bytes', 'CHECKSUM removed', 'another 64-hex directory']) {
+  test(`F1a-2 listing: a later local version that fails the build check (${damage}) is no evidence for (c): build of 2024-05 is a gap (exit 3)`, async () => {
+    const { w } = await listedFromJune();
+    damageJune(w, damage);
+    const build = await run(['build', ...mayOnly(w)]);
+    assert.equal(build.code, 3);
+    assert.deepEqual([build.summary.counts.missing, build.summary.counts.notListed], [1, 0]);
+  });
+}
+
+test('F1a-2 listing: a corrupt later version with a manifest entry for that source still proves (c): build of 2024-05 is not_listed (exit 0)', async () => {
+  const { w } = await listedFromJune();
+  assert.equal((await run(['build', '--symbols', 'BTC', '--from', '2021-10', '--to', '2024-06', ...w.args])).code, 0);
+  damageJune(w, 'zip bytes');
+  const build = await run(['build', ...mayOnly(w)]);
+  assert.equal(build.code, 0);
+  assert.deepEqual([build.summary.counts.missing, build.summary.counts.notListed], [0, 1]);
+});
+
+test('F1a-2 listing: a single-month download of 2024-05 with a corrupt later version and no manifest entry is a gap (exit 3)', async () => {
+  const { w, published } = await listedFromJune();
+  damageJune(w, 'zip bytes');
+  const single = await run(['download', ...mayOnly(w)], vision(published));
+  assert.equal(single.code, 3);
+  assert.deepEqual([single.summary.notListed, single.summary.gaps], [{}, [`${BTC_MONTHLY}/BTCUSDT-1m-2024-05.zip`]]);
+});

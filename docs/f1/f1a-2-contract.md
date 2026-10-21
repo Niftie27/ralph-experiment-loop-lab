@@ -103,3 +103,12 @@ Clarifications 1-3 of Tomas's answer "A" (verbatim):
    - Add a test for the invalid-manifest case.
 
 "Your example" in point 1: after a download of 2021-10..2024-06 in which every month up to 2024-05 answered 404 on both files and 2024-06 exists, a download of 2024-05 alone was a gap (exit 3) under the old rule and is not_listed (exit 0) under this one.
+
+## Amendment 2026-10-21, review round 3
+
+Binding from 2026-10-21, after the Codex review of 0392097 on PR #2: a local version used as evidence for (c) must be readable evidence. Asymmetric evidence rule, verbatim as Tomas sent it:
+
+- For (c), a local version counts only after it passes the same check the build uses (readVerifiedSource: CHECKSUM present and parsed, zip sha256 equal to both the directory name and the CHECKSUM). Manifest entries and 200s in this run count as before.
+- For (b) and the unit rule, any local version still counts, because there it can only block not_listed.
+- A local version that fails the check is not an error of the listing rule: it only stops counting for (c). The build of its own unit fails as it does now.
+- Check lazily: stop at the first later source that is verified evidence, so a normal run hashes at most one extra zip per instrument.
