@@ -1,7 +1,8 @@
 // F1a-2: Binance Vision source files: ZIP member, CHECKSUM, kline CSV rows and units (docs/f1/f1a-2-contract.md).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readZipMember, parseChecksum, verifyZip, parseKlines, planUnits, assembleUnit, unitCoverage, visionInstrument, VISION_SYMBOLS, QUARANTINE_RULES } from '../src/vision-source.mjs';
+import { readZipMember, parseChecksum, verifyZip, parseKlines, planUnits, assembleUnit, unitCoverage, visionInstrument, VISION_SYMBOLS, QUARANTINE_RULES,
+  visionSource, fillSources, mergeUnit, minuteRanges } from '../src/vision-source.mjs';
 import { instrumentForSymbol } from '../src/h2-contract.mjs';
 import fs from 'node:fs';
 import { makeZip, klineCsv, klineRow, minutes, checksumText, sha256, KLINE_HEADER } from '../test-support/vision-fixtures.mjs';
@@ -311,4 +312,105 @@ test('F1a-2 r5 quarantine: 10 quarantined rows in one file pass, 11 fail (counte
   }
   const all = parseKlines(csvOf(t.slice(0, 3).map(x => klineRow(x, bad))), JAN);
   assert.deepEqual([all.rowCount, all.columns.open_time.length, all.quarantined.length], [0, 0, 3]);
+});
+
+// Daily fill (contract amendment round 5, F1, F4, F6).
+const DAY = 86400000;
+const [JAN24] = planUnits('BTC', { from: '2024-01', to: '2024-01' });
+const dayFile = day => `data/futures/um/daily/klines/BTCUSDT/1m/BTCUSDT-1m-${day}.zip`;
+const allMinutes = (startMs, endMs, skip = []) => Float64Array.from({ length: (endMs - startMs) / 60000 }, (_, i) => startMs + i * 60000).filter(t => !skip.includes(t));
+const dailyOf = (unit, day) => visionSource(unit.instrument, 'daily', ms(`${day}T00:00:00.000Z`));
+const parsedRows = (source, rows) => parseKlines(csvOf(rows), source);
+// Merges with the dailies given as {source, rows}; returns the result and the files load() was asked for.
+function merge(unit, monthlyRows, dailies) {
+  const base = { file: unit.sources[0].file, parsed: parsedRows(unit.sources[0], monthlyRows) };
+  const loaded = [];
+  const byFile = new Map(dailies.map(d => [d.source.file, d]));
+  const result = mergeUnit(unit, base, dailies.map(d => d.source), source => { loaded.push(source.file); return parsedRows(source, byFile.get(source.file).rows); });
+  return { ...result, loaded };
+}
+
+test('F1a-2 r5 fill set: the days of a monthly unit with a minute lacking an accepted candle, leading and trailing days included; per unit in 2025-10; none for 2026-10', () => {
+  const files = (unit, openTime) => fillSources(unit, openTime).map(s => s.file);
+  assert.deepEqual(files(JAN24, allMinutes(JAN24.startMs, JAN24.endMs)), []);
+  const lacking = [ms('2024-01-01T00:00:00.000Z'), ...allMinutes(ms('2024-01-15T00:00:00.000Z'), ms('2024-01-16T00:00:00.000Z')), ms('2024-01-31T23:59:00.000Z')];
+  assert.deepEqual(files(JAN24, allMinutes(JAN24.startMs, JAN24.endMs, lacking)), [dayFile('2024-01-01'), dayFile('2024-01-15'), dayFile('2024-01-31')]);
+  const [day1] = fillSources(JAN24, allMinutes(JAN24.startMs, JAN24.endMs, lacking));
+  assert.deepEqual([day1.kind, day1.startMs, day1.endMs, day1.checksumFile, day1.csvName],
+    ['daily', ms('2024-01-01T00:00:00.000Z'), ms('2024-01-02T00:00:00.000Z'), `${dayFile('2024-01-01')}.CHECKSUM`, 'BTCUSDT-1m-2024-01-01.csv']);
+  assert.equal(files(JAN24, new Float64Array(0)).length, 31);
+  const [oct21] = planUnits('BTC', { from: '2021-10', to: '2021-10' });
+  assert.deepEqual(files(oct21, new Float64Array(0)), Array.from({ length: 14 }, (_, i) => dayFile(`2021-10-${18 + i}`)));
+  const [r25, h25] = planUnits('BTC', { from: '2025-10', to: '2025-10' });
+  const oct25 = allMinutes(ms('2025-10-01T00:00:00.000Z'), ms('2025-11-01T00:00:00.000Z'), [ms('2025-10-16T23:59:00.000Z'), ms('2025-10-17T00:00:00.000Z')]);
+  assert.deepEqual([files(r25, oct25), files(h25, oct25)], [[dayFile('2025-10-16')], [dayFile('2025-10-17')]]);
+  const [oct26] = planUnits('BTC', { from: '2026-10', to: '2026-10' });
+  assert.deepEqual(files(oct26, new Float64Array(0)), []);
+});
+
+test('F1a-2 r5 merge: a gap is filled from a daily; valid/valid equal keeps the monthly row; filledRanges are maximal and end-exclusive', () => {
+  const t3 = minutes('2024-01-03T00:00:00.000Z', 6), late = minutes('2024-01-03T23:58:00.000Z', 4); // 01-03T23:58 .. 01-04T00:01
+  const monthly = [t3[0], t3[1], t3[2], t3[5], late[0], late[3]].map(t => klineRow(t));
+  const day3 = dailyOf(JAN24, '2024-01-03'), day4 = dailyOf(JAN24, '2024-01-04');
+  const out = merge(JAN24, monthly, [{ source: day3, rows: [...t3, late[0], late[1]].map(t => klineRow(t)) }, { source: day4, rows: [late[2], late[3]].map(t => klineRow(t)) }]);
+  assert.deepEqual(out.loaded, [day3.file, day4.file]);
+  assert.deepEqual(Array.from(out.columns.open_time), [...t3, ...late]);
+  assert.equal(out.rowCount, 10);
+  assert.deepEqual(out.filledRanges, [{ start: '2024-01-03T00:03:00.000Z', end: '2024-01-03T00:05:00.000Z' }, { start: '2024-01-03T23:59:00.000Z', end: '2024-01-04T00:01:00.000Z' }]);
+  assert.deepEqual(out.quarantinedRows, []);
+  assert.ok(Object.values(out.columns).every(c => c instanceof Float64Array && c.length === 10));
+  assert.deepEqual(Array.from(out.columns.close), Array(10).fill(42331.9));
+  // No fill source: the monthly rows clipped to the unit, as assembleUnit gives them.
+  const plain = merge(JAN24, monthly, []);
+  const assembled = assembleUnit(JAN24, [{ file: JAN24.sources[0].file, parsed: parsedRows(JAN24.sources[0], monthly) }]);
+  for (const name of Object.keys(assembled.columns)) assert.deepEqual(Array.from(plain.columns[name]), Array.from(assembled.columns[name]));
+  assert.deepEqual(plain.filledRanges, []);
+  assert.deepEqual(minuteRanges([]), []);
+  assert.deepEqual(minuteRanges([...t3.slice(0, 2), t3[4]]), [{ start: '2024-01-03T00:00:00.000Z', end: '2024-01-03T00:02:00.000Z' }, { start: '2024-01-03T00:04:00.000Z', end: '2024-01-03T00:05:00.000Z' }]);
+});
+
+test('F1a-2 r5 merge: a value mismatch anywhere on a fetched day fails, also outside the holes; parsed values compare, +0 equals -0, the ignore field and decimal spelling do not count', () => {
+  const t = minutes('2024-01-03T00:00:00.000Z', 4);
+  const day3 = dailyOf(JAN24, '2024-01-03');
+  const monthly = [t[0], t[1], t[2]].map(x => klineRow(x, { volume: '0', takerBuyVolume: '0' }));
+  try {
+    merge(JAN24, monthly, [{ source: day3, rows: t.map((x, i) => klineRow(x, { volume: '0', takerBuyVolume: '0', ...(i === 1 ? { close: '42331.95' } : {}) })) }]);
+    assert.fail('expected a disagreement');
+  } catch (error) {
+    assert.match(error.message, /sources disagree at 2024-01-03T00:01:00.000Z/);
+    assert.ok(error.message.includes(JAN24.sources[0].file) && error.message.includes(day3.file));
+    assert.doesNotMatch(error.message, /4233|4231|4228/);
+  }
+  const same = merge(JAN24, monthly, [{ source: day3, rows: t.map(x => klineRow(x, { volume: '-0.0', takerBuyVolume: '0', close: '42331.90000', ignore: '1' })) }]);
+  assert.deepEqual([same.rowCount, same.filledRanges], [4, [{ start: '2024-01-03T00:03:00.000Z', end: '2024-01-03T00:04:00.000Z' }]]);
+  assert.ok(Object.is(same.columns.volume[0], 0));
+});
+
+test('F1a-2 r5 merge: valid / quarantined fails in both directions; an all-quarantined monthly file against a valid daily row fails', () => {
+  const t = minutes('2024-01-03T00:00:00.000Z', 3);
+  const day3 = dailyOf(JAN24, '2024-01-03');
+  const bad = { open: '98799.11', high: '98765.43' };
+  const conflict = (monthly, daily) => {
+    try { merge(JAN24, monthly, [{ source: day3, rows: daily }]); assert.fail('expected a conflict'); }
+    catch (error) { assert.match(error.message, /quarantined/); assert.match(error.message, /2024-01-03T00:01:00.000Z/); assert.doesNotMatch(error.message, /9876|9879/); }
+  };
+  conflict(t.map(x => klineRow(x)), t.map((x, i) => klineRow(x, i === 1 ? bad : {})));
+  conflict(t.map((x, i) => klineRow(x, i === 1 ? bad : {})), t.map(x => klineRow(x)));
+  conflict([t[0], t[1]].map(x => klineRow(x, bad)), [klineRow(t[1])]);
+});
+
+test('F1a-2 r5 merge: quarantined in both gives two records and one missing minute; quarantined / absent and absent / quarantined give one record; valid / absent keeps the monthly row', () => {
+  const t = minutes('2024-01-03T00:00:00.000Z', 5);
+  const day3 = dailyOf(JAN24, '2024-01-03');
+  const bad = { open: '98799.11', high: '98765.43' }, rule = 'high below max(open, close)';
+  // minute:   0 valid/absent, 1 quarantined/quarantined, 2 quarantined/absent, 3 absent/quarantined, 4 valid/valid
+  const monthly = [klineRow(t[0]), klineRow(t[1], bad), klineRow(t[2], bad), klineRow(t[4])];
+  const out = merge(JAN24, monthly, [{ source: day3, rows: [klineRow(t[1], { volume: '-1' }), klineRow(t[3], bad), klineRow(t[4])] }]);
+  assert.deepEqual(Array.from(out.columns.open_time), [t[0], t[4]]);
+  assert.deepEqual(out.filledRanges, []);
+  const iso = x => new Date(x).toISOString(), monthlyFile = JAN24.sources[0].file;
+  assert.deepEqual(out.quarantinedRows, [
+    { file: day3.file, openTime: iso(t[1]), rule: 'volume must be >= 0' }, { file: monthlyFile, openTime: iso(t[1]), rule },
+    { file: monthlyFile, openTime: iso(t[2]), rule }, { file: day3.file, openTime: iso(t[3]), rule }]);
+  assert.equal(unitCoverage(JAN24, out.columns.open_time).missingMinutes, 31 * 1440 - 2);
 });

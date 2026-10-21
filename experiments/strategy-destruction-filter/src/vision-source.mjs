@@ -272,3 +272,83 @@ export function unitCoverage(unit, openTime) {
   const expectedMinutes = (unit.endMs - unit.startMs) / 60000;
   return { expectedMinutes, rowCount: openTime.length, missingMinutes: expectedMinutes - openTime.length, missingRanges };
 }
+
+// Daily fill of monthly gaps (contract amendment round 5, F1, F4, F6).
+const lowerBound = (sorted, t) => { let a = 0, b = sorted.length; while (a < b) { const m = (a + b) >>> 1; if (sorted[m] < t) a = m + 1; else b = m; } return a; };
+// The fill sources of a unit built from a monthly file: the daily file of every UTC day in [unit.startMs, unit.endMs)
+// with fewer than 1,440 accepted monthly candles (absent or quarantined minutes), leading and trailing days included.
+// openTime is the verified monthly file's accepted open_time column; nothing else (no selection, no manifest) counts.
+// Units built from base dailies (2026-10) have none, so a daily never derives another daily.
+export function fillSources(unit, openTime) {
+  if (unit.sources.length !== 1 || unit.sources[0].kind !== 'monthly') return [];
+  const out = [];
+  let i = lowerBound(openTime, unit.startMs);
+  for (let day = unit.startMs; day < unit.endMs; day += DAY_MS) {
+    const first = i;
+    while (i < openTime.length && openTime[i] < day + DAY_MS) i++;
+    if (i - first < 1440) out.push(visionSource(unit.instrument, 'daily', day));
+  }
+  return out;
+}
+// Sorted open times as maximal end-exclusive minute ranges {start, end} (ISO).
+export function minuteRanges(openTimes) {
+  const out = [];
+  for (const t of openTimes) {
+    if (out.length && out.at(-1).endMs === t) out.at(-1).endMs = t + 60000;
+    else out.push({ startMs: t, endMs: t + 60000 });
+  }
+  return out.map(r => ({ start: iso(r.startMs), end: iso(r.endMs) }));
+}
+// Merges a monthly unit with its present fill dailies by open time (F4), one daily at a time: load(source) returns
+// the parsed daily, which is compared and dropped before the next one is loaded; check(label) runs after each daily
+// and before the assembly (memory guard). Per minute (monthly / daily): valid / absent keeps the monthly row; absent /
+// valid takes the daily row (filled); valid / valid must agree in all ten kept columns as parsed values (+0 equals
+// -0, no epsilon) and keeps the monthly row; valid / quarantined in either direction fails (no winner is chosen);
+// quarantined in either or both stays missing with one record per quarantined source row. Every minute of every
+// daily is compared, not only the holes. Filled rows are staged in typed arrays. Returns the unit's columns, its
+// filledRanges and its quarantinedRows (monthly and daily records inside the unit). Errors name times and files only.
+export function mergeUnit(unit, base, fills, load, check = () => {}) {
+  const monthly = base.parsed.columns, mt = monthly.open_time;
+  const monthlyQuarantined = new Set(base.parsed.quarantined.map(q => q.openTime));
+  const records = unitQuarantine(unit, [base]);
+  const staged = [];
+  let filled = 0;
+  for (const source of fills) {
+    const daily = load(source);
+    const dt = daily.columns.open_time, take = new Int32Array(dt.length);
+    let n = 0, i = lowerBound(mt, source.startMs);
+    for (let j = 0; j < dt.length; j++) {
+      const t = dt[j];
+      while (i < mt.length && mt[i] < t) i++;
+      if (i < mt.length && mt[i] === t) {
+        for (const name of KLINE_COLUMNS) if (monthly[name][i] !== daily.columns[name][j]) throw new Error(`Vision unit: sources disagree at ${iso(t)} (${base.file} / ${source.file})`);
+      } else if (monthlyQuarantined.has(t)) throw new Error(`Vision unit: a valid row in ${source.file} against a quarantined row in ${base.file} at ${iso(t)}`);
+      else take[n++] = j;
+    }
+    for (const q of daily.quarantined) {
+      const k = lowerBound(mt, q.openTime);
+      if (k < mt.length && mt[k] === q.openTime) throw new Error(`Vision unit: a valid row in ${base.file} against a quarantined row in ${source.file} at ${iso(q.openTime)}`);
+    }
+    records.push(...unitQuarantine(unit, [{ file: source.file, parsed: daily }]));
+    if (n) {
+      const rows = Object.fromEntries(KLINE_COLUMNS.map(name => [name, new Float64Array(n)]));
+      for (let k = 0; k < n; k++) for (const name of KLINE_COLUMNS) rows[name][k] = daily.columns[name][take[k]];
+      staged.push(rows);
+      filled += n;
+    }
+    check(`merge ${source.file}`);
+  }
+  // The monthly rows inside the unit and the staged daily rows are disjoint and each sorted: merge them by open time.
+  check(`assemble ${unit.instrument.contract} ${unit.dataStart}`);
+  const lo = lowerBound(mt, unit.startMs), hi = lowerBound(mt, unit.endMs);
+  const fillTime = new Float64Array(filled), fillAt = new Int32Array(filled * 2); // [staged index, row] per filled row
+  for (let s = 0, k = 0; s < staged.length; s++) for (let r = 0; r < staged[s].open_time.length; r++, k++) { fillTime[k] = staged[s].open_time[r]; fillAt[2 * k] = s; fillAt[2 * k + 1] = r; }
+  const rowCount = hi - lo + filled;
+  const columns = Object.fromEntries(KLINE_COLUMNS.map(name => [name, new Float64Array(rowCount)]));
+  for (let out = 0, i = lo, k = 0; out < rowCount; out++) {
+    if (k < filled && (i >= hi || fillTime[k] < mt[i])) { const rows = staged[fillAt[2 * k]], r = fillAt[2 * k + 1]; for (const name of KLINE_COLUMNS) columns[name][out] = rows[name][r]; k++; }
+    else { for (const name of KLINE_COLUMNS) columns[name][out] = monthly[name][i]; i++; }
+  }
+  records.sort((a, b) => a.openTime < b.openTime ? -1 : a.openTime > b.openTime ? 1 : a.file < b.file ? -1 : a.file > b.file ? 1 : 0);
+  return { rowCount, columns, filledRanges: minuteRanges(fillTime), quarantinedRows: records };
+}
