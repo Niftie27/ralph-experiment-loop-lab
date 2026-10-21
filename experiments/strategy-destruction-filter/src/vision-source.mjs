@@ -62,15 +62,17 @@ export function verifyZip(zipBytes, checksumText, zipName) {
   return actual;
 }
 
-// Kline CSV rows (contract A3). The first line is the exact header or a numeric first row; anything else fails.
-// Rows are validated against their source file's bounds [startMs, endMs); units are clipped later. Errors name
-// the row and its open time, never a price.
+// Kline CSV rows (contract A3, amendment round 5). The first line is the exact header or a numeric first row; anything
+// else fails. Rows are validated against their source file's bounds [startMs, endMs); units are clipped later. A row
+// that passes every structural check but breaks a value rule is quarantined: no candle, a record {openTime, rule};
+// more than QUARANTINE_CAP of them fail the file. Errors and records name the row and its open time, never a value.
 export const KLINE_HEADER = 'open_time,open,high,low,close,volume,close_time,quote_volume,count,taker_buy_volume,taker_buy_quote_volume,ignore';
 export const KLINE_COLUMNS = Object.freeze(['open_time', 'open', 'high', 'low', 'close', 'volume', 'quote_volume', 'count', 'taker_buy_volume', 'taker_buy_quote_volume']);
 // The value rules a row can break without failing its file (contract amendment round 5, Q1), in the fixed order in
 // which the first broken one is recorded. The texts are part of the manifest: never reword them.
 export const QUARANTINE_RULES = Object.freeze(['volume must be >= 0', 'quote_volume must be >= 0', 'taker_buy_volume must be within 0..volume',
   'taker_buy_quote_volume must be within 0..quote_volume', 'low must be > 0', 'low above min(open, close)', 'high below max(open, close)']);
+export const QUARANTINE_CAP = 10; // per physical file; a chosen fail-closed limit, changing it needs a new decision
 const KEPT = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10]; // CSV field index of each kept column; close_time (6) is checked, ignore (11) dropped
 const POW10 = Array.from({ length: 16 }, (_, k) => 10 ** k); // exact doubles
 // The value of the ASCII token buf[a, b) if it matches -?\d+(\.\d+)?, else NaN. With at most 15 digits the mantissa m
@@ -119,7 +121,8 @@ export function parseKlines(csv, { startMs, endMs }) {
   const columns = Object.fromEntries(KLINE_COLUMNS.map(name => [name, new Float64Array(rowCount)]));
   const cols = KLINE_COLUMNS.map(name => columns[name]);
   const starts = new Int32Array(13); // field j spans [starts[j], starts[j + 1] - 1)
-  let previous = -Infinity;
+  const quarantined = [];
+  let previous = -Infinity, w = 0; // w: the next accepted row; a quarantined row is overwritten by the next one
   for (let r = 0; r < rowCount; r++) {
     const end = buf.indexOf(0x0a, pos), row = r + 1;
     if (end === pos) throw new Error(`Vision klines: empty line at row ${row}`);
@@ -136,25 +139,37 @@ export function parseKlines(csv, { startMs, endMs }) {
     if (openTime < startMs || openTime >= endMs) throw rowError(row, openTime, 'open_time outside its source file bounds');
     if (openTime <= previous) throw rowError(row, openTime, 'open_time not strictly increasing');
     previous = openTime;
-    cols[0][r] = openTime;
+    cols[0][w] = openTime;
     for (let c = 1; c < KEPT.length; c++) {
       const value = decimalAt(buf, starts[KEPT[c]], starts[KEPT[c] + 1] - 1);
       if (!Number.isFinite(value)) throw rowError(row, openTime, `${KLINE_COLUMNS[c]} is not a non-empty finite decimal number`);
-      cols[c][r] = value;
+      cols[c][w] = value;
     }
-    const open = cols[1][r], high = cols[2][r], low = cols[3][r], close = cols[4][r], volume = cols[5][r], quoteVolume = cols[6][r];
-    const count = cols[7][r], takerBuy = cols[8][r], takerBuyQuote = cols[9][r];
-    const rule = !digitsOnly(buf, starts[8], starts[9] - 1) || !Number.isSafeInteger(count) ? 'count must be a safe non-negative integer'
-      : !(volume >= 0) ? 'volume must be >= 0'
-      : !(quoteVolume >= 0) ? 'quote_volume must be >= 0'
-      : !(takerBuy >= 0 && takerBuy <= volume) ? 'taker_buy_volume must be within 0..volume'
-      : !(takerBuyQuote >= 0 && takerBuyQuote <= quoteVolume) ? 'taker_buy_quote_volume must be within 0..quote_volume'
-      : !(low > 0) ? 'low must be > 0'
-      : !(low <= Math.min(open, close)) ? 'low above min(open, close)'
-      : !(high >= Math.max(open, close)) ? 'high below max(open, close)' : null;
-    if (rule) throw rowError(row, openTime, rule);
+    const open = cols[1][w], high = cols[2][w], low = cols[3][w], close = cols[4][w], volume = cols[5][w], quoteVolume = cols[6][w];
+    const count = cols[7][w], takerBuy = cols[8][w], takerBuyQuote = cols[9][w];
+    if (!digitsOnly(buf, starts[8], starts[9] - 1) || !Number.isSafeInteger(count)) throw rowError(row, openTime, 'count must be a safe non-negative integer');
+    const v = QUARANTINE_RULES;
+    const rule = !(volume >= 0) ? v[0]
+      : !(quoteVolume >= 0) ? v[1]
+      : !(takerBuy >= 0 && takerBuy <= volume) ? v[2]
+      : !(takerBuyQuote >= 0 && takerBuyQuote <= quoteVolume) ? v[3]
+      : !(low > 0) ? v[4]
+      : !(low <= Math.min(open, close)) ? v[5]
+      : !(high >= Math.max(open, close)) ? v[6] : null;
+    if (!rule) { w++; continue; }
+    if (quarantined.length === QUARANTINE_CAP) throw rowError(row, openTime, `more than ${QUARANTINE_CAP} quarantined rows in this file`);
+    quarantined.push({ openTime, rule });
   }
-  return { variant, rowCount, columns };
+  // Dense accepted columns: cut (copied) to the accepted rows when a row was quarantined.
+  if (w < rowCount) for (const name of KLINE_COLUMNS) columns[name] = columns[name].slice(0, w);
+  return { variant, rowCount: w, columns, quarantined };
+}
+// The quarantine records of a unit's inputs [{file, parsed}] whose open time lies in [unit.startMs, unit.endMs), as
+// {file, openTime (ISO), rule}, sorted by openTime, then file.
+export function unitQuarantine(unit, inputs) {
+  const records = inputs.flatMap(({ file, parsed }) => parsed.quarantined.filter(q => q.openTime >= unit.startMs && q.openTime < unit.endMs)
+    .map(q => ({ file, openTime: iso(q.openTime), rule: q.rule })));
+  return records.sort((a, b) => a.openTime < b.openTime ? -1 : a.openTime > b.openTime ? 1 : a.file < b.file ? -1 : a.file > b.file ? 1 : 0);
 }
 const rowError = (row, openTime, rule) => new Error(`Vision klines: row ${row} (${new Date(openTime).toISOString()}): ${rule}`);
 

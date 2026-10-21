@@ -340,15 +340,21 @@ test('F1a-2 store: a build never touches results/manifest-h2.json', () => {
 
 test('F1a-2 store: failures and summaries for holdout units carry counts, times and hashes, never prices', () => {
   const s = store();
-  const source = sourceOf('SOL', '2026-01');
+  const prices = { open: '187.4321', high: '187.1234', low: '186.9876', close: '187.0001' };
+  // A broken value rule quarantines the row (round 5): recorded with its time and rule, never its values.
   const t = minutes('2026-01-05T00:00:00.000Z', 2);
-  const csv = KLINE_HEADER + '\n' + klineRow(t[0], { open: '187.4321', high: '187.1234', low: '186.9876', close: '187.0001' }) + '\n' + klineRow(t[1]) + '\n';
-  const zip = makeZip([{ name: source.csvName, data: csv }]);
-  storeSource(s.zipRoot, source, zip, checksumText(zip, source.zipName));
-  const result = build(s, { symbols: ['SOL'], from: '2026-01', to: '2026-01' });
+  put(s, 'SOL', '2026-01', t, { csv: KLINE_HEADER + '\n' + klineRow(t[0], prices) + '\n' + klineRow(t[1]) + '\n' });
+  const quarantined = build(s, { symbols: ['SOL'], from: '2026-01', to: '2026-01' });
+  assert.equal(quarantined.status, 'ok');
+  assert.deepEqual(readManifest(s.manifestPath).entries[0].quarantinedRows, [{ file: sourceOf('SOL', '2026-01').file, openTime: '2026-01-05T00:00:00.000Z', rule: 'high below max(open, close)' }]);
+  // A structural error fails the unit; the failure names the row and its time, never its values.
+  const u = minutes('2026-03-05T00:00:00.000Z', 2);
+  put(s, 'SOL', '2026-03', u, { csv: KLINE_HEADER + '\n' + klineRow(u[0], { ...prices, closeTime: String(u[0] + 1) }) + '\n' + klineRow(u[1]) + '\n' });
+  const result = build(s, { symbols: ['SOL'], from: '2026-03', to: '2026-03' });
   assert.equal(result.status, 'failed');
-  const text = JSON.stringify(result);
+  const text = JSON.stringify([quarantined, result, readManifest(s.manifestPath)]);
   assert.match(text, /2026-01-05T00:00:00.000Z/);
+  assert.match(text, /2026-03-05T00:00:00.000Z/);
   assert.doesNotMatch(text, /187\.|186\./);
   const ok = store();
   put(ok, 'SOL', '2026-02', fourRows('2026-02'));
@@ -445,4 +451,54 @@ test('F1a-2 r5 store: checkEntry consistency: planned unit, missingRanges sorted
   dailyReject({ filledRanges: [m('2026-10-01T00:00', '2026-10-01T00:01')] }, /base dailies/);
   dailyReject({ sources: [...days, { file: dailyOf('2026-10-20'), sha256: 'c'.repeat(64) }].sort((x, y) => x.file < y.file ? -1 : 1) }, /base dailies/);
   dailyReject({ sources: days.slice(1) }, /base source/);
+});
+
+// Row quarantine in the store (contract amendment round 5, Q2-Q5).
+const BAD = { open: '98799.11', high: '98765.43' }; // high below max(open, close)
+const csvRows = rows => KLINE_HEADER + '\n' + rows.join('\n') + '\n';
+
+test('F1a-2 r5 store: a quarantined row is recorded in its unit entry and the build report; quarantine sets no exit code', () => {
+  const s = store();
+  const t = minutes('2024-03-03T00:00:00.000Z', 4);
+  const { source } = put(s, 'ETH', '2024-03', t, { csv: csvRows([klineRow(t[0]), klineRow(t[1], BAD), klineRow(t[2]), klineRow(t[3])]) });
+  const result = build(s, { symbols: ['ETH'], from: '2024-03', to: '2024-03' });
+  assert.equal(result.status, 'ok');
+  const record = { file: source.file, openTime: '2024-03-03T00:01:00.000Z', rule: 'high below max(open, close)' };
+  const [entry] = readManifest(s.manifestPath).entries;
+  assert.deepEqual([entry.rowCount, entry.quarantinedRows, entry.filledRanges], [3, [record], []]);
+  assert.ok(entry.missingRanges.some(r => r.start === '2024-03-03T00:01:00.000Z' && r.end === '2024-03-03T00:02:00.000Z'));
+  assert.deepEqual(result.coverage[0].quarantine, { sourceRows: 1, uniqueMinutes: 1, rows: [record] });
+  const rerun = build(s, { symbols: ['ETH'], from: '2024-03', to: '2024-03' });
+  assert.deepEqual([rerun.status, rerun.counts.unchanged, rerun.coverage[0].quarantine.rows], ['ok', 1, [record]]);
+  assert.doesNotMatch(JSON.stringify([result, entry]), /9879|9876/);
+});
+
+test('F1a-2 r5 store: an all-quarantined unit is empty, without snapshot or entry, and its records are in the report', () => {
+  const s = store();
+  const t = minutes('2024-04-03T00:00:00.000Z', 2);
+  const { source } = put(s, 'XRP', '2024-04', t, { csv: csvRows(t.map(x => klineRow(x, BAD))) });
+  const result = build(s, { symbols: ['XRP'], from: '2024-04', to: '2024-04' });
+  assert.equal(result.status, 'ok');
+  assert.deepEqual(result.counts, { units: 1, built: 0, unchanged: 0, empty: 1, missing: 0, notListed: 0, failed: 0 });
+  assert.deepEqual(files(s.cacheDir), []);
+  assert.deepEqual(readManifest(s.manifestPath).entries, []);
+  assert.deepEqual(result.coverage[0].quarantine.rows, t.map(x => ({ file: source.file, openTime: new Date(x).toISOString(), rule: 'high below max(open, close)' })));
+});
+
+test('F1a-2 r5 store: 6 + 5 quarantined rows across the 2025-10 boundary fail both units', () => {
+  const s = store();
+  const t = minutes('2025-10-16T23:53:00.000Z', 13); // rows 0-6 before 2025-10-17, rows 7-12 from it on; 0 and 12 stay valid
+  put(s, 'DOGE', '2025-10', t, { csv: csvRows(t.map((x, i) => klineRow(x, i >= 1 && i <= 11 ? BAD : {}))) });
+  const result = build(s, { symbols: ['DOGE'], from: '2025-10', to: '2025-10' });
+  assert.equal(result.status, 'failed');
+  assert.deepEqual(result.failures.map(f => [f.period, /more than 10 quarantined rows/.test(f.reason)]), [['research', true], ['holdout', true]]);
+  assert.deepEqual(files(s.cacheDir), []);
+  assert.doesNotMatch(JSON.stringify(result), /9879|9876/);
+  const ten = store();
+  put(ten, 'DOGE', '2025-10', t, { csv: csvRows(t.map((x, i) => klineRow(x, i >= 1 && i <= 10 ? BAD : {}))) });
+  const ok = build(ten, { symbols: ['DOGE'], from: '2025-10', to: '2025-10' });
+  assert.equal(ok.status, 'ok');
+  const entries = readManifest(ten.manifestPath).entries;
+  assert.deepEqual(entries.map(e => [e.period, e.quarantinedRows.length]), [['holdout', 4], ['research', 6]]);
+  assert.equal(ok.coverage[0].quarantine.sourceRows, 10);
 });

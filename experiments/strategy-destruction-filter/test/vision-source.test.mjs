@@ -1,7 +1,7 @@
 // F1a-2: Binance Vision source files: ZIP member, CHECKSUM, kline CSV rows and units (docs/f1/f1a-2-contract.md).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readZipMember, parseChecksum, verifyZip, parseKlines, planUnits, assembleUnit, unitCoverage, visionInstrument, VISION_SYMBOLS } from '../src/vision-source.mjs';
+import { readZipMember, parseChecksum, verifyZip, parseKlines, planUnits, assembleUnit, unitCoverage, visionInstrument, VISION_SYMBOLS, QUARANTINE_RULES } from '../src/vision-source.mjs';
 import { instrumentForSymbol } from '../src/h2-contract.mjs';
 import fs from 'node:fs';
 import { makeZip, klineCsv, klineRow, minutes, checksumText, sha256, KLINE_HEADER } from '../test-support/vision-fixtures.mjs';
@@ -108,24 +108,30 @@ test('F1a-2 klines: every kept token is a non-empty finite decimal; quote, taker
   assert.throws(() => parseKlines(Buffer.from((KLINE_HEADER + '\n' + klineRow(T[0]) + '\n').replaceAll('\n', '\r\n')), JAN), /header|number/);
   assert.throws(() => parseKlines(Buffer.from(KLINE_HEADER + '\n' + klineRow(T[0]) + '\n\n' + klineRow(T[1]) + '\n'), JAN), /empty line/);
   assert.throws(() => parseKlines(Buffer.from(KLINE_HEADER + '\n' + klineRow(T[0])), JAN), /newline/);
-  reject({ volume: '-0.001' }, /volume/);
-  reject({ quoteVolume: '-1' }, /quote_volume/);
-  reject({ takerBuyVolume: '289.642' }, /taker_buy_volume/);
-  reject({ takerBuyVolume: '-1' }, /taker_buy_volume/);
-  reject({ takerBuyQuoteVolume: '12256155.25626' }, /taker_buy_quote_volume/);
-  reject({ takerBuyQuoteVolume: '-0.5' }, /taker_buy_quote_volume/);
+  // Value rules quarantine the row (contract amendment round 5, Q1); the count rule still fails the file.
+  const quarantined = (over, rule) => assert.deepEqual(parseKlines(Buffer.from(KLINE_HEADER + '\n' + klineRow(T[0], over) + '\n'), JAN).quarantined, [{ openTime: T[0], rule }]);
+  quarantined({ volume: '-0.001' }, 'volume must be >= 0');
+  quarantined({ quoteVolume: '-1' }, 'quote_volume must be >= 0');
+  quarantined({ takerBuyVolume: '289.642' }, 'taker_buy_volume must be within 0..volume');
+  quarantined({ takerBuyVolume: '-1' }, 'taker_buy_volume must be within 0..volume');
+  quarantined({ takerBuyQuoteVolume: '12256155.25626' }, 'taker_buy_quote_volume must be within 0..quote_volume');
+  quarantined({ takerBuyQuoteVolume: '-0.5' }, 'taker_buy_quote_volume must be within 0..quote_volume');
   reject({ count: '3.5' }, /count/);
   reject({ count: '-3' }, /count/);
   reject({ count: '9007199254740993' }, /count/);
-  reject({ low: '0', open: '0', close: '0' }, /low/);
-  reject({ low: '42320.00' }, /low/);
-  reject({ high: '42330.00' }, /high/);
+  quarantined({ low: '0', open: '0', close: '0' }, 'low must be > 0');
+  quarantined({ low: '42320.00' }, 'low above min(open, close)');
+  quarantined({ high: '42330.00' }, 'high below max(open, close)');
   assert.equal(parseKlines(Buffer.from(KLINE_HEADER + '\n' + klineRow(T[0], { volume: '0', quoteVolume: '0', count: '0', takerBuyVolume: '0', takerBuyQuoteVolume: '0' }) + '\n'), JAN).rowCount, 1);
 });
 
 test('F1a-2 klines: errors name the row and time, never a price; sparse rows stay sparse', () => {
-  try { parseKlines(Buffer.from(KLINE_HEADER + '\n' + klineRow(T[0], { high: '98765.43', open: '98799.11' }) + '\n'), JAN); assert.fail('expected a failure'); }
+  const prices = { high: '98765.43', open: '98799.11' };
+  try { parseKlines(Buffer.from(KLINE_HEADER + '\n' + klineRow(T[0], { ...prices, closeTime: String(T[0] + 1) }) + '\n'), JAN); assert.fail('expected a failure'); }
   catch (error) { assert.match(error.message, /2024-01-01T00:00:00.000Z/); assert.doesNotMatch(error.message, /9876|9879|4233|4228/); }
+  const record = parseKlines(Buffer.from(KLINE_HEADER + '\n' + klineRow(T[0], prices) + '\n'), JAN).quarantined;
+  assert.deepEqual(record, [{ openTime: T[0], rule: 'high below max(open, close)' }]);
+  assert.doesNotMatch(JSON.stringify(record), /9876|9879|4233|4228/);
   const sparse = parseKlines(Buffer.from(klineCsv([T[0], T[3]])), JAN);
   assert.deepEqual(Array.from(sparse.columns.open_time), [T[0], T[3]]);
 });
@@ -240,4 +246,69 @@ test('F1a-2 coverage: missing ranges cover the whole unit including leading and 
   const empty = assembleUnit(u21, [parsedFor(u21.sources[0], minutes('2021-10-01T00:00:00.000Z', 3))]);
   assert.equal(empty.rowCount, 0);
   assert.equal(unitCoverage(u21, empty.columns.open_time).missingMinutes, 14 * 1440);
+});
+
+// Row quarantine (contract amendment round 5, Q1, Q2 and Q4).
+const csvOf = rows => Buffer.from(KLINE_HEADER + '\n' + rows.join('\n') + '\n');
+const SEVEN = [{ volume: '-1' }, { quoteVolume: '-1' }, { takerBuyVolume: '289.642' }, { takerBuyQuoteVolume: '12256155.25626' }, { low: '0', open: '0', close: '0' },
+  { low: '42320.00' }, { high: '42330.00' }];
+
+test('F1a-2 r5 quarantine: each of the seven value rules quarantines its row with the exact text; no candle, dense columns', () => {
+  assert.deepEqual(QUARANTINE_RULES, ['volume must be >= 0', 'quote_volume must be >= 0', 'taker_buy_volume must be within 0..volume',
+    'taker_buy_quote_volume must be within 0..quote_volume', 'low must be > 0', 'low above min(open, close)', 'high below max(open, close)']);
+  const t = minutes('2024-01-01T00:00:00.000Z', 9);
+  const parsed = parseKlines(csvOf([klineRow(t[0]), ...SEVEN.map((over, i) => klineRow(t[i + 1], over)), klineRow(t[8], { close: '42320.50' })]), JAN);
+  assert.deepEqual(parsed.quarantined, SEVEN.map((_, i) => ({ openTime: t[i + 1], rule: QUARANTINE_RULES[i] })));
+  assert.equal(parsed.rowCount, 2);
+  for (const [name, col] of Object.entries(parsed.columns)) assert.equal(col.length, 2, name);
+  assert.deepEqual(Array.from(parsed.columns.open_time), [t[0], t[8]]);
+  assert.deepEqual(Array.from(parsed.columns.close), [42331.9, 42320.5]);
+  assert.ok(Object.values(parsed.columns).every(c => c instanceof Float64Array));
+  assert.deepEqual(parseKlines(Buffer.from(klineCsv(t)), JAN).quarantined, []);
+});
+
+test('F1a-2 r5 quarantine: a row breaking several value rules records the first in the fixed order', () => {
+  const first = over => parseKlines(csvOf([klineRow(T[0], over)]), JAN).quarantined[0].rule;
+  assert.equal(first({ volume: '-1', quoteVolume: '-1', high: '1' }), 'volume must be >= 0');
+  assert.equal(first({ quoteVolume: '-1', low: '0' }), 'quote_volume must be >= 0');
+  assert.equal(first({ takerBuyVolume: '300', takerBuyQuoteVolume: '-1', low: '0' }), 'taker_buy_volume must be within 0..volume');
+  assert.equal(first({ takerBuyQuoteVolume: '-1', low: '0' }), 'taker_buy_quote_volume must be within 0..quote_volume');
+  assert.equal(first({ low: '0', high: '1' }), 'low must be > 0');
+  assert.equal(first({ low: '42320.00', high: '42320.00' }), 'low above min(open, close)');
+});
+
+test('F1a-2 r5 quarantine: the count rule, every structural error and a structural error after a quarantinable row still fail the file', () => {
+  const reject = (rows, pattern) => assert.throws(() => parseKlines(csvOf(rows), JAN), pattern);
+  reject([klineRow(T[0], { count: '3.5', volume: '-1' })], /count/);
+  reject([klineRow(T[0], { count: '-3', low: '0' })], /count/);
+  reject([klineRow(T[0], { high: 'NaN', volume: '-1' })], /number/);
+  reject([klineRow(T[0], { volume: '-1', closeTime: String(T[0] + 60000) })], /close_time/);
+  reject([klineRow(T[0], { volume: '-1' }), klineRow(T[1], { closeTime: String(T[1] + 60000) })], /close_time/);
+  reject([klineRow(T[0], { volume: '-1' }), klineRow(T[1]).split(',').slice(0, 11).join(',')], /12 columns/);
+  reject([klineRow(T[0], { low: '0' }), klineRow(JAN.endMs)], /outside its source/);
+  reject([klineRow(T[0], { low: '0' }), klineRow(T[1] + 1000, { closeTime: String(T[1] + 1000 + 59999) })], /aligned/);
+  reject([klineRow(T[0], { volume: '-1', openTime: String(T[0] * 1000) })], /milliseconds/);
+  assert.throws(() => parseKlines(Buffer.from(KLINE_HEADER + '\n' + klineRow(T[0], { volume: '-1' }) + '\n\n' + klineRow(T[1]) + '\n'), JAN), /empty line/);
+  assert.throws(() => parseKlines(Buffer.from(KLINE_HEADER + '\n' + klineRow(T[0], { volume: '-1' })), JAN), /newline/);
+});
+
+test('F1a-2 r5 quarantine: a duplicate open_time right after a quarantined row fails', () => {
+  assert.throws(() => parseKlines(csvOf([klineRow(T[0], { volume: '-1' }), klineRow(T[0])]), JAN), /not strictly increasing/);
+  assert.throws(() => parseKlines(csvOf([klineRow(T[1]), klineRow(T[0], { volume: '-1' })]), JAN), /not strictly increasing/);
+});
+
+test('F1a-2 r5 quarantine: 10 quarantined rows in one file pass, 11 fail (counted over the whole file, no values in the error)', () => {
+  const t = minutes('2024-01-01T00:00:00.000Z', 12);
+  const bad = { open: '98799.11', high: '98765.43' };
+  const ten = parseKlines(csvOf([...t.slice(0, 10).map(x => klineRow(x, bad)), klineRow(t[10])]), JAN);
+  assert.equal(ten.quarantined.length, 10);
+  assert.deepEqual(Array.from(ten.columns.open_time), [t[10]]);
+  try { parseKlines(csvOf([klineRow(t[0], bad), klineRow(t[1]), ...t.slice(2, 12).map(x => klineRow(x, bad))]), JAN); assert.fail('expected a failure'); }
+  catch (error) {
+    assert.match(error.message, /more than 10 quarantined rows in this file/);
+    assert.match(error.message, /2024-01-01T00:11:00.000Z/);
+    assert.doesNotMatch(error.message, /9876|9879/);
+  }
+  const all = parseKlines(csvOf(t.slice(0, 3).map(x => klineRow(x, bad))), JAN);
+  assert.deepEqual([all.rowCount, all.columns.open_time.length, all.quarantined.length], [0, 0, 3]);
 });

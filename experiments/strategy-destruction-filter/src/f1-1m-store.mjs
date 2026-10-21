@@ -7,7 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
 import { encodeSnapshot, decodeSnapshot, canonicalJson, SCHEMA_VERSION } from './f1-1m-format.mjs';
-import { verifyZip, parseChecksum, readZipMember, parseKlines, planUnits, assembleUnit, unitCoverage, visionSource, QUARANTINE_RULES, VISION_SYMBOLS } from './vision-source.mjs';
+import { verifyZip, parseChecksum, readZipMember, parseKlines, planUnits, assembleUnit, unitCoverage, unitQuarantine, visionSource, QUARANTINE_RULES, VISION_SYMBOLS } from './vision-source.mjs';
 
 export const MANIFEST_KIND = 'binance_vision_kline_1m_manifest';
 export const SOURCE = 'binance-vision-archive';
@@ -250,13 +250,14 @@ function buildUnit(unit, zipRoot, parsedCache) {
   }
   const { rowCount, columns } = assembleUnit(unit, inputs);
   const coverage = unitCoverage(unit, columns.open_time);
-  if (!rowCount) return { status: 'empty', coverage };
+  const quarantinedRows = unitQuarantine(unit, inputs);
+  if (!rowCount) return { status: 'empty', coverage, quarantinedRows };
   const bytes = encodeSnapshot({ instrument: unit.instrument, period: unit.period, dataStart: unit.dataStart, dataEnd: unit.dataEnd, sources }, columns);
   const iso = t => new Date(t).toISOString();
   const entry = { ...unit.instrument, period: unit.period, dataStart: unit.dataStart, dataEnd: unit.dataEnd, schemaVersion: SCHEMA_VERSION, sha256: sha256(bytes),
     bytes: bytes.length, rowCount, firstOpenTime: iso(columns.open_time[0]), lastOpenTime: iso(columns.open_time[rowCount - 1]), missingMinutes: coverage.missingMinutes,
-    missingRanges: coverage.missingRanges, quarantinedRows: [], filledRanges: [], source: SOURCE, sources: [...sources].sort((a, b) => order(a.file, b.file)) };
-  return { status: 'ok', entry, bytes, coverage };
+    missingRanges: coverage.missingRanges, quarantinedRows, filledRanges: [], source: SOURCE, sources: [...sources].sort((a, b) => order(a.file, b.file)) };
+  return { status: 'ok', entry, bytes, coverage, quarantinedRows };
 }
 
 // Builds every planned unit of the symbols and months. Fail closed per unit; a guard (memory) failure or a lock
@@ -333,7 +334,13 @@ function coverageOf(contract, results) {
   return { contract, firstSourceFile: built[0]?.entry.sources[0].file ?? null, firstCandle: built[0]?.entry.firstOpenTime ?? null, lastCandle: built.at(-1)?.entry.lastOpenTime ?? null,
     bars, expectedMinutes, missingMinutes: expectedMinutes - bars, notListed: [...new Set(units.filter(r => r.status === 'not_listed').map(r => r.unit.dataStart.slice(0, 7)))],
     gaps: counted.filter(r => ['missing', 'empty', 'failed'].includes(r.status)).map(r => ({ period: r.unit.period, dataStart: r.unit.dataStart, dataEnd: r.unit.dataEnd, status: r.status })),
-    missingRanges: mergeRanges(ranges) };
+    missingRanges: mergeRanges(ranges),
+    quarantine: quarantineReport(units.filter(r => ['built', 'unchanged', 'empty'].includes(r.status)).flatMap(r => r.quarantinedRows)) };
+}
+// Per-symbol quarantine report (amendment round 5, Q5) from unit records, which never repeat across split units.
+export function quarantineReport(records) {
+  const rows = [...records].sort((a, b) => order(a.openTime, b.openTime) || order(a.file, b.file));
+  return { sourceRows: rows.length, uniqueMinutes: new Set(rows.map(q => q.openTime)).size, rows };
 }
 function summarize(command, results, error) {
   const count = status => results.filter(r => r.status === status).length;
