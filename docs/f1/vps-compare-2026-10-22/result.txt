@@ -1,0 +1,9 @@
+2026-10-22T11:34:19Z start; runner sha256 ad85a65dda7d36613a752a45717cf890b0a290ba334fe2ce9939c8efa035787d; commit 6ebaa260086ff764836f973c16916728f44e6dd7
+2026-10-22T11:34:19Z checks ok: oom_score_adj 1000, memory.max 1073741824, cpu.max 50000 100000, MemAvailable 1010888 kB, free disk 36593201152 B, TMPDIR fs ext2/ext3, /tmp fs ext2/ext3, node v24.22.0
+2026-10-22T11:34:20Z clone ok: HEAD 6ebaa260086ff764836f973c16916728f44e6dd7, clean, manifest sha256 ab28161a599c91fbb8e1e026b2a9fc366ebd742340d9a28bbb552330f355b0ed
+2026-10-22T11:34:37Z node --test exit 0: # tests 204 # pass 204 # fail 0 
+2026-10-22T11:34:37Z step download started
+2026-10-22T11:50:08Z step download exit 0, wall 931 s, terminated by memory check: 0
+2026-10-22T11:50:08Z step compare started
+2026-10-22T11:51:08Z step compare exit 0, wall 60 s, terminated by memory check: 0
+2026-10-22T11:51:09Z RESULT done: download exit 0, compare exit 0

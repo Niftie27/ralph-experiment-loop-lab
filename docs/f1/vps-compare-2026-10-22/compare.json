@@ -1,0 +1,2888 @@
+{
+  "command": "compare",
+  "status": "ok",
+  "error": null,
+  "counts": {
+    "units": 372,
+    "expected": 329,
+    "rebuilt": 329,
+    "compared": 329,
+    "matched": 329,
+    "mismatched": 0,
+    "extra": 0,
+    "missingInput": 0,
+    "gap": 0,
+    "notListed": 43,
+    "empty": 0,
+    "failed": 0
+  },
+  "units": [
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2021-11-01T00:00:00.000Z",
+      "dataStart": "2021-10-18T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2021-12-01T00:00:00.000Z",
+      "dataStart": "2021-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2022-01-01T00:00:00.000Z",
+      "dataStart": "2021-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2022-02-01T00:00:00.000Z",
+      "dataStart": "2022-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2022-03-01T00:00:00.000Z",
+      "dataStart": "2022-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2022-04-01T00:00:00.000Z",
+      "dataStart": "2022-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2022-05-01T00:00:00.000Z",
+      "dataStart": "2022-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2022-06-01T00:00:00.000Z",
+      "dataStart": "2022-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2022-07-01T00:00:00.000Z",
+      "dataStart": "2022-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2022-08-01T00:00:00.000Z",
+      "dataStart": "2022-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2022-09-01T00:00:00.000Z",
+      "dataStart": "2022-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2022-10-01T00:00:00.000Z",
+      "dataStart": "2022-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2022-11-01T00:00:00.000Z",
+      "dataStart": "2022-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2022-12-01T00:00:00.000Z",
+      "dataStart": "2022-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2023-01-01T00:00:00.000Z",
+      "dataStart": "2022-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2023-02-01T00:00:00.000Z",
+      "dataStart": "2023-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2023-03-01T00:00:00.000Z",
+      "dataStart": "2023-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2023-04-01T00:00:00.000Z",
+      "dataStart": "2023-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2023-05-01T00:00:00.000Z",
+      "dataStart": "2023-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2023-06-01T00:00:00.000Z",
+      "dataStart": "2023-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2023-07-01T00:00:00.000Z",
+      "dataStart": "2023-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2023-08-01T00:00:00.000Z",
+      "dataStart": "2023-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2023-09-01T00:00:00.000Z",
+      "dataStart": "2023-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2023-10-01T00:00:00.000Z",
+      "dataStart": "2023-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2023-11-01T00:00:00.000Z",
+      "dataStart": "2023-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2023-12-01T00:00:00.000Z",
+      "dataStart": "2023-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2024-01-01T00:00:00.000Z",
+      "dataStart": "2023-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2024-02-01T00:00:00.000Z",
+      "dataStart": "2024-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2024-03-01T00:00:00.000Z",
+      "dataStart": "2024-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2024-04-01T00:00:00.000Z",
+      "dataStart": "2024-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2024-05-01T00:00:00.000Z",
+      "dataStart": "2024-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2024-06-01T00:00:00.000Z",
+      "dataStart": "2024-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2024-07-01T00:00:00.000Z",
+      "dataStart": "2024-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2024-08-01T00:00:00.000Z",
+      "dataStart": "2024-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2024-09-01T00:00:00.000Z",
+      "dataStart": "2024-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2024-10-01T00:00:00.000Z",
+      "dataStart": "2024-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2024-11-01T00:00:00.000Z",
+      "dataStart": "2024-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2024-12-01T00:00:00.000Z",
+      "dataStart": "2024-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2025-01-01T00:00:00.000Z",
+      "dataStart": "2024-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2025-02-01T00:00:00.000Z",
+      "dataStart": "2025-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2025-03-01T00:00:00.000Z",
+      "dataStart": "2025-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2025-04-01T00:00:00.000Z",
+      "dataStart": "2025-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2025-05-01T00:00:00.000Z",
+      "dataStart": "2025-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2025-06-01T00:00:00.000Z",
+      "dataStart": "2025-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2025-07-01T00:00:00.000Z",
+      "dataStart": "2025-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2025-08-01T00:00:00.000Z",
+      "dataStart": "2025-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2025-09-01T00:00:00.000Z",
+      "dataStart": "2025-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2025-10-01T00:00:00.000Z",
+      "dataStart": "2025-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2025-10-17T00:00:00.000Z",
+      "dataStart": "2025-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2025-11-01T00:00:00.000Z",
+      "dataStart": "2025-10-17T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2025-12-01T00:00:00.000Z",
+      "dataStart": "2025-11-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2026-01-01T00:00:00.000Z",
+      "dataStart": "2025-12-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2026-02-01T00:00:00.000Z",
+      "dataStart": "2026-01-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2026-03-01T00:00:00.000Z",
+      "dataStart": "2026-02-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2026-04-01T00:00:00.000Z",
+      "dataStart": "2026-03-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2026-05-01T00:00:00.000Z",
+      "dataStart": "2026-04-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2026-06-01T00:00:00.000Z",
+      "dataStart": "2026-05-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2026-07-01T00:00:00.000Z",
+      "dataStart": "2026-06-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2026-08-01T00:00:00.000Z",
+      "dataStart": "2026-07-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2026-09-01T00:00:00.000Z",
+      "dataStart": "2026-08-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2026-10-01T00:00:00.000Z",
+      "dataStart": "2026-09-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "BTCUSDT",
+      "dataEnd": "2026-10-17T00:00:00.000Z",
+      "dataStart": "2026-10-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2021-11-01T00:00:00.000Z",
+      "dataStart": "2021-10-18T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2021-12-01T00:00:00.000Z",
+      "dataStart": "2021-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2022-01-01T00:00:00.000Z",
+      "dataStart": "2021-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2022-02-01T00:00:00.000Z",
+      "dataStart": "2022-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2022-03-01T00:00:00.000Z",
+      "dataStart": "2022-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2022-04-01T00:00:00.000Z",
+      "dataStart": "2022-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2022-05-01T00:00:00.000Z",
+      "dataStart": "2022-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2022-06-01T00:00:00.000Z",
+      "dataStart": "2022-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2022-07-01T00:00:00.000Z",
+      "dataStart": "2022-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2022-08-01T00:00:00.000Z",
+      "dataStart": "2022-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2022-09-01T00:00:00.000Z",
+      "dataStart": "2022-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2022-10-01T00:00:00.000Z",
+      "dataStart": "2022-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2022-11-01T00:00:00.000Z",
+      "dataStart": "2022-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2022-12-01T00:00:00.000Z",
+      "dataStart": "2022-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2023-01-01T00:00:00.000Z",
+      "dataStart": "2022-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2023-02-01T00:00:00.000Z",
+      "dataStart": "2023-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2023-03-01T00:00:00.000Z",
+      "dataStart": "2023-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2023-04-01T00:00:00.000Z",
+      "dataStart": "2023-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2023-05-01T00:00:00.000Z",
+      "dataStart": "2023-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2023-06-01T00:00:00.000Z",
+      "dataStart": "2023-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2023-07-01T00:00:00.000Z",
+      "dataStart": "2023-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2023-08-01T00:00:00.000Z",
+      "dataStart": "2023-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2023-09-01T00:00:00.000Z",
+      "dataStart": "2023-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2023-10-01T00:00:00.000Z",
+      "dataStart": "2023-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2023-11-01T00:00:00.000Z",
+      "dataStart": "2023-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2023-12-01T00:00:00.000Z",
+      "dataStart": "2023-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2024-01-01T00:00:00.000Z",
+      "dataStart": "2023-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2024-02-01T00:00:00.000Z",
+      "dataStart": "2024-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2024-03-01T00:00:00.000Z",
+      "dataStart": "2024-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2024-04-01T00:00:00.000Z",
+      "dataStart": "2024-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2024-05-01T00:00:00.000Z",
+      "dataStart": "2024-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2024-06-01T00:00:00.000Z",
+      "dataStart": "2024-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2024-07-01T00:00:00.000Z",
+      "dataStart": "2024-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2024-08-01T00:00:00.000Z",
+      "dataStart": "2024-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2024-09-01T00:00:00.000Z",
+      "dataStart": "2024-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2024-10-01T00:00:00.000Z",
+      "dataStart": "2024-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2024-11-01T00:00:00.000Z",
+      "dataStart": "2024-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2024-12-01T00:00:00.000Z",
+      "dataStart": "2024-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2025-01-01T00:00:00.000Z",
+      "dataStart": "2024-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2025-02-01T00:00:00.000Z",
+      "dataStart": "2025-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2025-03-01T00:00:00.000Z",
+      "dataStart": "2025-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2025-04-01T00:00:00.000Z",
+      "dataStart": "2025-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2025-05-01T00:00:00.000Z",
+      "dataStart": "2025-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2025-06-01T00:00:00.000Z",
+      "dataStart": "2025-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2025-07-01T00:00:00.000Z",
+      "dataStart": "2025-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2025-08-01T00:00:00.000Z",
+      "dataStart": "2025-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2025-09-01T00:00:00.000Z",
+      "dataStart": "2025-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2025-10-01T00:00:00.000Z",
+      "dataStart": "2025-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2025-10-17T00:00:00.000Z",
+      "dataStart": "2025-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2025-11-01T00:00:00.000Z",
+      "dataStart": "2025-10-17T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2025-12-01T00:00:00.000Z",
+      "dataStart": "2025-11-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2026-01-01T00:00:00.000Z",
+      "dataStart": "2025-12-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2026-02-01T00:00:00.000Z",
+      "dataStart": "2026-01-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2026-03-01T00:00:00.000Z",
+      "dataStart": "2026-02-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2026-04-01T00:00:00.000Z",
+      "dataStart": "2026-03-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2026-05-01T00:00:00.000Z",
+      "dataStart": "2026-04-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2026-06-01T00:00:00.000Z",
+      "dataStart": "2026-05-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2026-07-01T00:00:00.000Z",
+      "dataStart": "2026-06-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2026-08-01T00:00:00.000Z",
+      "dataStart": "2026-07-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2026-09-01T00:00:00.000Z",
+      "dataStart": "2026-08-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2026-10-01T00:00:00.000Z",
+      "dataStart": "2026-09-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "ETHUSDT",
+      "dataEnd": "2026-10-17T00:00:00.000Z",
+      "dataStart": "2026-10-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2021-11-01T00:00:00.000Z",
+      "dataStart": "2021-10-18T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2021-12-01T00:00:00.000Z",
+      "dataStart": "2021-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2022-01-01T00:00:00.000Z",
+      "dataStart": "2021-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2022-02-01T00:00:00.000Z",
+      "dataStart": "2022-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2022-03-01T00:00:00.000Z",
+      "dataStart": "2022-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2022-04-01T00:00:00.000Z",
+      "dataStart": "2022-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2022-05-01T00:00:00.000Z",
+      "dataStart": "2022-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2022-06-01T00:00:00.000Z",
+      "dataStart": "2022-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2022-07-01T00:00:00.000Z",
+      "dataStart": "2022-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2022-08-01T00:00:00.000Z",
+      "dataStart": "2022-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2022-09-01T00:00:00.000Z",
+      "dataStart": "2022-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2022-10-01T00:00:00.000Z",
+      "dataStart": "2022-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2022-11-01T00:00:00.000Z",
+      "dataStart": "2022-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2022-12-01T00:00:00.000Z",
+      "dataStart": "2022-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2023-01-01T00:00:00.000Z",
+      "dataStart": "2022-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2023-02-01T00:00:00.000Z",
+      "dataStart": "2023-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2023-03-01T00:00:00.000Z",
+      "dataStart": "2023-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2023-04-01T00:00:00.000Z",
+      "dataStart": "2023-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2023-05-01T00:00:00.000Z",
+      "dataStart": "2023-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2023-06-01T00:00:00.000Z",
+      "dataStart": "2023-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2023-07-01T00:00:00.000Z",
+      "dataStart": "2023-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2023-08-01T00:00:00.000Z",
+      "dataStart": "2023-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2023-09-01T00:00:00.000Z",
+      "dataStart": "2023-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2023-10-01T00:00:00.000Z",
+      "dataStart": "2023-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2023-11-01T00:00:00.000Z",
+      "dataStart": "2023-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2023-12-01T00:00:00.000Z",
+      "dataStart": "2023-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2024-01-01T00:00:00.000Z",
+      "dataStart": "2023-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2024-02-01T00:00:00.000Z",
+      "dataStart": "2024-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2024-03-01T00:00:00.000Z",
+      "dataStart": "2024-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2024-04-01T00:00:00.000Z",
+      "dataStart": "2024-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2024-05-01T00:00:00.000Z",
+      "dataStart": "2024-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2024-06-01T00:00:00.000Z",
+      "dataStart": "2024-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2024-07-01T00:00:00.000Z",
+      "dataStart": "2024-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2024-08-01T00:00:00.000Z",
+      "dataStart": "2024-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2024-09-01T00:00:00.000Z",
+      "dataStart": "2024-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2024-10-01T00:00:00.000Z",
+      "dataStart": "2024-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2024-11-01T00:00:00.000Z",
+      "dataStart": "2024-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2024-12-01T00:00:00.000Z",
+      "dataStart": "2024-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2025-01-01T00:00:00.000Z",
+      "dataStart": "2024-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2025-02-01T00:00:00.000Z",
+      "dataStart": "2025-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2025-03-01T00:00:00.000Z",
+      "dataStart": "2025-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2025-04-01T00:00:00.000Z",
+      "dataStart": "2025-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2025-05-01T00:00:00.000Z",
+      "dataStart": "2025-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2025-06-01T00:00:00.000Z",
+      "dataStart": "2025-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2025-07-01T00:00:00.000Z",
+      "dataStart": "2025-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2025-08-01T00:00:00.000Z",
+      "dataStart": "2025-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2025-09-01T00:00:00.000Z",
+      "dataStart": "2025-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2025-10-01T00:00:00.000Z",
+      "dataStart": "2025-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2025-10-17T00:00:00.000Z",
+      "dataStart": "2025-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2025-11-01T00:00:00.000Z",
+      "dataStart": "2025-10-17T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2025-12-01T00:00:00.000Z",
+      "dataStart": "2025-11-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2026-01-01T00:00:00.000Z",
+      "dataStart": "2025-12-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2026-02-01T00:00:00.000Z",
+      "dataStart": "2026-01-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2026-03-01T00:00:00.000Z",
+      "dataStart": "2026-02-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2026-04-01T00:00:00.000Z",
+      "dataStart": "2026-03-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2026-05-01T00:00:00.000Z",
+      "dataStart": "2026-04-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2026-06-01T00:00:00.000Z",
+      "dataStart": "2026-05-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2026-07-01T00:00:00.000Z",
+      "dataStart": "2026-06-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2026-08-01T00:00:00.000Z",
+      "dataStart": "2026-07-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2026-09-01T00:00:00.000Z",
+      "dataStart": "2026-08-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2026-10-01T00:00:00.000Z",
+      "dataStart": "2026-09-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "SOLUSDT",
+      "dataEnd": "2026-10-17T00:00:00.000Z",
+      "dataStart": "2026-10-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2021-11-01T00:00:00.000Z",
+      "dataStart": "2021-10-18T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2021-12-01T00:00:00.000Z",
+      "dataStart": "2021-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2022-01-01T00:00:00.000Z",
+      "dataStart": "2021-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2022-02-01T00:00:00.000Z",
+      "dataStart": "2022-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2022-03-01T00:00:00.000Z",
+      "dataStart": "2022-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2022-04-01T00:00:00.000Z",
+      "dataStart": "2022-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2022-05-01T00:00:00.000Z",
+      "dataStart": "2022-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2022-06-01T00:00:00.000Z",
+      "dataStart": "2022-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2022-07-01T00:00:00.000Z",
+      "dataStart": "2022-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2022-08-01T00:00:00.000Z",
+      "dataStart": "2022-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2022-09-01T00:00:00.000Z",
+      "dataStart": "2022-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2022-10-01T00:00:00.000Z",
+      "dataStart": "2022-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2022-11-01T00:00:00.000Z",
+      "dataStart": "2022-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2022-12-01T00:00:00.000Z",
+      "dataStart": "2022-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2023-01-01T00:00:00.000Z",
+      "dataStart": "2022-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2023-02-01T00:00:00.000Z",
+      "dataStart": "2023-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2023-03-01T00:00:00.000Z",
+      "dataStart": "2023-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2023-04-01T00:00:00.000Z",
+      "dataStart": "2023-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2023-05-01T00:00:00.000Z",
+      "dataStart": "2023-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2023-06-01T00:00:00.000Z",
+      "dataStart": "2023-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2023-07-01T00:00:00.000Z",
+      "dataStart": "2023-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2023-08-01T00:00:00.000Z",
+      "dataStart": "2023-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2023-09-01T00:00:00.000Z",
+      "dataStart": "2023-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2023-10-01T00:00:00.000Z",
+      "dataStart": "2023-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2023-11-01T00:00:00.000Z",
+      "dataStart": "2023-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2023-12-01T00:00:00.000Z",
+      "dataStart": "2023-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2024-01-01T00:00:00.000Z",
+      "dataStart": "2023-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2024-02-01T00:00:00.000Z",
+      "dataStart": "2024-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2024-03-01T00:00:00.000Z",
+      "dataStart": "2024-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2024-04-01T00:00:00.000Z",
+      "dataStart": "2024-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2024-05-01T00:00:00.000Z",
+      "dataStart": "2024-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2024-06-01T00:00:00.000Z",
+      "dataStart": "2024-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2024-07-01T00:00:00.000Z",
+      "dataStart": "2024-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2024-08-01T00:00:00.000Z",
+      "dataStart": "2024-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2024-09-01T00:00:00.000Z",
+      "dataStart": "2024-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2024-10-01T00:00:00.000Z",
+      "dataStart": "2024-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2024-11-01T00:00:00.000Z",
+      "dataStart": "2024-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2024-12-01T00:00:00.000Z",
+      "dataStart": "2024-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2025-01-01T00:00:00.000Z",
+      "dataStart": "2024-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2025-02-01T00:00:00.000Z",
+      "dataStart": "2025-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2025-03-01T00:00:00.000Z",
+      "dataStart": "2025-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2025-04-01T00:00:00.000Z",
+      "dataStart": "2025-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2025-05-01T00:00:00.000Z",
+      "dataStart": "2025-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2025-06-01T00:00:00.000Z",
+      "dataStart": "2025-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2025-07-01T00:00:00.000Z",
+      "dataStart": "2025-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2025-08-01T00:00:00.000Z",
+      "dataStart": "2025-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2025-09-01T00:00:00.000Z",
+      "dataStart": "2025-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2025-10-01T00:00:00.000Z",
+      "dataStart": "2025-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2025-10-17T00:00:00.000Z",
+      "dataStart": "2025-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2025-11-01T00:00:00.000Z",
+      "dataStart": "2025-10-17T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2025-12-01T00:00:00.000Z",
+      "dataStart": "2025-11-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2026-01-01T00:00:00.000Z",
+      "dataStart": "2025-12-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2026-02-01T00:00:00.000Z",
+      "dataStart": "2026-01-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2026-03-01T00:00:00.000Z",
+      "dataStart": "2026-02-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2026-04-01T00:00:00.000Z",
+      "dataStart": "2026-03-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2026-05-01T00:00:00.000Z",
+      "dataStart": "2026-04-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2026-06-01T00:00:00.000Z",
+      "dataStart": "2026-05-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2026-07-01T00:00:00.000Z",
+      "dataStart": "2026-06-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2026-08-01T00:00:00.000Z",
+      "dataStart": "2026-07-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2026-09-01T00:00:00.000Z",
+      "dataStart": "2026-08-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2026-10-01T00:00:00.000Z",
+      "dataStart": "2026-09-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "XRPUSDT",
+      "dataEnd": "2026-10-17T00:00:00.000Z",
+      "dataStart": "2026-10-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2021-11-01T00:00:00.000Z",
+      "dataStart": "2021-10-18T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2021-12-01T00:00:00.000Z",
+      "dataStart": "2021-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2022-01-01T00:00:00.000Z",
+      "dataStart": "2021-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2022-02-01T00:00:00.000Z",
+      "dataStart": "2022-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2022-03-01T00:00:00.000Z",
+      "dataStart": "2022-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2022-04-01T00:00:00.000Z",
+      "dataStart": "2022-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2022-05-01T00:00:00.000Z",
+      "dataStart": "2022-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2022-06-01T00:00:00.000Z",
+      "dataStart": "2022-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2022-07-01T00:00:00.000Z",
+      "dataStart": "2022-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2022-08-01T00:00:00.000Z",
+      "dataStart": "2022-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2022-09-01T00:00:00.000Z",
+      "dataStart": "2022-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2022-10-01T00:00:00.000Z",
+      "dataStart": "2022-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2022-11-01T00:00:00.000Z",
+      "dataStart": "2022-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2022-12-01T00:00:00.000Z",
+      "dataStart": "2022-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2023-01-01T00:00:00.000Z",
+      "dataStart": "2022-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2023-02-01T00:00:00.000Z",
+      "dataStart": "2023-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2023-03-01T00:00:00.000Z",
+      "dataStart": "2023-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2023-04-01T00:00:00.000Z",
+      "dataStart": "2023-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2023-05-01T00:00:00.000Z",
+      "dataStart": "2023-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2023-06-01T00:00:00.000Z",
+      "dataStart": "2023-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2023-07-01T00:00:00.000Z",
+      "dataStart": "2023-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2023-08-01T00:00:00.000Z",
+      "dataStart": "2023-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2023-09-01T00:00:00.000Z",
+      "dataStart": "2023-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2023-10-01T00:00:00.000Z",
+      "dataStart": "2023-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2023-11-01T00:00:00.000Z",
+      "dataStart": "2023-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2023-12-01T00:00:00.000Z",
+      "dataStart": "2023-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2024-01-01T00:00:00.000Z",
+      "dataStart": "2023-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2024-02-01T00:00:00.000Z",
+      "dataStart": "2024-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2024-03-01T00:00:00.000Z",
+      "dataStart": "2024-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2024-04-01T00:00:00.000Z",
+      "dataStart": "2024-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2024-05-01T00:00:00.000Z",
+      "dataStart": "2024-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2024-06-01T00:00:00.000Z",
+      "dataStart": "2024-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2024-07-01T00:00:00.000Z",
+      "dataStart": "2024-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2024-08-01T00:00:00.000Z",
+      "dataStart": "2024-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2024-09-01T00:00:00.000Z",
+      "dataStart": "2024-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2024-10-01T00:00:00.000Z",
+      "dataStart": "2024-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2024-11-01T00:00:00.000Z",
+      "dataStart": "2024-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2024-12-01T00:00:00.000Z",
+      "dataStart": "2024-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2025-01-01T00:00:00.000Z",
+      "dataStart": "2024-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2025-02-01T00:00:00.000Z",
+      "dataStart": "2025-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2025-03-01T00:00:00.000Z",
+      "dataStart": "2025-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2025-04-01T00:00:00.000Z",
+      "dataStart": "2025-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2025-05-01T00:00:00.000Z",
+      "dataStart": "2025-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2025-06-01T00:00:00.000Z",
+      "dataStart": "2025-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2025-07-01T00:00:00.000Z",
+      "dataStart": "2025-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2025-08-01T00:00:00.000Z",
+      "dataStart": "2025-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2025-09-01T00:00:00.000Z",
+      "dataStart": "2025-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2025-10-01T00:00:00.000Z",
+      "dataStart": "2025-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2025-10-17T00:00:00.000Z",
+      "dataStart": "2025-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2025-11-01T00:00:00.000Z",
+      "dataStart": "2025-10-17T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2025-12-01T00:00:00.000Z",
+      "dataStart": "2025-11-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2026-01-01T00:00:00.000Z",
+      "dataStart": "2025-12-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2026-02-01T00:00:00.000Z",
+      "dataStart": "2026-01-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2026-03-01T00:00:00.000Z",
+      "dataStart": "2026-02-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2026-04-01T00:00:00.000Z",
+      "dataStart": "2026-03-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2026-05-01T00:00:00.000Z",
+      "dataStart": "2026-04-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2026-06-01T00:00:00.000Z",
+      "dataStart": "2026-05-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2026-07-01T00:00:00.000Z",
+      "dataStart": "2026-06-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2026-08-01T00:00:00.000Z",
+      "dataStart": "2026-07-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2026-09-01T00:00:00.000Z",
+      "dataStart": "2026-08-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2026-10-01T00:00:00.000Z",
+      "dataStart": "2026-09-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "DOGEUSDT",
+      "dataEnd": "2026-10-17T00:00:00.000Z",
+      "dataStart": "2026-10-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2021-11-01T00:00:00.000Z",
+      "dataStart": "2021-10-18T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2021-12-01T00:00:00.000Z",
+      "dataStart": "2021-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2022-01-01T00:00:00.000Z",
+      "dataStart": "2021-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2022-02-01T00:00:00.000Z",
+      "dataStart": "2022-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2022-03-01T00:00:00.000Z",
+      "dataStart": "2022-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2022-04-01T00:00:00.000Z",
+      "dataStart": "2022-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2022-05-01T00:00:00.000Z",
+      "dataStart": "2022-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2022-06-01T00:00:00.000Z",
+      "dataStart": "2022-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2022-07-01T00:00:00.000Z",
+      "dataStart": "2022-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2022-08-01T00:00:00.000Z",
+      "dataStart": "2022-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2022-09-01T00:00:00.000Z",
+      "dataStart": "2022-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2022-10-01T00:00:00.000Z",
+      "dataStart": "2022-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2022-11-01T00:00:00.000Z",
+      "dataStart": "2022-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2022-12-01T00:00:00.000Z",
+      "dataStart": "2022-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2023-01-01T00:00:00.000Z",
+      "dataStart": "2022-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2023-02-01T00:00:00.000Z",
+      "dataStart": "2023-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2023-03-01T00:00:00.000Z",
+      "dataStart": "2023-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2023-04-01T00:00:00.000Z",
+      "dataStart": "2023-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2023-05-01T00:00:00.000Z",
+      "dataStart": "2023-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2023-06-01T00:00:00.000Z",
+      "dataStart": "2023-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2023-07-01T00:00:00.000Z",
+      "dataStart": "2023-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2023-08-01T00:00:00.000Z",
+      "dataStart": "2023-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2023-09-01T00:00:00.000Z",
+      "dataStart": "2023-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2023-10-01T00:00:00.000Z",
+      "dataStart": "2023-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2023-11-01T00:00:00.000Z",
+      "dataStart": "2023-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2023-12-01T00:00:00.000Z",
+      "dataStart": "2023-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2024-01-01T00:00:00.000Z",
+      "dataStart": "2023-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2024-02-01T00:00:00.000Z",
+      "dataStart": "2024-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2024-03-01T00:00:00.000Z",
+      "dataStart": "2024-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2024-04-01T00:00:00.000Z",
+      "dataStart": "2024-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2024-05-01T00:00:00.000Z",
+      "dataStart": "2024-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2024-06-01T00:00:00.000Z",
+      "dataStart": "2024-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2024-07-01T00:00:00.000Z",
+      "dataStart": "2024-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2024-08-01T00:00:00.000Z",
+      "dataStart": "2024-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2024-09-01T00:00:00.000Z",
+      "dataStart": "2024-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2024-10-01T00:00:00.000Z",
+      "dataStart": "2024-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2024-11-01T00:00:00.000Z",
+      "dataStart": "2024-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2024-12-01T00:00:00.000Z",
+      "dataStart": "2024-11-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2025-01-01T00:00:00.000Z",
+      "dataStart": "2024-12-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2025-02-01T00:00:00.000Z",
+      "dataStart": "2025-01-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2025-03-01T00:00:00.000Z",
+      "dataStart": "2025-02-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2025-04-01T00:00:00.000Z",
+      "dataStart": "2025-03-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2025-05-01T00:00:00.000Z",
+      "dataStart": "2025-04-01T00:00:00.000Z",
+      "period": "research",
+      "class": "not_listed"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2025-06-01T00:00:00.000Z",
+      "dataStart": "2025-05-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2025-07-01T00:00:00.000Z",
+      "dataStart": "2025-06-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2025-08-01T00:00:00.000Z",
+      "dataStart": "2025-07-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2025-09-01T00:00:00.000Z",
+      "dataStart": "2025-08-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2025-10-01T00:00:00.000Z",
+      "dataStart": "2025-09-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2025-10-17T00:00:00.000Z",
+      "dataStart": "2025-10-01T00:00:00.000Z",
+      "period": "research",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2025-11-01T00:00:00.000Z",
+      "dataStart": "2025-10-17T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2025-12-01T00:00:00.000Z",
+      "dataStart": "2025-11-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2026-01-01T00:00:00.000Z",
+      "dataStart": "2025-12-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2026-02-01T00:00:00.000Z",
+      "dataStart": "2026-01-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2026-03-01T00:00:00.000Z",
+      "dataStart": "2026-02-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2026-04-01T00:00:00.000Z",
+      "dataStart": "2026-03-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2026-05-01T00:00:00.000Z",
+      "dataStart": "2026-04-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2026-06-01T00:00:00.000Z",
+      "dataStart": "2026-05-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2026-07-01T00:00:00.000Z",
+      "dataStart": "2026-06-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2026-08-01T00:00:00.000Z",
+      "dataStart": "2026-07-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2026-09-01T00:00:00.000Z",
+      "dataStart": "2026-08-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2026-10-01T00:00:00.000Z",
+      "dataStart": "2026-09-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    },
+    {
+      "contract": "HYPEUSDT",
+      "dataEnd": "2026-10-17T00:00:00.000Z",
+      "dataStart": "2026-10-01T00:00:00.000Z",
+      "period": "holdout",
+      "class": "matched"
+    }
+  ],
+  "missing": [],
+  "extra": [],
+  "mismatches": [],
+  "missingInputs": [],
+  "failures": [],
+  "coverage": [
+    {
+      "contract": "BTCUSDT",
+      "firstSourceFile": "data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2021-10.zip",
+      "firstCandle": "2021-10-18T00:00:00.000Z",
+      "lastCandle": "2026-10-16T23:59:00.000Z",
+      "bars": 2628000,
+      "expectedMinutes": 2628000,
+      "missingMinutes": 0,
+      "notListed": [],
+      "gaps": [],
+      "missingRanges": [],
+      "quarantine": {
+        "sourceRows": 0,
+        "uniqueMinutes": 0,
+        "rows": []
+      },
+      "dailyFill": {
+        "filledMinutes": 0,
+        "sources": [],
+        "unavailable": []
+      }
+    },
+    {
+      "contract": "ETHUSDT",
+      "firstSourceFile": "data/futures/um/monthly/klines/ETHUSDT/1m/ETHUSDT-1m-2021-10.zip",
+      "firstCandle": "2021-10-18T00:00:00.000Z",
+      "lastCandle": "2026-10-16T23:59:00.000Z",
+      "bars": 2628000,
+      "expectedMinutes": 2628000,
+      "missingMinutes": 0,
+      "notListed": [],
+      "gaps": [],
+      "missingRanges": [],
+      "quarantine": {
+        "sourceRows": 0,
+        "uniqueMinutes": 0,
+        "rows": []
+      },
+      "dailyFill": {
+        "filledMinutes": 0,
+        "sources": [],
+        "unavailable": []
+      }
+    },
+    {
+      "contract": "SOLUSDT",
+      "firstSourceFile": "data/futures/um/monthly/klines/SOLUSDT/1m/SOLUSDT-1m-2021-10.zip",
+      "firstCandle": "2021-10-18T00:00:00.000Z",
+      "lastCandle": "2026-10-16T23:59:00.000Z",
+      "bars": 2628000,
+      "expectedMinutes": 2628000,
+      "missingMinutes": 0,
+      "notListed": [],
+      "gaps": [],
+      "missingRanges": [],
+      "quarantine": {
+        "sourceRows": 0,
+        "uniqueMinutes": 0,
+        "rows": []
+      },
+      "dailyFill": {
+        "filledMinutes": 7200,
+        "sources": [
+          "data/futures/um/daily/klines/SOLUSDT/1m/SOLUSDT-1m-2022-02-26.zip",
+          "data/futures/um/daily/klines/SOLUSDT/1m/SOLUSDT-1m-2022-02-27.zip",
+          "data/futures/um/daily/klines/SOLUSDT/1m/SOLUSDT-1m-2022-02-28.zip",
+          "data/futures/um/daily/klines/SOLUSDT/1m/SOLUSDT-1m-2022-04-01.zip",
+          "data/futures/um/daily/klines/SOLUSDT/1m/SOLUSDT-1m-2022-04-02.zip"
+        ],
+        "unavailable": []
+      }
+    },
+    {
+      "contract": "XRPUSDT",
+      "firstSourceFile": "data/futures/um/monthly/klines/XRPUSDT/1m/XRPUSDT-1m-2021-10.zip",
+      "firstCandle": "2021-10-18T00:00:00.000Z",
+      "lastCandle": "2026-10-16T23:59:00.000Z",
+      "bars": 2627999,
+      "expectedMinutes": 2628000,
+      "missingMinutes": 1,
+      "notListed": [],
+      "gaps": [],
+      "missingRanges": [
+        {
+          "start": "2023-11-30T12:35:00.000Z",
+          "end": "2023-11-30T12:36:00.000Z"
+        }
+      ],
+      "quarantine": {
+        "sourceRows": 2,
+        "uniqueMinutes": 1,
+        "rows": [
+          {
+            "file": "data/futures/um/daily/klines/XRPUSDT/1m/XRPUSDT-1m-2023-11-30.zip",
+            "openTime": "2023-11-30T12:35:00.000Z",
+            "rule": "taker_buy_volume must be within 0..volume"
+          },
+          {
+            "file": "data/futures/um/monthly/klines/XRPUSDT/1m/XRPUSDT-1m-2023-11.zip",
+            "openTime": "2023-11-30T12:35:00.000Z",
+            "rule": "taker_buy_volume must be within 0..volume"
+          }
+        ]
+      },
+      "dailyFill": {
+        "filledMinutes": 7200,
+        "sources": [
+          "data/futures/um/daily/klines/XRPUSDT/1m/XRPUSDT-1m-2022-02-26.zip",
+          "data/futures/um/daily/klines/XRPUSDT/1m/XRPUSDT-1m-2022-02-27.zip",
+          "data/futures/um/daily/klines/XRPUSDT/1m/XRPUSDT-1m-2022-02-28.zip",
+          "data/futures/um/daily/klines/XRPUSDT/1m/XRPUSDT-1m-2022-04-01.zip",
+          "data/futures/um/daily/klines/XRPUSDT/1m/XRPUSDT-1m-2022-04-02.zip",
+          "data/futures/um/daily/klines/XRPUSDT/1m/XRPUSDT-1m-2023-11-30.zip"
+        ],
+        "unavailable": []
+      }
+    },
+    {
+      "contract": "DOGEUSDT",
+      "firstSourceFile": "data/futures/um/monthly/klines/DOGEUSDT/1m/DOGEUSDT-1m-2021-10.zip",
+      "firstCandle": "2021-10-18T00:00:00.000Z",
+      "lastCandle": "2026-10-16T23:59:00.000Z",
+      "bars": 2628000,
+      "expectedMinutes": 2628000,
+      "missingMinutes": 0,
+      "notListed": [],
+      "gaps": [],
+      "missingRanges": [],
+      "quarantine": {
+        "sourceRows": 0,
+        "uniqueMinutes": 0,
+        "rows": []
+      },
+      "dailyFill": {
+        "filledMinutes": 0,
+        "sources": [],
+        "unavailable": []
+      }
+    },
+    {
+      "contract": "HYPEUSDT",
+      "firstSourceFile": "data/futures/um/monthly/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05.zip",
+      "firstCandle": "2025-05-30T10:30:00.000Z",
+      "lastCandle": "2026-10-16T23:59:00.000Z",
+      "bars": 726570,
+      "expectedMinutes": 768960,
+      "missingMinutes": 42390,
+      "notListed": [
+        "2021-10",
+        "2021-11",
+        "2021-12",
+        "2022-01",
+        "2022-02",
+        "2022-03",
+        "2022-04",
+        "2022-05",
+        "2022-06",
+        "2022-07",
+        "2022-08",
+        "2022-09",
+        "2022-10",
+        "2022-11",
+        "2022-12",
+        "2023-01",
+        "2023-02",
+        "2023-03",
+        "2023-04",
+        "2023-05",
+        "2023-06",
+        "2023-07",
+        "2023-08",
+        "2023-09",
+        "2023-10",
+        "2023-11",
+        "2023-12",
+        "2024-01",
+        "2024-02",
+        "2024-03",
+        "2024-04",
+        "2024-05",
+        "2024-06",
+        "2024-07",
+        "2024-08",
+        "2024-09",
+        "2024-10",
+        "2024-11",
+        "2024-12",
+        "2025-01",
+        "2025-02",
+        "2025-03",
+        "2025-04"
+      ],
+      "gaps": [],
+      "missingRanges": [
+        {
+          "start": "2025-05-01T00:00:00.000Z",
+          "end": "2025-05-30T10:30:00.000Z"
+        }
+      ],
+      "quarantine": {
+        "sourceRows": 0,
+        "uniqueMinutes": 0,
+        "rows": []
+      },
+      "dailyFill": {
+        "filledMinutes": 0,
+        "sources": [
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-30.zip"
+        ],
+        "unavailable": [
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-01.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-02.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-03.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-04.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-05.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-06.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-07.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-08.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-09.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-10.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-11.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-12.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-13.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-14.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-15.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-16.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-17.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-18.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-19.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-20.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-21.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-22.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-23.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-24.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-25.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-26.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-27.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-28.zip",
+          "data/futures/um/daily/klines/HYPEUSDT/1m/HYPEUSDT-1m-2025-05-29.zip"
+        ]
+      }
+    }
+  ],
+  "memory": {
+    "ceilingMiB": 512,
+    "maxRssMiB": 180,
+    "rssMiB": {
+      "checks": 2215,
+      "first": 65,
+      "last": 173,
+      "max": 180
+    }
+  },
+  "runtime": {
+    "node": "v24.22.0",
+    "platform": "linux"
+  }
+}
