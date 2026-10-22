@@ -21,6 +21,10 @@ experiments/**/runtime/
 **/aggtrades-cache/
 **/planned-level-aggtrades-cache/
 
+# F1a-2 1m manifest writer: lock and temp file only (the manifest itself is tracked)
+experiments/strategy-destruction-filter/results/manifest-f1-1m.json.lock
+experiments/strategy-destruction-filter/results/manifest-f1-1m.json.tmp
+
 # Dependency/build/runtime folders
 node_modules/
 .venv/
