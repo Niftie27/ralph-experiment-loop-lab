@@ -1,12 +1,23 @@
 # Live operational state
 
-Updated: 2026-10-20 (section "Changes since the 2026-10-18 snapshot"); sections (a)-(h) are the 2026-10-18T15:07:41Z snapshot. Update after every change.
+Updated: 2026-10-27 (section "Changes since the 2026-10-18 snapshot", entries of 2026-10-27 and 2026-10-20); sections (a)-(h) are the 2026-10-18T15:07:41Z snapshot. Update after every change.
 
 Snapshot checked read-only on 2026-10-18 UTC. Services, data, cron and timers were not changed. No V6 interim outcomes were inspected. Hashes below compare files at the configured runtime paths with tracked repo copies, not in-memory code loaded at process start.
 
 ## Changes since the 2026-10-18 snapshot
 
 Written 2026-10-20 from verified reports. Sections (a)-(h) below were not re-checked.
+
+Entries of 2026-10-27 (Claude, from the repo and the reports named in each line):
+
+- F1 strategy factory: F1a-2 (Binance Vision 1m klines, manifest of 329 entries) merged into main 2026-10-22 as merge commit 6ebaa26 (PR #2), tests 204/204; reproduced on the VPS (docs/f1/vps-compare-2026-10-22/, 67ed43f). Next phase: F1a-3. Ledger I59, I78.
+- VPS memory, preflight 2026-10-22 (docs/f1/vps-preflight-2026-10-22.md): MemAvailable 829 MiB, swap 1,388 of 2,048 MiB used, openclaw-gateway memory.current 2,129 MiB (peak 2,951 MiB since its restart after the OOM kills of 2026-10-21 08:35Z), collectors BTC/ETH/SOL/HYPE active since 2026-10-09 with NRestarts 0. Ledger I56.
+- Data checks: data-checks/2026-10-23.csv to 2026-10-26.csv, 4 symbols, 380 hourly rows, all PASS, missing_id_count 0, aggTrade IDs contiguous within each day (checked by Claude in the repo).
+- Schedules (VPS agent inventory 2026-10-23, taken over): crontab runs only the short-watcher supervisor; systemd user timers ralph-disk-alert, ralph-storage-maintenance (hourly), ralph-data-checks (daily 00:20 UTC; its commits come from a separate data-checks clone), ralph-archive-upload, launchpadlib-cache-clean. OpenClaw cron jobs were not re-listed (section d is the 2026-10-18 snapshot).
+- OpenClaw memory (same inventory, taken over): memory search is keyword-only because the embedding credits are exhausted; the agent's daily memory files end on 2026-10-18. Ledger I81.
+- Project memory: this repo is the one source of truth; docs/MAP.md and docs/findings.md are read first (decision 45).
+
+Entries of 2026-10-20:
 
 - F1 strategy factory: F1a-1 (data identity) merged into main 2026-10-20 as merge commit 7d73008 (PR #1), tests 73/73. F1a-F1e are developed on the PC with Claude Code on branches `f1/<phase>` (decision 2026-10-19). Next phase: F1a-2. Ledger I59.
 - Review loop: every push to a PR branch gets an automatic Codex review on GitHub; one commit per review round, no empty commits; Claude Code's Final report is in the commit body; Claude in chat reviews in the repo before Tomas merges (decisions 2026-10-19 and 2026-10-20). Ledger I68.
