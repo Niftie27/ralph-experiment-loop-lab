@@ -31,7 +31,7 @@ const RESEARCH_END = Date.parse(PERIODS.research[1]);
 const MIN = 60000, HOUR = 3600000, DAY = 86400000, DAILY_FROM = Date.parse('2025-10-01T00:00:00.000Z');
 const COLUMNS = ['open', 'high', 'low', 'close', 'volume', 'quote_volume', 'count', 'taker_buy_volume', 'taker_buy_quote_volume'];
 const SUMS = COLUMNS.slice(4), FIELDS = [1, 2, 3, 4, 5, 7, 8, 9, 10]; // CSV fields of COLUMNS
-const CSV_HEADER = ['symbol', 'open_time', 'minutes', 'columns', ...SUMS.map(c => `rel_${c}`)].join(',');
+export const E1_HEADER = ['symbol', 'open_time', 'minutes', 'columns', ...SUMS.map(c => `rel_${c}`)].join(',');
 const LIST_LIMIT = 10;
 const iso = t => new Date(t).toISOString();
 const usage = message => Object.assign(new Error(message), { usage: true });
@@ -209,7 +209,7 @@ function e1(options, guard) {
     rows.push(...list);
   }
   const status = symbols.some(s => s.status === 'failed') ? 'failed' : symbols.some(s => s.status === 'incomplete') ? 'incomplete' : 'ok';
-  const text = [CSV_HEADER, ...rows, ''].join('\n');
+  const text = [E1_HEADER, ...rows, ''].join('\n');
   const summary = { command: 'e1', status, csv: { file: path.basename(options.out), rows: rows.length, sha256: sha256(text) },
     inputs: { minuteSources: symbols.reduce((n, s) => n + s.minuteSources, 0), hourFiles: symbols.reduce((n, s) => n + s.hourFiles.verified, 0), sha256: sha256(inputs.join('\n') + '\n') },
     code: { ...gitRevision(), module: 'src/f1-e1.mjs', sha256: MODULE_SHA256 }, symbols };
