@@ -31,6 +31,10 @@ const INTERVALS = Object.keys(ROLES);
 export const C3_MONTHS = Object.freeze({ BTC: '2022-06', ETH: '2023-03', SOL: '2022-02', XRP: '2023-11', DOGE: '2024-05', HYPE: '2025-08' });
 // First month with Vision files (plan section h listing; the 1m months before it are not_listed in F1a-2).
 const LISTED_FROM = Object.freeze({ HYPE: '2025-05' });
+// The days the 1m store fills from daily files (manifest filledRanges, F1a-2 round 5). Amendment 1 D2 plans their daily
+// 1h, 4h and 1d files, and their daily 5m and 15m files where the day lies in the C3 month; they count like monthly files.
+const FILLS = Object.freeze(['2022-02-26', '2022-02-27', '2022-02-28', '2022-04-01', '2022-04-02']);
+export const FILLED_DAYS = Object.freeze({ SOL: FILLS, XRP: FILLS });
 const FIRST_MONTH = '2021-10', LAST_MONTH = '2025-09', LAST_WEEKLY_MONTH = '2024-01', DAILY_FROM = '2025-10-01', DAILY_TO = '2025-10-16';
 const usage = message => Object.assign(new Error(message), { usage: true });
 const iso = t => new Date(t).toISOString();
@@ -44,24 +48,28 @@ export function assertResearchSource(source) {
   if (!(lastClose <= RESEARCH_END)) throw new Error(`reference plan: ${source.file} can hold rows after ${PERIODS.research[1]} (holdout sealed)`);
   return source;
 }
-// The reference files of a symbol, in interval order (1h, 4h, 1d, 1w, 5m, 15m), then time order.
+// The reference files of a symbol, in interval order (1h, 4h, 1d, 1w, 5m, 15m), then time order (a filled day's daily
+// file after the monthly file of its month).
 export function planReferences(symbol) {
   const instrument = visionInstrument(symbol);
-  const first = monthMs(LISTED_FROM[symbol] ?? FIRST_MONTH);
+  const first = monthMs(LISTED_FROM[symbol] ?? FIRST_MONTH), c3 = monthMs(C3_MONTHS[symbol]);
+  const filled = (FILLED_DAYS[symbol] ?? []).map(day => Date.parse(`${day}T00:00:00.000Z`));
   const plan = (interval, kind, startMs) => assertResearchSource({ ...visionSource(instrument, kind, startMs, interval), symbol, interval, role: ROLES[interval] });
   const months = (interval, last) => { const out = []; for (let t = first; t <= monthMs(last); t = nextMonth(t)) out.push(plan(interval, 'monthly', t)); return out; };
   const days = interval => { const out = []; for (let t = Date.parse(`${DAILY_FROM}T00:00:00.000Z`); t <= Date.parse(`${DAILY_TO}T00:00:00.000Z`); t += 86400000) out.push(plan(interval, 'daily', t)); return out; };
-  return [...['1h', '4h', '1d'].flatMap(interval => [...months(interval, LAST_MONTH), ...days(interval)]), ...months('1w', LAST_WEEKLY_MONTH),
-    ...['5m', '15m'].map(interval => plan(interval, 'monthly', monthMs(C3_MONTHS[symbol])))];
+  const fills = (interval, inside = () => true) => filled.filter(inside).map(t => plan(interval, 'daily', t));
+  const inTimeOrder = sources => sources.sort((a, b) => a.startMs - b.startMs); // stable: a monthly file before a daily file of its first day
+  return [...['1h', '4h', '1d'].flatMap(interval => inTimeOrder([...months(interval, LAST_MONTH), ...fills(interval), ...days(interval)])), ...months('1w', LAST_WEEKLY_MONTH),
+    ...['5m', '15m'].flatMap(interval => inTimeOrder([plan(interval, 'monthly', c3), ...fills(interval, t => t >= c3 && t < nextMonth(c3))]))];
 }
 
-// The file that holds the row of a bar: the monthly file of its month before 2025-10-01, else the daily file of its day
-// (the plan's split). Whether it is planned is the caller's question.
+// The file that holds the row of a bar: the daily file of its day when the bar opens from 2025-10-01 (the plan's split)
+// or that daily file is planned (the D2 filled days), else the monthly file of its month. Whether a monthly file is
+// planned is the caller's question.
 const DAILY_FROM_MS = Date.parse(`${DAILY_FROM}T00:00:00.000Z`);
-function holdingFile(instrument, interval, t) {
-  const d = new Date(t);
-  return t < DAILY_FROM_MS ? visionSource(instrument, 'monthly', Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1), interval).file
-    : visionSource(instrument, 'daily', Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()), interval).file;
+function holdingFile(instrument, interval, t, planned) {
+  const d = new Date(t), daily = visionSource(instrument, 'daily', Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()), interval).file;
+  return t >= DAILY_FROM_MS || planned.has(daily) ? daily : visionSource(instrument, 'monthly', Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1), interval).file;
 }
 // The raw value tokens of every row of a CSV that parseKlines has accepted as a file (so every row has 12 fields and a
 // 13-digit open time), in VALUE_COLUMNS order. V1 compares these tokens, not their Numbers.
@@ -134,7 +142,7 @@ export function compareInterval({ instrument, interval, timeframe, sources, load
   let lastCompared = -1;
   for (let i = 0; i < bars; i++) {
     if (state[i]) { dispositions[DISPOSITIONS[state[i] - 1]]++; if (state[i] < 3) lastCompared = i; continue; }
-    const file = holdingFile(instrument, interval, open[i]), status = planned.has(file) ? fileState.get(file) : 'not_planned';
+    const file = holdingFile(instrument, interval, open[i], planned), status = planned.has(file) ? fileState.get(file) : 'not_planned';
     if (status === 'verified') { dispositions.absent_row++; if (lists.absent_row.length < LIST_LIMIT) lists.absent_row.push(iso(open[i])); continue; }
     dispositions.absent_file++;
     if (!absentFiles.has(file)) absentFiles.set(file, { file, reason: status, bars: 0 });

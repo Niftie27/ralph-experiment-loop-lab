@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { main, planReferences, assertResearchSource } from '../src/f1-reference.mjs';
+import { main, planReferences, assertResearchSource, FILLED_DAYS } from '../src/f1-reference.mjs';
 import { visionSource, gridOpen, KLINE_INTERVALS } from '../src/vision-source.mjs';
 import { makeZip, klineCsv, checksumText } from '../test-support/vision-fixtures.mjs';
 
@@ -39,6 +39,45 @@ test('reference plan: 1h, 4h and 1d monthly to 2025-09 plus daily 2025-10-01..16
   const months = { ETH: '2023-03', SOL: '2022-02', XRP: '2023-11', DOGE: '2024-05' };
   for (const [symbol, month] of Object.entries(months)) assert.deepEqual(labels(planReferences(symbol), '15m', 'monthly'), [month]);
   assert.throws(() => planReferences('BTCUSDT'), /Unknown symbol/);
+});
+
+// Amendment 1 D2: the days the 1m store fills from daily files get daily reference files of their own.
+const FILLS = ['2022-02-26', '2022-02-27', '2022-02-28', '2022-04-01', '2022-04-02'];
+test('reference plan D2: daily 1h, 4h and 1d files of the filled days, daily 5m and 15m files of those in the C3 month', () => {
+  assert.deepEqual(FILLED_DAYS, { SOL: FILLS, XRP: FILLS });
+  const sol = planReferences('SOL'), xrp = planReferences('XRP');
+  const filled = (sources, interval) => labels(sources, interval, 'daily').filter(day => day < '2025-10-01');
+  for (const interval of ['1h', '4h', '1d']) {
+    assert.deepEqual([filled(sol, interval), filled(xrp, interval)], [FILLS, FILLS], interval);
+    assert.equal(count(sol, interval, 'monthly'), 48);
+  }
+  assert.deepEqual([labels(sol, '5m', 'daily'), labels(sol, '15m', 'daily')], [FILLS.slice(0, 3), FILLS.slice(0, 3)]);
+  assert.deepEqual([count(xrp, '5m', 'daily'), count(xrp, '15m', 'daily')], [0, 0]);
+  assert.deepEqual([sol.length, xrp.length], [222 + 15 + 6, 222 + 15]);
+  assert.deepEqual(['BTC', 'ETH', 'DOGE', 'HYPE'].map(symbol => planReferences(symbol).length), [222, 222, 222, 65]);
+  const role = (sources, interval, day) => sources.find(s => s.interval === interval && s.kind === 'daily' && s.zipName.endsWith(`${day}.zip`)).role;
+  assert.deepEqual(['1h', '4h', '1d', '5m', '15m'].map(interval => role(sol, interval, '2022-02-27')), ['deciding', 'deciding', 'reported', 'c3', 'c3']);
+  assert.ok(sol.some(s => s.file === 'data/futures/um/daily/klines/SOLUSDT/4h/SOLUSDT-4h-2022-04-02.zip'));
+  // Each file once; within an interval in time order (a daily file after the monthly file of its month).
+  for (const sources of [sol, xrp]) {
+    assert.equal(new Set(sources.map(s => s.file)).size, sources.length);
+    for (const interval of Object.keys(KLINE_INTERVALS).filter(i => i !== '1m')) {
+      const starts = sources.filter(s => s.interval === interval).map(s => s.startMs);
+      assert.deepEqual(starts, [...starts].sort((a, b) => a - b), interval);
+    }
+  }
+  assert.deepEqual(sol.filter(s => s.interval === '1h').map(s => s.zipName).slice(4, 9),
+    ['SOLUSDT-1h-2022-02.zip', 'SOLUSDT-1h-2022-02-26.zip', 'SOLUSDT-1h-2022-02-27.zip', 'SOLUSDT-1h-2022-02-28.zip', 'SOLUSDT-1h-2022-03.zip']);
+});
+
+test('reference plan D2: FILLED_DAYS are exactly the whole days of the research filledRanges in the committed 1m manifest', () => {
+  const manifest = JSON.parse(fs.readFileSync(new URL('../results/manifest-f1-1m.json', import.meta.url), 'utf8'));
+  const days = {};
+  for (const e of manifest.entries) if (e.period === 'research') for (const r of e.filledRanges) {
+    assert.deepEqual([ms(r.start) % 86400000, ms(r.end) % 86400000], [0, 0], `${e.contract} ${r.start}`);
+    for (let t = ms(r.start); t < ms(r.end); t += 86400000) (days[e.contract.replace(/USDT$/, '')] ??= []).push(new Date(t).toISOString().slice(0, 10));
+  }
+  assert.deepEqual(days, FILLED_DAYS);
 });
 
 test('reference plan holdout guard: no monthly 2025-10 or later, no daily from 2025-10-17, no row that can close after 2025-10-17', () => {

@@ -97,6 +97,26 @@ test('compare V4: absent_row, reference_quarantined and absent_file (not_publish
   assert.deepEqual(beyond.lists.absent_file, [{ file: 'data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2024-02.zip', reason: 'not_planned', bars: 2 }]);
 });
 
+test('compare D2: a bar on the day of a planned daily file is held by that daily file, not by the monthly file of its month', () => {
+  const monthly = source('1h', 'monthly', '2024-01-01T00:00:00.000Z'), daily = source('1h', 'daily', '2024-01-02T00:00:00.000Z');
+  const csvs = { [monthly.file]: refCsv('1h', opens('2024-01-01T00:00:00.000Z', 24, H)), [daily.file]: refCsv('1h', opens('2024-01-02T00:00:00.000Z', 24, H)) };
+  const run = (load, sources = [monthly, daily]) => compareInterval({ instrument: BTC, interval: '1h', timeframe: aggregate('1h', '2024-01-01T00:00:00.000Z', '2024-01-03T00:00:00.000Z'),
+    sources, load, windowStartMs: 0 });
+  const both = run(s => ({ status: 'verified', csv: csvs[s.file] }));
+  assert.deepEqual(both.dispositions, { equal: 48, mismatched: 0, reference_quarantined: 0, absent_row: 0, absent_file: 0 });
+  assert.deepEqual(both.files, { planned: 2, verified: 2, not_published: 0, not_downloaded: 0, failed: 0 });
+  // The daily file not published: its 24 bars are absent_file (exit 3 when deciding), not absent_row of the monthly file.
+  const unpublished = run(s => s === daily ? { status: 'not_published' } : { status: 'verified', csv: csvs[s.file] });
+  assert.deepEqual(unpublished.dispositions, { equal: 24, mismatched: 0, reference_quarantined: 0, absent_row: 0, absent_file: 24 });
+  assert.deepEqual(unpublished.lists.absent_file, [{ file: 'data/futures/um/daily/klines/BTCUSDT/1h/BTCUSDT-1h-2024-01-02.zip', reason: 'not_published', bars: 24 }]);
+  reconciles(unpublished);
+  // A verified daily file without the row of a bar: absent_row. Without a planned daily file the monthly file holds the day.
+  const t5 = ms('2024-01-02T05:00:00.000Z'), gap = { ...csvs, [daily.file]: refCsv('1h', opens('2024-01-02T00:00:00.000Z', 24, H).filter(t => t !== t5)) };
+  assert.deepEqual(run(s => ({ status: 'verified', csv: gap[s.file] })).lists.absent_row, ['2024-01-02T05:00:00.000Z']);
+  const monthlyOnly = run(s => ({ status: 'verified', csv: csvs[s.file] }), [monthly]);
+  assert.deepEqual([monthlyOnly.dispositions.absent_row, monthlyOnly.lists.absent_row[0]], [24, '2024-01-02T00:00:00.000Z']);
+});
+
 test('compare: reference rows outside the window, at incomplete bars and at empty slots are counted, never compared', () => {
   const hole = ms('2024-01-01T03:30:00.000Z'), empty = t => t === hole || (t >= ms('2024-01-02T00:00:00.000Z') && t < ms('2024-01-02T02:00:00.000Z'));
   const timeframe = aggregate('1h', '2024-01-01T01:00:00.000Z', '2024-01-03T00:00:00.000Z', empty);
