@@ -43,7 +43,7 @@ function parseArgs(argv) {
 
 // RSS is checked at every step and by a timer while the event loop is free; maxRSS is checked once more at the end.
 // injected(label) runs first at every check: an internal test seam (main's deps.check), never a CLI option.
-function memoryGuard(ceilingMiB, injected = () => {}) {
+export function memoryGuard(ceilingMiB, injected = () => {}) {
   const limit = ceilingMiB * 2 ** 20, samples = [];
   let tripped = null;
   const timer = setInterval(() => { const rss = process.memoryUsage.rss(); if (rss > limit) tripped ??= rss; }, 250);
