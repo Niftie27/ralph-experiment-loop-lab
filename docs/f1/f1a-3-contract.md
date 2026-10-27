@@ -46,3 +46,17 @@ The 5m and 15m monthly files of these months are fetched with the reference down
 ## Revised hours estimate (decision 44)
 
 The plan's estimate (about 15 h, range 12-20) rises to about 19 h, range 15-25, from the first branch commit to merge including the compare step (reasoning). Added: aggregator +1 h (C1 exact BigInt intermediates and composition fixtures, V2 month-by-month spy test, V5 canonical digest); reference parser and download +1 h (V1 scaled-integer reference tokens, V3 grid-open row cap and research admission with the poisoned boundary-week fixture); compare +1.5 h (V4 disposition partition and exit precedence, C3 5m and 15m sample); report +0.5 h (V7 precision-survey method, hashes, commands, versions).
+
+## Amendment 1 (verbatim)
+
+F1a-3 amendment 1 (Tomas, 2026-10-27). Inputs: docs/f1/f1a-3-aggregation.md at cd23e4e (full compare at e5efe41, exit 1); an independent check by Claude in chat, run on the PC: 40 daily Vision files (1m and 1h of BTC, ETH, SOL, XRP and DOGE on 2022-06-18, 2023-11-14, 2024-10-28 and 2025-01-29), every CHECKSUM verified, 480 hours, 24 hours where the 60 1m rows do not reproduce the 1h row.
+
+Decisions: 1(a), 2(a), 3 PR after the fix commits.
+
+D1. Exception class E1 (source-inconsistent hours). A research hour of a symbol is in E1 if and only if Binance Vision's own 60 1m rows of that hour do not reproduce Vision's 1h row in at least one of the nine value columns (first open, max high, min low, last close; exact decimal sums of volume, quote_volume, count, taker_buy_volume and taker_buy_quote_volume). E1 is computed by a committed script that does not import src/f1-aggregate.mjs and uses its own exact sums, from the 1m files of the store and the 1h reference files of the compare. The list (symbol, open time, minutes, differing columns, relative difference of each differing sum) is committed. Acceptance with E1, per symbol: the mismatched 1h bars equal the E1 hours whose aggregate bar is complete; every mismatched 4h and 1d bar contains at least one E1 hour; everything else in V4 is unchanged (any other mismatch or any absent_row in 1h or 4h exits 1; reference_quarantined or absent_file in 1h or 4h exits 3; 1 wins over 3). E1 does not say which file is right: in XRP 2023-11-14T11:00 the 1m volume is higher and the 1m quote volume lower than the 1h row. In F1a-3 the aggregator is not changed and no minute is filled or flagged.
+
+D2. The reference plan adds daily 1h, 4h and 1d files for the days the 1m store fills from daily files (manifest filledRanges: SOL and XRP 2022-02-26..28 and 2022-04-01..02), and daily 5m and 15m files where such a day lies in the symbol's C3 month (SOL 2022-02-26..28). They count like monthly files: 1h and 4h decide. An unpublished daily file is absent_file (exit 3 for 1h and 4h).
+
+D3. The PR is opened after the fix commits; every push to the open PR is one Codex round (decision 42).
+
+Ledger item filed by Claude in chat, not by Claude Code: before F1b uses volume, count or taker columns, decide how E1 hours are treated (keep, flag or omit), with a reported, never-deciding aggTrades check of the E1 hours as evidence.
