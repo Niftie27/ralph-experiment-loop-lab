@@ -4,17 +4,22 @@
 // high, min low, last close; exact decimal sums of volume, quote_volume, count, taker_buy_volume, taker_buy_quote_volume).
 // Independent of the aggregator: nothing from src/f1-aggregate.mjs or src/f1-reference.mjs is imported, and the CSV
 // tokens are summed here as exact decimals (BigInt coefficient and scale). Offline, unattended, Node built-ins only.
-//   node src/f1-e1.mjs [--symbols BTC,ETH,SOL,XRP,DOGE,HYPE] [--data-dir DIR] [--manifest FILE] [--out FILE] [--max-rss-mib N (1..512)]
+// Amendment 2 D5: the same script computes the exception class E2, the research 4h and 1d bars where Vision's own 1h
+// rows (all of them present) do not reproduce Vision's 4h or 1d row in at least one of the nine value columns.
+//   node src/f1-e1.mjs [--symbols BTC,ETH,SOL,XRP,DOGE,HYPE] [--data-dir DIR] [--manifest FILE] [--out FILE] [--e2-out FILE] [--max-rss-mib N (1..512)]
 // Inputs per research unit of the 1m manifest: its 1m sources at the versions the manifest records (a monthly row wins,
-// a daily fill row counts only at a minute the monthly file lacks, as in the store), and the 1h reference files that
-// hold its hours (hourFiles), each with exactly one verified local version. Only rows inside the unit are read: a row
-// outside it (the holdout minutes of the shared 2025-10 monthly 1m file) is skipped on its open time alone.
+// a daily fill row counts only at a minute the monthly file lacks, as in the store), and the 1h, 4h and 1d reference
+// files that hold its bars (referenceFiles), each with exactly one verified local version. Only rows inside the unit
+// are read: a row outside it (the holdout minutes of the shared 2025-10 monthly 1m file) is skipped on its open time alone.
 // Per hour: 60 minutes and a 1h row are checked (equal or E1); fewer minutes with a row are short, minutes without a
-// row noReference, a row without minutes referenceOnly; only E1 hours are listed.
+// row noReference, a row without minutes referenceOnly; only E1 hours are listed. Per 4h or 1d bar the same with its
+// 1h rows (4 or 24) in place of the minutes; only E2 bars are listed.
 // Output: the E1 list as CSV (default docs/f1/f1a-3-e1.csv): symbol, open_time, minutes, columns (the differing value
 // columns, ';'-joined) and per sum column the relative difference (1m sum - 1h token) / 1h token where that sum differs,
-// 4 significant digits. JSON summary on stdout: counts, file names and hashes, never values. Exit: 0 ok; 1 any failure
-// (no list written); 2 usage error; 3 a 1h file not published or not downloaded (list written, its hours unchecked).
+// 4 significant digits. The E2 list (default docs/f1/f1a-3-e2.csv): symbol, interval, open_time, columns and the
+// relative differences (1h sum - bar token) / bar token, by symbol, then 4h before 1d, then open time. JSON summary on
+// stdout: counts, file names and hashes, never values. Exit: 0 ok; 1 any failure (no list written); 2 usage error; 3 a
+// 1h, 4h or 1d file not published or not downloaded (lists written, its bars unchecked).
 import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
@@ -32,6 +37,8 @@ const MIN = 60000, HOUR = 3600000, DAY = 86400000, DAILY_FROM = Date.parse('2025
 const COLUMNS = ['open', 'high', 'low', 'close', 'volume', 'quote_volume', 'count', 'taker_buy_volume', 'taker_buy_quote_volume'];
 const SUMS = COLUMNS.slice(4), FIELDS = [1, 2, 3, 4, 5, 7, 8, 9, 10]; // CSV fields of COLUMNS
 export const E1_HEADER = ['symbol', 'open_time', 'minutes', 'columns', ...SUMS.map(c => `rel_${c}`)].join(',');
+export const E2_HEADER = ['symbol', 'interval', 'open_time', 'columns', ...SUMS.map(c => `rel_${c}`)].join(',');
+const BARS = { '4h': 4 * HOUR, '1d': DAY };
 const LIST_LIMIT = 10;
 const iso = t => new Date(t).toISOString();
 const usage = message => Object.assign(new Error(message), { usage: true });
@@ -99,21 +106,22 @@ export function* csvRows(csv, { startMs, endMs, step, file }) {
   }
 }
 
-// The 1h reference files that hold the hours of a research unit (plan split and amendment 1 D2): the monthly file of
-// its month before 2025-10-01, the daily file of each day from 2025-10-01, and the daily file of each day the unit
-// fills from daily 1m files (filledRanges).
-export function hourFiles(entry) {
+// The 1h, 4h or 1d reference files that hold the bars of a research unit (plan split and amendment 1 D2): the monthly
+// file of its month before 2025-10-01, the daily file of each day from 2025-10-01, and the daily file of each day the
+// unit fills from daily 1m files (filledRanges).
+export function referenceFiles(entry, interval) {
   const instrument = { exchange: entry.exchange, market: entry.market, contract: entry.contract };
   const a = Date.parse(entry.dataStart), b = Date.parse(entry.dataEnd), days = new Set(), out = [];
-  if (a < DAILY_FROM) { const d = new Date(a); out.push(visionSource(instrument, 'monthly', Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1), '1h')); }
+  if (a < DAILY_FROM) { const d = new Date(a); out.push(visionSource(instrument, 'monthly', Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1), interval)); }
   else for (let t = a - a % DAY; t < b; t += DAY) days.add(t);
   for (const r of entry.filledRanges) { const s = Date.parse(r.start); for (let t = s - s % DAY; t < Date.parse(r.end); t += DAY) days.add(t); }
-  return [...out, ...[...days].sort((x, y) => x - y).map(t => visionSource(instrument, 'daily', t, '1h'))];
+  return [...out, ...[...days].sort((x, y) => x - y).map(t => visionSource(instrument, 'daily', t, interval))];
 }
+export const hourFiles = entry => referenceFiles(entry, '1h');
 
-// One 1h file from the local store: exactly one verified version, else not_published (404 marker), not_downloaded, or
-// failed (more than one version: no version-selection rule; a bad stored copy).
-function loadHourFile(zipRoot, source) {
+// One reference file from the local store: exactly one verified version, else not_published (404 marker),
+// not_downloaded, or failed (more than one version: no version-selection rule; a bad stored copy).
+function loadReferenceFile(zipRoot, source) {
   const versions = localVersions(zipRoot, source);
   if (versions.length > 1) return { status: 'failed', error: `${source.file}: ${versions.length} local versions (no version-selection rule)` };
   if (!versions.length) return { status: recordedMissing(zipRoot, source) ? 'not_published' : 'not_downloaded' };
@@ -126,7 +134,7 @@ function minuteSource(s) {
   return { file: s.file, zipName, csvName: zipName.replace(/\.zip$/, '.csv'), kind: s.file.includes('/daily/') ? 'daily' : 'monthly' };
 }
 
-// One research unit: classifies its hours into out.hours and appends its E1 hours to list.
+// One research unit: classifies its hours into out.hours and appends its E1 hours to list. Returns the unit's 1h rows.
 function unitHours(symbol, entry, zipRoot, out, list, inputs) {
   const a = Date.parse(entry.dataStart), b = Date.parse(entry.dataEnd);
   const minutes = new Map(); // open time -> tokens; monthly sources first, a daily row only where no monthly row is
@@ -139,7 +147,7 @@ function unitHours(symbol, entry, zipRoot, out, list, inputs) {
   }
   const reference = new Map();
   for (const source of hourFiles(entry)) {
-    const got = loadHourFile(zipRoot, source);
+    const got = loadReferenceFile(zipRoot, source);
     out.hourFiles.planned++;
     out.hourFiles[got.status]++;
     if (got.status === 'failed') throw new Error(got.error);
@@ -165,6 +173,42 @@ function unitHours(symbol, entry, zipRoot, out, list, inputs) {
     out.hours.e1++;
     list.push([symbol, iso(h), rows.length, differ.columns.join(';'), ...SUMS.map(c => differ.relative[c] ?? '')].join(','));
   }
+  return reference;
+}
+
+// The 4h or 1d bars of one research unit (amendment 2 D5): classifies them into out.bars[interval] against the unit's
+// 1h rows and appends the E2 bars to list. A bar is checked only when its 1h rows are all present; e1Hour applies the
+// D1 rules to any parts in time order.
+function unitBars(symbol, entry, interval, hourRows, zipRoot, out, list, inputs) {
+  const a = Date.parse(entry.dataStart), b = Date.parse(entry.dataEnd), step = BARS[interval];
+  const files = out.barFiles[interval], counts = out.bars[interval], reference = new Map();
+  for (const source of referenceFiles(entry, interval)) {
+    const got = loadReferenceFile(zipRoot, source);
+    files.planned++;
+    files[got.status]++;
+    if (got.status === 'failed') throw new Error(got.error);
+    if (got.status !== 'verified') { out.absentFiles.push({ file: source.file, reason: got.status }); continue; }
+    inputs.push(`${source.file} ${got.sha}`);
+    for (const row of csvRows(got.csv, { startMs: a, endMs: b - step + 1, step, file: source.file })) {
+      if (reference.has(row.openTime)) throw new Error(`the ${interval} row ${iso(row.openTime)} is in two files`);
+      reference.set(row.openTime, row.tokens);
+    }
+  }
+  const slots = new Set(reference.keys());
+  for (const h of hourRows.keys()) { const t = h - h % step; if (t + step <= b) slots.add(t); }
+  for (const t of [...slots].sort((x, y) => x - y)) {
+    const row = reference.get(t), hours = [];
+    for (let h = t; h < t + step; h += HOUR) if (hourRows.has(h)) hours.push(hourRows.get(h));
+    if (!row) { counts.noReference++; continue; }
+    if (!hours.length) { counts.referenceOnly++; continue; }
+    if (hours.length < step / HOUR) { counts.short++; if (out.shortBars[interval].length < LIST_LIMIT) out.shortBars[interval].push(iso(t)); continue; }
+    counts.checked++;
+    let differ;
+    try { differ = e1Hour(hours, row); } catch (error) { throw new Error(`${entry.contract} ${interval} bar ${iso(t)}: ${error.message}`); }
+    if (!differ) { counts.equal++; continue; }
+    counts.e2++;
+    list.push([symbol, interval, iso(t), differ.columns.join(';'), ...SUMS.map(c => differ.relative[c] ?? '')].join(','));
+  }
 }
 
 // A memory-guard trip aborts the whole run, never only one symbol.
@@ -175,24 +219,31 @@ function e1Symbol(symbol, entries, zipRoot, check, inputs) {
   const units = entries.filter(e => e.period === 'research' && e.exchange === instrument.exchange && e.market === instrument.market && e.contract === instrument.contract);
   const out = { symbol, contract: instrument.contract, status: 'failed', window: null, units: units.length, minuteSources: 0,
     hourFiles: { planned: 0, verified: 0, not_published: 0, not_downloaded: 0, failed: 0 }, absentFiles: [],
-    hours: { checked: 0, equal: 0, e1: 0, short: 0, noReference: 0, referenceOnly: 0 }, shortHours: [], failures: [] };
-  const list = [];
+    hours: { checked: 0, equal: 0, e1: 0, short: 0, noReference: 0, referenceOnly: 0 }, shortHours: [],
+    barFiles: {}, bars: {}, shortBars: {}, failures: [] };
+  for (const interval of Object.keys(BARS)) {
+    out.barFiles[interval] = { planned: 0, verified: 0, not_published: 0, not_downloaded: 0, failed: 0 };
+    out.bars[interval] = { checked: 0, equal: 0, e2: 0, short: 0, noReference: 0, referenceOnly: 0 };
+    out.shortBars[interval] = [];
+  }
+  const list = [], e2 = Object.fromEntries(Object.keys(BARS).map(interval => [interval, []]));
   try {
     if (!units.length) throw new Error(`${instrument.contract}: no research units in the 1m manifest`);
     for (let i = 1; i < units.length; i++) if (units[i].dataStart !== units[i - 1].dataEnd) throw new Error(`${instrument.contract}: research units not contiguous at ${units[i].dataStart}`);
     if (Date.parse(units.at(-1).dataEnd) !== RESEARCH_END) throw new Error(`${instrument.contract}: research units end at ${units.at(-1).dataEnd}, not ${PERIODS.research[1]}`);
     out.window = { dataStart: units[0].dataStart, dataEnd: units.at(-1).dataEnd };
     for (const entry of units) {
-      unitHours(symbol, entry, zipRoot, out, list, inputs);
+      const hourRows = unitHours(symbol, entry, zipRoot, out, list, inputs);
+      for (const interval of Object.keys(BARS)) unitBars(symbol, entry, interval, hourRows, zipRoot, out, e2[interval], inputs);
       check(`e1 ${instrument.contract} ${entry.dataStart.slice(0, 7)}`);
     }
   } catch (error) {
     if (error.memory) throw error;
     out.failures.push(error.message);
-    return { out, list: [] };
+    return { out, list: [], e2List: [] };
   }
   out.status = out.absentFiles.length ? 'incomplete' : 'ok';
-  return { out, list };
+  return { out, list, e2List: Object.values(e2).flat() };
 }
 function gitRevision() {
   const git = args => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
@@ -202,21 +253,24 @@ function gitRevision() {
 const sha256 = text => createHash('sha256').update(text).digest('hex');
 function e1(options, guard) {
   const { entries } = readManifest(options.manifestPath);
-  const check = memoryCheck(guard), symbols = [], rows = [], inputs = [];
+  const check = memoryCheck(guard), symbols = [], rows = [], e2Rows = [], inputs = [];
   for (const symbol of options.symbols) {
-    const { out, list } = e1Symbol(symbol, entries, options.zipRoot, check, inputs);
+    const { out, list, e2List } = e1Symbol(symbol, entries, options.zipRoot, check, inputs);
     symbols.push(out);
     rows.push(...list);
+    e2Rows.push(...e2List);
   }
   const status = symbols.some(s => s.status === 'failed') ? 'failed' : symbols.some(s => s.status === 'incomplete') ? 'incomplete' : 'ok';
-  const text = [E1_HEADER, ...rows, ''].join('\n');
+  const text = [E1_HEADER, ...rows, ''].join('\n'), e2Text = [E2_HEADER, ...e2Rows, ''].join('\n');
   const summary = { command: 'e1', status, csv: { file: path.basename(options.out), rows: rows.length, sha256: sha256(text) },
-    inputs: { minuteSources: symbols.reduce((n, s) => n + s.minuteSources, 0), hourFiles: symbols.reduce((n, s) => n + s.hourFiles.verified, 0), sha256: sha256(inputs.join('\n') + '\n') },
+    e2Csv: { file: path.basename(options.e2Out), rows: e2Rows.length, sha256: sha256(e2Text) },
+    inputs: { minuteSources: symbols.reduce((n, s) => n + s.minuteSources, 0), hourFiles: symbols.reduce((n, s) => n + s.hourFiles.verified, 0),
+      barFiles: symbols.reduce((n, s) => n + Object.values(s.barFiles).reduce((k, f) => k + f.verified, 0), 0), sha256: sha256(inputs.join('\n') + '\n') },
     code: { ...gitRevision(), module: 'src/f1-e1.mjs', sha256: MODULE_SHA256 }, symbols };
-  return { summary, text };
+  return { summary, text, e2Text };
 }
 
-const FLAGS = ['--symbols', '--data-dir', '--manifest', '--out', '--max-rss-mib'];
+const FLAGS = ['--symbols', '--data-dir', '--manifest', '--out', '--e2-out', '--max-rss-mib'];
 function parseArgs(argv) {
   const flags = {};
   for (let i = 0; i < argv.length; i += 2) {
@@ -233,7 +287,8 @@ function parseArgs(argv) {
   const dataDir = path.resolve(flags['--data-dir'] ?? path.join(ROOT, 'data'));
   return { symbols, maxRssMiB, zipRoot: path.join(dataDir, 'vision'),
     manifestPath: path.resolve(flags['--manifest'] ?? path.join(ROOT, 'results', 'manifest-f1-1m.json')),
-    out: path.resolve(flags['--out'] ?? path.join(ROOT, '..', '..', 'docs', 'f1', 'f1a-3-e1.csv')) };
+    out: path.resolve(flags['--out'] ?? path.join(ROOT, '..', '..', 'docs', 'f1', 'f1a-3-e1.csv')),
+    e2Out: path.resolve(flags['--e2-out'] ?? path.join(ROOT, '..', '..', 'docs', 'f1', 'f1a-3-e2.csv')) };
 }
 
 const EXIT = { ok: 0, failed: 1, usage: 2, incomplete: 3 };
@@ -243,16 +298,16 @@ export async function main(argv, deps = {}) {
   try {
     const options = parseArgs(argv);
     guard = memoryGuard(options.maxRssMiB, deps.check);
-    let text = null;
-    try { ({ summary, text } = e1(options, guard)); }
+    let text = null, e2Text = null;
+    try { ({ summary, text, e2Text } = e1(options, guard)); }
     catch (error) { summary = { command: 'e1', status: 'failed', error: error.message }; }
     const memory = guard.report();
     if (memory.maxRssMiB > options.maxRssMiB) summary = { ...summary, status: 'failed', error: `memory ceiling exceeded: maxRSS ${memory.maxRssMiB} MiB > ${options.maxRssMiB} MiB` };
-    // The list is written only by a run without failure, atomically.
-    if (summary.status === 'failed') { if (summary.csv) summary = { ...summary, csv: null }; }
-    else {
-      fs.writeFileSync(`${options.out}.tmp`, text);
-      fs.renameSync(`${options.out}.tmp`, options.out);
+    // The lists are written only by a run without failure, each atomically.
+    if (summary.status === 'failed') { if (summary.csv) summary = { ...summary, csv: null, e2Csv: null }; }
+    else for (const [file, content] of [[options.out, text], [options.e2Out, e2Text]]) {
+      fs.writeFileSync(`${file}.tmp`, content);
+      fs.renameSync(`${file}.tmp`, file);
     }
     summary = { ...summary, memory, runtime: { node: process.version, platform: process.platform } };
   } catch (error) {

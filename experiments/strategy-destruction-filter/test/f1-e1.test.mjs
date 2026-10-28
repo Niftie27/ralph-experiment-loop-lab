@@ -1,11 +1,12 @@
 // F1a-3 commit 11: the E1 list (docs/f1/f1a-3-contract.md amendment 1 D1, D2): the research hours where Vision's own 60
-// 1m rows do not reproduce Vision's 1h row, computed without src/f1-aggregate.mjs.
+// 1m rows do not reproduce Vision's 1h row, computed without src/f1-aggregate.mjs. Commit 14: the E2 list (amendment 2
+// D5): the research 4h and 1d bars where Vision's own 1h rows do not reproduce Vision's 4h or 1d row.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { main, e1Hour, hourFiles, csvRows } from '../src/f1-e1.mjs';
+import { main, e1Hour, hourFiles, referenceFiles, csvRows } from '../src/f1-e1.mjs';
 import { planReferences } from '../src/f1-reference.mjs';
 import { storeSource, buildStore, readManifest } from '../src/f1-1m-store.mjs';
 import { planUnits, visionSource } from '../src/vision-source.mjs';
@@ -78,6 +79,16 @@ test('E1 files: the 1h files of the research units are exactly the planned 1h re
   }
 });
 
+test('E2 files: the 1h, 4h and 1d files of the research units are exactly the planned reference files of those intervals, all six symbols', () => {
+  const { entries } = readManifest(new URL('../results/manifest-f1-1m.json', import.meta.url));
+  for (const symbol of ['BTC', 'ETH', 'SOL', 'XRP', 'DOGE', 'HYPE']) for (const interval of ['1h', '4h', '1d']) {
+    const contract = `${symbol}USDT`, units = entries.filter(e => e.period === 'research' && e.contract === contract);
+    const files = units.flatMap(e => referenceFiles(e, interval).map(s => s.file));
+    assert.equal(new Set(files).size, files.length, `${symbol} ${interval}`);
+    assert.deepEqual([...files].sort(), planReferences(symbol).filter(s => s.interval === interval).map(s => s.file).sort(), `${symbol} ${interval}`);
+  }
+});
+
 test('E1 module: imports nothing from src/f1-aggregate.mjs or src/f1-reference.mjs', () => {
   const text = fs.readFileSync(new URL('../src/f1-e1.mjs', import.meta.url), 'utf8');
   const imports = [...text.matchAll(/^\s*import\s[^;]*?from\s+'([^']+)'/gm), ...text.matchAll(/import\(\s*['"]([^'"]+)/g)].map(m => m[1]);
@@ -119,7 +130,23 @@ const hourSources = () => [...planReferences('HYPE').filter(s => s.interval === 
 // tokens of a row, rows[zipName] replaces the open times of a file, skip leaves files out, extra(zipRoot) adds anything else.
 const HOUR_ROWS = { 'HYPEUSDT-1h-2025-06.zip': Array.from({ length: 24 }, (_, i) => ms('2025-06-30T00:00:00.000Z') + i * H),
   'HYPEUSDT-1h-2025-07-01.zip': Array.from({ length: 24 }, (_, i) => ms('2025-07-01T00:00:00.000Z') + i * H), 'HYPEUSDT-1h-2025-07.zip': [ms('2025-07-02T00:00:00.000Z')] };
-function workspace({ over = {}, skip = [], rows = HOUR_ROWS, extra = [] } = {}) {
+// The 4h and 1d files of the same units (amendment 2 D5): HYPE's planned files plus the daily files of 2025-07-01, with
+// the bars of the same days (2025-06-30 and 2025-07-01 in full, and 2025-07-02T00:00), each the exact sum of its 1h rows.
+const barSources = () => ['4h', '1d'].flatMap(interval => [...planReferences('HYPE').filter(s => s.interval === interval),
+  { ...visionSource(HYPE, 'daily', ms('2025-07-01T00:00:00.000Z'), interval), interval }]);
+const STEP = { '4h': 4 * H, '1d': D };
+const times = (token, n) => {
+  const scale = token.includes('.') ? token.length - token.indexOf('.') - 1 : 0, s = (BigInt(token.replace('.', '')) * BigInt(n)).toString().padStart(scale + 1, '0');
+  return scale ? `${s.slice(0, -scale)}.${s.slice(-scale)}` : s;
+};
+const barTokens = n => ({ ...HOUR, volume: times(HOUR.volume, n), quoteVolume: times(HOUR.quoteVolume, n), count: times(HOUR.count, n),
+  takerBuyVolume: times(HOUR.takerBuyVolume, n), takerBuyQuoteVolume: times(HOUR.takerBuyQuoteVolume, n) });
+const day = (iso, step) => Array.from({ length: D / step }, (_, i) => ms(iso) + i * step);
+const BAR_ROWS = { 'HYPEUSDT-4h-2025-06.zip': day('2025-06-30T00:00:00.000Z', 4 * H), 'HYPEUSDT-4h-2025-07-01.zip': day('2025-07-01T00:00:00.000Z', 4 * H),
+  'HYPEUSDT-4h-2025-07.zip': [ms('2025-07-02T00:00:00.000Z')], 'HYPEUSDT-1d-2025-06.zip': [ms('2025-06-30T00:00:00.000Z')],
+  'HYPEUSDT-1d-2025-07-01.zip': [ms('2025-07-01T00:00:00.000Z')], 'HYPEUSDT-1d-2025-07.zip': [ms('2025-07-02T00:00:00.000Z')] };
+// barOver[interval][t] changes the tokens of a 4h or 1d row, bars[zipName] replaces the open times of a 4h or 1d file.
+function workspace({ over = {}, barOver = {}, skip = [], rows = HOUR_ROWS, bars = BAR_ROWS, extra = [] } = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'f1-e1-'));
   fs.cpSync(hypeStore(), dir, { recursive: true });
   const zipRoot = path.join(dir, 'data', 'vision');
@@ -130,9 +157,16 @@ function workspace({ over = {}, skip = [], rows = HOUR_ROWS, extra = [] } = {}) 
     const zip = makeZip([{ name: src.csvName, data: csv }]);
     storeSource(zipRoot, src, zip, checksumText(zip, src.zipName));
   }
+  for (const src of barSources()) {
+    if (skip.includes(src.zipName)) continue;
+    const step = STEP[src.interval], opens = bars[src.zipName] ?? [];
+    const csv = KLINE_HEADER + '\n' + opens.map(t => klineRow(t, { closeTime: String(t + step - 1), ...barTokens(step / H), ...barOver[src.interval]?.[t] })).join('\n') + (opens.length ? '\n' : '');
+    const zip = makeZip([{ name: src.csvName, data: csv }]);
+    storeSource(zipRoot, src, zip, checksumText(zip, src.zipName));
+  }
   for (const f of extra) f(zipRoot);
-  const out = path.join(dir, 'e1.csv');
-  return { dir, out, args: ['--symbols', 'HYPE', '--data-dir', path.join(dir, 'data'), '--manifest', path.join(dir, 'results', 'manifest-f1-1m.json'), '--out', out] };
+  const out = path.join(dir, 'e1.csv'), e2 = path.join(dir, 'e2.csv');
+  return { dir, out, e2, args: ['--symbols', 'HYPE', '--data-dir', path.join(dir, 'data'), '--manifest', path.join(dir, 'results', 'manifest-f1-1m.json'), '--out', out, '--e2-out', e2] };
 }
 async function run(argv, check) {
   let out = '';
@@ -140,6 +174,7 @@ async function run(argv, check) {
   return { code, summary: out ? JSON.parse(out) : null, out };
 }
 const CSV_HEADER = 'symbol,open_time,minutes,columns,rel_volume,rel_quote_volume,rel_count,rel_taker_buy_volume,rel_taker_buy_quote_volume';
+const E2_CSV_HEADER = 'symbol,interval,open_time,columns,rel_volume,rel_quote_volume,rel_count,rel_taker_buy_volume,rel_taker_buy_quote_volume';
 
 test('E1 cli: no differing hour writes a header-only list, exit 0, with counts, hashes and no private paths', async () => {
   const w = workspace();
@@ -148,6 +183,15 @@ test('E1 cli: no differing hour writes a header-only list, exit 0, with counts, 
   assert.equal(summary.command, 'e1');
   assert.equal(summary.status, 'ok');
   assert.equal(fs.readFileSync(w.out, 'utf8'), `${CSV_HEADER}\n`);
+  assert.equal(fs.readFileSync(w.e2, 'utf8'), `${E2_CSV_HEADER}\n`);
+  const files = { planned: 22, verified: 22, not_published: 0, not_downloaded: 0, failed: 0 };
+  assert.deepEqual(summary.symbols[0].barFiles, { '4h': files, '1d': files });
+  // 12 4h bars and two days with all their 1h rows; the bars of 2025-07-02T00:00 have one 1h row of 4 and of 24.
+  assert.deepEqual(summary.symbols[0].bars, { '4h': { checked: 12, equal: 12, e2: 0, short: 1, noReference: 0, referenceOnly: 0 },
+    '1d': { checked: 2, equal: 2, e2: 0, short: 1, noReference: 0, referenceOnly: 0 } });
+  assert.deepEqual(summary.symbols[0].shortBars, { '4h': ['2025-07-02T00:00:00.000Z'], '1d': ['2025-07-02T00:00:00.000Z'] });
+  assert.deepEqual([summary.e2Csv.file, summary.e2Csv.rows, summary.inputs.barFiles], ['e2.csv', 0, 44]);
+  assert.match(summary.e2Csv.sha256, /^[0-9a-f]{64}$/);
   const hype = summary.symbols[0];
   assert.deepEqual(hype.window, { dataStart: '2025-05-01T00:00:00.000Z', dataEnd: '2025-10-17T00:00:00.000Z' });
   assert.equal(hype.units, 6);
@@ -175,6 +219,52 @@ test('E1 cli: differing hours are listed by symbol and open time with minutes, c
   assert.deepEqual(summary.symbols[0].hours, { checked: 48, equal: 46, e1: 2, short: 1, noReference: 4, referenceOnly: 0 });
   assert.equal(summary.csv.rows, 2);
   assert.ok(!out.includes('17378') && !out.includes('42335'), 'the summary holds no values');
+});
+
+test('E2 cli: 4h and 1d rows that Vision\'s own 1h rows do not reproduce are listed by symbol, interval and open time; a bar without all its 1h rows never', async () => {
+  const t5 = ms('2025-06-30T05:00:00.000Z'), t4 = ms('2025-06-30T04:00:00.000Z'), t8 = ms('2025-06-30T08:00:00.000Z');
+  const july1 = ms('2025-07-01T00:00:00.000Z'), july2 = ms('2025-07-02T00:00:00.000Z');
+  // The 1h row of 05:00 differs from its minutes (E1); the 4h row of 04:00 follows the 1h rows (not E2), the 1d row of
+  // 2025-06-30 does not (E2 in volume): E2 is computed from the 1h rows, never from the minutes.
+  const w = workspace({ over: { [t5]: { volume: '17378.461' } }, barOver: { '4h': { [t4]: { volume: '69513.841' }, [t8]: { count: '794401' }, [july2]: { volume: '1' } },
+    '1d': { [july1]: { high: '42335.81' }, [july2]: { count: '1' } } } });
+  const { code, summary, out } = await run(w.args);
+  assert.equal(code, 0, out);
+  assert.equal(fs.readFileSync(w.out, 'utf8'), [CSV_HEADER, 'HYPE,2025-06-30T05:00:00.000Z,60,volume,-5.754e-8,,,,', ''].join('\n'));
+  assert.equal(fs.readFileSync(w.e2, 'utf8'), [E2_CSV_HEADER, 'HYPE,4h,2025-06-30T08:00:00.000Z,count,,,-1.259e-6,,', 'HYPE,1d,2025-06-30T00:00:00.000Z,volume,2.398e-9,,,,',
+    'HYPE,1d,2025-07-01T00:00:00.000Z,high,,,,,', ''].join('\n'));
+  assert.deepEqual(summary.symbols[0].bars, { '4h': { checked: 12, equal: 11, e2: 1, short: 1, noReference: 0, referenceOnly: 0 },
+    '1d': { checked: 2, equal: 0, e2: 2, short: 1, noReference: 0, referenceOnly: 0 } });
+  assert.equal(summary.e2Csv.rows, 3);
+  assert.ok(!out.includes('69513') && !out.includes('42335'), 'the summary holds no values');
+});
+
+test('E2 cli: a 4h or 1d file not published or not downloaded exits 3 and is listed; a bar row in two files fails and writes no list', async () => {
+  const daily4h = { ...visionSource(HYPE, 'daily', ms('2025-07-01T00:00:00.000Z'), '4h') };
+  const marker = zipRoot => {
+    const file = path.join(zipRoot, path.dirname(daily4h.file), '404', daily4h.zipName);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, '404 on the zip and its CHECKSUM\n');
+  };
+  const w = workspace({ skip: ['HYPEUSDT-1d-2025-06.zip', daily4h.zipName], extra: [marker] });
+  const { code, summary } = await run(w.args);
+  assert.equal(code, 3);
+  assert.equal(summary.status, 'incomplete');
+  assert.deepEqual(summary.symbols[0].absentFiles, [{ file: 'data/futures/um/monthly/klines/HYPEUSDT/1d/HYPEUSDT-1d-2025-06.zip', reason: 'not_downloaded' },
+    { file: 'data/futures/um/daily/klines/HYPEUSDT/4h/HYPEUSDT-4h-2025-07-01.zip', reason: 'not_published' }]);
+  assert.deepEqual(summary.symbols[0].barFiles['4h'], { planned: 22, verified: 21, not_published: 1, not_downloaded: 0, failed: 0 });
+  assert.deepEqual(summary.symbols[0].barFiles['1d'], { planned: 22, verified: 21, not_published: 0, not_downloaded: 1, failed: 0 });
+  // The 1h rows of the bars whose file is absent have no bar row.
+  assert.deepEqual(summary.symbols[0].bars, { '4h': { checked: 6, equal: 6, e2: 0, short: 1, noReference: 6, referenceOnly: 0 },
+    '1d': { checked: 1, equal: 1, e2: 0, short: 1, noReference: 1, referenceOnly: 0 } });
+  assert.equal(fs.readFileSync(w.e2, 'utf8'), `${E2_CSV_HEADER}\n`);
+  const twice = { ...BAR_ROWS, 'HYPEUSDT-4h-2025-07.zip': [ms('2025-07-01T04:00:00.000Z'), ms('2025-07-02T00:00:00.000Z')] };
+  const both = workspace({ bars: twice });
+  const r = await run(both.args);
+  assert.equal(r.code, 1);
+  assert.match(r.summary.symbols[0].failures.join('\n'), /the 4h row 2025-07-01T04:00:00\.000Z is in two files/);
+  assert.equal(fs.existsSync(both.out), false);
+  assert.equal(fs.existsSync(both.e2), false);
 });
 
 test('E1 cli: a 1h file not published or not downloaded exits 3 and lists it; a 1h row without minutes counts as referenceOnly', async () => {
