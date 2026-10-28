@@ -145,6 +145,23 @@ test('compare D1: which mismatched bars hold an E1 hour, and which E1 hours with
   assert.deepEqual(quarter.e1, { mismatchedWithE1: 1, mismatchedWithoutE1: 1, withoutE1Bars: ['2024-01-01T06:00:00.000Z'] });
 });
 
+test('compare D5: mismatched 4h bars without an E1 hour must be E2 bars, and E2 bars without an E1 hour and with a complete bar must mismatch; dispositions unchanged', () => {
+  const at = hh => ms(`2024-01-01T${hh}:00:00.000Z`), hole = ms('2024-01-01T21:30:00.000Z');
+  // 04:00 mismatches and holds the E1 hour 05:00; 12:00 and 16:00 mismatch without one; 20:00 is incomplete (a minute missing).
+  const csv = refCsv('4h', opens('2024-01-01T00:00:00.000Z', 6, 4 * H), { [at('04')]: { count: '1' }, [at('12')]: { count: '1' }, [at('16')]: { count: '1' } });
+  const four = e2Bars => compareInterval({ instrument: BTC, interval: '4h', timeframe: aggregate('4h', '2024-01-01T00:00:00.000Z', '2024-01-02T00:00:00.000Z', t => t === hole),
+    sources: [source('4h', 'monthly', '2024-01-01T00:00:00.000Z')], load: () => ({ status: 'verified', csv }), windowStartMs: 0, e1Hours: [at('05')], e2Bars });
+  const explained = four([at('12'), at('16')]);
+  assert.deepEqual(explained.dispositions, { equal: 2, mismatched: 3, reference_quarantined: 0, absent_row: 0, absent_file: 0 });
+  assert.deepEqual(explained.e2, { listed: 2, withoutE1Complete: 2, notMismatched: 0, notMismatchedBars: [], mismatchedNotE2: 0, mismatchedNotE2Bars: [] });
+  assert.deepEqual(four([at('12')]).e2, { listed: 1, withoutE1Complete: 1, notMismatched: 0, notMismatchedBars: [], mismatchedNotE2: 1, mismatchedNotE2Bars: ['2024-01-01T16:00:00.000Z'] });
+  // 04:00 holds an E1 hour: never counted; 08:00 holds none and compares equal: not mismatched; 20:00 is incomplete: never required.
+  assert.deepEqual(four([at('04'), at('08'), at('12'), at('16'), at('20')]).e2,
+    { listed: 5, withoutE1Complete: 3, notMismatched: 1, notMismatchedBars: ['2024-01-01T08:00:00.000Z'], mismatchedNotE2: 0, mismatchedNotE2Bars: [] });
+  assert.deepEqual(four([at('12'), at('16')]).dispositions, four(null).dispositions);
+  assert.equal(four(null).e2, null);
+});
+
 test('compare: reference rows outside the window, at incomplete bars and at empty slots are counted, never compared', () => {
   const hole = ms('2024-01-01T03:30:00.000Z'), empty = t => t === hole || (t >= ms('2024-01-02T00:00:00.000Z') && t < ms('2024-01-02T02:00:00.000Z'));
   const timeframe = aggregate('1h', '2024-01-01T01:00:00.000Z', '2024-01-03T00:00:00.000Z', empty);
@@ -199,8 +216,9 @@ function hypeStore() {
 // A fresh copy of the store with the reference files of the full days: 1h, 4h and 1d monthly 2025-06 and 2025-07 with
 // the rows of those days. over[interval][t] changes tokens, drop[interval] removes rows, skip leaves files out
 // ('4h' both months, '4h:2025-07' one), extra(zipRoot, plan) adds anything else, e1 holds the rows of the E1 list
-// (amendment 1 D1) written to e1.csv beside the data (header only by default).
-function workspace({ over = {}, drop = {}, skip = [], extra = [], e1 = [] } = {}) {
+// (amendment 1 D1) written to e1.csv beside the data, e2 those of the E2 list (amendment 2 D5) written to e2.csv
+// (both header only by default).
+function workspace({ over = {}, drop = {}, skip = [], extra = [], e1 = [], e2 = [] } = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'f1-reference-compare-'));
   fs.cpSync(hypeStore(), dir, { recursive: true });
   const zipRoot = path.join(dir, 'data', 'vision');
@@ -214,12 +232,16 @@ function workspace({ over = {}, drop = {}, skip = [], extra = [], e1 = [] } = {}
     storeSource(zipRoot, src, zip, checksumText(zip, src.zipName));
   }
   for (const f of extra) f(zipRoot, plan);
-  const e1File = path.join(dir, 'e1.csv');
+  const e1File = path.join(dir, 'e1.csv'), e2File = path.join(dir, 'e2.csv');
   fs.writeFileSync(e1File, [E1_HEADER, ...e1, ''].join('\n'));
-  return { dir, e1File, args: ['--symbols', 'HYPE', '--data-dir', path.join(dir, 'data'), '--manifest', path.join(dir, 'results', 'manifest-f1-1m.json'), '--e1', e1File] };
+  fs.writeFileSync(e2File, [E2_HEADER, ...e2, ''].join('\n'));
+  return { dir, e1File, e2File,
+    args: ['--symbols', 'HYPE', '--data-dir', path.join(dir, 'data'), '--manifest', path.join(dir, 'results', 'manifest-f1-1m.json'), '--e1', e1File, '--e2', e2File] };
 }
 const E1_HEADER = 'symbol,open_time,minutes,columns,rel_volume,rel_quote_volume,rel_count,rel_taker_buy_volume,rel_taker_buy_quote_volume';
 const e1Row = (iso, columns = 'volume') => `HYPE,${iso},60,${columns},1.000e-3,,,,`;
+const E2_HEADER = 'symbol,interval,open_time,columns,rel_volume,rel_quote_volume,rel_count,rel_taker_buy_volume,rel_taker_buy_quote_volume';
+const e2Row = (interval, iso, columns = 'count') => `HYPE,${interval},${iso},${columns},,,1.000e-3,,`;
 async function run(argv, check) {
   let out = '';
   const code = await main(argv, { stdout: { write: s => { out += s; } }, check });
@@ -303,13 +325,14 @@ test('compare cli D1: mismatches held by E1 hours exit 0; a mismatch outside E1,
   assert.equal(equalHour.code, 1);
   assert.deepEqual(equalHour.summary.symbols[0].unexplained, ['1h: 1 E1 hours with a complete aggregate bar are not mismatched']);
   assert.deepEqual(equalHour.summary.symbols[0].intervals['1h'].e1.notMismatchedHours, [`${day}T03:00:00.000Z`]);
-  // A 4h mismatch without an E1 hour fails as before; a 1d mismatch without an E1 hour now fails too.
+  // A 4h mismatch without an E1 hour fails as before; a 1d mismatch without an E1 hour now fails too (amendment 2 D5:
+  // unless it is in E2; the E2 list is empty here).
   const four = await run(['compare', ...workspace({ e1, over: { ...held, '4h': { [t8]: { count: '1' } } } }).args]);
   assert.equal(four.code, 1);
-  assert.deepEqual(four.summary.symbols[0].unexplained, ['4h: 1 mismatched bars without an E1 hour']);
+  assert.deepEqual(four.summary.symbols[0].unexplained, ['4h: 1 mismatched bars without an E1 hour and not in E2']);
   const daily = await run(['compare', ...workspace({ over: { '1d': { [ms(`${FULL_DAYS[1]}T00:00:00.000Z`)]: { count: '1' } } } }).args]);
   assert.equal(daily.code, 1);
-  assert.deepEqual(daily.summary.symbols[0].unexplained, ['1d: 1 mismatched bars without an E1 hour']);
+  assert.deepEqual(daily.summary.symbols[0].unexplained, ['1d: 1 mismatched bars without an E1 hour and not in E2']);
   // Held mismatches and an absent 4h file: exit 3; with a mismatch outside E1 as well: exit 1 wins.
   const marker = (zipRoot, plan) => {
     const src = plan.find(s => s.interval === '4h' && s.kind === 'monthly' && s.zipName.endsWith('2025-07.zip')), file = path.join(zipRoot, path.dirname(src.file), '404', src.zipName);
@@ -318,6 +341,68 @@ test('compare cli D1: mismatches held by E1 hours exit 0; a mismatch outside E1,
   };
   assert.equal((await run(['compare', ...workspace({ e1, over: held, skip: ['4h:2025-07'], extra: [marker] }).args])).code, 3);
   assert.equal((await run(['compare', ...workspace({ e1, over: { ...held, '1h': { [t3]: { volume: '17378.461' }, [t5]: { low: '1' } } }, skip: ['4h:2025-07'], extra: [marker] }).args])).code, 1);
+});
+
+test('compare cli D5: a 4h or 1d mismatch without an E1 hour passes only as an E2 bar; an E2 bar without an E1 hour that compares equal exits 1; an E2 bar holding an E1 hour passes either way', async () => {
+  const day = FULL_DAYS[0], next = FULL_DAYS[1], t0 = ms(`${day}T00:00:00.000Z`), t3 = ms(`${day}T03:00:00.000Z`), t8 = ms(`${day}T08:00:00.000Z`), d2 = ms(`${next}T00:00:00.000Z`);
+  const e1 = [e1Row(`${day}T03:00:00.000Z`)], hour = { '1h': { [t3]: { volume: '17378.461' } } };
+  // The 4h bar of 08:00 and the 1d bar of the second day hold no E1 hour, mismatch and are in E2: explained.
+  const e2 = [e2Row('4h', `${day}T08:00:00.000Z`), e2Row('1d', `${next}T00:00:00.000Z`)];
+  const over = { ...hour, '4h': { [t8]: { count: '1' } }, '1d': { [d2]: { count: '1' } } };
+  const explained = await run(['compare', ...workspace({ e1, e2, over }).args]);
+  assert.equal(explained.code, 0, explained.out);
+  const hype = explained.summary.symbols[0];
+  assert.deepEqual(hype.unexplained, []);
+  assert.deepEqual(['1h', '4h', '1d'].map(i => hype.intervals[i].dispositions.mismatched), [1, 1, 1], 'dispositions unchanged');
+  const one = { listed: 1, withoutE1Complete: 1, notMismatched: 0, notMismatchedBars: [], mismatchedNotE2: 0, mismatchedNotE2Bars: [] };
+  assert.deepEqual([hype.intervals['4h'].e2, hype.intervals['1d'].e2, hype.intervals['1h'].e2], [one, one, null]);
+  assert.deepEqual(hype.e2Listed, { '4h': 1, '1d': 1 });
+  assert.deepEqual([explained.summary.e2List.file, explained.summary.e2List.rows], ['e2.csv', 2]);
+  assert.match(explained.summary.e2List.sha256, /^[0-9a-f]{64}$/);
+  // A 4h or a 1d mismatch that holds no E1 hour and is not in E2 exits 1.
+  const four = await run(['compare', ...workspace({ e1, e2: [e2[1]], over }).args]);
+  assert.equal(four.code, 1);
+  assert.deepEqual(four.summary.symbols[0].unexplained, ['4h: 1 mismatched bars without an E1 hour and not in E2']);
+  assert.deepEqual(four.summary.symbols[0].intervals['4h'].e2.mismatchedNotE2Bars, [`${day}T08:00:00.000Z`]);
+  const daily = await run(['compare', ...workspace({ e1, e2: [e2[0]], over }).args]);
+  assert.equal(daily.code, 1);
+  assert.deepEqual(daily.summary.symbols[0].unexplained, ['1d: 1 mismatched bars without an E1 hour and not in E2']);
+  // An E2 bar with no E1 hour that compares equal exits 1 (the sets must be equal).
+  const equal = await run(['compare', ...workspace({ e1, e2, over: { ...hour, '1d': { [d2]: { count: '1' } } } }).args]);
+  assert.equal(equal.code, 1);
+  assert.deepEqual(equal.summary.symbols[0].unexplained, ['4h: 1 E2 bars without an E1 hour with a complete aggregate bar are not mismatched']);
+  assert.deepEqual(equal.summary.symbols[0].intervals['4h'].e2.notMismatchedBars, [`${day}T08:00:00.000Z`]);
+  // An E2 bar that holds an E1 hour (the 4h bar of 00:00 and the 1d bar of the first day hold 03:00) passes whether it
+  // matches or not.
+  const held = [e2Row('4h', `${day}T00:00:00.000Z`), e2Row('1d', `${day}T00:00:00.000Z`)];
+  for (const bars of [{}, { '4h': { [t0]: { count: '1' } }, '1d': { [t0]: { count: '1' } } }]) {
+    const r = await run(['compare', ...workspace({ e1, e2: held, over: { ...hour, ...bars } }).args]);
+    assert.equal(r.code, 0, r.out);
+    const none = { listed: 1, withoutE1Complete: 0, notMismatched: 0, notMismatchedBars: [], mismatchedNotE2: 0, mismatchedNotE2Bars: [] };
+    assert.deepEqual([r.summary.symbols[0].intervals['4h'].e2, r.summary.symbols[0].intervals['1d'].e2], [none, none]);
+  }
+});
+
+test('compare cli D5: the E2 list must exist, carry the E2 header and list research 4h or 1d bars of known symbols in order, else exit 1', async () => {
+  const day = FULL_DAYS[0], rows = (...r) => [E2_HEADER, ...r, ''].join('\n');
+  const bad = { missing: null, header: 'symbol,interval,open_time\n', e1Header: [E1_HEADER, ''].join('\n'), interval: rows(e2Row('1h', `${day}T03:00:00.000Z`)),
+    grid: rows(e2Row('4h', `${day}T02:00:00.000Z`)), holdout: rows(e2Row('1d', '2025-10-16T00:00:00.000Z'), e2Row('1d', '2025-10-17T00:00:00.000Z')),
+    order: rows(e2Row('4h', `${day}T08:00:00.000Z`), e2Row('1d', `${day}T00:00:00.000Z`), e2Row('4h', `${day}T04:00:00.000Z`)),
+    symbol: rows(`HYPEUSDT,4h,${day}T04:00:00.000Z,count,,,,,`), column: rows(e2Row('4h', `${day}T04:00:00.000Z`, 'count;vwap')) };
+  const errors = {};
+  for (const [name, text] of Object.entries(bad)) {
+    const w = workspace();
+    if (text === null) fs.rmSync(w.e2File); else fs.writeFileSync(w.e2File, text);
+    const { code, summary } = await run(['compare', ...w.args]);
+    assert.equal(code, 1, name);
+    assert.equal(summary.symbols, undefined, name);
+    errors[name] = summary.error;
+  }
+  assert.match(errors.missing, /^E2 list: cannot read e2\.csv/);
+  for (const name of ['header', 'e1Header']) assert.equal(errors[name], 'E2 list: e2.csv is not an E2 list (header or final newline)', name);
+  assert.equal(errors.holdout, 'E2 list: row 2 is not a research bar');
+  assert.equal(errors.order, 'E2 list: row 3: open times not strictly increasing for HYPE 4h');
+  for (const name of ['interval', 'grid', 'symbol', 'column']) assert.equal(errors[name], 'E2 list: row 1 is malformed', name);
 });
 
 test('compare cli D1: the E1 list must exist, carry the E1 header and list research hours of known symbols in order, else exit 1', async () => {
