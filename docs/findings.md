@@ -17,6 +17,7 @@ Read before every prompt, plan or run. One entry per error class: what happened 
 - **F06 Second-opinion scope** (2026-10-21). The VPS agent applied its own VPS rules (cgroup, runtime identity) to PC steps under review. Rule: second-opinion prompts say that R1-R6 govern the agent's own VPS actions only.
 - **F07 Prompt contradicts itself** (2026-10-21, F1a-2 round 2). "Never turn a gap into not_listed" conflicted with shared evidence outside the selection; Claude Code stopped correctly. Rule: before sending, check every absolute sentence against the rest of the prompt.
 - **F19 Script shared from the app arrived as a PDF** (2026-10-27). A .py shared from the Claude app reached the VPS agent as an 80,952 B PDF. Rule: deliver scripts as .sh (Python wrapped in a quoted heredoc) and check the sha256 in the next step.
+- **F22 Text copied into Telegram on the phone** (2026-10-28). A 279-character caption and a 2.8k-character prompt, copied from the Claude app into Telegram on the phone, arrived mangled; the VPS agent stopped on the END OF PROMPT guard. Two .txt documents shared from the app arrived byte-exact (sha256 matched). Rule: every instruction for the VPS agent goes as a .txt document with the hand-typed caption "Follow this document exactly."; step 0 saves it unchanged and prints its sha256; the last line is END OF PROMPT.
 
 ## Claims and memory
 

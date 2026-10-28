@@ -1835,6 +1835,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D065 — Binance Vision research trades
 
 - Purpose: Historical public trade archive and provenance.
+- Dataset terms (ledger I93): files from data.binance.vision fall under the Binance Vision dataset terms (TERMS_AND_CONDITIONS.md in binance/binance-public-data, version 1.0, last updated 2026-08-26, read by Claude 2026-10-28): CC BY-NC-SA 4.0; permitted non-commercial uses include purely personal non-production historical backtesting; commercial use needs a separate written license; redistributed derivative works need attribution to Binance Vision and the same license. The repo keeps no bulk data from these files.
 - Producer: `~/.openclaw/workspace/scripts/a2b_history_proof.py` (sha256 `46f2450b10c9`). Unit/trigger: writer matrix above; on-demand if not listed as a service.
 - Source: data.binance.vision/data/futures/um/daily/aggTrades or public.bybit.com/trading; BTCUSDT/ETHUSDT/SOLUSDT/HYPEUSDT/ZECUSDT.
 - Location/naming: box `research/ralph-research-data/binance-vision/*.zip`; original local root `~/ralph-research-data/`.
@@ -1865,6 +1866,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D066 — Binance Vision checksums
 
 - Purpose: Historical public trade archive and provenance.
+- Dataset terms (ledger I93): the checksum files come from data.binance.vision; the terms at D065 apply.
 - Producer: `~/.openclaw/workspace/scripts/a2b_history_proof.py` (sha256 `46f2450b10c9`). Unit/trigger: writer matrix above; on-demand if not listed as a service.
 - Source: data.binance.vision/data/futures/um/daily/aggTrades or public.bybit.com/trading; BTCUSDT/ETHUSDT/SOLUSDT/HYPEUSDT/ZECUSDT.
 - Location/naming: box `research/ralph-research-data/binance-vision/*.CHECKSUM`; original local root `~/ralph-research-data/`.
@@ -3760,6 +3762,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D120 — repo cache btc-eth-alert-edge/binance-archive-cache
 
 - Purpose: Reusable offline experiment inputs.
+- Dataset terms (ledger I93): archive candles come from data.binance.vision (`BINANCE_ARCHIVE` in experiments/btc-eth-alert-edge/src/binance-data.mjs, both in the catalogued version 9f5027dab014 and at ae5b30b), so the terms at D065 apply; REST candles are not covered by this note.
 - Producer: `experiments/btc-eth-alert-edge/src/binance-data.mjs` (sha256 `9f5027dab014`). Unit/trigger: writer matrix above; on-demand if not listed as a service.
 - Source: Binance spot candle archives/REST.
 - Location/naming: `~/ralph-experiment-loop-lab/experiments/btc-eth-alert-edge/data/binance-archive-cache/*`.
@@ -3987,6 +3990,7 @@ Real selected-file example, shortened (not necessarily valid JSON after shorteni
 ### D130 — workspace cache btc-eth-alert-edge/binance-archive-cache
 
 - Purpose: Reusable offline experiment inputs.
+- Dataset terms (ledger I93): as D120 (archive candles from data.binance.vision; terms at D065).
 - Producer: `experiments/btc-eth-alert-edge/src/binance-data.mjs` (sha256 `9f5027dab014`). Unit/trigger: writer matrix above; on-demand if not listed as a service.
 - Source: Binance spot candle archives/REST.
 - Location/naming: `~/.openclaw/workspace/ralph-research-os/experiments/btc-eth-alert-edge/data/binance-archive-cache/*`.
