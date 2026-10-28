@@ -1,6 +1,6 @@
 # RALPH map (read this first)
 
-Updated: 2026-10-28 (F1a-3, PR #3). Size cap 3,500 bytes, checked by `tools/docs-budget/docs-budget.test.mjs`. If the phase below is no longer current, this file is stale: say so before you act.
+Updated: 2026-10-28 (F1a-3 merged, lookback 2). Size cap 3,500 bytes, checked by `tools/docs-budget/docs-budget.test.mjs`. If the phase below is no longer current, this file is stale: say so before you act.
 
 ## What RALPH is now
 
@@ -10,8 +10,8 @@ Research and paper only; nothing trades. Main line = the backtesting factory F1 
 
 - F1a-1 data identity: DONE (merge 7d73008).
 - F1a-2 Binance Vision 1m klines + manifest: DONE (merge 6ebaa26; reproduced on the VPS, `docs/f1/vps-compare-2026-10-22/`).
-- F1a-3 aggregation 1m to 5m, 15m, 1h, 4h, 1d and 1w: DONE (PR #3; report `docs/f1/f1a-3-aggregation.md`, contract with amendments 1-2 `docs/f1/f1a-3-contract.md`). Binance Vision's own files disagree in a few bars, listed in `docs/f1/f1a-3-e1.csv` and `docs/f1/f1a-3-e2.csv`.
-- Next: F1a-4 funding, then F1b statistics. Before F1b uses volume, count or taker columns, decide how E1 and E2 bars are treated (ledger item pending).
+- F1a-3 aggregation 1m to 5m, 15m, 1h, 4h, 1d and 1w: DONE (merge a474890; report `docs/f1/f1a-3-aggregation.md`, contract with amendments 1-2 `docs/f1/f1a-3-contract.md`). Binance Vision's own files disagree in a few bars, listed in `docs/f1/f1a-3-e1.csv` and `docs/f1/f1a-3-e2.csv`.
+- Next: F1a-4 funding; then the deep reassess at the end of F1a (at the latest 2026-11-05), which triages every gate before F1b (decision 47); then F1b statistics. Before F1b uses any column of an E1 or E2 bar, prices included, decide how those bars are treated (decision 48, ledger I89).
 - No hypothesis has been tested in F1 yet.
 
 ## For job X read Y
@@ -31,7 +31,7 @@ Archive from before the F1 decision: `wiki/`, `raw/`, `core/`, `loops/`, `index.
 
 ## Standing process
 
-- Every F1 phase plan from F1a-3 on: prior-art step, hours estimate, at most 3 Codex review rounds per PR (decisions 37, 44, 42).
-- Light lookback after every F1 phase; deep reassess at big milestones or every 14 days; extra lookback on a surprise (decision 39). Every lookback checks that this file is current.
+- Every F1 phase plan from F1a-3 on: prior-art step (decision 37), hours estimate in wall clock from git (decisions 44, 46), at most 3 Codex review rounds per PR (decision 42).
+- Light lookback after every F1 phase. Checklist: does the work move the main line (an edge found or hypotheses killed); repeated finding classes (`docs/findings.md`); wall-clock hours vs estimate; prior-art step done; this file current. Output = decisions and ledger items only. Deep reassess at the end of F1a and F1b, at the latest every 14 days; extra lookback on a surprise (decision 39).
 - Nothing counts as confirmed without a test. Label claims: tested (how, how many), taken over (from where), reasoning.
 - Repo files are the one source of truth; Obsidian is only a viewer (decision 45). Public repo: no hosts, user names, IPs, chat ids or home paths.
