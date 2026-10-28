@@ -261,11 +261,9 @@ The first 16 hex digits of each sha256 are below; the full digests are in the co
 
 ## Deviations and corrections
 
-1. **Zero compared bars.** Since commit 7 (`e5efe41`) the compare exits 1 when a 1h or 4h interval of a symbol has zero compared bars.
-   - Review by Claude in chat (2026-10-28): this per-interval rule is not in V4. It is a stricter addition, and the e5efe41 TDD note ("zero compared bars fail under V4") attributes it to V4 wrongly.
-   - Claude in chat on V4's own outcomes: an interval whose bars are all absent_file exits 3, and an interval with no complete bars exits 0.
-   - V4 itself ends with "A deciding window with zero compared bars fails." The per-interval rule is stricter than reading that window as a symbol's 1h and 4h compare together.
-   - The code is unchanged; changing the rule is Tomas's decision. In the run at `2786b45` every 1h and 4h interval has compared bars, so the rule decided nothing.
+1. **Zero compared bars (interpretation of V4).** V4 ends with "A deciding window with zero compared bars fails." Since commit 7 (`e5efe41`) the compare applies this to each deciding interval of a symbol separately: a 1h or 4h interval with zero compared bars exits 1. Tomas (2026-10-28) keeps this reading; it is at least as strict as reading the window as a symbol's 1h and 4h compare together.
+   - Correction: the review by Claude in chat said this rule is not in V4. That was wrong; the e5efe41 TDD note ("zero compared bars fail under V4") is correct.
+   - In the run at `2786b45` every 1h and 4h interval has compared bars, so the rule decided nothing.
 2. **Commit 4 trailer.** Commit 4 (`13b2c67`) ends with a paragraph beginning "Tests: docs-budget test 5 pass", which git parses as a trailer. The rule is that commits carry no trailers.
    - History is not rewritten: no amend after a push, no force-push.
    - Every later commit was checked with `%(trailers)` before its push. Commits 11 and 14 had the same problem and were amended before their first push.
