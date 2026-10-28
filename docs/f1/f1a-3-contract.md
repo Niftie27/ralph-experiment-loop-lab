@@ -60,3 +60,15 @@ D2. The reference plan adds daily 1h, 4h and 1d files for the days the 1m store 
 D3. The PR is opened after the fix commits; every push to the open PR is one Codex round (decision 42).
 
 Ledger item filed by Claude in chat, not by Claude Code: before F1b uses volume, count or taker columns, decide how E1 hours are treated (keep, flag or omit), with a reported, never-deciding aggTrades check of the E1 hours as evidence.
+
+## Amendment 2 (verbatim)
+
+F1a-3 amendment 2 (Tomas, 2026-10-28). Inputs: the run at 6c953ce as reported by Claude Code (E1 64 hours: BTC 15, ETH 13, SOL 12, XRP 12, DOGE 12, HYPE 0; compare exit 1); a second independent check by Claude in chat, run on the PC, 34 Vision files, every CHECKSUM verified: (A) BTCUSDT 2023-11-14, the daily and monthly 1m files differ by value in the rows 11:38-11:42; the monthly 1m rows reproduce the monthly and the daily 1h row of 11:00, the daily 1m rows reproduce neither; (B) in 2022-07 and 2023-08 the monthly 4h row 2022-07-16T04:00 and the monthly 1d rows 2022-07-16 and 2023-08-16 do not reproduce from Vision's own monthly 1h rows for BTC, ETH, SOL, XRP and DOGE; every other 4h and 1d row of those months does.
+
+Decisions: 1(a), 2(a).
+
+D4. D1 is unchanged: E1 is computed from the 1m files the store uses, so BTC 2023-11-14T11:00 is not in E1 (the store's monthly 1m rows reproduce the 1h row). That Vision's daily and monthly files can differ is recorded as a finding; a full daily-versus-monthly comparison is scheduled in the input data review (ledger I84), not done in F1a-3. The cross-check for the four days checked under amendment 1 becomes: E1 on those days equals the 24 hours listed there minus BTC 2023-11-14T11:00.
+
+D5. Exception class E2 (source-inconsistent higher bars). A research 4h or 1d bar of a symbol is in E2 if and only if all its Vision 1h rows are present in the 1h reference files and Vision's own 4h or 1d row does not reproduce from them in at least one of the nine value columns (same rules as D1). E2 is computed by the same committed script as E1 (no import of src/f1-aggregate.mjs, own exact sums) from the 1h, 4h and 1d reference files of the compare, and its list (symbol, interval, open time, differing columns, relative difference of each differing sum) is committed. Acceptance replaces the 4h and 1d part of D1, per symbol and interval: every mismatched 4h and 1d bar holds an E1 hour or is in E2; the mismatched 4h and 1d bars that hold no E1 hour equal the E2 bars that hold no E1 hour and whose aggregate bar is complete. The 1h part of D1 and everything else in V4 are unchanged. E2 does not say which file is right.
+
+Ledger items filed by Claude in chat, not by Claude Code: the daily-versus-monthly comparison (I84); before F1b uses volume, count or taker columns, decide how E1 and E2 bars are treated, with the aggTrades check as evidence.
