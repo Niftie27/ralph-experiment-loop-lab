@@ -85,7 +85,7 @@ export function recordMissing(zipRoot, source) {
   const file = missingMarker(zipRoot, source);
   if (!fs.existsSync(file)) writeOnce(file, Buffer.from('404 on the zip and its CHECKSUM\n'), 0o644);
 }
-const recordedMissing = (zipRoot, source) => fs.existsSync(missingMarker(zipRoot, source));
+export const recordedMissing = (zipRoot, source) => fs.existsSync(missingMarker(zipRoot, source));
 // The listing rule (docs/f1/f1a-2-contract.md, amendment 2026-10-21), the one implementation used by download, build
 // and compare. Over every source of the instrument in the F1a range, in time order, a missing source is not_listed
 // only if (a) it and every earlier source have a recorded 404, (b) none of them exists (local version, manifest entry,
@@ -112,7 +112,7 @@ export function notListedSources(symbol, { zipRoot, entries = [], fetched = new 
   for (const u of units) if (u.sources.some(s => present.has(s.file))) for (const s of u.sources) result.delete(s.file);
   return result;
 }
-function readVerifiedSource(zipRoot, source, sha) {
+export function readVerifiedSource(zipRoot, source, sha) {
   const zipFile = path.join(versionDir(zipRoot, source, sha), source.zipName);
   let checksum;
   try { checksum = fs.readFileSync(`${zipFile}.CHECKSUM`, 'utf8'); } catch (error) { if (error.code !== 'ENOENT') throw error; }

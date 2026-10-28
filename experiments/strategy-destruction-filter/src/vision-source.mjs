@@ -107,7 +107,22 @@ function millisAt(buf, a, b) {
   return v;
 }
 const digitsOnly = (buf, a, b) => { for (let i = a; i < b; i++) if (buf[i] < 0x30 || buf[i] > 0x39) return false; return b > a; };
-export function parseKlines(csv, { startMs, endMs }) {
+// Kline intervals in ms on the UTC grid: t is on the grid when (t - offset) is a multiple of the interval. Weekly bars
+// open on Monday 00:00 UTC; the first Monday after the epoch (a Thursday) is 4 days in.
+export const KLINE_INTERVALS = Object.freeze({ '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '4h': 14400000, '1d': 86400000, '1w': 604800000 });
+const GRID_OFFSET = Object.freeze({ '1w': 4 * 86400000 });
+const intervalMs = interval => {
+  if (typeof interval !== 'string' || !Object.hasOwn(KLINE_INTERVALS, interval)) throw new Error(`Vision klines: unknown kline interval ${JSON.stringify(interval)}`);
+  return KLINE_INTERVALS[interval];
+};
+// The open time of the interval's bar that contains t.
+export function gridOpen(interval, t) {
+  const step = intervalMs(interval), offset = GRID_OFFSET[interval] ?? 0;
+  return Math.floor((t - offset) / step) * step + offset;
+}
+const grouped = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+export function parseKlines(csv, { startMs, endMs, interval = '1m' }) {
+  const step = intervalMs(interval), offset = GRID_OFFSET[interval] ?? 0;
   const buf = Buffer.from(csv.buffer, csv.byteOffset, csv.byteLength);
   if (!buf.length || buf[buf.length - 1] !== 0x0a) throw new Error('Vision klines: file does not end with a newline');
   let lineCount = 0;
@@ -118,10 +133,14 @@ export function parseKlines(csv, { startMs, endMs }) {
   if (firstLine === KLINE_HEADER) { variant = 'header'; pos = firstEnd + 1; rowCount--; }
   else if (!(buf[0] >= 0x30 && buf[0] <= 0x39)) throw new Error('Vision klines: unknown header (expected the exact Vision header or a numeric first row)');
   if (rowCount < 1) throw new Error('Vision klines: no rows');
-  // Every row, accepted or quarantined, has its own minute inside [startMs, endMs): more rows than minutes can never be
-  // valid, and the columns below are sized by rowCount, so the file fails before anything is allocated.
-  const minutes = (endMs - startMs) / 60000;
-  if (rowCount > minutes) throw new Error(`Vision klines: ${rowCount} rows exceed the ${minutes} minutes of the source file`);
+  // Every row, accepted or quarantined, has its own grid open inside [startMs, endMs): more rows than grid opens can never
+  // be valid, and the columns below are sized by rowCount, so the file fails before anything is allocated. A weekly row
+  // may close after its file ends; only its open counts.
+  const first = gridOpen(interval, startMs) < startMs ? gridOpen(interval, startMs) + step : gridOpen(interval, startMs);
+  const opens = first < endMs ? Math.floor((endMs - 1 - first) / step) + 1 : 0;
+  if (rowCount > opens) throw new Error(`Vision klines: ${rowCount} rows exceed the ${opens} ${interval === '1m' ? 'minutes' : `${interval} opens`} of the source file`);
+  const misaligned = interval === '1m' ? 'open_time not aligned to a minute' : `open_time not aligned to the ${interval} grid`;
+  const badClose = `close_time is not open_time + ${grouped(step - 1)} ms`;
   const columns = Object.fromEntries(KLINE_COLUMNS.map(name => [name, new Float64Array(rowCount)]));
   const cols = KLINE_COLUMNS.map(name => columns[name]);
   const starts = new Int32Array(13); // field j spans [starts[j], starts[j + 1] - 1)
@@ -138,8 +157,8 @@ export function parseKlines(csv, { startMs, endMs }) {
     pos = end + 1;
     const openTime = millisAt(buf, starts[0], starts[1] - 1), closeTime = millisAt(buf, starts[6], starts[7] - 1);
     if (Number.isNaN(openTime) || Number.isNaN(closeTime)) throw new Error(`Vision klines: row ${row} timestamp unit is not milliseconds`);
-    if (openTime % 60000 !== 0) throw rowError(row, openTime, 'open_time not aligned to a minute');
-    if (closeTime !== openTime + 59999) throw rowError(row, openTime, 'close_time is not open_time + 59,999 ms');
+    if ((openTime - offset) % step !== 0) throw rowError(row, openTime, misaligned);
+    if (closeTime !== openTime + step - 1) throw rowError(row, openTime, badClose);
     if (openTime < startMs || openTime >= endMs) throw rowError(row, openTime, 'open_time outside its source file bounds');
     if (openTime <= previous) throw rowError(row, openTime, 'open_time not strictly increasing');
     previous = openTime;
@@ -199,18 +218,20 @@ const monthIndex = month => {
 const monthStart = index => Date.UTC(Math.floor(index / 12), index % 12, 1);
 const monthName = index => `${Math.floor(index / 12)}-${String(index % 12 + 1).padStart(2, '0')}`;
 
-function source(instrument, kind, label, startMs, endMs) {
+function source(instrument, kind, label, startMs, endMs, interval = '1m') {
   const root = VISION_ROOTS[`${instrument.exchange}:${instrument.market}`];
-  const base = `${instrument.contract}-1m-${label}`;
-  const file = `${root}/${kind}/klines/${instrument.contract}/1m/${base}.zip`;
+  const base = `${instrument.contract}-${interval}-${label}`;
+  const file = `${root}/${kind}/klines/${instrument.contract}/${interval}/${base}.zip`;
   return { file, checksumFile: `${file}.CHECKSUM`, zipName: `${base}.zip`, csvName: `${base}.csv`, kind, startMs, endMs };
 }
 const DAY_MS = 86400000;
-// The Vision source of an instrument for the UTC month ('monthly') or day ('daily') that starts at startMs.
-export function visionSource(instrument, kind, startMs) {
+// The Vision source of an instrument for the UTC month ('monthly') or day ('daily') that starts at startMs, for one kline
+// interval (1m unless given).
+export function visionSource(instrument, kind, startMs, interval = '1m') {
+  intervalMs(interval);
   const d = new Date(startMs);
-  return kind === 'monthly' ? source(instrument, kind, iso(startMs).slice(0, 7), startMs, Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1))
-    : source(instrument, kind, iso(startMs).slice(0, 10), startMs, startMs + DAY_MS);
+  return kind === 'monthly' ? source(instrument, kind, iso(startMs).slice(0, 7), startMs, Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1), interval)
+    : source(instrument, kind, iso(startMs).slice(0, 10), startMs, startMs + DAY_MS, interval);
 }
 // Units for the inclusive source months from..to: one per instrument x calendar month, clipped to the F1a range and
 // split at the period boundary; 2026-10 is built from the daily files 01..16 only.

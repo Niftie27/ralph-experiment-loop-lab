@@ -1,6 +1,6 @@
 # RALPH map (read this first)
 
-Updated: 2026-10-27 (main d22a6e4). Size cap 3,500 bytes, checked by `tools/docs-budget/docs-budget.test.mjs`. If the phase below is no longer current, this file is stale: say so before you act.
+Updated: 2026-10-28 (F1a-3, PR #3). Size cap 3,500 bytes, checked by `tools/docs-budget/docs-budget.test.mjs`. If the phase below is no longer current, this file is stale: say so before you act.
 
 ## What RALPH is now
 
@@ -10,7 +10,8 @@ Research and paper only; nothing trades. Main line = the backtesting factory F1 
 
 - F1a-1 data identity: DONE (merge 7d73008).
 - F1a-2 Binance Vision 1m klines + manifest: DONE (merge 6ebaa26; reproduced on the VPS, `docs/f1/vps-compare-2026-10-22/`).
-- Next: F1a-3 aggregation 1m to higher timeframes with an incomplete-aggregate policy, then F1a-4 funding, then F1b statistics.
+- F1a-3 aggregation 1m to 5m, 15m, 1h, 4h, 1d and 1w: DONE (PR #3; report `docs/f1/f1a-3-aggregation.md`, contract with amendments 1-2 `docs/f1/f1a-3-contract.md`). Binance Vision's own files disagree in a few bars, listed in `docs/f1/f1a-3-e1.csv` and `docs/f1/f1a-3-e2.csv`.
+- Next: F1a-4 funding, then F1b statistics. Before F1b uses volume, count or taker columns, decide how E1 and E2 bars are treated (ledger item pending).
 - No hypothesis has been tested in F1 yet.
 
 ## For job X read Y
