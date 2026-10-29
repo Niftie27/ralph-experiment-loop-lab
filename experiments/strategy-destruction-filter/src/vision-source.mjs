@@ -256,6 +256,31 @@ export function planUnits(symbol, { from = FIRST_MONTH, to = LAST_MONTH } = {}) 
   return units;
 }
 
+// F1a-4 funding sources (docs/f1/f1a-4-contract.md): the Vision monthly fundingRate file of an instrument and month.
+// Vision has no daily funding files; 2026-10 is outside F1a-4 (m4) and never planned.
+const FUNDING_LAST_MONTH = '2026-09';
+export function fundingSource(instrument, month) {
+  const m = monthIndex(month);
+  const base = `${instrument.contract}-fundingRate-${monthName(m)}`;
+  const file = `${VISION_ROOTS[`${instrument.exchange}:${instrument.market}`]}/monthly/fundingRate/${instrument.contract}/${base}.zip`;
+  return { file, checksumFile: `${file}.CHECKSUM`, zipName: `${base}.zip`, csvName: `${base}.csv`, kind: 'monthly', startMs: monthStart(m), endMs: monthStart(m + 1) };
+}
+// Funding units 2021-10..2026-09, one per month clipped to the F1a range and split at the period boundary like planUnits
+// (2025-10 gives a research and a holdout unit with the same source). The source keeps its whole month: the 2021-10
+// file's rows before the research window are predecessor evidence.
+export function planFundingUnits(symbol) {
+  const instrument = visionInstrument(symbol);
+  const units = [];
+  for (let m = monthIndex(FIRST_MONTH); m <= monthIndex(FUNDING_LAST_MONTH); m++) {
+    const sources = [fundingSource(instrument, monthName(m))];
+    for (const [period, [p0, p1]] of Object.entries(MS_PERIODS)) {
+      const s = Math.max(monthStart(m), p0, F1A_RANGE.startMs), e = Math.min(monthStart(m + 1), p1, F1A_RANGE.endMs);
+      if (s < e) units.push({ symbol, instrument, period, dataStart: iso(s), dataEnd: iso(e), startMs: s, endMs: e, sources });
+    }
+  }
+  return units;
+}
+
 // Concatenates the parsed rows of a unit's sources in source-file order and clips them to [startMs, endMs).
 export function assembleUnit(unit, inputs) {
   const byFile = new Map();
