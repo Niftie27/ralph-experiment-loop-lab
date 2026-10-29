@@ -10,7 +10,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PERIODS } from './h2-contract.mjs';
 import { verifyZip, readZipMember, planFundingUnits, visionInstrument, VISION_SYMBOLS } from './vision-source.mjs';
-import { notListedSources, localVersions } from './f1-1m-store.mjs';
+import { notListedSources, localVersions, readVerifiedSource, readManifest } from './f1-1m-store.mjs';
 import { fetchSource } from './vision-transport.mjs';
 import { memoryGuard, CEILING_MIB } from './vision-1m.mjs';
 
@@ -144,8 +144,155 @@ export async function downloadFunding({ symbols, zipRoot }, guard, deps) {
   return { command: 'download', status: counts.failed ? 'failed' : counts.gaps ? 'incomplete' : 'ok', counts, gaps, notListed, versionConflicts, repaired, failures };
 }
 
+// Schedule check (contract section 2) of a settlement r = {t, h} against its predecessor p (null: none known). Returns
+// null (no predecessor, on its grid), 'regular', 'interval_change' or 'bridge' (pass), or one of STOP_CLASSES. Grids
+// are anchored at 00:00 UTC; 24 is a multiple of every interval, so epoch hours give the hour of the day modulo h.
+export const STOP_CLASSES = Object.freeze(['off_grid', 'unexplained_gap', 'unexplained_change']);
+export function scheduleClass(p, r) {
+  if ((r.t / HOUR_MS) % r.h !== 0) return 'off_grid';
+  if (!p) return null;
+  const d = (r.t - p.t) / HOUR_MS;
+  if (p.h === r.h) return d === r.h ? 'regular' : 'unexplained_gap';
+  if (d === p.h || d === r.h) return 'interval_change';
+  if (p.h === 1 && r.h === 4 && d > 1 && d < 4) return 'bridge'; // bridge to the new grid: r is on the 4 h grid (checked above)
+  return 'unexplained_change';
+}
+
+// The first research 1m candle of a contract in the F1a-2 manifest (contract section 3), or null without one.
+export function firstCandleOf(manifestPath, contract) {
+  const times = readManifest(manifestPath).entries.filter(e => e.contract === contract && e.period === 'research' && e.rowCount > 0).map(e => Date.parse(e.firstOpenTime));
+  return times.length ? Math.min(...times) : null;
+}
+
+// The one verified local version of a source, or why there is none: missing, conflict (more than one version until a
+// version-selection rule exists) or failed (its CHECKSUM).
+function loadSource(zipRoot, source) {
+  const versions = localVersions(zipRoot, source);
+  if (!versions.length) return { status: 'missing' };
+  if (versions.length > 1) return { status: 'conflict', error: 'more than one local version' };
+  try { return { status: 'verified', sha256: versions[0], zip: readVerifiedSource(zipRoot, source, versions[0]) }; }
+  catch (error) { return { status: 'failed', error: error.message }; }
+}
+
+const RESEARCH_START_MS = Date.parse(PERIODS.research[0]);
+const iso = t => new Date(t).toISOString();
+const timeOf = x => x.time ?? x.start;
+const byTime = (a, b) => timeOf(a) < timeOf(b) ? -1 : timeOf(a) > timeOf(b) ? 1 : 0;
+
+// The research history of an instrument (contract sections 2 and 3): its research sources 2021-10..2025-10 in month
+// order, research-parsed (sealed rows give calc_time only); the 2021-10 rows before the window are predecessor evidence
+// only. Every research settlement is checked against its predecessor unless a gap or failed month lies between them
+// (then elapsedHours is NaN, meaning null). Edges: an instrument without rows before the window needs its first
+// settlement at the first grid point of its interval after its first 1m candle; the last settlement must lie within
+// its interval of 2025-10-17T00:00Z; a listed file without research settlements stops. Reads no holdout field.
+export function researchHistory(symbol, { zipRoot, firstCandle = () => null, check = () => {} }) {
+  const units = planFundingUnits(symbol), instrument = units[0].instrument;
+  const research = units.filter(u => u.period === 'research');
+  const listing = notListedSources(units, { zipRoot });
+  const sources = [], notListed = [], gaps = [], failures = [], coverage = [], anomalies = [], changes = [];
+  const columns = { settlementTime: [], calcTime: [], rate: [], rateDecimal: [], intervalHours: [], elapsedHours: [], sourceIndex: [] };
+  let previous = null, broken = false, prior = false, firstListed = null, missingFirst = false;
+  for (const unit of research) {
+    const source = unit.sources[0];
+    check(`research ${source.file}`);
+    const loaded = loadSource(zipRoot, source);
+    if (loaded.status === 'missing') {
+      if (listing.has(source.file)) { notListed.push(monthOf(source)); continue; }
+      gaps.push(source.file);
+      coverage.push({ kind: 'gap_month', start: unit.dataStart, end: unit.dataEnd, file: source.file });
+      if (!firstListed) missingFirst = true;
+      broken = true;
+      continue;
+    }
+    firstListed ??= source;
+    let parsed;
+    try {
+      if (loaded.status !== 'verified') throw new Error(loaded.error);
+      parsed = parseFunding(readZipMember(loaded.zip, source.csvName), source);
+    } catch (error) { failures.push({ file: source.file, error: error.message }); broken = true; continue; }
+    const index = sources.push({ file: source.file, sha256: loaded.sha256 }) - 1;
+    const c = parsed.columns;
+    let inWindow = 0;
+    for (let i = 0; i < parsed.rowCount; i++) {
+      const r = { t: c.settlementTime[i], h: c.intervalHours[i] };
+      if (r.t < unit.startMs) { previous = r; broken = false; prior = true; continue; }
+      const p = broken ? null : previous, cls = scheduleClass(p, r), elapsed = p ? (r.t - p.t) / HOUR_MS : NaN;
+      if (STOP_CLASSES.includes(cls)) anomalies.push({ time: iso(r.t), class: cls, intervalHours: r.h, ...(p && { previous: iso(p.t), previousIntervalHours: p.h, elapsedHours: elapsed }) });
+      else if (cls === 'interval_change' || cls === 'bridge') changes.push({ time: iso(r.t), class: cls, old: p.h, new: r.h, elapsedHours: elapsed });
+      columns.settlementTime.push(r.t); columns.calcTime.push(c.calcTime[i]); columns.rate.push(c.rate[i]); columns.rateDecimal.push(parsed.rateDecimal[i]);
+      columns.intervalHours.push(r.h); columns.elapsedHours.push(elapsed); columns.sourceIndex.push(index);
+      previous = r; broken = false; inWindow++;
+    }
+    if (!inWindow) anomalies.push({ time: unit.dataStart, class: 'empty_file', file: source.file });
+  }
+  const n = columns.settlementTime.length;
+  if (n && !prior && !missingFirst) {
+    const first = { t: columns.settlementTime[0], h: columns.intervalHours[0] }, candle = firstCandle(instrument.contract);
+    if (notListed.length) coverage.push({ kind: 'before_listing', start: iso(RESEARCH_START_MS), end: iso(firstListed.startMs) });
+    if (candle === null || candle === undefined) anomalies.push({ time: iso(first.t), class: 'first_settlement_unproven', reason: 'no first 1m candle' });
+    else {
+      const step = first.h * HOUR_MS, expected = (Math.floor(candle / step) + 1) * step;
+      coverage.push({ kind: 'before_first_charge', start: iso(candle), end: iso(first.t) });
+      if (first.t !== expected) anomalies.push({ time: iso(first.t), class: 'first_settlement_unproven', expected: iso(expected) });
+    }
+  }
+  if (n && sources.at(-1).file === research.at(-1).sources[0].file) {
+    const t = columns.settlementTime[n - 1], h = columns.intervalHours[n - 1];
+    if (SEAL_MS - t > h * HOUR_MS) anomalies.push({ time: iso(t), class: 'trailing_edge', intervalHours: h });
+  }
+  return { instrument, planned: research.length, sources, notListed, gaps, failures, coverage: coverage.sort(byTime), anomalies: anomalies.sort(byTime), changes, columns };
+}
+
+// Holdout integrity (amendment 1 A1): per holdout unit ("2025-10 sealed part", then 2025-11..2026-09) only availability,
+// CHECKSUM and pass or fail. Every field of every row is parsed (sealMs = Infinity) and every holdout settlement is
+// checked against its predecessor; the boundary pair (last research settlement, first holdout settlement) belongs to
+// "2025-10 sealed part". A unit fails when it is missing, unreadable or empty, when a check fails, or when its first
+// predecessor is unknown (the previous file missing or unreadable). Errors are dropped: nothing else leaves this path.
+export function checkHoldout(symbol, { zipRoot, lastResearch = null, check = () => {} }) {
+  let previous = lastResearch;
+  return planFundingUnits(symbol).filter(u => u.period === 'holdout').map(unit => {
+    const source = unit.sources[0], name = source.startMs < SEAL_MS ? '2025-10 sealed part' : monthOf(source);
+    check(`holdout ${unit.instrument.contract} ${name}`);
+    const loaded = loadSource(zipRoot, source);
+    const checksum = loaded.status === 'verified' ? 'verified' : loaded.status === 'failed' ? 'failed' : 'not checked';
+    let pass = false, last = null;
+    try {
+      if (loaded.status !== 'verified') throw new Error('unavailable');
+      const c = parseFunding(readZipMember(loaded.zip, source.csvName), source, { sealMs: Infinity }).columns;
+      let p = previous, ok = true, count = 0;
+      for (let i = 0; i < c.settlementTime.length; i++) {
+        const r = { t: c.settlementTime[i], h: c.intervalHours[i] };
+        if (r.t >= SEAL_MS) { count++; if (!p || STOP_CLASSES.includes(scheduleClass(p, r))) ok = false; }
+        p = r;
+      }
+      last = p;
+      pass = ok && count > 0;
+    } catch { pass = false; }
+    previous = last;
+    return { unit: name, available: loaded.status !== 'missing', checksum, result: pass ? 'pass' : 'fail' };
+  });
+}
+
+// verify (plan section i): offline, per symbol the research history and the holdout integrity. status: failed (a research
+// file or a holdout unit fails), stopped (a research anomaly: amendment needed), incomplete (a gap month), else ok.
+export function verifyFunding({ symbols, zipRoot, firstCandle = () => null, guard = { check() {} } }) {
+  const check = label => guard.check(label);
+  const out = symbols.map(symbol => {
+    const h = researchHistory(symbol, { zipRoot, firstCandle, check }), t = h.columns.settlementTime, n = t.length;
+    const holdout = checkHoldout(symbol, { zipRoot, lastResearch: n ? { t: t[n - 1], h: h.columns.intervalHours[n - 1] } : null, check });
+    let offsetMaxMs = 0;
+    for (let i = 0; i < n; i++) offsetMaxMs = Math.max(offsetMaxMs, h.columns.calcTime[i] - t[i]);
+    return { contract: h.instrument.contract, sources: { planned: h.planned, verified: h.sources.length, notListed: h.notListed.length, gaps: h.gaps.length, failed: h.failures.length },
+      researchSettlements: n, firstSettlement: n ? iso(t[0]) : null, lastSettlement: n ? iso(t[n - 1]) : null, offsetMaxMs: n ? offsetMaxMs : null,
+      changes: h.changes, notListed: h.notListed, gaps: h.gaps, failures: h.failures, coverage: h.coverage, anomalies: h.anomalies, holdout };
+  });
+  const status = out.some(s => s.failures.length || s.holdout.some(u => u.result === 'fail')) ? 'failed'
+    : out.some(s => s.anomalies.length) ? 'stopped' : out.some(s => s.gaps.length) ? 'incomplete' : 'ok';
+  return { command: 'verify', status, symbols: out };
+}
+
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
-const COMMANDS = ['download'];
+const COMMANDS = ['download', 'verify'];
 const FLAGS = ['--symbols', '--data-dir', '--manifest', '--max-rss-mib'];
 const usage = message => Object.assign(new Error(message), { usage: true });
 function parseArgs(argv) {
@@ -176,7 +323,8 @@ export async function main(argv, deps = {}) {
     const options = parseArgs(argv);
     guard = memoryGuard(options.maxRssMiB, deps.check);
     try {
-      summary = await downloadFunding(options, guard, io);
+      summary = options.command === 'download' ? await downloadFunding(options, guard, io)
+        : verifyFunding({ ...options, firstCandle: contract => firstCandleOf(options.manifestPath, contract), guard });
     } catch (error) {
       summary = { command: options.command, status: 'failed', error: error.message };
     }
