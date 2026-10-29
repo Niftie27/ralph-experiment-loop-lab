@@ -94,8 +94,8 @@ export const recordedMissing = (zipRoot, source) => fs.existsSync(missingMarker(
 // Asymmetric evidence (amendment round 3): for (b) and the unit rule any local version counts, since there it can only
 // block not_listed; for (c) a local version counts only if it passes the build's own check (readVerifiedSource),
 // checked lazily up to the first later source that is evidence, so a normal run hashes at most one extra zip.
-export function notListedSources(symbol, { zipRoot, entries = [], fetched = new Set() }) {
-  const units = planUnits(symbol);
+// units are the instrument's planned units over the whole F1a range (planUnits(symbol) for 1m), in time order.
+export function notListedSources(units, { zipRoot, entries = [], fetched = new Set() }) {
   const sources = [...new Map(units.flatMap(u => u.sources).map(s => [s.file, s])).values()];
   const inManifest = new Set(entries.flatMap(e => e.sources.map(s => s.file)));
   const present = new Set(sources.filter(s => fetched.has(s.file) || inManifest.has(s.file) || localVersions(zipRoot, s).length).map(s => s.file));
@@ -352,7 +352,7 @@ export function buildStore({ symbols, from, to, zipRoot, cacheDir, manifestPath,
     release = acquireLock(manifestPath);
     const entries = readManifest(manifestPath).entries;
     for (const [symbol, units] of plans) {
-      const notListed = notListedSources(symbol, { zipRoot, entries: [...entries, ...listingEntries] });
+      const notListed = notListedSources(planUnits(symbol), { zipRoot, entries: [...entries, ...listingEntries] });
       let parsedCache = new Map();
       for (const unit of units) {
         // Before the unit, keep only its own base parses (the split month reuses its monthly file); this also drops
