@@ -3,8 +3,16 @@
 // Seal (contract sections 1 to 3, amendment 1 A1): a research parse reads only calc_time of a row at or after
 // 2025-10-17T00:00Z (routing and order) and never counts, returns or names such a row; its errors name only the file
 // and "sealed part". The holdout integrity path parses every field with sealMs = Infinity and reports pass or fail only.
+//   node src/f1-funding.mjs download|verify [--symbols BTC,ETH,SOL,XRP,DOGE,HYPE] [--data-dir DIR] [--manifest FILE] [--max-rss-mib N (1..512)]
+// download is the only network step (src/vision-transport.mjs fetchSource, unchanged). JSON summary on stdout: counts,
+// times and relative Vision paths only, never rates or sizes. Exit: 0 ok, 1 failure or stop, 2 usage, 3 a file missing.
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { PERIODS } from './h2-contract.mjs';
-import { verifyZip, readZipMember } from './vision-source.mjs';
+import { verifyZip, readZipMember, planFundingUnits, visionInstrument, VISION_SYMBOLS } from './vision-source.mjs';
+import { notListedSources, localVersions } from './f1-1m-store.mjs';
+import { fetchSource } from './vision-transport.mjs';
+import { memoryGuard, CEILING_MIB } from './vision-1m.mjs';
 
 export const FUNDING_HEADER = 'calc_time,funding_interval_hours,last_funding_rate';
 export const SEAL_MS = Date.parse(PERIODS.holdout[0]);
@@ -98,3 +106,89 @@ export function parseFundingZip(zipBytes, checksumText, source, options) {
   verifyZip(zipBytes, checksumText, source.zipName);
   return parseFunding(readZipMember(zipBytes, source.csvName), source, options);
 }
+
+// The distinct sources of planned units, in time order (the split 2025-10 month gives one source).
+const sourcesOf = units => [...new Map(units.flatMap(u => u.sources).map(s => [s.file, s])).values()];
+const monthOf = source => new Date(source.startMs).toISOString().slice(0, 7);
+
+// Fetches every planned funding source (plan section h): CHECKSUM first, verified zips stored as versions, 404 on both
+// recorded. A month with more than one local version fails closed until a version-selection rule exists. Misses are
+// not_listed by the F1a-2 listing rule over the whole plan, else gaps (exit 3). No file is parsed here.
+export async function downloadFunding({ symbols, zipRoot }, guard, deps) {
+  const counts = { expected: 0, downloaded: 0, skipped: 0, verified: 0, gaps: 0, notListed: 0, failed: 0 };
+  const gaps = [], notListed = {}, versionConflicts = [], repaired = [], failures = [];
+  for (const symbol of symbols) {
+    const units = planFundingUnits(symbol), contract = units[0].instrument.contract;
+    const fetched = new Set(), misses = [];
+    for (const source of sourcesOf(units)) {
+      counts.expected++;
+      guard.check(`download ${source.file}`);
+      try {
+        const result = await fetchSource(source, zipRoot, deps, () => fetched.add(source.file));
+        if (result.status === 'missing') { misses.push(source); continue; }
+        counts[result.status]++;
+        if (result.repaired) repaired.push(source.checksumFile);
+        if (localVersions(zipRoot, source).length > 1) { counts.failed++; versionConflicts.push(source.file); continue; }
+        counts.verified++;
+      } catch (error) {
+        counts.failed++;
+        failures.push({ file: source.file, error: error.message });
+      }
+    }
+    const listing = notListedSources(units, { zipRoot, fetched });
+    for (const source of misses) {
+      if (listing.has(source.file)) { (notListed[contract] ??= []).push(monthOf(source)); counts.notListed++; }
+      else { gaps.push(source.file); counts.gaps++; }
+    }
+  }
+  return { command: 'download', status: counts.failed ? 'failed' : counts.gaps ? 'incomplete' : 'ok', counts, gaps, notListed, versionConflicts, repaired, failures };
+}
+
+const ROOT = fileURLToPath(new URL('../', import.meta.url));
+const COMMANDS = ['download'];
+const FLAGS = ['--symbols', '--data-dir', '--manifest', '--max-rss-mib'];
+const usage = message => Object.assign(new Error(message), { usage: true });
+function parseArgs(argv) {
+  const [command, ...rest] = argv;
+  if (!COMMANDS.includes(command)) throw usage(`command must be one of ${COMMANDS.join('|')}`);
+  const flags = {};
+  for (let i = 0; i < rest.length; i += 2) {
+    if (!FLAGS.includes(rest[i])) throw usage(`unknown flag ${rest[i]}`);
+    if (rest[i] in flags) throw usage(`duplicate flag ${rest[i]}`);
+    if (i + 1 >= rest.length || rest[i + 1].startsWith('--')) throw usage(`flag ${rest[i]} needs a value`);
+    flags[rest[i]] = rest[i + 1];
+  }
+  const symbols = (flags['--symbols'] ?? Object.keys(VISION_SYMBOLS).join(',')).split(',');
+  if (new Set(symbols).size !== symbols.length) throw usage('duplicate symbol');
+  for (const symbol of symbols) visionInstrument(symbol);
+  const maxRssMiB = flags['--max-rss-mib'] === undefined ? CEILING_MIB : Number(flags['--max-rss-mib']);
+  if (!Number.isSafeInteger(maxRssMiB) || maxRssMiB < 1 || maxRssMiB > CEILING_MIB) throw usage(`--max-rss-mib must be an integer 1..${CEILING_MIB} (the ceiling can only be lowered)`);
+  const dataDir = path.resolve(flags['--data-dir'] ?? path.join(ROOT, 'data'));
+  return { command, symbols, maxRssMiB, zipRoot: path.join(dataDir, 'vision'),
+    manifestPath: path.resolve(flags['--manifest'] ?? path.join(ROOT, 'results', 'manifest-f1-1m.json')) };
+}
+
+const EXIT = { ok: 0, failed: 1, stopped: 1, usage: 2, incomplete: 3 };
+export async function main(argv, deps = {}) {
+  const io = { fetch: deps.fetch ?? globalThis.fetch, stdout: deps.stdout ?? process.stdout, sleep: deps.sleep ?? (ms => new Promise(resolve => setTimeout(resolve, ms))) };
+  let summary, guard;
+  try {
+    const options = parseArgs(argv);
+    guard = memoryGuard(options.maxRssMiB, deps.check);
+    try {
+      summary = await downloadFunding(options, guard, io);
+    } catch (error) {
+      summary = { command: options.command, status: 'failed', error: error.message };
+    }
+    const memory = guard.report();
+    if (memory.maxRssMiB > options.maxRssMiB) summary = { ...summary, status: 'failed', error: `memory ceiling exceeded: maxRSS ${memory.maxRssMiB} MiB > ${options.maxRssMiB} MiB` };
+    summary = { ...summary, memory, runtime: { node: process.version, platform: process.platform } };
+  } catch (error) {
+    if (!error.usage) throw error;
+    summary = { command: argv[0] ?? null, status: 'usage', error: error.message };
+  } finally { guard?.stop(); }
+  io.stdout.write(JSON.stringify(summary, null, 2) + '\n');
+  return EXIT[summary.status];
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) process.exitCode = await main(process.argv.slice(2));
