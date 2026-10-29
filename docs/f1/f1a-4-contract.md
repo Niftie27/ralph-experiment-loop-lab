@@ -154,3 +154,20 @@ Claude Code edits none of `docs/ledger.md`, `docs/decisions.md`, `docs/state.md`
 ## 8. Hours estimate for the rest of F1a-4 (decisions 44, 46)
 
 Measure: wall clock from the plan commit `c64902b` (author time 2026-10-28T17:40:29Z) to the merge commit. The plan estimated about 12 h, range 8-20 h. New estimate: about 14 h, range 10-26 h (reasoning). Added since the plan: the bridge class, edge coverage, the digest schema, the sanitized integrity path and about 15 more tests (+2 h). Remaining after this contract, in wall-clock hours: Claude's contract review 1-3; refactor 0.5; glossary 0.3; parser with tokens and bounds 1.5; download 0.7; verify with schedule, edges and holdout integrity 2; reader and digest 1.5; full run and report with MAP 0.5; PR and up to 3 Codex rounds (decision 42) 2-3. The top of the range is one overnight wait. Agent time is reported as information only.
+
+## Amendment 1 (verbatim)
+
+F1a-4 amendment 1 (Tomas, 2026-10-28). Input: the review of this contract at 27a777f by Claude in chat (four text findings; no code existed yet).
+
+Q: Jak s kontraktem F1a-4? Doporučuju (a): opravy 1–4 jako amendment 1 v prvním commitu implementačního kola. Codex pak reviewuje už proti opravenému textu a neztratíme celý cyklus.
+A: (a) Schválit, amendment 1 jako 1. commit implementace (doporučeno)
+
+Where this amendment differs from sections 1-8, this amendment wins.
+
+A1. Research reader and holdout integrity are separate paths (fixes a conflict between m3, section 2 and the Q4 row d:81-82). The section 2 rule that a predecessor is never taken from a sealed row, and the Q4 row d:81-82 rule that only `calc_time` of a sealed row may be read, govern the research reader and everything it returns or reports. The holdout integrity path reads every field of the holdout units: "2025-10 sealed part" (the 2025-10 rows at or after 2025-10-17T00:00Z) and the months 2025-11..2026-09 (HYPE likewise). It applies the parser rules (section 1 m7, section 6) and the section 2 table to every holdout settlement and its predecessor, including the boundary pair of the last research settlement and the first holdout settlement, which counts toward "2025-10 sealed part". An empty holdout unit fails. Per unit it reports only availability, CHECKSUM and pass or fail; a failure message names only the unit. No count, time, interval, rate, row number or size of a holdout row leaves the integrity path, and nothing from it enters the research reader's columns, coverage, anomalies or digest. October 2026 stays outside F1a-4 (m4). Tests: a holdout fixture with an unexplained gap fails its unit with no row detail; a schedule failure in the boundary pair fails "2025-10 sealed part" only; an empty holdout unit fails; a research read and its digest are unchanged by any holdout fixture.
+
+A2. Section 2: the clause "the FAQ section 8 rule from 2026-01-02 also returns to 4 hours, tested below" is withdrawn as unverified; section 4 records no such date. The bridge class rests on the September 2025 announcement alone. Whether the FAQ's section 8 rule changed after 2025-10-16 is not verified; if a holdout unit fails, documented rule versions are the only repair route (m3).
+
+A3. Section 4, completeness: "For BTC, ETH, SOL, XRP and DOGE the research window lies strictly inside each observed span, so their research edges are interior rows" holds for the leading edge only. The scan reads no row at or after 2025-10-17T00:00Z (plan section d), so the last research settlement of every symbol is the last observed row, and the trailing-edge rule of section 3 is the only check of it.
+
+A4. Section 6 adds to and changes the plan's test list (plan section j); every plan test it does not change stays, with 30 ms read as 47 ms. This includes: a settlement at 2025-10-17T00:00:00.002Z is holdout; the exact header and the numeric first-row variant; 3 fields; a 13-digit `calc_time` inside the file's month; missing final newline, CRC and member-name errors fail; `fundingSource` names and `planFundingUnits` (2021-10..2026-09, 2025-10 split at 2025-10-17, 2026-10 never planned, HYPE months).
