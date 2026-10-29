@@ -1,6 +1,6 @@
 # Ubiquitous language
 
-Last updated: 2026-10-27
+Last updated: 2026-10-29
 
 This is the shared RALPH vocabulary for Tomas, the agent, Obsidian notes, and code-facing specs.
 
@@ -89,7 +89,7 @@ This is the shared RALPH vocabulary for Tomas, the agent, Obsidian notes, and co
 
 ## Data identity and factory (F1)
 
-Sources: [factory spec F1](factory-spec-f1.md), [F1a-1 data identity](f1/f1a-1-identity.md) and the code in `experiments/strategy-destruction-filter`.
+Sources: [factory spec F1](factory-spec-f1.md), [F1a-1 data identity](f1/f1a-1-identity.md), [F1a-4 contract](f1/f1a-4-contract.md) and the code in `experiments/strategy-destruction-filter`.
 
 | Term | Definition | Canonical spelling in code | Notes |
 |------|------------|----------------------------|-------|
@@ -112,6 +112,21 @@ Sources: [factory spec F1](factory-spec-f1.md), [F1a-1 data identity](f1/f1a-1-i
 | Reference file | Binance Vision USD-M kline file of a higher interval, CHECKSUM verified, that aggregate bars are compared against: 1h, 4h, 1d and 1w, plus 5m and 15m in one month per symbol (contract C3). | `planReferences` (`src/f1-reference.mjs`) | Research files only: monthly up to 2025-09, daily 2025-10-01..16, monthly 1w up to 2024-01. A reference row is admitted only when open_time + interval <= 2025-10-17T00:00Z (V3). |
 | Disposition | The one compare outcome of a complete aggregate bar: `equal`, `mismatched`, `reference_quarantined`, `absent_row` (its reference file is verified but has no row for it) or `absent_file` (its reference file is not published, not downloaded or not planned). | `dispositions` | The counts reconcile with the complete bars (V4). 1h and 4h decide: mismatched or absent_row exit 1, reference_quarantined or absent_file exit 3, exit 1 wins, zero compared bars fail. 1d, 1w, 5m and 15m are reported only. |
 | Unverified remainder | The complete weeks of a symbol after its last externally compared week (Vision publishes monthly 1w only up to 2024-01). | `unverifiedWeeks` | Reported per symbol, never counted equal; HYPE has no 1w reference at all. Weeks are checked internally only (a week equals its seven days, exactly). |
+| Funding source | Binance Vision monthly fundingRate file of a contract and month, `data/futures/um/monthly/fundingRate/<contract>/<contract>-fundingRate-<YYYY-MM>.zip`, with its CHECKSUM. | `fundingSource`, `planFundingUnits` (`src/vision-source.mjs`) | F1a-4. Planned 2021-10..2026-09, the 2025-10 file split at 2025-10-17; 2026-10 is never planned in F1a-4 (m4). Vision has no daily funding files. |
+| Funding settlement | One row of a funding source: the settled rate of a contract with its `calc_time` and published interval. Settlement time = `calc_time` floored to the full UTC hour. | `settlementTime`, `calcTime`, `rate`, `intervalHours` (`src/f1-funding.mjs`) | A row fails its file unless `calc_time` mod 1 h is below 15,000 ms and the interval is 1, 2, 4 or 8 (m7, a chosen policy). The rate's exact decimal is computed from the token, exponent form included. The rate is per settlement: a payment is size × mark price × rate, never × hours. A missing settlement is never filled. |
+| Funding interval | The published `funding_interval_hours` of a settlement: the setting in force when the rate was settled. | `intervalHours` | Kept verbatim. At a change the elapsed time can equal the old or the new setting (SOLUSDT 2022-11). |
+| Elapsed hours | Hours from a settlement's predecessor to the settlement. | `elapsedHours` | Null (NaN in the typed column) at the instrument's first settlement and after a gap month. |
+| Predecessor | The previous settlement of the same instrument: from the previous month's file when needed, and for the first research settlement from the 2021-10 rows before the research window. | not a column | Never a sealed row in the research reader (contract section 2, amendment 1 A1). |
+| Settlement grid | The hours a settlement of interval h may fall on: multiples of h counted from 00:00 UTC (8 h: 00, 08, 16; 4 h: 00, 04, ..., 20). | `off_grid` | A settlement off its own interval's grid stops the phase. |
+| Schedule class | Result of the check of a settlement r against its predecessor p, d hours apart: `regular` (same interval, d equal to it), `interval_change` (intervals differ, d equals either) and `bridge` pass; `off_grid`, `unexplained_gap` (same interval, other d) and `unexplained_change` (any other change) stop. | `scheduleClass` | Contract section 2. Disorder or a repeated settlement hour inside one file fails the file (exit 1) before any schedule check. |
+| Bridge to the new grid | The one documented short transition: a 1 h settlement followed 2 or 3 h later by a 4 h settlement on the 4 h grid (the return from hourly settlement in Binance's announcement of 2025-08-31). | `bridge` | Passes and is recorded with its times. Any other short change, e.g. 2 h then 8 h, stops. None occurs in the research data. |
+| Funding stop | Research finding that stops F1a-4 for an amendment by Tomas, never repaired by a fill or a looser rule: a stopping schedule class, an unproven first settlement (`first_settlement_unproven`), a last research settlement more than its interval before 2025-10-17 (`trailing_edge`) or a listed file without research settlements (`empty_file`). | `anomalies` | Status `stopped`, exit 1. |
+| Before listing; listed, before the first charge | The two leading-edge spans of an instrument listed inside the research window: its months proven not_listed by the F1a-2 listing rule, then the time from its first 1m candle to its first settlement. | `coverage` (`before_listing`, `before_first_charge`) | The first settlement must be the first grid point of its interval after the first 1m candle (HYPE: 10:30, then 12:00), else `first_settlement_unproven`. Replaces the plan's "pre-listing span". |
+| Holdout unit | Part of the funding holdout that the holdout integrity path checks on its own: "2025-10 sealed part" and each month 2025-11..2026-09 (HYPE likewise). | `holdoutUnits` | Reported with availability, CHECKSUM and pass or fail only; a failure names only the unit; an empty unit fails. A failing unit blocks every holdout evaluation (m3). 2026-10 is outside F1a-4. |
+| 2025-10 sealed part | The holdout unit of the 2025-10 file's rows at or after 2025-10-17T00:00Z, together with the boundary pair (the last research settlement and the first holdout settlement). | `'2025-10 sealed part'` | The research reader reads only `calc_time` of these rows, for routing and order. A settlement at 2025-10-17T00:00:00.002Z belongs here. |
+| Holdout integrity path | Check of the holdout units, separate from the research reader: it reads every field of their rows and applies the parser rules and the schedule check to every holdout settlement and its predecessor. | `checkHoldout` | No count, time, interval, rate, row number or size leaves it, and nothing from it enters the research columns, coverage, anomalies or digest (amendment 1 A1). |
+| Funding digest | sha256 of the canonical JSON of a research read: schema `f1-funding-v1`, instrument, window, sources {file, sha256} in file order, coverage, anomalies and the columns, rates as canonical exact decimal strings. | `digest` | Code identity sits beside it: the sha256 of every module in the import closure of `src/f1-funding.mjs` and the git revision (m5). |
+| Mark-price proxy | The trade close of the 1m candle that opens one minute before a settlement, used as the price of a funding payment. | not in code yet | Never "the mark price". Its error figures (at most 15 bp of price, 0.002 bp of notional) hold only for its sample of 1,708 settlements, 2024-08..2025-09 (m2). Payment phase. |
 | Variant | One concrete parameter set of a candidate, expanded from its grid, on one symbol and timeframe. | `variant` | `variantId`; a queue item is exactly one variant. |
 | Variant registry | Append-only log with one row per backtest run: identity (variant, parameters, symbol, instrument, timeframe, entry mode, costs, risk), period, manifest and engine hashes, metrics. | `registry` | `results/variant-registry.jsonl`; the identity comes from `identityFor`. Raw N is read from it from F1b on. |
 | Trial | One counted evaluation of a distinct variant, pass or fail; an exact rerun is not a new trial. | `trialCount` | Raw N = trials in the full registry history across markets; the registry separates reserved grid size, evaluated unique trials and technical repeats. Today `trialCount` is a proxy: distinct variants in earlier reports plus the queued batch. |
@@ -145,6 +160,7 @@ Sources: [factory spec F1](factory-spec-f1.md), [F1a-1 data identity](f1/f1a-1-i
 | entry mode, entry style | Entry style | Spec term; code keeps `entryMode` until F1e adds the new styles. |
 | stop-first collision, ambiguous fill | Ambiguous fill | Spec name for the same stop-first rule on finer bars. |
 | USD-M perpetual, USDT-margined perpetual, linear perp, perp | Linear perpetual (`linear_perpetual`) | One market type; the venue belongs in exchange. |
+| mark price (for the 1m close before a settlement), mark proxy | Mark-price proxy | The 1m trade close only stands in for Binance's mark price (F1a-4 m2). |
 
 ## Homonyms to disambiguate
 
@@ -169,6 +185,7 @@ Sources: [factory spec F1](factory-spec-f1.md), [F1a-1 data identity](f1/f1a-1-i
 | Snapshot | Frozen content-addressed series vs offline raw inputs (`snapshotInputs`) that get frozen into one | Use `snapshot` only for frozen bytes; call `snapshotInputs` offline inputs. |
 | Incomplete | Incomplete bar (aggregate slot with some but not all minutes, F1a-3) vs run status `incomplete` (exit 3: the run finished but a file is missing) | Use `incomplete bar` for the aggregate case and `exit 3` or `incomplete run` for the status. |
 | Fill | Archive gap fill (a minute a monthly 1m unit takes from a daily Vision file: fill source, `filledRanges`) vs execution or backtest fill of a trade (see Execution and Ambiguous fill) | Use `daily fill`, `fill source` and `filled minutes` for the archive case; `execution`, `paper fill` and `backtest fill` for trades. |
+| Interval | Kline interval (`interval`: `1m` to `1w`, the bar length) vs funding interval (`intervalHours`: 1, 2, 4 or 8 h between settlements) | Use `kline interval` and `funding interval` when both can be meant. |
 
 ## Terms I am guessing about
 
