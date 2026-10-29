@@ -6,9 +6,13 @@
 //   node src/f1-funding.mjs download|verify [--symbols BTC,ETH,SOL,XRP,DOGE,HYPE] [--data-dir DIR] [--manifest FILE] [--max-rss-mib N (1..512)]
 // download is the only network step (src/vision-transport.mjs fetchSource, unchanged). JSON summary on stdout: counts,
 // times and relative Vision paths only, never rates or sizes. Exit: 0 ok, 1 failure or stop, 2 usage, 3 a file missing.
+import fs from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { PERIODS } from './h2-contract.mjs';
+import { canonicalJson, hasExactKeys } from './f1-1m-format.mjs';
 import { verifyZip, readZipMember, planFundingUnits, visionInstrument, VISION_SYMBOLS } from './vision-source.mjs';
 import { notListedSources, localVersions, readVerifiedSource, readManifest } from './f1-1m-store.mjs';
 import { fetchSource } from './vision-transport.mjs';
@@ -189,7 +193,7 @@ export function researchHistory(symbol, { zipRoot, firstCandle = () => null, che
   const units = planFundingUnits(symbol), instrument = units[0].instrument;
   const research = units.filter(u => u.period === 'research');
   const listing = notListedSources(units, { zipRoot });
-  const sources = [], notListed = [], gaps = [], failures = [], coverage = [], anomalies = [], changes = [];
+  const sources = [], spans = [], notListed = [], gaps = [], failures = [], coverage = [], anomalies = [], changes = [];
   const columns = { settlementTime: [], calcTime: [], rate: [], rateDecimal: [], intervalHours: [], elapsedHours: [], sourceIndex: [] };
   let previous = null, broken = false, prior = false, firstListed = null, missingFirst = false;
   for (const unit of research) {
@@ -211,6 +215,7 @@ export function researchHistory(symbol, { zipRoot, firstCandle = () => null, che
       parsed = parseFunding(readZipMember(loaded.zip, source.csvName), source);
     } catch (error) { failures.push({ file: source.file, error: error.message }); broken = true; continue; }
     const index = sources.push({ file: source.file, sha256: loaded.sha256 }) - 1;
+    spans.push([unit.startMs, unit.endMs]);
     const c = parsed.columns;
     let inWindow = 0;
     for (let i = 0; i < parsed.rowCount; i++) {
@@ -240,7 +245,95 @@ export function researchHistory(symbol, { zipRoot, firstCandle = () => null, che
     const t = columns.settlementTime[n - 1], h = columns.intervalHours[n - 1];
     if (SEAL_MS - t > h * HOUR_MS) anomalies.push({ time: iso(t), class: 'trailing_edge', intervalHours: h });
   }
-  return { instrument, planned: research.length, sources, notListed, gaps, failures, coverage: coverage.sort(byTime), anomalies: anomalies.sort(byTime), changes, columns };
+  return { instrument, planned: research.length, sources, spans, notListed, gaps, failures, coverage: coverage.sort(byTime), anomalies: anomalies.sort(byTime), changes, columns };
+}
+
+// Code identity (m5), recorded beside the digest: the sha256 of every module in the local import closure of this module
+// (static relative imports), sorted by path, and the git revision.
+const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
+const IMPORT = /^(?:import|export)\s[^;'"]*?\bfrom\s+'(\.{1,2}\/[^']+)'|^import\s+'(\.{1,2}\/[^']+)'/gm;
+function gitRevision() {
+  const git = args => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+  try { return { gitRevision: git(['rev-parse', 'HEAD']), gitDirty: git(['status', '--porcelain', '--untracked-files=no']) !== '' }; }
+  catch { return { gitRevision: null, gitDirty: null }; }
+}
+export function codeIdentity() {
+  const hashes = new Map(), queue = [fileURLToPath(import.meta.url)];
+  while (queue.length) {
+    const file = queue.pop();
+    if (hashes.has(file)) continue;
+    const bytes = fs.readFileSync(file);
+    hashes.set(file, sha256(bytes));
+    for (const m of bytes.toString('utf8').matchAll(IMPORT)) queue.push(path.resolve(path.dirname(file), m[1] ?? m[2]));
+  }
+  const modules = [...hashes].map(([file, hash]) => ({ path: path.relative(ROOT, file).split(path.sep).join('/'), sha256: hash }))
+    .sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
+  return { modules, ...gitRevision() };
+}
+
+// The research window [start, end) of a history: fresh columns (elapsedHours NaN = null; sourceIndex into sources),
+// sources {file, sha256} in file order (the files whose research unit overlaps the window, plus the file of the first
+// settlement's predecessor), the coverage and anomalies of the window, and the digest of m5: sha256 of the canonical
+// JSON of {schema, instrument, dataStart, dataEnd, sources, coverage, anomalies, columns} with rates as canonical decimals.
+function researchWindow(h, instrument, start, end) {
+  const c = h.columns, t = c.settlementTime;
+  let i0 = 0;
+  while (i0 < t.length && t[i0] < start) i0++;
+  let i1 = i0;
+  while (i1 < t.length && t[i1] < end) i1++;
+  const used = new Set(h.spans.flatMap(([a, b], k) => a < end && b > start ? [k] : []));
+  if (i0 < i1 && i0 > 0 && !Number.isNaN(c.elapsedHours[i0])) used.add(c.sourceIndex[i0 - 1]);
+  const keep = [...used].sort((a, b) => a - b), remap = new Map(keep.map((k, j) => [k, j]));
+  const sources = keep.map(k => ({ file: h.sources[k].file, sha256: h.sources[k].sha256 }));
+  const coverage = h.coverage.filter(e => Date.parse(e.start) < end && Date.parse(e.end) > start);
+  const anomalies = h.anomalies.filter(a => a.class === 'empty_file' ? sources.some(s => s.file === a.file) : Date.parse(a.time) >= start && Date.parse(a.time) < end);
+  const columns = { settlementTime: Float64Array.from(t.slice(i0, i1)), calcTime: Float64Array.from(c.calcTime.slice(i0, i1)), rate: Float64Array.from(c.rate.slice(i0, i1)),
+    intervalHours: Uint8Array.from(c.intervalHours.slice(i0, i1)), elapsedHours: Float64Array.from(c.elapsedHours.slice(i0, i1)),
+    sourceIndex: Uint32Array.from(c.sourceIndex.slice(i0, i1).map(k => remap.get(k))) };
+  const dataStart = iso(start), dataEnd = iso(end);
+  const digest = sha256(canonicalJson({ schema: 'f1-funding-v1', instrument, dataStart, dataEnd, sources, coverage, anomalies,
+    columns: { settlementTime: [...columns.settlementTime], calcTime: [...columns.calcTime], rate: c.rateDecimal.slice(i0, i1), intervalHours: [...columns.intervalHours],
+      elapsedHours: [...columns.elapsedHours].map(x => Number.isNaN(x) ? null : x), sourceIndex: [...columns.sourceIndex] } }));
+  return { instrument, dataStart, dataEnd, sources, coverage, anomalies, columns, digest };
+}
+
+const SYMBOL_OF = Object.fromEntries(Object.entries(VISION_SYMBOLS).map(([symbol, contract]) => [contract, symbol]));
+const ISO_MS = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.000Z$/;
+const RESEARCH_END_MS = Date.parse(PERIODS.research[1]);
+const readerFail = message => { throw new Error(`funding reader: ${message}`); };
+const isoTime = s => typeof s === 'string' && ISO_MS.test(s) && new Date(Date.parse(s)).toISOString() === s;
+const deepFreeze = value => { if (value && typeof value === 'object' && !ArrayBuffer.isView(value)) { Object.values(value).forEach(deepFreeze); Object.freeze(value); } return value; };
+function checkRequest(request) {
+  if (!hasExactKeys(request, ['instrument', 'dataStart', 'dataEnd'])) readerFail('request must have exactly instrument, dataStart and dataEnd');
+  const { instrument, dataStart, dataEnd } = request;
+  if (!hasExactKeys(instrument, ['exchange', 'market', 'contract']) || instrument.exchange !== 'binance' || instrument.market !== 'linear_perpetual'
+    || !Object.hasOwn(SYMBOL_OF, instrument.contract)) readerFail('unsupported instrument (Binance USD-M Vision contracts only)');
+  if (!isoTime(dataStart) || !isoTime(dataEnd)) readerFail('dataStart and dataEnd must be ISO strings with .000Z');
+  const start = Date.parse(dataStart), end = Date.parse(dataEnd);
+  if (!(start < end)) readerFail('empty window: dataStart must be before dataEnd');
+  if (start < RESEARCH_START_MS || end > RESEARCH_END_MS) readerFail(`window outside the research window ${PERIODS.research.join('..')}: the holdout is sealed`);
+  return { instrument: { exchange: instrument.exchange, market: instrument.market, contract: instrument.contract }, start, end };
+}
+// The research reader (plan section f, m5): read({instrument, dataStart, dataEnd}) inside the research window only.
+// Every research source of the instrument is verified and parsed on each read (storage S1, compute on read) and a
+// failed research source fails the read; gaps and stops are returned as coverage and anomalies. The result is frozen and
+// holds fresh typed arrays. Sealed rows give calc_time only; no holdout field is read. manifestPath (the F1a-2 1m
+// manifest) gives the first 1m candle of an instrument listed inside the window.
+export function openResearchFunding(options) {
+  if (!options || typeof options !== 'object' || Object.keys(options).some(k => !['zipRoot', 'manifestPath'].includes(k)) || typeof options.zipRoot !== 'string'
+    || (options.manifestPath !== undefined && typeof options.manifestPath !== 'string')) readerFail('options must be zipRoot and an optional manifestPath');
+  const { zipRoot, manifestPath } = options;
+  const firstCandle = contract => manifestPath === undefined ? null : firstCandleOf(manifestPath, contract);
+  const code = deepFreeze(codeIdentity());
+  return Object.freeze({
+    read(request) {
+      const { instrument, start, end } = checkRequest(request);
+      const h = researchHistory(SYMBOL_OF[instrument.contract], { zipRoot, firstCandle });
+      if (h.failures.length) readerFail(`research source ${h.failures[0].file} fails: ${h.failures[0].error}`);
+      const { columns, ...rest } = researchWindow(h, instrument, start, end);
+      return Object.freeze({ ...deepFreeze(rest), columns: Object.freeze(columns), codeIdentity: code });
+    },
+  });
 }
 
 // Holdout integrity (amendment 1 A1): per holdout unit ("2025-10 sealed part", then 2025-11..2026-09) only availability,
@@ -284,11 +377,12 @@ export function verifyFunding({ symbols, zipRoot, firstCandle = () => null, guar
     for (let i = 0; i < n; i++) offsetMaxMs = Math.max(offsetMaxMs, h.columns.calcTime[i] - t[i]);
     return { contract: h.instrument.contract, sources: { planned: h.planned, verified: h.sources.length, notListed: h.notListed.length, gaps: h.gaps.length, failed: h.failures.length },
       researchSettlements: n, firstSettlement: n ? iso(t[0]) : null, lastSettlement: n ? iso(t[n - 1]) : null, offsetMaxMs: n ? offsetMaxMs : null,
-      changes: h.changes, notListed: h.notListed, gaps: h.gaps, failures: h.failures, coverage: h.coverage, anomalies: h.anomalies, holdout };
+      changes: h.changes, notListed: h.notListed, gaps: h.gaps, failures: h.failures, coverage: h.coverage, anomalies: h.anomalies,
+      digest: h.failures.length ? null : researchWindow(h, h.instrument, RESEARCH_START_MS, RESEARCH_END_MS).digest, holdout };
   });
   const status = out.some(s => s.failures.length || s.holdout.some(u => u.result === 'fail')) ? 'failed'
     : out.some(s => s.anomalies.length) ? 'stopped' : out.some(s => s.gaps.length) ? 'incomplete' : 'ok';
-  return { command: 'verify', status, symbols: out };
+  return { command: 'verify', status, symbols: out, code: codeIdentity() };
 }
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
