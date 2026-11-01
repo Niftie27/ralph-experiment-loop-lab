@@ -11,13 +11,19 @@ const sampleName='ADAUSDT-fundingRate-2025-04.csv';
 // Read the real member by its local ZIP record, independently of the production parser.
 const realMember=()=>{const start=30+sample.readUInt16LE(26)+sample.readUInt16LE(28);return inflateRawSync(sample.subarray(start,start+sample.readUInt32LE(18)));};
 const noRows=(r)=> {assert.equal(text(r,'timing.csv'),'symbol,segment,calc_time,funding_interval_hours\n');assert.equal(text(r,'episodes.csv'),'episode,symbol,segment,part,calc_time,funding_interval_hours,status\n');assert.equal(text(r,'pairs.csv'),'symbol,segment,p_calc_time,p_h,r_calc_time,r_h,elapsed_h,class,era,cross_era,tree,roles\n');assert.equal(text(r,'e4.csv'),'symbol,calc_time,funding_interval_hours,hourly_related\n');};
-const frozen=async routes=> {const r=await run(routes);assert.equal(r.code,0);assert.deepEqual(Object.keys(r.files).sort(),['checksums.sha256','outcome.csv','summary.txt']);assert.equal(text(r,'outcome.csv'),'stage,outcome,reason\nscript,P0,freeze_unresolved\n');sums(r);return r;};
+// F1-branch O6 (spec v6.2 O6, F1): the freeze items reached (0 or false otherwise), then node and the E1 module hashes in path byte order.
+const MODULES=[['f1-1m-format.mjs','b261d673ae36576273dbf3f3d5bc14a89901d71990f3388f2e08b1b3ae17820f'],['f1-1m-store.mjs','1795c7344d5da729caf0c71ff74b5f08ba45ab03e09338f6a5daab289f745ea2'],['f1-funding.mjs','9f6741134e6f59463c6cda371a0355a387650fea8106efcf38ac8a843004f628'],['h2-contract.mjs','8fee0b4dbd7f03d7c00f1c8fe7461b7772bb3deb93f16d74850bd043df5beaf1'],['vision-1m.mjs','09fdbd908159c12eda159f34fd0b89aae6723e8f38b345277a75bab0f4121f30'],['vision-source.mjs','d918bf6804803028d56e7e9c42efd459fc94b77f6cf4a4ed57dba7f3fca1d891'],['vision-transport.mjs','ed051e5a6b15aefcbacaf9be432e63d181a75b3b711b1ab8acd985f2b5a6b130']];
+const f1Summary=counts=>Object.entries({listing_pages:1,prefixes_received:0,...Object.fromEntries(['BTCUSDT','ETHUSDT','SOLUSDT','XRPUSDT','DOGEUSDT','HYPEUSDT'].map(s=>['dropped:'+s,false])),symbols_listed:0,symbols_with_keys:0,noncanonical_names:0,keys_frozen:0,...counts}).map(([k,v])=>k+' '+v+'\n').join('')+'node v24.22.0\n'+MODULES.map(([f,h])=>'module:experiments/strategy-destruction-filter/src/'+f+' '+h+'\n').join('');
+// D-14: frozen() checks the full summary.txt; listing_pages counts listing pages received with HTTP 200.
+const frozen=async(routes,counts={},requests)=> {const r=await run(routes);assert.equal(r.code,0);assert.deepEqual(Object.keys(r.files).sort(),['checksums.sha256','outcome.csv','summary.txt']);assert.equal(text(r,'outcome.csv'),'stage,outcome,reason\nscript,P0,freeze_unresolved\n');assert.equal(text(r,'summary.txt'),f1Summary(counts));if(requests!==undefined)assert.equal(r.requests.length,requests);sums(r);return r;};
 
 test('listing: exact multipage URLs, six excluded, ampersand, percent and non-ASCII real member',async()=> {
  const nonAscii=readFileSync(new URL('../probe-4a/selected.csv',import.meta.url),'utf8').split('\n').find(l=>l.startsWith('05,')).split(',')[1];
  const syms=['Z%USDT','A&USDT',nonAscii,'BTCUSDT','ETHUSDT','SOLUSDT','XRPUSDT','DOGEUSDT','HYPEUSDT'];
  const entries=syms.slice(0,3).flatMap(symbol=>['2025-04','2025-05','2025-06','2025-07'].map(month=>({symbol,month,body:csv([month+'-01T00:00Z',8])})));
- entries.find(e=>e.symbol===nonAscii&&e.month==='2025-04').zip=zip(nonAscii+'-fundingRate-2025-04.csv',realMember());
+ // D-13: the non-ASCII member carries flags 0x0800 in both headers, as a real non-ASCII Vision zip does (v6.2 I1, C34).
+ const nonAsciiZip=zip(nonAscii+'-fundingRate-2025-04.csv',realMember());nonAsciiZip.writeUInt16LE(0x0800,6);nonAsciiZip.writeUInt16LE(0x0800,nonAsciiZip.readUInt32LE(nonAsciiZip.length-6)+8);
+ entries.find(e=>e.symbol===nonAscii&&e.month==='2025-04').zip=nonAsciiZip;
  const routes=sources(entries,syms),r=await run(routes,{repeats:2});
  assert.equal(r.code,0);assert.equal(text(r,'symbols.txt'),'A&USDT\nZ%USDT\n'+nonAscii+'\n');
  assert.equal(text(r,'keys.txt'),entries.map(e=>key(e.symbol,e.month)).sort((a,b)=>Buffer.compare(Buffer.from(a),Buffer.from(b))).join('\n')+'\n');
@@ -26,16 +32,18 @@ test('listing: exact multipage URLs, six excluded, ampersand, percent and non-AS
  for(const p of Object.keys(r.files))assert.ok(r.results[0].files[p].equals(r.results[1].files[p]),'deterministic '+p);
  status(r,nonAscii,'2025-04','verified_nonempty');sums(r);
 });
-for(const [name,char] of [['comma',','],['plus','+'],['colon',':'],['NBSP','\u00a0'],['ideographic space','\u3000'],['BOM','\ufeff'],['control','\u0001']])test('freeze unresolved '+name,async()=>frozen(new Map([[listPath(root),page([root+'A'+char+'USDT/'])]])));
+// S1 forbidden characters; hash, at, semicolon, quote (M50) and U+007F to U+009F (M51) added in the m9 fix batch.
+for(const [name,char] of [['comma',','],['plus','+'],['colon',':'],['NBSP','\u00a0'],['ideographic space','\u3000'],['BOM','\ufeff'],['control','\u0001'],['hash','#'],['at','@'],['semicolon',';'],['double quote','"'],['DEL U+007F','\u007f'],['NEL U+0085','\u0085'],['C1 U+009F','\u009f']])test('freeze unresolved '+name,async()=>frozen(new Map([[listPath(root),page([root+'A'+char+'USDT/'])]]),{prefixes_received:1}));
 test('freeze unresolved invalid UTF-8',async()=>frozen(new Map([[listPath(root),Buffer.concat([Buffer.from('<ListBucketResult><IsTruncated>false</IsTruncated><CommonPrefixes><Prefix>'+root),Buffer.from([0xff]),Buffer.from('/</Prefix></CommonPrefixes></ListBucketResult>')])]])));
-test('freeze unresolved repeated marker',async()=>frozen(new Map([[listPath(root),page([],[],'repeat')],[listPath(root,'repeat'),page([],[],'repeat')]])));
-test('freeze unresolved repeated CommonPrefix across pages',async()=>frozen(new Map([[listPath(root),page([root+'A/'],[],'next')],[listPath(root,'next'),page([root+'A/'])]])));
-test('freeze unresolved repeated CommonPrefix within page',async()=>frozen(new Map([[listPath(root),page([root+'A/',root+'A/'])]])));
-test('freeze unresolved repeated Key',async()=>{const k=root+key('A','2025-05');await frozen(new Map([[listPath(root),page([root+'A/'])],[listPath(root+'A/'),page([],[k,k])]]));});
-test('freeze unresolved truncated without marker',async()=>frozen(new Map([[listPath(root),page([],[],null,true)]])));
-test('freeze unresolved root page limit',async()=>{const m=new Map();for(let i=0;i<30;i++)m.set(listPath(root,i?String(i):undefined),page([],[],String(i+1)));const r=await frozen(m);assert.equal(r.requests.length,30);});
-test('freeze unresolved symbol page limit',async()=>{const m=new Map([[listPath(root),page([root+'A/'])]]);for(let i=0;i<5;i++)m.set(listPath(root+'A/',i?String(i):undefined),page([],[],String(i+1)));const r=await frozen(m);assert.equal(r.requests.length,6);});
-test('freeze unresolved listing twice fails',async()=>{const r=await frozen(new Map([[listPath(root),500]]));assert.equal(r.requests.length,2);});
+test('freeze unresolved repeated marker',async()=>frozen(new Map([[listPath(root),page([],[],'repeat')],[listPath(root,'repeat'),page([],[],'repeat')]]),{listing_pages:2}));
+test('freeze unresolved repeated CommonPrefix across pages',async()=>frozen(new Map([[listPath(root),page([root+'A/'],[],'next')],[listPath(root,'next'),page([root+'A/'])]]),{listing_pages:2,prefixes_received:2}));
+test('freeze unresolved repeated CommonPrefix within page',async()=>frozen(new Map([[listPath(root),page([root+'A/',root+'A/'])]]),{prefixes_received:2}));
+test('freeze unresolved repeated Key',async()=>{const k=root+key('A','2025-05');await frozen(new Map([[listPath(root),page([root+'A/'])],[listPath(root+'A/'),page([],[k,k])]]),{listing_pages:2,prefixes_received:1,symbols_listed:1});});
+// D-14 (M09): S1 a truncated page without NextMarker leaves the freeze unresolved after exactly one request.
+test('freeze unresolved truncated without marker',async()=>frozen(new Map([[listPath(root),page([],[],null,true)]]),{},1));
+test('freeze unresolved root page limit',async()=>{const m=new Map();for(let i=0;i<30;i++)m.set(listPath(root,i?String(i):undefined),page([],[],String(i+1)));await frozen(m,{listing_pages:30},30);});
+test('freeze unresolved symbol page limit',async()=>{const m=new Map([[listPath(root),page([root+'A/'])]]);for(let i=0;i<5;i++)m.set(listPath(root+'A/',i?String(i):undefined),page([],[],String(i+1)));await frozen(m,{listing_pages:6,prefixes_received:1,symbols_listed:1},6);});
+test('freeze unresolved listing twice fails',async()=>{await frozen(new Map([[listPath(root),500]]),{listing_pages:0},2);});
 for(const entity of ['&bogus;','&#xD800;','&'])test('strict XML entity '+entity,()=>assert.throws(()=>parsePage(Buffer.from('<ListBucketResult><IsTruncated>false</IsTruncated><CommonPrefixes><Prefix>'+entity+'</Prefix></CommonPrefixes></ListBucketResult>'))));
 
 for(const check of ['missing_checksum','checksum','hash','archive','member','crc'])test('I1 '+check,async()=> {
@@ -122,9 +130,10 @@ test('E4 hourly endpoints only, context remains false',async()=> {
  const r=await run(sources([{symbol:'A',month:'2025-05',body:csv(['2025-05-03T00:00:15Z',3],['2025-05-03T08:00:15Z',1],['2025-05-03T09:00:15Z',1],['2025-05-03T12:00Z',4],['2025-05-03T16:00:15Z',4])}]));
  assert.equal(text(r,'e4.csv'),'symbol,calc_time,funding_interval_hours,hourly_related\nA,1746230415000,3,true\nA,1746259215000,1,true\nA,1746262815000,1,true\nA,1746288015000,4,false\n');assert.equal(text(r,'outcome.csv'),'stage,outcome,reason\nscript,P0,e4_hourly_related\n');
 });
-test('pins: changed closure yields P0 pin_mismatch',async()=> {
+// D-07: v6.2 E1 (C38, C42): a pin difference before any request is a preflight rejection: no request, no import, no result.
+test('pins: changed closure is a preflight rejection with no request and no output',async()=> {
  const temp=mkdtempSync(join(tmpdir(),'m9-pin-'));
- try {cpSync(closure,temp,{recursive:true});appendFileSync(join(temp,'experiments/strategy-destruction-filter/src/f1-funding.mjs'),'\n// offline pin mutation\n');const r=await run(sources([{symbol:'A',month:'2025-05'}]),{closureRoot:temp});assert.equal(text(r,'outcome.csv'),'stage,outcome,reason\nscript,P0,pin_mismatch\n');}
+ try {cpSync(closure,temp,{recursive:true});appendFileSync(join(temp,'experiments/strategy-destruction-filter/src/f1-funding.mjs'),'\n// offline pin mutation\n');const r=await run(sources([{symbol:'A',month:'2025-05'}]),{closureRoot:temp});assert.equal(r.requests.length,0);assert.equal(r.code,4);assert.deepEqual(r.names,[]);assert.deepEqual(r.stderr,['preflight rejection\n']);}
  finally {assert.ok(temp.startsWith(resolve(tmpdir())+'/m9-pin-'));if(existsSync(temp))rmSync(temp,{recursive:true});}
 });
 
@@ -158,9 +167,10 @@ test('F6 declared inflated-member size abort',async()=> {
 test('F6 line bound aborts before parsing row fields',async()=> {
  const r=await run(sources([{symbol:'A',month:'2025-05',body:may+',8,'+'x'.repeat(65536)+'\n'}]));assert.equal(r.code,3);assert.equal(r.invalid,'invalid line\n');assert.deepEqual(r.names,['out0.invalid']);
 });
+// D-03: v6.2 F6 records the single reason resource_2025_10 for a resource abort in a 2025-10 file, never the bound hit.
 test('F6 million-line bound counts sealed lines without exposing them',async()=> {
  const body=(time('2025-10-17Z')+'\n').repeat(1000001);
- const r=await run(sources([{symbol:'A',month:'2025-10',body}]));assert.equal(r.code,3);assert.equal(r.invalid,'invalid lines\n');assert.deepEqual(r.names,['out0.invalid']);
+ const r=await run(sources([{symbol:'A',month:'2025-10',body}]));assert.equal(r.code,3);assert.equal(r.invalid,'invalid resource_2025_10\n');assert.deepEqual(r.names,['out0.invalid']);assert.deepEqual(r.stdout,['invalid resource_2025_10\n']);
 });
 test('I2 resource edges permit exactly 65536-byte sealed line and 1000000 lines',()=> {
  assert.equal(rows(Buffer.from(time('2025-10-17Z')+','+'x'.repeat(65536-14)+'\n'),'2025-10').times.length,0);

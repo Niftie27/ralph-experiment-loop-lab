@@ -1,4 +1,4 @@
-// m9 spec v5: offline-testable acquisition, fail-closed integrity, cadence and canonical outputs.
+// m9 spec v6.2: offline-testable acquisition, fail-closed integrity, cadence and canonical outputs.
 // No rate decoding. Only scheduleClass is called from the pinned import closure.
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync, renameSync, rmSync, lstatSync } from 'node:fs';
@@ -16,7 +16,8 @@ const CLASSES = ['regular','interval_change','bridge','off_grid','unexplained_ga
 const ERAS = ['era1','era2','era3'];
 const HOUR = 3600000, W = Date.parse('2025-05-01Z'), SEAL = Date.parse('2025-10-17Z');
 const TREE_A = Date.parse('2025-08-31T08:00Z'), TREE_B = Date.parse('2025-09-01T04:00Z');
-export const LIMITS = Object.freeze({ listing:16*1024*1024, sidecar:4096, zip:16*1024*1024, member:64*1024*1024, line:65536, lines:1000000, total:1073741824, output:256*1024*1024, keys:10000 });
+// errorBody: per-response limit for non-200 bodies (F6); provisional until the run document's probe of one real 404 body freezes it.
+export const LIMITS = Object.freeze({ listing:16*1024*1024, sidecar:4096, zip:16*1024*1024, member:64*1024*1024, line:65536, lines:1000000, total:1073741824, output:256*1024*1024, keys:10000, errorBody:65536 });
 const MODULE_ROOT = 'experiments/strategy-destruction-filter/src/';
 const PINS = {
  'f1-funding.mjs':'9f6741134e6f59463c6cda371a0355a387650fea8106efcf38ac8a843004f628',
@@ -35,9 +36,11 @@ const verified = s => s === 'verified_empty' || s === 'verified_nonempty';
 const stopped = c => !CLASSES.slice(0,3).includes(c);
 export class Abort extends Error { constructor(reason) { super(reason); this.reason = reason; } }
 class Freeze extends Error {}
+// F5 invalidation with a named reason (no host or path in the reason).
+class Invalid extends Error { constructor(reason) { super(reason); this.reason = reason; } }
 class Exclude extends Error { constructor(check) { super(check); this.check = check; } }
 const reject = check => { throw new Exclude(check); };
-export function bound(kind,n) { if (n > LIMITS[kind]) throw new Abort(kind); }
+export function bound(kind,n) { if (n > LIMITS[kind]) throw new Abort(kind==='errorBody'?'error_body':kind); }
 export class Budget {
  constructor() { this.total = 0; this.output = 0; }
  receive(kind, n, attemptBytes) { this.total += n; bound('total',this.total); bound(kind,attemptBytes); }
@@ -87,8 +90,11 @@ export function requester(options,budget) {
    try {
     const res=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(30000)});
     lastStatus=res.status;
-    if (res.body) for await (const ch of res.body) { n+=ch.length; budget.receive(kind,ch.length,n); chunks.push(ch); }
-    if (res.status===200) return {status:200,body:Buffer.concat(chunks,n)};
+    // F6: the per-kind bound applies to HTTP 200 bodies only; a non-200 body counts toward the total and the error-body limit
+    // and is consumed as opaque chunks that are never decoded or retained.
+    const ok=res.status===200;
+    if (res.body) for await (const ch of res.body) { n+=ch.length; budget.receive(ok?kind:'errorBody',ch.length,n); if(ok)chunks.push(ch); }
+    if (ok) return {status:200,body:Buffer.concat(chunks,n)};
    } catch(e) { if(e instanceof Abort) throw e; lastStatus=null; }
    finally { end=Date.now(); }
   }
@@ -113,7 +119,9 @@ export function member(buf,name) {
  if(p!==end) reject('archive');
  if(records.length!==1) reject('member');
  const c=records[0], flags=buf.readUInt16LE(c+8), method=buf.readUInt16LE(c+10), packed=buf.readUInt32LE(c+20), declared=buf.readUInt32LE(c+24), nl=buf.readUInt16LE(c+28), local=buf.readUInt32LE(c+42);
- if(flags!==0||method!==8||!buf.subarray(c+46,c+46+nl).equals(Buffer.from(name))) reject('member');
+ // I1 (C34): flags exactly 0, or exactly 0x0800 only if the expected name has a byte above 0x7F; local flags must equal these.
+ const nameBytes=Buffer.from(name), flagsOk=flags===0||(flags===0x0800&&nameBytes.some(b=>b>0x7f));
+ if(!flagsOk||method!==8||!buf.subarray(c+46,c+46+nl).equals(nameBytes)) reject('member');
  if(local+30>at||buf.readUInt32LE(local)!==0x04034b50) reject('member');
  const ln=buf.readUInt16LE(local+26), extra=buf.readUInt16LE(local+28), start=local+30+ln+extra;
  if(buf.readUInt16LE(local+6)!==flags||buf.readUInt16LE(local+8)!==method||ln!==nl||!buf.subarray(local+30,local+30+ln).equals(buf.subarray(c+46,c+46+nl))||start+packed>at) reject('member');
@@ -182,9 +190,9 @@ function options(argv) {
  for(const k of ['--pause-ms','--retry-ms']) if(o[k]!==undefined && (!/^\d+$/.test(o[k])||!Number.isSafeInteger(+o[k]))) return null;
  return {out:resolve(o['--out']),closure:resolve(o['--closure-root']),list:o['--list-base']||'https://s3-ap-northeast-1.amazonaws.com/data.binance.vision',download:o['--download-base']||'https://data.binance.vision/'+ROOT,pause:o['--pause-ms']===undefined?250:+o['--pause-ms'],retry:o['--retry-ms']===undefined?2000:+o['--retry-ms']};
 }
-async function pins(root) {
+function pins(root) {
  const lines=[['node',process.version]];let mismatch=process.version!=='v24.22.0';
- for(const file of Object.keys(PINS).sort(cmp)) {const hash=sha(readFileSync(join(root,MODULE_ROOT,file)));lines.push(['module:'+MODULE_ROOT+file,hash]);if(hash!==PINS[file]) mismatch=true;}
+ for(const file of Object.keys(PINS).sort(cmp)) {let hash='';try {hash=sha(readFileSync(join(root,MODULE_ROOT,file)));} catch {mismatch=true;}lines.push(['module:'+MODULE_ROOT+file,hash]);if(hash!==PINS[file]) mismatch=true;}
  return {lines,mismatch};
 }
 async function freeze(o,get,stats) {
@@ -205,7 +213,8 @@ async function freeze(o,get,stats) {
  const symbols=[];
  for(const prefix of root.prefixes) {
   const symbol=prefix.startsWith(ROOT)&&prefix.endsWith('/')?prefix.slice(ROOT.length,-1):'';
-  if(!symbol||symbol.includes('/')||/[,"#@:;+\u0000-\u001f\u007f-\u009f\s]/u.test(symbol)) throw new Freeze();
+  // S1 (C36): a symbol "." or ".." is a URL dot segment and leaves the freeze unresolved.
+  if(!symbol||symbol==='.'||symbol==='..'||symbol.includes('/')||/[,"#@:;+\u0000-\u001f\u007f-\u009f\s]/u.test(symbol)) throw new Freeze();
   if(SIX.includes(symbol)) stats['dropped:'+symbol]=true;else symbols.push(symbol);
  }
  symbols.sort(cmp);stats.symbols_listed=symbols.length;
@@ -225,7 +234,12 @@ async function freeze(o,get,stats) {
  files.sort((a,b)=>cmp(a.key,b.key));stats.keys_frozen=files.length;stats.symbols_with_keys=new Set(files.map(f=>f.symbol)).size;
  bound('keys',files.length);return {symbols,files};
 }
+// F6: a resource abort while a 2025-10 file is fetched, inflated or parsed records only resource_2025_10, never the bound hit.
 async function acquire(f,completion,get,o,output,selected) {
+ try {await acquireKey(f,completion,get,o,output,selected);}
+ catch(e) {if(e instanceof Abort&&f.month==='2025-10')throw new Abort('resource_2025_10');throw e;}
+}
+async function acquireKey(f,completion,get,o,output,selected) {
  const url=o.download+enc(f.key,true), base=basename(f.key);
  const sc=await get('sidecar',url+'.CHECKSUM');
  if(sc.status!==200) {f.status=completion&&sc.status===404?'excluded:missing_checksum':'not_verified';}
@@ -281,8 +295,15 @@ async function reports(files,output,stats,scheduleClass) {
  const treeFiles=files.filter(f=>f.symbol==='TREEUSDT');
  if(treeFiles.some(f=>f.data&&f.data.times.some(t=>inTree(Math.floor(t/HOUR)*HOUR)))) {
   treeStatus='partial';
-  const aug=treeFiles.find(f=>f.month==='2025-08'),sep=treeFiles.find(f=>f.month==='2025-09');
-  if(aug?.status==='verified_nonempty'&&sep?.status==='verified_nonempty'&&Math.floor(aug.data.times[0]/HOUR)*HOUR<=TREE_A&&Math.floor(sep.data.times.at(-1)/HOUR)*HOUR>=TREE_B) treeStatus='available';
+  // S3: 2025-08 and 2025-09 verified_nonempty and their one segment (the maximal run of verified_nonempty months around them)
+  // holds a row at or before TREE_A and a row at or after TREE_B; rows are in time order, so its first and last rows decide.
+  const tf=m=>treeFiles.find(f=>f.month===m),ok=i=>tf(MONTHS[i])?.status==='verified_nonempty';
+  let lo=MONTHS.indexOf('2025-08'),hi=MONTHS.indexOf('2025-09');
+  if(ok(lo)&&ok(hi)) {
+   while(lo>0&&ok(lo-1))lo--;
+   while(hi<MONTHS.length-1&&ok(hi+1))hi++;
+   if(Math.floor(tf(MONTHS[lo]).data.times[0]/HOUR)*HOUR<=TREE_A&&Math.floor(tf(MONTHS[hi]).data.times.at(-1)/HOUR)*HOUR>=TREE_B) treeStatus='available';
+  }
  }
  if(treeStatus==='unavailable') output.csv('tree_control.csv',['TREEUSDT','','','','unavailable']);
  const runNumbers=new Map();
@@ -342,21 +363,26 @@ function initialStats() {
  const s={listing_pages:0,prefixes_received:0};for(const symbol of SIX)s['dropped:'+symbol]=false;
  for(const k of ['symbols_listed','symbols_with_keys','noncanonical_names','keys_frozen'])s[k]=0;return s;
 }
-function decision(files,pin,r) {
+// O13 script stage (C42): never pin_mismatch; a script-side pin failure gives no result (E1, F5, F6).
+function decision(files,r) {
  const p0=[];
  if(!files.length)p0.push('no_key');if(files.some(f=>!verified(f.status)))p0.push('not_final_verified');
  if(files.some(f=>f.month!=='2025-10'&&f.status==='verified_empty'))p0.push('verified_empty');
- if(pin.mismatch)p0.push('pin_mismatch');if(r.e4)p0.push('e4_hourly_related');if(p0.length)return ['P0',p0];
+ if(r.e4)p0.push('e4_hourly_related');if(p0.length)return ['P0',p0];
  const p3=[];for(const e of ['era2','era3'])if(!r.hourlyEras.has(e))p3.push('no_hourly_pair_'+e);
  if(!r.observed)p3.push('no_observed_boundary');if(p3.length)return ['P3',p3];return r.hourlyStop?['P2',['stops']]:['P1',['all_pass']];
 }
 export async function main(argv=process.argv.slice(2)) {
  const o=options(argv);
  if(!o||[o.out,o.out+'.partial',o.out+'.invalid'].some(existsSync))return 2;
+ // E1/F6 preflight: Node version and the seven closure hashes before any request, output or import; a difference is a
+ // preflight rejection with no request, no import and no result: nothing is written under the output path.
+ const pin=pins(o.closure);
+ if(pin.mismatch) {process.stderr.write('preflight rejection\n');return 4;}
  const budget=new Budget();let output;
  try {
   output=new Output(o.out,budget);
-  const pin=await pins(o.closure),stats=initialStats(),get=requester(o,budget);
+  const stats=initialStats(),get=requester(o,budget);
   let frozen;
   try {frozen=await freeze(o,get,stats);} catch(e) {
    if(!(e instanceof Freeze))throw e;
@@ -379,6 +405,8 @@ export async function main(argv=process.argv.slice(2)) {
   for(const e of ERAS)for(const s of ['observed','right_censored_seal','right_censored_segment'])stats['runs_exit:'+e+':'+s]=0;
   stats.isolated_candidates=0;
   // Property insertion of role_none_stops is delayed until after the h histogram for canonical O6 order.
+  // E1/F5: hash the seven closure files again immediately before the import; any difference invalidates the run, nothing imported.
+  if(pins(o.closure).lines.some(([name,hash])=>name!=='node'&&hash!==PINS[name.slice(('module:'+MODULE_ROOT).length)]))throw new Invalid('pin_rehash');
   const {scheduleClass}=await import(pathToFileURL(join(o.closure,MODULE_ROOT,'f1-funding.mjs')).href);
   const r=await reports(files,output,stats,scheduleClass);
   const roleStops=stats.role_none_stops||0;delete stats.role_none_stops;stats.role_none_stops=roleStops;
@@ -386,10 +414,10 @@ export async function main(argv=process.argv.slice(2)) {
   output.append('fixtures/fixtures.csv','key,status,zip_sha256\n');
   for(const key of [...selected].sort(cmp)) {const f=files.find(f=>f.key===key);output.csv('fixtures/fixtures.csv',[key,f?.status||'not_listed',f&&verified(f.status)?f.hash:'']);}
   output.append('summary.txt',[...Object.entries(stats),...pin.lines].map(([k,v])=>k+' '+v+'\n').join(''));
-  const [outcome,reasons]=decision(files,pin,r);output.append('outcome.csv','stage,outcome,reason\n');for(const reason of reasons)output.csv('outcome.csv',['script',outcome,reason]);
+  const [outcome,reasons]=decision(files,r);output.append('outcome.csv','stage,outcome,reason\n');for(const reason of reasons)output.csv('outcome.csv',['script',outcome,reason]);
   output.finish();process.stdout.write('result '+outcome+'\n');return 0;
  } catch(e) {
-  const reason=e instanceof Abort?e.reason:'implementation';
+  const reason=e instanceof Abort||e instanceof Invalid?e.reason:'implementation';
   try {if(output)output.invalidate(reason);else writeFileSync(o.out+'.invalid','invalid '+reason+'\n',{flag:'wx'});}catch { /* A failed marker write cannot be made successful by disclosing data. */ }
   process.stdout.write('invalid '+reason+'\n');return 3;
  }

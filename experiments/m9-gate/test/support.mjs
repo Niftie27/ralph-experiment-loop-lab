@@ -61,9 +61,13 @@ export async function run(routes,{closureRoot=closure,repeats=1,args=[]}={}) {
  try {
   for(let i=0;i<repeats;i++) {
    const out=join(temp,'out'+i);
-   const code=await main(['--out',out,'--closure-root',closureRoot,'--list-base',origin+'/list','--download-base',origin+'/download/','--pause-ms','0','--retry-ms','0',...args]);
+   // Record the scan's own string writes (stdout result/invalid lines, stderr preflight line); every write still passes through.
+   const stdout=[],stderr=[],writes={stdout:process.stdout.write,stderr:process.stderr.write};let code;
+   for(const s of ['stdout','stderr'])process[s].write=function(chunk,...rest){if(typeof chunk==='string')(s==='stdout'?stdout:stderr).push(chunk);return writes[s].call(this,chunk,...rest);};
+   try {code=await main(['--out',out,'--closure-root',closureRoot,'--list-base',origin+'/list','--download-base',origin+'/download/','--pause-ms','0','--retry-ms','0',...args]);}
+   finally {process.stdout.write=writes.stdout;process.stderr.write=writes.stderr;}
    const result=existsSync(out)?files(out):{};
-   results.push({code,files:result,invalid:existsSync(out+'.invalid')?readFileSync(out+'.invalid','utf8'):null,partial:existsSync(out+'.partial'),names:readdirSync(temp)});
+   results.push({code,files:result,invalid:existsSync(out+'.invalid')?readFileSync(out+'.invalid','utf8'):null,partial:existsSync(out+'.partial'),names:readdirSync(temp),stdout,stderr});
   }
   assert.deepEqual(unexpected,[],'strict mock received unexpected requests');
   return {...results.at(-1),results,requests,counts};
