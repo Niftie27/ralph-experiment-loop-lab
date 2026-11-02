@@ -10,6 +10,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { run, main, indices } from '../probe-r1.mjs';
+// T40 reads checkOutput through the namespace, so this file still loads against a script without that export.
+import * as probeR1 from '../probe-r1.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SCRIPT = join(HERE, '..', 'probe-r1.mjs');
@@ -95,7 +97,7 @@ async function probe(w, { opts = {}, deps = {}, before } = {}) {
  process.stdout.write = function (chunk, ...rest) { if (typeof chunk === 'string') lines.push(chunk); return write.call(this, chunk, ...rest); };
  let code;
  try {
-  code = await run({ out, pauseMs: 0, retryMs: 0, capBytes: 134217728, capRequests: 3000, ...opts },
+  code = await run({ out, pauseMs: 0, retryMs: 0, capBytes: 134217728, capRequests: 3000, capOutput: 16777216, ...opts },
    { fetch: w.fetch, version: 'v24.22.0', readMeminfo: () => MEMINFO, now: Date.now, ...deps });
  } finally { process.stdout.write = write; }
  assert.equal(globalThis.fetch, previous, 'globalThis.fetch restored');
@@ -144,7 +146,7 @@ test('T02 out exists: exit 2, zero fetch calls, existing content unchanged', asy
 test('T02 non-recursive mkdir: a missing parent stops with exit 2 and creates nothing', async () => {
  const w = standard(), tmp = mkdtempSync(join(tmpdir(), 'probe-r1-')), out = join(tmp, 'missing', 'out');
  try {
-  const code = await run({ out, pauseMs: 0, retryMs: 0, capBytes: 1000, capRequests: 10 }, { fetch: w.fetch, version: 'v24.22.0', readMeminfo: () => MEMINFO, now: Date.now });
+  const code = await run({ out, pauseMs: 0, retryMs: 0, capBytes: 1000, capRequests: 10, capOutput: 16777216 }, { fetch: w.fetch, version: 'v24.22.0', readMeminfo: () => MEMINFO, now: Date.now });
   assert.equal(code, 2);
   assert.equal(w.calls.length, 0);
   assert.deepEqual(readdirSync(tmp), []);
@@ -657,4 +659,42 @@ test('T38 real sample: probe-4a sym-01-001.xml and sym-04-001.xml as symbol list
  assert.equal(expected[0][3], '162');
  assert.equal(expected[1][7], '2');
  assert.deepEqual(r.unknown, []);
+});
+
+test('T39 output over capOutput: exit 3, only invalid.txt', async () => {
+ const r = await probe(standard(), { opts: { capOutput: 1000 } });
+ assert.equal(r.code, 3);
+ assert.deepEqual(r.files, { 'invalid.txt': 'invalid cap_output\n' });
+ assert.ok(r.stdout.endsWith('\n'));
+ assert.equal(r.stdout.slice(0, -1).split('\n').at(-1), 'invalid cap_output');
+});
+
+test('T40 checkOutput boundary', () => {
+ // UTF-8 bytes: 'abc\n' 4, '哈x\n' 5 (the CJK character is 3 bytes); 9 in total, against a string length of 7.
+ const files = { 'a.txt': 'abc\n', 'b.txt': '哈x\n' };
+ assert.equal(probeR1.checkOutput(files, 9), 9);
+ assert.throws(() => probeR1.checkOutput(files, 8));
+});
+
+test('T41 invalid caps: exit 2, zero requests, out not created', async () => {
+ const base = { pauseMs: 0, retryMs: 0, capBytes: 134217728, capRequests: 3000, capOutput: 16777216 };
+ const without = k => { const o = { ...base }; delete o[k]; return o; };
+ const cases = [['capOutput missing', without('capOutput')], ['capOutput 0', { ...base, capOutput: 0 }], ['capOutput 1.5', { ...base, capOutput: 1.5 }],
+  ["capOutput '16'", { ...base, capOutput: '16' }], ['capBytes missing', without('capBytes')], ['capRequests missing', without('capRequests')]];
+ for (const [label, opts] of cases) {
+  const w = standard(), tmp = mkdtempSync(join(tmpdir(), 'probe-r1-')), out = join(tmp, 'out');
+  const previous = globalThis.fetch, lines = [], write = process.stdout.write;
+  process.stdout.write = function (chunk, ...rest) { if (typeof chunk === 'string') lines.push(chunk); return write.call(this, chunk, ...rest); };
+  let code;
+  try {
+   code = await run({ out, ...opts }, { fetch: w.fetch, version: 'v24.22.0', readMeminfo: () => MEMINFO, now: Date.now });
+  } finally { process.stdout.write = write; }
+  try {
+   assert.equal(globalThis.fetch, previous, label + ': globalThis.fetch restored');
+   assert.equal(code, 2, label);
+   assert.equal(lines.join(''), 'stop cap_invalid\n', label);
+   assert.equal(w.calls.length, 0, label);
+   assert.ok(!existsSync(out), label + ': out not created');
+  } finally { rmSync(tmp, { recursive: true, force: true }); }
+ }
 });

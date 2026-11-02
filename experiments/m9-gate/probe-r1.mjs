@@ -49,6 +49,13 @@ export function indices(n,parts) {
  if (n>0) for (let j=0;j<=parts;j++) { const i = Math.floor(j*(n-1)/parts); if (!out.includes(i)) out.push(i); }
  return out;
 }
+// Output-space bound (F6): the UTF-8 bytes of every result file; over cap is a resource abort.
+export function checkOutput(files,cap) {
+ let total = 0;
+ for (const text of Object.values(files)) total += Buffer.byteLength(text);
+ if (total>cap) throw new RangeError('cap_output');
+ return total;
+}
 const encClass = v => v===null||v===undefined ? 'absent' : String(v).trim().toLowerCase()==='identity' ? 'identity' : 'other';
 const field = v => { const s = v===null||v===undefined ? '' : String(v); return /[",\n]/.test(s) ? '"'+s.replaceAll('"','""')+'"' : s; };
 const csv = (header,rows) => header+'\n'+rows.map(r => r.map(field).join(',')+'\n').join('');
@@ -67,6 +74,7 @@ function meminfo(read) {
 export async function run(opts,deps) {
  const stop = reason => { process.stdout.write('stop '+reason+'\n'); return 2; };
  if (deps.version!==NODE) return stop('node '+deps.version);
+ if (![opts.capOutput,opts.capBytes,opts.capRequests].every(v => Number.isSafeInteger(v) && v>0)) return stop('cap_invalid');
  if (!opts.out) return stop('out_missing');
  const out = opts.out;
  let exists = true;
@@ -320,6 +328,8 @@ export async function run(opts,deps) {
     [['start',...MEM.map(k => ramStart[k])],['end','',ramEnd.MemAvailable,'',ramEnd.SwapFree]])
   };
   files['checksums.sha256'] = Object.keys(files).sort(cmp).map(p => sha(files[p])+'  '+p+'\n').join('');
+  // Before any write; over capOutput only invalid.txt remains (not counted).
+  try { checkOutput(files,opts.capOutput); } catch { fail('cap_output'); }
   for (const [name,text] of Object.entries(files)) {
    state.written.push(name);
    try { writeFileSync(join(out,name),text,{flag:'wx'}); } catch { fail('output'); }
@@ -343,7 +353,7 @@ export async function main(argv=process.argv.slice(2)) {
   out = argv[i+1];
  }
  if (!out) { process.stdout.write('stop out_missing\n'); return 2; }
- return run({out:resolve(out), pauseMs:250, retryMs:2000, capBytes:134217728, capRequests:3000},
+ return run({out:resolve(out), pauseMs:250, retryMs:2000, capBytes:134217728, capRequests:3000, capOutput:16777216},
   {fetch:globalThis.fetch, version:process.version, readMeminfo:() => readFileSync('/proc/meminfo','utf8'), now:Date.now});
 }
 if(process.argv[1]&&resolve(process.argv[1])===resolve(new URL(import.meta.url).pathname))process.exitCode=await main();
