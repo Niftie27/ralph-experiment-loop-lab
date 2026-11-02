@@ -1,0 +1,4 @@
+id,url,raw_status,raw_body_bytes,content_type,m9_status,m9_budget_total,m9_equals_2x,m9_abort
+N1,https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCU/BTCU-fundingRate-2000-01.zip,404,340,application/xml,404,680,true,
+N2,https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCU/BTCU-fundingRate-2000-01.zip.CHECKSUM,404,349,application/xml,404,738,false,
+N3,https://data.binance.vision/data/futures/um/monthly/fundingRate/%E6%88%91%E8%B8%8F%E9%A9%AC%E6%9D%A5%E4%BA%86USDT/%E6%88%91%E8%B8%8F%E9%A9%AC%E6%9D%A5%E4%BA%86USDT-fundingRate-2000-01.zip.CHECKSUM,404,379,application/xml,404,798,false,

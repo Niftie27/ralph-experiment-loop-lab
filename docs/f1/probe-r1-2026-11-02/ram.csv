@@ -1,0 +1,3 @@
+phase,mem_total_kb,mem_available_kb,swap_total_kb,swap_free_kb
+start,3905936,771604,2097148,16232
+end,,843612,,35640
