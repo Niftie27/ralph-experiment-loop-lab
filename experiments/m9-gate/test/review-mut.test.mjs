@@ -69,7 +69,7 @@ const C = {
 // I2 cases on the inflated member (rebuilt with correct headers)
 const lines = s => s.split('\n');
 const G = {
-  g_bom: [s => '\ufeff' + s, 'excluded:routing'],
+  g_bom: [s => '\xef\xbb\xbf' + s, 'excluded:routing'], // UTF-8 BOM: the text is latin1 (one char per byte), so these become bytes EF BB BF
   g_crlf: [s => s.replaceAll('\n', '\r\n'), 'excluded:routing'],
   g_noheader: [s => lines(s).slice(1).join('\n'), 'verified_nonempty'],
   g_nolf: [s => s.replace(/\n$/, ''), 'excluded:framing'],

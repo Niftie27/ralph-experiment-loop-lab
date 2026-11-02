@@ -88,11 +88,22 @@ export function requester(options,budget) {
    let n=0;
    const chunks=[];
    try {
-    const res=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(30000)});
+    // F6/D2: every request asks for the identity encoding.
+    const res=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(30000),headers:{'accept-encoding':'identity'}});
     lastStatus=res.status;
     // F6: the per-kind bound applies to HTTP 200 bodies only; a non-200 body counts toward the total and the error-body limit
     // and is consumed as opaque chunks that are never decoded or retained.
     const ok=res.status===200;
+    // F6/D2: a Content-Encoding other than identity (case-insensitive, trimmed): the body is cancelled unread, never decoded; a valid
+    // decimal Content-Length counts as received bytes (HTTP 200: the total only; otherwise also the error body); HTTP 200 fails the attempt.
+    const encoding=res.headers?.get('content-encoding');
+    if (encoding!=null&&encoding.trim().toLowerCase()!=='identity') {
+     await res.body?.cancel();
+     const length=res.headers.get('content-length'), declared=length!==null&&/^[0-9]+$/.test(length)?Number(length):0;
+     budget.receive(ok?'total':'errorBody',declared,declared);
+     if (ok) lastStatus=null;
+     continue;
+    }
     if (res.body) for await (const ch of res.body) { n+=ch.length; budget.receive(ok?kind:'errorBody',ch.length,n); if(ok)chunks.push(ch); }
     if (ok) return {status:200,body:Buffer.concat(chunks,n)};
    } catch(e) { if(e instanceof Abort) throw e; lastStatus=null; }
@@ -196,8 +207,10 @@ function pins(root) {
  return {lines,mismatch};
 }
 async function freeze(o,get,stats) {
+ // S1/Q2-1: one set of seen items for the whole freeze (root and every symbol listing); a repeated item anywhere is unresolved (F1).
+ const seen=new Set();
  async function list(prefix,maxPages) {
-  const prefixes=[],keys=[],seen=new Set(),markers=new Set();let marker=null;
+  const prefixes=[],keys=[],markers=new Set();let marker=null;
   for(let n=1;;n++) {
    const r=await get('listing',o.list+'?delimiter=%2F&prefix='+enc(prefix,false)+(marker===null?'':'&marker='+enc(marker,false)));
    if(r.status!==200) throw new Freeze();stats.listing_pages++;
@@ -395,8 +408,8 @@ export async function main(argv=process.argv.slice(2)) {
   const selected=new Set(['TREEUSDT/TREEUSDT-fundingRate-2025-08.zip','TREEUSDT/TREEUSDT-fundingRate-2025-09.zip']);
   files.filter(f=>f.month!=='2025-10').forEach((f,i)=>{if(i%50===0)selected.add(f.key);});
   for(const phase of ['first_pass','final'])for(const s of STATUSES)stats[phase+':'+s]=0;
-  let done=0;
-  for(const f of files) {await acquire(f,false,get,o,output,selected);stats['first_pass:'+f.status]++;if(++done%100===0)process.stdout.write('progress keys '+done+'/'+files.length+'\n');}
+  // F6/M-02: no progress line; stdout carries only the result line or the invalid reason.
+  for(const f of files) {await acquire(f,false,get,o,output,selected);stats['first_pass:'+f.status]++;}
   for(const f of files)if(f.status==='not_verified')await acquire(f,true,get,o,output,selected);
   for(const f of files)stats['final:'+f.status]++;
   for(const check of CHECKS) {const first=files.find(f=>f.month!=='2025-10'&&f.status==='excluded:'+check);if(first)selected.add(first.key);}

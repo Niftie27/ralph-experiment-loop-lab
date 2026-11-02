@@ -67,10 +67,19 @@ for (const rootPages of ['default', 'max100']) test('strict 4a mock (ROOTPAGES='
  const o4 = [];
  for (const s of syms) for (const m of MONTHS) { const k = s + '/' + s + '-fundingRate-' + m + '.zip', x = st.get(k); o4.push([s, m, x ? x.status : 'not_listed', x ? x.hash : '', x && m !== '2025-10' ? x.size : ''].join(',')); }
  assert.equal(text(r, 'manifest.csv'), 'symbol,month,status,zip_sha256,zip_bytes\n' + o4.join('\n') + '\n');
- const o0 = text(r, 'timing.csv').trim().split('\n').slice(1).map(l => { const f = l.split(','); return [f[0], f[2], f[3]].join(','); });
- const exp0 = []; for (const k of ind.keys) { const x = st.get(k); if (x.status === 'verified_nonempty') for (const [t, h] of x.rows) exp0.push([k.split('/')[0], t, h].join(',')); }
+ // O0 by symbol, segment, calc_time and h (E2). Segment ids from the model's statuses (Definitions: per symbol, maximal runs of
+ // consecutive allowed months that are all verified_nonempty, numbered 1, 2, ... in time order; a month without a key breaks the run).
+ const monthStatus = (s, m) => st.get(s + '/' + s + '-fundingRate-' + m + '.zip')?.status ?? 'not_listed';
+ const segment = (s, m) => { let id = 0; for (let i = 0; i <= MONTHS.indexOf(m); i++) if (monthStatus(s, MONTHS[i]) === 'verified_nonempty' && (i === 0 || monthStatus(s, MONTHS[i - 1]) !== 'verified_nonempty')) id++; return id; };
+ const o0 = text(r, 'timing.csv').trim().split('\n').slice(1).map(l => { const f = l.split(','); return [f[0], f[1], f[2], f[3]].join(','); });
+ const exp0 = []; for (const k of ind.keys) { const x = st.get(k), s = k.split('/')[0]; if (x.status === 'verified_nonempty') for (const [t, h] of x.rows) exp0.push([s, segment(s, k.slice(-11, -4)), t, h].join(',')); }
  assert.deepEqual(o0, exp0);
+ // O7 from the model: selected are the TREEUSDT keys 2025-08 and 2025-09 and every 50th model key of months 2025-04 to 2025-09 in
+ // frozen order, starting with the first; bytes only for a selected frozen key whose model status is verified (exclusion picks never have bytes).
+ const early = ind.keys.filter(k => !k.endsWith('-2025-10.zip'));
+ const picked = new Set(['TREEUSDT/TREEUSDT-fundingRate-2025-08.zip', 'TREEUSDT/TREEUSDT-fundingRate-2025-09.zip', ...early.filter((k, i) => i % 50 === 0)]);
+ const wantFx = [...picked].filter(k => ['verified_nonempty', 'verified_empty'].includes(st.get(k)?.status)).flatMap(k => ['fixtures/' + k.split('/').at(-1), 'fixtures/' + k.split('/').at(-1) + '.CHECKSUM']).sort();
  const fx = Object.keys(r.files).filter(f => f.startsWith('fixtures/') && f !== 'fixtures/fixtures.csv');
- assert.ok(fx.length > 0);
+ assert.deepEqual([...fx].sort(), wantFx);
  for (const f of fx) { const k = ind.keys.find(k => k.endsWith('/' + f.slice(9).replace(/\.CHECKSUM$/, ''))); const path = '/download/' + s1(k, true) + (f.endsWith('.CHECKSUM') ? '.CHECKSUM' : ''); assert.ok(r.files[f].equals(Buffer.from(routes.get(path))), f); }
 });
