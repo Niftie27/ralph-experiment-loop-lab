@@ -207,8 +207,10 @@ function pins(root) {
  return {lines,mismatch};
 }
 async function freeze(o,get,stats) {
- // S1/Q2-1: one set of seen items for the whole freeze (root and every symbol listing); a repeated item anywhere is unresolved (F1).
- const seen=new Set();
+ // S1/Q2-1/R2-01: two sets held for the whole freeze (root and every symbol listing), one of listed prefixes and one of listed keys;
+ // a repeated prefix or a repeated key anywhere is unresolved (F1). A key byte-identical to a listed prefix (a directory marker) is
+ // not a repeat: S1 counts it in O6 and never fetches it.
+ const seenPrefixes=new Set(),seenKeys=new Set();
  async function list(prefix,maxPages) {
   const prefixes=[],keys=[],markers=new Set();let marker=null;
   for(let n=1;;n++) {
@@ -216,7 +218,8 @@ async function freeze(o,get,stats) {
    if(r.status!==200) throw new Freeze();stats.listing_pages++;
    const p=parsePage(r.body);
    if(prefix===ROOT)stats.prefixes_received+=p.prefixes.length;
-   for(const item of [...p.prefixes,...p.keys]) {if(seen.has(item)) throw new Freeze();seen.add(item);}
+   for(const item of p.prefixes) {if(seenPrefixes.has(item)) throw new Freeze();seenPrefixes.add(item);}
+   for(const item of p.keys) {if(seenKeys.has(item)) throw new Freeze();seenKeys.add(item);}
    prefixes.push(...p.prefixes); keys.push(...p.keys);
    if(!p.truncated) return {prefixes,keys};
    if(!p.next||markers.has(p.next)||n>=maxPages) throw new Freeze();markers.add(p.next);marker=p.next;
