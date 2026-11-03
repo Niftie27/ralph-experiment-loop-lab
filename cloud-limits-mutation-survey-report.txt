@@ -1,0 +1,81 @@
+LIMITS mutation survey report
+Tue Nov  3 15:59:04 UTC 2026
+head 46be60a0accaedfc789f11adb865b0ef2db540cc
+branch claude/clever-franklin-9rqark
+node v24.22.0
+m9-scan sha256 after 0805a48bd1ee73c9de8490b889d180ae3b63908521bd944bc392d97a5ad2818b
+## baseline
+# tests 313
+# pass 313
+# fail 0
+baseline failing names:
+## results (id|from|to|exit|counts|new failures|verdict)
+M01|{ listing:16*1024*1024,|{ listing:16777215,|rc=0|# pass 313 # fail 0 |new_fail=0|survived
+M02|{ listing:16*1024*1024,|{ listing:16777217,|rc=0|# pass 313 # fail 0 |new_fail=0|survived
+M03| sidecar:4096,| sidecar:4095,|rc=1|# pass 312 # fail 1 |new_fail=1|killed
+M04| sidecar:4096,| sidecar:4097,|rc=1|# pass 312 # fail 1 |new_fail=1|killed
+M05| zip:16*1024*1024,| zip:16777215,|rc=1|# pass 312 # fail 1 |new_fail=1|killed
+M06| zip:16*1024*1024,| zip:16777217,|rc=0|# pass 313 # fail 0 |new_fail=0|survived
+M07| member:64*1024*1024,| member:67108863,|rc=0|# pass 313 # fail 0 |new_fail=0|survived
+M08| member:64*1024*1024,| member:67108865,|rc=1|# pass 312 # fail 1 |new_fail=1|killed
+M09| line:65536,| line:65535,|rc=1|# pass 312 # fail 1 |new_fail=1|killed
+M10| line:65536,| line:65537,|rc=1|# pass 311 # fail 2 |new_fail=2|killed
+M11| lines:1000000,| lines:999999,|rc=1|# pass 312 # fail 1 |new_fail=1|killed
+M12| lines:1000000,| lines:1000001,|rc=1|# pass 312 # fail 1 |new_fail=1|killed
+M13| total:1073741824,| total:1073741823,|rc=1|# pass 312 # fail 1 |new_fail=1|killed
+M14| total:1073741824,| total:1073741825,|rc=1|# pass 312 # fail 1 |new_fail=1|killed
+M15| output:256*1024*1024,| output:268435455,|rc=0|# pass 313 # fail 0 |new_fail=0|survived
+M16| output:256*1024*1024,| output:268435457,|rc=0|# pass 313 # fail 0 |new_fail=0|survived
+M17| keys:10000,| keys:9999,|rc=1|# pass 311 # fail 2 |new_fail=2|killed
+M18| keys:10000,| keys:10001,|rc=1|# pass 312 # fail 1 |new_fail=1|killed
+M19| errorBody:65536 }| errorBody:65535 }|rc=1|# pass 311 # fail 2 |new_fail=2|killed
+M20| errorBody:65536 }| errorBody:65537 }|rc=1|# pass 310 # fail 3 |new_fail=3|killed
+## first new failing tests per mutant (max 3)
+M03   D-10: a 404 sidecar body one byte over the sidecar bound (4097 bytes) does not abort; v6.2 applies that bound to HTTP 200 only
+M04   D-10: a 404 sidecar body one byte over the sidecar bound (4097 bytes) does not abort; v6.2 applies that bound to HTTP 200 only
+M05   F6 total byte accounting includes failed attempts and crosses 1 GiB exactly
+M08   F6 actual inflate overflow aborts regardless of smaller declared size
+M09   I2 resource edges permit exactly 65536-byte sealed line and 1000000 lines
+M10   D-02: a 65537-byte sealed line in a 2025-10 file aborts with the single reason resource_2025_10 (marker and stdout)
+M10   RES-5 F6/D-02: with 101 keys, an abort on the 2025-10 key leaves stdout with only the reason line
+M11   I2 resource edges permit exactly 65536-byte sealed line and 1000000 lines
+M12   F6 million-line bound counts sealed lines without exposing them
+M13   F6 total byte accounting includes failed attempts and crosses 1 GiB exactly
+M14   F6 total byte accounting includes failed attempts and crosses 1 GiB exactly
+M17   F6 frozen-key bound is inclusive 10000, rejects 10001
+M17   RES-4 F6: 10,000 frozen zip keys plus 10,000 listed sidecars pass the key bound and reach the first source fetch
+M18   F6 frozen-key bound is inclusive 10000, rejects 10001
+M19   D-h: LIMITS.errorBody imported from m9-scan.mjs is strictly equal to the number 65536
+M19   T04 happy run: exit 0, exact output file set, exact summary order and values
+M20   D-h: LIMITS.errorBody imported from m9-scan.mjs is strictly equal to the number 65536
+M20   T04 happy run: exit 0, exact output file set, exact summary order and values
+M20   T24 404 body of 65,537 bytes: m9 Abort error_body recorded, raw bytes exact, the run continues, exit 0
+## survivors
+M01|{ listing:16*1024*1024,|{ listing:16777215,
+M02|{ listing:16*1024*1024,|{ listing:16777217,
+M06| zip:16*1024*1024,| zip:16777217,
+M07| member:64*1024*1024,| member:67108863,
+M15| output:256*1024*1024,| output:268435455,
+M16| output:256*1024*1024,| output:268435457,
+## notes
+Node used:
+- v24.22.0, from npm pack node-linux-x64@24.22.0, unpacked to /tmp/lm/node/package/bin/node (tested: "node -v" printed v24.22.0).
+Failed steps and fixes:
+- None. Steps 0 to 5 met every stated expectation on the first run; no fix or rerun was used.
+- Step 2: npm pack printed "npm notice New major version of npm available! 10.9.9 -> 12.2.1"; the step exited 0 and was not treated as a failure.
+- Step 0: HEAD at start was the base commit 46be60a0accaedfc789f11adb865b0ef2db540cc itself.
+- Step 5 ran as a single background shell call with its summary written to /tmp/lm/loop.log. Loop summary (tested): results 20, controls killed 2, m9-scan sha256 0805a48bd1ee73c9de8490b889d180ae3b63908521bd944bc392d97a5ad2818b, status lines 0. No mutant reached the 1800 s timeout.
+Conflicts (this document was followed in each case):
+- Commit attribution: the session default asks for Co-Authored-By and Claude-Session trailers on commits. This document forbids trailers, so the commit has none.
+- Temporary files: the session default says to use a session scratchpad directory rather than /tmp. This document names /tmp/lm, so /tmp/lm was used.
+- Stop hook: during step 5, a session stop hook asked again and again to commit and push the uncommitted change in experiments/m9-gate/m9-scan.mjs, which was the mutant being tested at that moment. This document keeps mutants out of the commit, so the hook was not acted on. Only this report is committed, in step 7.
+- AGENTS.md read order (read docs/MAP.md and docs/findings.md before every prompt, plan or run): not followed. Only this document's blocks were run.
+- AGENTS.md rule to update docs/MAP.md when the phase or next step changes: not applied, because the commit holds only this report. Whether this survey changes the phase or next step: not verified.
+- Push form: the session default is "git push -u origin <branch-name>"; this document uses "git push -q -u origin HEAD". The document's form was used. Both push the current claude/ branch.
+Deviations from the allowed command list:
+- During step 5, the progress watcher (a polling loop run through the session's monitor tool) used sleep, which is not on the allowed list, between reads of /tmp/lm/results.txt and /tmp/lm/loop.log. It only read those files.
+Not verified:
+- Provenance of the npm package node-linux-x64@24.22.0 against the official Node.js release checksums.
+- That the test suite made no network contact, including to data.binance.vision or amazonaws hosts. Network traffic was not monitored.
+- Content of /tmp/lm/closure beyond extract exit 0 and 45 entries in its experiments/strategy-destruction-filter/src directory.
+- Commit hash and push result: these come from step 7, after this report was written.
