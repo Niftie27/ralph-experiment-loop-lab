@@ -1,0 +1,385 @@
+REPORT cloud-a4-seal-second-opinion 2026-11-03
+Tue Nov  3 11:09:17 UTC 2026
+
+Step 1 output (full, unchanged):
+fetch exit 0
+a4 c33f9c7b9f662cd22a0b7912f8105bfad1004c04
+main 73407036260c6bd5f8329a7f8780570ee05da156
+6cb805ec56f867568cce5227f4ec529aa65a8b0e753298627d1a812025e77327 origin/main:docs/f1/f1a-4-seal-review.md
+62753b547d70d055b1b3d554dbe7cf6dab55d5e502cc66f8290dc3b982cd0050 c33f9c7:docs/f1/f1a-4-contract.md
+bccb3ac0793e50987a363ea8a9e8a694e61525e074908fa84e39ca19d6b5f239 c33f9c7:docs/f1/f1a-4-plan.md
+9f6741134e6f59463c6cda371a0355a387650fea8106efcf38ac8a843004f628 c33f9c7:experiments/strategy-destruction-filter/src/f1-funding.mjs
+Check: fetch exit 0, the a4 sha and all four sha256 values equal the expected values; main is reported as above.
+
+Conflicts (rule 1; the document won in each case):
+1. The session's attribution instruction asks for Co-Authored-By and Claude-Session trailers on commits; rule 9 forbids any trailer. The commit uses the exact subject of rule 9 and nothing else (this also matches the 2026-10-19 decision row "no Co-Authored-By or session trailers").
+2. The session's git instructions say to push with "git push -u origin <branch>"; step 4 says "git push -q origin HEAD". Step 4 was followed.
+3. The session default keeps temporary files in a session scratchpad and uses the system temp directory only on request; the document asks for so.md and report-head.txt in the system temp directory. The document was followed.
+4. The session default prefers dedicated file tools; rule 7 limits shell commands. Repository files were read only with the allowed git commands; the two temporary files were written with the file-writing tool, because steps 3 and 4 require them and rule 7 names no shell writer.
+5. Rule 7's list omits "date -u" and "git rev-parse", which the document itself requires (steps 1, 3a and 4); both were run only where the document asks for them (internal tension, read as allowed).
+6. Rule 7 allows git grep only with the pathspecs '*.mjs', '*.md', '*.txt'. Those exact pathspecs were used; the search was narrowed with a commit:directory tree argument (for example c33f9c7:experiments/strategy-destruction-filter/src) and one file was selected with sed -n. Interpretation, noted for review.
+7. AGENTS.md says to update docs/MAP.md in the same change when the phase or next step changes, and docs/MAP.md is stale (it says the F1a-4 plan is not started); the document allows one report file and nothing else. MAP was not changed; this review does not change the phase.
+8. AGENTS.md's read order says docs/MAP.md names the files a job needs; the document fixes the file list and calls MAP stale. The document's list was followed; MAP was read for orientation only.
+
+Summary (reasoning): the seal path needs one fix batch before the single verify run. F1 (research listing evidence reads holdout state) and F2 (sealed-part errors name their failure class; raised to P1) must be fixed; F3 and F4 are overstated as seal breaches (decision 27 covers the 1m manifest metadata; the shared version directory fails in research first; maxRSS is in the binding plan); F5 stands; F6 is latent. Two missed size channels (zip errors of the mixed 2025-10 file, download errors of holdout files) and two small integrity-output issues are added. All fixes fit in src/f1-funding.mjs with existing tests unchanged.
+Counts: agree 2 (F1, F5); partly 4 (F2, F3, F4, F6); disagree 0; missed 4 (M1, M2, M3, M4).
+=== BEGIN FILE docs/f1/f1a-4-seal-review-second-opinion.md sha256=3cc26ca7312680233af98ea67300fae092775b7dba6a06eaacfd86369d529906 ===
+# F1a-4 seal review second opinion (cloud)
+
+- **tested — date:** `date -u` printed `Tue Nov  3 11:09:17 UTC 2026`.
+- **Base:** `f1/a4-funding` at `c33f9c7b9f662cd22a0b7912f8105bfad1004c04` (c33f9c7), equal to the expected value (tested, step 1).
+- **Main:** `73407036260c6bd5f8329a7f8780570ee05da156` (tested, step 1). The review under test is `docs/f1/f1a-4-seal-review.md` at that main, sha256 `6cb805ec56f867568cce5227f4ec529aa65a8b0e753298627d1a812025e77327` (tested, step 1, equal to the expected value).
+- **Conventions:** `src/` and `test/` mean `experiments/strategy-destruction-filter/src/` and `experiments/strategy-destruction-filter/test/` at c33f9c7; `docs/` paths are repository-relative and read at main unless a commit is named. Line numbers come from `git grep -n` on the commit tree (tested; commands in h). Labels: **tested** (a command ran in this session; command and output in h), **taken over** (read from the named file), **reasoning** (my analysis). Every statement about program behaviour is static reasoning from code: no repository program or test ran, no data file was opened, counted or hashed, nothing was downloaded. No claim about any holdout row or holdout value is made.
+
+## b) Verdict
+
+**reasoning:** The first pass is right that the seal path needs one more fix batch before the verify run, and its two most important findings hold: the research path's listing evidence reaches into holdout files (F1), and sealed-part errors carry more than the one message the contract allows (F2, which I rate P1, not P2). F3 and F4 are overstated as seal breaches: the 1m manifest details F3 can print are integrity metadata that decision 27 allows to be reported, F4's directory scenario fires in the research phase first, and maxRSS reporting is written into the binding plan. I add two missed size channels (zip errors of the mixed 2025-10 file, download errors of holdout files) and two small integrity-output issues; every fix fits inside `src/f1-funding.mjs`, so one batch with all existing tests unchanged, followed by one verify run, is feasible.
+
+## c) Findings F1 to F6 of the first pass
+
+### F1 — research listing evidence reads holdout state
+
+**Position: agree. My severity: P1.**
+
+Evidence (taken over, code at c33f9c7). `src/f1-funding.mjs:193-195`, the research history runs the listing rule over the whole plan, research and holdout units:
+
+```js
+  const units = planFundingUnits(symbol), instrument = units[0].instrument;
+  const research = units.filter(u => u.period === 'research');
+  const listing = notListedSources(units, { zipRoot });
+```
+
+`src/f1-1m-store.mjs:101` and `:103`, presence is taken over every source, holdout months included, and decides rule (c):
+
+```js
+  const present = new Set(sources.filter(s => fetched.has(s.file) || inManifest.has(s.file) || localVersions(zipRoot, s).length).map(s => s.file));
+  if (!present.size) return result; // (c): no file of the instrument exists, so every miss is a gap
+```
+
+`src/f1-1m-store.mjs:110`, later-source evidence can open and hash a holdout zip through `readVerifiedSource`:
+
+```js
+  const later = sources.slice(result.size).some(s => fetched.has(s.file) || inManifest.has(s.file) || localVersions(zipRoot, s).some(sha => verified(s, sha)));
+```
+
+`src/f1-funding.mjs:234`, with zero research settlements the edge block is skipped:
+
+```js
+  if (n && !prior && !missingFirst) {
+```
+
+Contract (taken over): A1, `docs/f1/f1a-4-contract.md:167` at c33f9c7, "a research read and its digest are unchanged by any holdout fixture"; the adopted Q4 row f:114/117 (contract line 101) rests on the plan second opinion's "initial listing evidence ... without looking beyond the research seal" (`docs/f1/f1a-4-plan-second-opinion.md:67`).
+
+- **reasoning — scenario:** synthetic store; every research month has a recorded 404 and no local version; one CHECKSUM-valid 2025-11 version exists. `present` is non-empty only through 2025-11, all 49 research months (49 research units, taken over from `test/f1-funding.test.mjs:40`) become not_listed, `n = 0`, and because of `:234` the research history carries no coverage entry and no anomaly: the reader returns empty columns with empty coverage, a vacuous research pass. Removing that one holdout file makes `present` empty, so all 49 months become gap months and coverage and digest change. The research call also hashes the holdout zip at store:110. This confirms the first pass's scenario and adds the vacuous-pass consequence.
+- **reasoning — normal store:** when any research month has a local version, the loop at store:104-107 and the lazy `.some` at store:110 stop inside the research months, so the output does not depend on holdout; store:101 still calls `localVersions` for every holdout month on every research read (directory listing and existence checks). This review checked no real store.
+- **First-pass fix:** sufficient. **Minimal form:** pass `research` instead of `units` at `src/f1-funding.mjs:195`. Reasoning: the research units are a time-ordered prefix of the plan with the same source order (the shared 2025-10 file appears once in both), so the research-only result is a subset of the whole-plan result. It can only turn not_listed into gap, never the reverse; with no research file present it returns the empty set and every research miss becomes a gap month (status incomplete, exit 3), which is the unresolved state the first pass asks for, with no new state. `downloadFunding` (`src/f1-funding.mjs:142`) keeps the whole-plan rule. The narrowing should be recorded in the amendment (Q3 in g).
+
+### F2 — sealed-part errors name their failure class
+
+**Position: partly** (defect agreed; severity raised; fix scope too narrow). **My severity: P1.**
+
+Evidence (taken over). `src/f1-funding.mjs:75-76`:
+
+```js
+      if (previous >= sealMs || wholly) sealedPart('calc_time unreadable in the sealed part');
+      if (sealable) sealedPart('calc_time unreadable in the research or sealed part');
+```
+
+`src/f1-funding.mjs:80` and `:84`:
+
+```js
+      if (t >= sealMs || previous >= sealMs) sealedPart('calc_time outside the file month in the sealed part');
+      if (previous >= sealMs) sealedPart('calc_time order broken in the sealed part');
+```
+
+`src/f1-funding.mjs:61` and `:66`, file-level checks whose outcome, for the 2025-10 file, can depend on bytes after the seal (the last byte; the first line when the file has no research row):
+
+```js
+  if (!buf.length || buf[buf.length - 1] !== 0x0a) fail(`${file}: file does not end with a newline`);
+  else if (!/^\d/.test(lines[0] ?? '')) fail(`${file}: unknown header (expected the exact Vision header or a numeric first row)`);
+```
+
+Output route: `src/f1-funding.mjs:216` keeps `error.message`; `:380` puts `failures` into the verify summary; `:332` puts the first one into the reader's error.
+
+```js
+    } catch (error) { failures.push({ file: source.file, error: error.message }); broken = true; continue; }
+```
+
+Contract (taken over): Q4 row d:81-82 (`docs/f1/f1a-4-contract.md:98`) "a failure located in sealed rows is reported only as `"sealed part of <file> fails"`"; m3 (line 25) "no ... failure details". Test (taken over): `test/f1-funding.test.mjs:137` accepts any reason text before "sealed part":
+
+```js
+    assert.match(message, /^Vision funding: data\/futures\/um\/monthly\/fundingRate\/BTCUSDT\/BTCUSDT-fundingRate-2025-10\.zip: .*sealed part/);
+```
+
+- **reasoning — severity:** the verify summary prints these messages, so a sealed-part failure during the one verify run would publish its class (unreadable, outside the month, disorder, and whether a valid sealed time came before it) on top of the pass or fail outcome. A3 (contract line 171, taken over) says the scan read no row at or after the seal, so nothing upstream has checked those timestamps: the channel is reachable. Hence P1.
+- **First-pass fix:** right direction (one public message), not sufficient: it covers the routing failures only. The same constant must also cover (i) the newline check (`:61`) and the header check (`:66`) when the source is sealable (`source.endMs > sealMs`), and (ii) the zip-container errors of the same file (M1). "Keep any detailed classification internal" needs no internal sink: drop the detail.
+- **Smaller fix:** one constant per sealable file, for example `Vision funding: <file>: sealed part fails`, used at `:75`, `:76`, `:80`, `:84`, and for `:61` and `:66` when the source is sealable. Research-row messages (`row N: ...`) stay: strict calc_time order (`:83-86`) means every row before a failing research row is a research row. This exact form keeps `test/f1-funding.test.mjs:137-138` passing unchanged (the regex allows an empty reason; line 138 forbids "row", ISO times and ten-digit runs), so no existing test is edited (Q2 in g).
+
+### F3 — the research reader validates holdout 1m manifest entries
+
+**Position: partly. My severity: P3** (ledger; no change needed in the verify batch).
+
+Evidence (taken over). `src/f1-funding.mjs:167`:
+
+```js
+  const times = readManifest(manifestPath).entries.filter(e => e.contract === contract && e.period === 'research' && e.rowCount > 0).map(e => Date.parse(e.firstOpenTime));
+```
+
+`src/f1-1m-store.mjs:232`, `:177`, `:179`, every entry is validated before any filter, and a quarantined minute must lie in missingRanges:
+
+```js
+  manifest.entries.forEach(checkEntry);
+    if (!missing.some(([a, b]) => a <= t && t < b)) fail('a quarantined minute must lie in missingRanges');
+    if (!(t >= lo && t < hi)) fail(`a quarantined row at ${q.openTime} lies outside its file ${q.file}`);
+```
+
+The call is reached only for an instrument without rows before the window and without a missing first month (`src/f1-funding.mjs:234-235`), the HYPE-like path. The F1a-2 research reader has the same full-manifest dependency: `src/f1-1m-reader.mjs:73`, `const entries = readManifest(manifestPath).entries.filter(e => e.exchange === instrument.exchange && ...`. Decision 27 (`docs/decisions.md:60`): "The holdout seal covers outcomes, not integrity metadata: file availability, checksum and snapshot verification, row counts, missing minutes and ranges, first and last open times may be stored and reported". Decisions (36) and (42) in `docs/decisions.md`: P2 findings about hand-edited or corrupted manifests, and edge cases that change only the information-only symbol HYPE, go to the ledger unless P0/P1.
+
+- **reasoning:** the coupling is real: an invalid holdout 1m entry makes a HYPE research read or verify fail, and the message can name a quarantined minute. That minute must lie in missingRanges (store:177), so what can be printed is 1m integrity metadata that decision 27 allows to be reported; it is not funding holdout data, which m3 governs. The trigger needs a corrupted or hand-edited manifest, the class decisions 36 and 42 send to the ledger, and only HYPE reaches it. Not a seal breach, not P1.
+- **First-pass fix:** a research-only validated listing-evidence reader changes `src/f1-1m-store.mjs`, which is shared with F1a-2 and is itself one of the seven modules in the funding import closure; larger than the problem.
+- **Smaller fix (optional):** catch around the call at `src/f1-funding.mjs:167` and rethrow one fixed message (for example `1m manifest unusable for the first 1m candle`), touching only `src/f1-funding.mjs`; or no code change and a ledger entry (Q4 in g).
+
+### F4 — integrity-path exceptions and memory telemetry
+
+**Position: partly. My severity: P2** for the guard trip inside the integrity loop; **P3** for the rest.
+
+Evidence (taken over). The version parent is one directory per contract, shared by all months: `src/vision-source.mjs:265`, `src/f1-1m-store.mjs:77` and `:79`:
+
+```js
+  const file = `${VISION_ROOTS[`${instrument.exchange}:${instrument.market}`]}/monthly/fundingRate/${instrument.contract}/${base}.zip`;
+  const parent = path.join(zipRoot, path.dirname(source.file));
+  try { names = fs.readdirSync(parent); } catch (error) { if (error.code === 'ENOENT') return []; throw error; }
+```
+
+In verify the research history of a symbol runs before its integrity loop (`src/f1-funding.mjs:374-375`) and calls `localVersions` outside any try (`:195` through store:101, and `:202`). The guard check in the integrity loop sits outside the sanitizing try (`src/f1-funding.mjs:348`), and its message (`src/vision-1m.mjs:57`):
+
+```js
+    check(`holdout ${unit.instrument.contract} ${name}`);
+      if (rss > limit || tripped) throw new Error(`memory ceiling exceeded: ${mib(Math.max(rss, tripped ?? 0))} MiB > ${ceilingMiB} MiB at ${label}`);
+```
+
+The CLI prints it (`src/f1-funding.mjs:423`): `summary = { command: options.command, status: 'failed', error: error.message };`. The memory report holds MiB-rounded process figures (`src/vision-1m.mjs:61-62`). The binding plan asks for them: `docs/f1/f1a-4-plan.md:157` at c33f9c7 (acceptance "maxRSS <= 512 MiB") and `:159` (report "maxRSS, runtime"); the contract makes the plan binding (contract line 5).
+
+- **reasoning:** (a) An unreadable version parent throws in the research phase of the same symbol, before the integrity loop, because the directory is shared; the result is an unsanitized OS error with an absolute path on stdout (hygiene, P3), not a holdout-dependent signal. Only a store change between the two phases could make it surface inside the integrity loop. (b) The guard trip is the one holdout-phase exception that leaves the sanitizing try: its message carries the unit (allowed by A1) plus two MiB figures (not part of A1's per-unit outcome). (c) The end-of-run maxRSS block is written into the binding plan, so it needs no new contract exception; whether to keep it is Tomas's call (Q5 in g). No claim is made about how holdout parsing affects RSS.
+- **First-pass fix:** "sanitize source-loading exceptions at the integrity boundary" misses that the same exception fires in research first; "obtain an explicit contract exception" for telemetry is unnecessary because plan section i already binds it.
+- **Smaller fix:** in `checkHoldout`, catch a throw from `check(...)` and rethrow one fixed message without figures or label (for example `memory ceiling exceeded during holdout integrity`), keeping the abort; the 1m CLI states the same design intent at `src/vision-1m.mjs:79` ("a trip aborts the run, never a per-source failure"). Keep the end-of-run memory block unless Tomas decides otherwise.
+
+### F5 — instrument accessors can relabel the digest
+
+**Position: agree. My severity: P2.**
+
+Evidence (taken over). `src/f1-funding.mjs:309-310` and `:315`:
+
+```js
+  if (!hasExactKeys(instrument, ['exchange', 'market', 'contract']) || instrument.exchange !== 'binance' || instrument.market !== 'linear_perpetual'
+    || !Object.hasOwn(SYMBOL_OF, instrument.contract)) readerFail('unsupported instrument (Binance USD-M Vision contracts only)');
+  return { instrument: { exchange: instrument.exchange, market: instrument.market, contract: instrument.contract }, start, end };
+```
+
+`hasExactKeys` checks the prototype and the own enumerable key names only (`src/f1-1m-format.mjs:26-31`), so accessor properties pass.
+
+- **reasoning:** validation reads each getter once and the copy reads it again; an `exchange` getter can return `binance` and then another string, which then labels the columns and enters the digest (`:333` into `:294`). A contract getter that returns a different valid contract the second time is consistent (the copy drives both the history and the label), and any other value fails closed in `visionInstrument`. Not a holdout issue; the verify path uses `h.instrument` (`:381`) and is unaffected. P2 rather than P3 because the fix touches `src/f1-funding.mjs`, whose hash the verify record names (section e).
+- **First-pass fix:** sufficient and minimal (snapshot once, validate the snapshot, use only it). Equivalent form: destructure `{ exchange, market, contract }` once after `hasExactKeys`, require each to be a string, validate and return those primitives.
+
+### F6 — import-closure hashing depends on import syntax
+
+**Position: partly. My severity: P3** (latent; recommended for the batch as a fail-closed guard).
+
+Evidence (taken over). `src/f1-funding.mjs:254` and `:267`:
+
+```js
+const IMPORT = /^(?:import|export)\s[^;'"]*?\bfrom\s+'(\.{1,2}\/[^']+)'|^import\s+'(\.{1,2}\/[^']+)'/gm;
+    for (const m of bytes.toString('utf8').matchAll(IMPORT)) queue.push(path.resolve(path.dirname(file), m[1] ?? m[2]));
+```
+
+- **tested:** `git grep` over the seven closure modules at c33f9c7 (f1-funding, f1-1m-store, f1-1m-format, vision-source, vision-1m, vision-transport, h2-contract) found no `import(`, `require(`, double-quoted `from "` or indented `import` (empty output); every quoted relative `.mjs` string in them is on an import line the regex matches (17 lines), and the only other quoted relative strings are `'../'` at `src/f1-funding.mjs:388`, `src/h2-contract.mjs:6` and `src/vision-1m.mjs:17`. This agrees with the seven paths asserted at `test/f1-funding-reader.test.mjs:100` (taken over).
+- **reasoning:** nothing is missing today; the gap is that a future double-quoted, dynamic or indented import would be silently left out of the identity.
+- **First-pass fix:** sufficient, but larger than needed (dependency analysis or a maintained module manifest).
+- **Smaller fix:** keep the regex and add a fail-closed cross-check in `codeIdentity`: every quoted relative `.mjs` string in a closure module must be in the parsed set, and any `import(` or `require(` token throws. By the tested grep above, this passes on the current seven modules.
+
+## d) Missed issues in the same scope
+
+### M1 — zip errors of the mixed 2025-10 file print byte sizes
+
+**Position: missed as a finding** (the first pass's Q6, line 91 of the review, notes "malformed names/sizes can appear in research errors for the mixed file" but files no finding). **My severity: P2.**
+
+Evidence (taken over). `src/vision-source.mjs:34` and `:44`:
+
+```js
+  if (size > maxBytes) fail(`member of ${size} bytes over the ${maxBytes} byte cap`);
+  if (out.length !== size) fail(`uncompressed size ${out.length} != declared ${size}`);
+```
+
+These are reached from the research path at `src/f1-funding.mjs:215` (`parsed = parseFunding(readZipMember(loaded.zip, source.csvName), source);`) and printed through `:216` and `:380` (verify) and `:332` (reader). Contract (taken over): m3 "no ... sizes" (line 25); preface (line 9) "nothing about rows, files or sizes from 2025-10-17 on"; plan second opinion C4 (`docs/f1/f1a-4-plan-second-opinion.md:42`) "the split boundary month's compressed bytes include protected rows and are not research-only bytes"; Q4 row d:81-82 in the same file (line 64) asks to keep "byte/count summaries" sanitized.
+
+- **reasoning:** the 2025-10 file holds research and holdout rows (taken over, plan section d, `docs/f1/f1a-4-plan.md:81`), so the inflated length printed at `:44` covers holdout rows. The trigger is a CHECKSUM-valid zip whose member is internally inconsistent; the verify run would print the message verbatim.
+- **Fix:** in `researchHistory`, when the source is sealable, map any error from `readZipMember` to the F2 constant; other months keep their detailed messages, and `test/f1-funding.test.mjs:103-113` (2024-03) stays unchanged.
+
+### M2 — download failures can print exact sizes of holdout zips
+
+**Position: missed. My severity: P2.**
+
+Evidence (taken over). `src/vision-transport.mjs:39`, `:56`, `:59` (also `:30` above the 64 MiB cap):
+
+```js
+    if (declared !== null && Number(declared) !== bytes.length) throw new Error(`truncated body (${bytes.length} of ${declared} bytes)`);
+      last = error.name === 'TimeoutError' ? 'timeout' : error.cause?.code ?? error.message;
+  throw new Error(`${file}: ${last} after ${ATTEMPTS} attempts`);
+```
+
+`downloadFunding` keeps the message for every planned source, holdout months included (`src/f1-funding.mjs:139`, `failures.push({ file: source.file, error: error.message });`) and prints it (`:148`). Contract as in M1. `test/f1-funding-cli.test.mjs:67` already asserts that a download summary contains no "bytes" (`assert.ok(!first.out.includes('bytes') && !first.out.includes(RATE));`), but only on the success path (taken over).
+
+- **reasoning:** after four truncated transfers of a holdout zip the summary would print its declared Content-Length, the exact size of a file holding holdout rows. Not part of the verify run, but the F1a-4 download fetches every holdout month.
+- **Fix (local; the transport stays unchanged because F1a-2 and F1a-3 share it):** in `downloadFunding`, for a source with `endMs > SEAL_MS`, record one fixed error (for example `download failed`) instead of `error.message`.
+
+### M3 — the integrity output reports any read error as a CHECKSUM failure
+
+**Position: missed. My severity: P3.**
+
+Evidence (taken over). `src/f1-funding.mjs:177-178` and `:350`:
+
+```js
+  try { return { status: 'verified', sha256: versions[0], zip: readVerifiedSource(zipRoot, source, versions[0]) }; }
+  catch (error) { return { status: 'failed', error: error.message }; }
+    const checksum = loaded.status === 'verified' ? 'verified' : loaded.status === 'failed' ? 'failed' : 'not checked';
+```
+
+`readVerifiedSource` can throw before any hash comparison: a missing CHECKSUM file makes `verifyZip` throw "missing CHECKSUM" (`src/f1-1m-store.mjs:118`, `src/vision-source.mjs:58`), and the zip read itself can fail (`src/f1-1m-store.mjs:119`).
+
+- **reasoning:** an unreadable zip or a missing CHECKSUM file is reported as `checksum: 'failed'`, which reads as a byte mismatch. m3 allows repair only "through rules developed on documentation and research inputs"; a wrong label points that repair at the wrong cause. Not a leak: the unit still fails.
+- **Fix:** a distinct `unreadable` status for exceptions other than the sha256 comparison, mapped to `checksum: 'not checked'`.
+
+### M4 — research and integrity paths read the 2025-10 file independently
+
+**Position: missed as a finding** (the first pass's Q6, line 90 of the review, describes the concurrency limitation). **My severity: P3.**
+
+Evidence (taken over). `src/f1-funding.mjs:202` (research) and `:349` (integrity) each call `loadSource`; the integrity record carries no sha256 (`:365`):
+
+```js
+    const loaded = loadSource(zipRoot, source);
+    return { unit: name, available: loaded.status !== 'missing', checksum, result: pass ? 'pass' : 'fail' };
+```
+
+- **reasoning:** if the store changes between the phases (one version replaced by another), the "2025-10 sealed part" result and the research digest can refer to different verified versions of one file, without either path parsing unverified bytes.
+- **Fix:** pass the research history's 2025-10 sha256 (from `h.sources`) to `checkHoldout` and fail that unit if its loaded version differs; information flows only from research to integrity.
+
+### What I checked without a further finding
+
+- **reasoning — routing:** the seal is on the hour, so calc_time < seal holds exactly when settlement time < seal; routing on calc_time (`src/f1-funding.mjs:88`) agrees with the half-open research window, and A4's 2025-10-17T00:00:00.002Z case is sealed.
+- **reasoning — research diagnostics:** strict calc_time order (`:83-86`) means a `row N:` message is raised only for a research row, after research rows only.
+- **reasoning — integrity return:** `checkHoldout` returns exactly `{unit, available, checksum, result}` (`:365`), drops errors inside its try (`:363`), and nothing from it enters the research history (`:374-381`).
+- **reasoning — digest schema:** `:294-296` hold exactly the m5 keys with `schema: 'f1-funding-v1'`, rates as canonical decimal strings and NaN elapsed hours as null; `canonicalJson` sorts object keys and keeps array order (`src/f1-1m-format.mjs:17-19`).
+- **reasoning — bytes identity:** `readVerifiedSource` returns the Buffer it hashed (`src/f1-1m-store.mjs:119-121`) and the parser reads that Buffer.
+- **reasoning — reader refusal:** `checkRequest` rejects a start before 2021-10-18 and an end after 2025-10-17 (`:314`).
+- **reasoning — code identity:** `gitDirty` uses `--untracked-files=no` (`:257`); the first pass's Q5 point about untracked reachable modules stands; no new finding.
+
+## e) One fix batch
+
+**reasoning — principle:** each verify run spends holdout information, and its record names the hashes of the seven modules in the import closure of `src/f1-funding.mjs`. A later change to any of those seven files makes the record name code that no longer runs, so a fix left out of the batch either waits for the next planned integrity run (m4 already requires one before F1c, contract line 26) or is accepted as is for F1a-4. Tests and docs are outside the closure and do not change the code identity. Note that real-data research reads are not free either: a research parse of the 2025-10 file depends on sealed calc_time order and the final newline (allowed and fail-closed under Q4 row d:81-82), so no real-data read should be used to check the batch before the verify run.
+
+Must be in the batch (P1):
+
+1. F1: research-only listing evidence at `src/f1-funding.mjs:195`.
+2. F2: one constant message for every sealed-part failure of a sealable source, the newline and header checks included.
+
+Should be in the batch (P2):
+
+3. M1: zip errors of a sealable source mapped to the F2 constant.
+4. F4 (b): guard trip inside the integrity loop rethrown without figures or label.
+5. F5: instrument snapshot in `checkRequest`.
+6. M2: one fixed download error for holdout sources.
+
+Recommended to ride along (P3, small, inside the closure):
+
+7. F6: fail-closed cross-check in `codeIdentity`.
+8. M3: distinct unreadable status in `loadSource` and `checkHoldout`.
+
+May wait (ledger entry, or the m4 integrity step before F1c): M4 (2025-10 version binding between the paths), F3 (any code change), F4 (a) (OS-error hygiene), the first pass's Q5 untracked-module semantics, and the end-of-run RSS block unless Tomas decides otherwise (Q5).
+
+Decided before the batch is written, because they set test expectations (no code): Q1 (wording of the 2025-10 sha256 exception), Q2 (message wording), Q3 (research-only listing evidence). `docs/MAP.md` changes in the commit that changes the phase (findings F21).
+
+Dependencies:
+
+- Q1 to Q3 decisions, then tests, then code (TDD, decision 2026-10-19 working rules).
+- F2 and M1 share the constant and the sealable-source fixtures; implement them together.
+- F1 is independent of F2; its fixtures reuse the `storeAll` and `recordMissing` helpers of the reader and verify tests.
+- Keep every fix inside the seven existing modules, preferably only `src/f1-funding.mjs`, so that `test/f1-funding-reader.test.mjs:100` (seven paths) and every existing test stay unchanged (decision 2026-10-19 review row "nobody changes tests ... to make a test pass"; `experiments/strategy-destruction-filter/AGENTS.md`, "Tests, thresholds and gates").
+- F6 last, because it validates the final closure.
+- The one verify run comes after the last review round of the batch (decision 42: at most three Codex rounds), from a clean tree at the final commit, so that the recorded `gitRevision`, `gitDirty` and module hashes describe the code that ran.
+
+## f) Test scenarios for the batch (synthetic only; no test code)
+
+F1:
+
+- **"research listing ignores a holdout file"**: BTC store; every research month recorded 404, no research version. Variant A: no other file. Variant B: one CHECKSUM-valid 2025-11 version. Variant C: that version with a corrupted CHECKSUM. Assert: the research fields of verify (`notListed`, `gaps`, `coverage`, `anomalies`, `digest`) and a full-window reader read are identical across A, B and C; all 49 research months are gap months; the research part yields status incomplete. Holdout units are not asserted on.
+- **"HYPE listing unchanged"**: the existing HYPE fixture (research months from 2025-05 present, earlier months 404). Assert: still 43 not_listed months and the same coverage.
+- **"download keeps the whole-plan rule"**: the existing CLI HYPE download test, unchanged.
+
+F2:
+
+- **"one public sealed-part message"**: 2025-10 fixture with a fixed research prefix and, in turn, each sealed suffix: unreadable calc_time before any sealed row; unreadable after a sealed row; a September time after a sealed row; a November time; a decreasing time; a duplicate sealed time; a research time after a sealed row; a file without final newline; a headerless file whose first line is a malformed calc_time. Assert: every thrown message is byte-identical to the chosen constant, and the reader's error and verify's `failures[0].error` are identical across all variants.
+- **"research diagnostics stay"**: a bad interval in a research row before the seal still gives `row N: interval not one of 1, 2, 4, 8`.
+- **"other months unchanged"**: a 2024-03 file without final newline still fails with "does not end with a newline".
+
+M1:
+
+- **"no byte count for the mixed file"**: a 2025-10 zip with a valid CHECKSUM whose declared uncompressed size differs from its member (a fixture-builder option like the existing `crc` option used at `test/f1-funding.test.mjs:108`; it may need adding in `test-support`, outside the closure). Assert: the research failure equals the constant and contains no digit run besides the file name; the same corruption in 2024-03 keeps its detailed zip message.
+
+F4 (b):
+
+- **"guard trip in the integrity loop"**: verify with an injected `check` that throws on the first label starting with `holdout`. Assert: exit 1, `error` equals the fixed text, no "MiB" figure and no unit label in it. An injected trip on a `research` label keeps today's message.
+
+F5:
+
+- **"an accessor cannot relabel"**: a request whose instrument has an `exchange` getter returning `binance` first and another string afterwards, with call counters. Assert: the result's instrument is `{ exchange: 'binance', market: 'linear_perpetual', contract: 'BTCUSDT' }` and its digest equals that of a plain request (or the read is refused, if the fix chooses rejection); each getter runs exactly once.
+
+M2:
+
+- **"holdout download failure without sizes"**: a fake fetch whose 2025-11 zip body is shorter than its content-length on every attempt. Assert: exit 1, the failure entry for that file has the fixed text, and the summary contains no "bytes" and no digit run besides file names; the same truncation for a research month keeps the detailed message.
+
+F6:
+
+- **"unsupported import form fails closed"**: needs `codeIdentity` to take an entry path (internal parameter); temporary module trees with a double-quoted import, an indented import and an `import()` call. Assert: each throws; a single-quoted tree lists all its files; the real closure still lists the seven paths (existing test, unchanged).
+
+M3:
+
+- **"unreadable holdout zip"**: a stored 2026-03 zip replaced by a directory of the same name. Assert: that unit is `{ unit: '2026-03', available: true, checksum: 'not checked', result: 'fail' }`; a sha256 mismatch still gives `checksum: 'failed'`.
+
+## g) Open questions for Tomas
+
+1. **A1 versus m5 on the 2025-10 sha256.** A1 says a research read and its digest are unchanged by any holdout fixture, and "Where this amendment differs from sections 1-8, this amendment wins" (contract line 165); m5 (line 27) puts the whole 2025-10 file's sha256 into research provenance, and `test/f1-funding-reader.test.mjs:114` expects a sealed-row edit to change the digest. Read literally, A1 wins. **Recommendation:** keep m5's whole-file sha256 (it binds the verified bytes and equals the published CHECKSUM value) and add one amendment sentence naming it as the only holdout-dependent digest input; no code change.
+2. **Wording of the public sealed-part message.** The contract quotes `"sealed part of <file> fails"`; the existing test (`test/f1-funding.test.mjs:137`) requires the prefix `Vision funding: <file>: `. **Recommendation:** `Vision funding: <file>: sealed part fails` (same content, no existing test edited); otherwise approve the test edit in the PR description.
+3. **Research-only listing evidence (F1).** It narrows "evidence outside the requested months counts" of the F1a-2 listing rule (store comment, `src/f1-1m-store.mjs:89-93`; decision 28) for the research path only. **Recommendation:** approve it as a consequence of A1 and record it in the amendment; download keeps the whole-plan rule.
+4. **F3: does m3 extend to 1m manifest holdout metadata read by the funding research path?** **Recommendation:** no; decision 27 governs that metadata; ledger the coupling (shared with `src/f1-1m-reader.mjs:73`) and at most add the one fixed-message catch in `src/f1-funding.mjs`.
+5. **Memory figures in the verify summary.** The plan requires maxRSS in acceptance and report; A1 says nothing else leaves the integrity path. **Recommendation:** keep the end-of-run maxRSS block (process level, MiB, plan-bound) and sanitize only the guard-trip message inside the integrity loop (F4 b).
+6. **P3 items inside the closure (F6, M3, M4).** **Recommendation:** include F6 and M3 in the batch; defer M4 to the m4 integrity step before F1c with a ledger entry.
+
+## h) Evidence
+
+Rule-1 conflicts are listed in the report head, not here.
+
+Files read (code and docs only through `git show` or `git grep -n` on a commit tree, never the working tree; some long lines were displayed cut at 150 to 900 characters where noted, and no quote above comes from a cut part except the marked `...` in F3):
+
+- At main `7340703`: `docs/f1/f1a-4-seal-review.md` (whole); `AGENTS.md` (whole; its main copy and working-tree copy have the same sha256, tested); `docs/findings.md` (whole); `docs/decisions.md` (whole; rows 60 and 82-99 cut at 900 characters); `docs/f1/f1a-4-plan-second-opinion.md` (whole, lines cut at 700 to 900 characters); `docs/MAP.md` (orientation only; stale: it still says the F1a-4 plan is not started).
+- At c33f9c7: `docs/f1/f1a-4-contract.md` (whole, including Amendment 1); `docs/f1/f1a-4-plan.md` (sections a to n; lines 1-77 cut at 400 to 700 characters; Appendix A framing and its last lines only); `experiments/strategy-destruction-filter/AGENTS.md` (whole, lines cut at 400 characters); `src/f1-funding.mjs` (whole); `src/f1-1m-store.mjs` (whole; 260-558 cut at 200); `src/vision-source.mjs` (whole; 66-199 and 284-404 cut at 160); `src/vision-1m.mjs` (whole; 66-182 cut at 150); `src/vision-transport.mjs` (whole); `src/f1-1m-format.mjs` (whole; 40-135 cut at 150); `src/h2-contract.mjs` (whole, cut at 150); `src/f1-1m-reader.mjs` (grep lines only: 1-3, 9, 12, 28, 64, 72-73, 76); `test/f1-funding.test.mjs`, `test/f1-funding-reader.test.mjs`, `test/f1-funding-verify.test.mjs`, `test/f1-funding-cli.test.mjs` (whole; some ranges cut at 260).
+
+Commands run (from the repository root; read-only; the step 4 privacy grep is not reproduced, as the document requires):
+
+1. `git status` and `git log -1 --format='%H %s'`: branch `claude/focused-fermi-vwx8zh`, clean, HEAD `7340703...` "Update hourly data checks" (tested).
+2. The step 1 block, unchanged; output in the report head; every value as expected (tested).
+3. `git log --oneline -8 origin/main`, `git log --oneline -12 origin/f1/a4-funding`, `git show origin/main:docs/f1/f1a-4-seal-review.md | wc -l` (120 lines).
+4. `git show origin/main:docs/f1/f1a-4-seal-review.md | sed -n '1,120{=;p}'` (long output read back from the tool's saved copy of this command's output).
+5. `git ls-tree --name-only c33f9c7` on the `src/`, `test/`, `docs/f1/` and experiment folders (names only; no file content).
+6. Line-numbered reads, one per module and range: `git grep -n -e '' c33f9c7:experiments/strategy-destruction-filter/src -- '*.mjs' | sed -n 's#^c33f9c7:experiments/strategy-destruction-filter/src:<module>\.mjs:##p' | sed -n '<range>p'`, the same with `c33f9c7:experiments/strategy-destruction-filter/test -- '*.mjs'`, and `git grep -n -e '' c33f9c7:docs/f1 -- '*.md'` for the contract.
+7. Size checks: `git show <commit>:<path> | wc -l -c` for the contract, plan, findings, decisions, plan second opinion, AGENTS.md, MAP, the six imported modules and the four test files.
+8. `git grep -n -E '^(import|export .* from)|import\(' c33f9c7:experiments/strategy-destruction-filter/src -- '*.mjs'`, filtered to the imported modules (import lines).
+9. `git grep -n -E 'readManifest|holdout|research' ...` (1m reader, store, 1m CLI) and `git grep -n -E 'export (function|const)|throw new Error|fail\(' ...` (vision-source).
+10. `git grep -n -E 'PERIODS|research|holdout' ...` (h2-contract) and `git grep -n -E "import\(|require\(|from \"|^[[:space:]]+import " ...` filtered to the seven closure modules: empty (tested, F6).
+11. `` git grep -n -E "['\"\`]\.{1,2}/[^'\"\`]*['\"\`]" ... `` filtered to the seven closure modules: 17 lines, all import lines or `'../'` (tested, F6).
+12. `git grep -n -E 'canonicalJson|hasExactKeys' ...` and `git grep -n -E '^(test|describe)\(|^  (test|it)\(' c33f9c7:experiments/strategy-destruction-filter/test -- '*.mjs'` (test titles).
+13. `git grep -n -i -E 'seal|holdout|listing|not_listed|digest|identity' c33f9c7 -- 'docs/f1/f1a-4-plan.md'`; `git grep -n -i -E 'holdout|seal|verify run|F1a-4|bit' origin/main -- 'docs/decisions.md'`; `git grep -n -i -E 'seal|holdout|sanitiz|listing evidence|import closure' origin/main -- 'docs/f1/f1a-4-plan-second-opinion.md'`.
+14. `git show origin/main:docs/findings.md`; `git show origin/main:docs/decisions.md | sed -n ...`; `git show origin/main:docs/f1/f1a-4-plan-second-opinion.md | sed -n ... | cut -c1-...`; `git show c33f9c7:docs/f1/f1a-4-plan.md | sed -n ... | cut -c1-...`; `git show origin/main:docs/MAP.md | sed -n '1,37p' | cut -c1-300`; `git show c33f9c7:experiments/strategy-destruction-filter/AGENTS.md | cut -c1-400`.
+15. `git show origin/main:AGENTS.md | sha256sum | cut -c1-64` and `sha256sum AGENTS.md | cut -c1-64`: both `9541342f24d9c907eddfce7b76e623b45ebfc94ede71c8781f96c468229e7c22` (tested).
+16. `date -u`: `Tue Nov  3 11:09:17 UTC 2026` (tested).
+17. The step 4 block, run after this file was written (its outputs belong to the final reply, because this file's sha256 is computed in that step).
+=== END FILE ===
