@@ -16,7 +16,7 @@ const CLASSES = ['regular','interval_change','bridge','off_grid','unexplained_ga
 const ERAS = ['era1','era2','era3'];
 const HOUR = 3600000, W = Date.parse('2025-05-01Z'), SEAL = Date.parse('2025-10-17Z');
 const TREE_A = Date.parse('2025-08-31T08:00Z'), TREE_B = Date.parse('2025-09-01T04:00Z');
-// errorBody: per-response limit for non-200 bodies (F6); provisional until the run document's probe of one real 404 body freezes it.
+// errorBody: per-response limit for non-200 bodies (F6); frozen at 65536 on 2026-11-02 after the probe-r1 run (real 404 bodies 340-379 bytes, docs/f1/probe-r1-2026-11-02/notfound.csv).
 export const LIMITS = Object.freeze({ listing:16*1024*1024, sidecar:4096, zip:16*1024*1024, member:64*1024*1024, line:65536, lines:1000000, total:1073741824, output:256*1024*1024, keys:10000, errorBody:65536 });
 const MODULE_ROOT = 'experiments/strategy-destruction-filter/src/';
 const PINS = {
