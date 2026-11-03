@@ -1,0 +1,240 @@
+Error body 40 B analysis report
+Tue Nov  3 16:24:42 UTC 2026
+head 46be60a0accaedfc789f11adb865b0ef2db540cc
+branch claude/brave-bohr-9uc2hu
+node v24.22.0
+## A evidence
+id,raw_status,raw_body_bytes,content_type,m9_status,m9_budget_total,m9_equals_2x,m9_abort
+N1,404,340,application/xml,404,680,true,
+N2,404,349,application/xml,404,738,false,
+N3,404,379,application/xml,404,798,false,
+raw,zip,1,404,Error from cloudfront,340
+m9,zip,1,404,Error from cloudfront,
+m9,zip,2,404,Error from cloudfront,
+raw,sidecar,1,404,Error from cloudfront,349
+m9,sidecar,1,404,Error from cloudfront,
+m9,sidecar,2,404,Error from cloudfront,
+raw,sidecar,1,404,Error from cloudfront,379
+m9,sidecar,1,404,Error from cloudfront,
+m9,sidecar,2,404,Error from cloudfront,
+## C mock output
+zip|340|340|chunked|2|680|680|true|status:404
+zip|340|340|length|2|680|680|true|status:404
+zip|349|349|chunked|2|698|698|true|status:404
+zip|349|349|length|2|698|698|true|status:404
+zip|379|379|chunked|2|758|758|true|status:404
+zip|379|379|length|2|758|758|true|status:404
+zip|349|389|chunked|2|738|738|true|status:404
+zip|349|389|length|2|738|738|true|status:404
+zip|379|419|chunked|2|798|798|true|status:404
+zip|379|419|length|2|798|798|true|status:404
+sidecar|340|340|chunked|2|680|680|true|status:404
+sidecar|340|340|length|2|680|680|true|status:404
+sidecar|349|349|chunked|2|698|698|true|status:404
+sidecar|349|349|length|2|698|698|true|status:404
+sidecar|379|379|chunked|2|758|758|true|status:404
+sidecar|379|379|length|2|758|758|true|status:404
+sidecar|349|389|chunked|2|738|738|true|status:404
+sidecar|349|389|length|2|738|738|true|status:404
+sidecar|379|419|chunked|2|798|798|true|status:404
+sidecar|379|419|length|2|798|798|true|status:404
+all match true
+=== BEGIN FILE mock40.mjs sha256=45665ec22b405645e31418e6bba26c8ff7083e4ab546fc63894e39ce75f2ca31 ===
+// mock40.mjs: does m9-scan's requester/Budget count exactly the received body bytes of non-200 responses?
+// Local node:http server on 127.0.0.1 only. Node builtins only. Run from the repo root.
+import { createServer } from 'node:http';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+
+const { requester, Budget, Abort } = await import(pathToFileURL(resolve('experiments/m9-gate/m9-scan.mjs')).href);
+
+const hardStop = setTimeout(() => { process.stdout.write('timeout 55s\n'); process.exit(4); }, 55000);
+hardStop.unref();
+
+const KINDS = ['zip', 'sidecar'];
+const PAIRS = [[340, 340], [349, 349], [379, 379], [349, 389], [379, 419]];
+const MODES = ['chunked', 'length'];
+const cases = [];
+for (const kind of KINDS) for (const [a, b] of PAIRS) for (const mode of MODES) {
+ const id = 'c' + String(cases.length + 1).padStart(2, '0');
+ cases.push({ id, kind, a, b, mode, path: '/' + id + '/' + kind + '/' + a + '-' + b + '/' + mode });
+}
+const byPath = new Map(cases.map(c => [c.path, c]));
+const hits = new Map();
+
+// A body of exactly n bytes (ASCII), XML-like prefix, padded with 'x'.
+function body(n) {
+ const head = Buffer.from('<?xml version="1.0" encoding="UTF-8"?><Error>');
+ const buf = Buffer.alloc(n, 0x78);
+ head.copy(buf, 0, 0, Math.min(head.length, n));
+ return buf;
+}
+
+const server = createServer((req, res) => {
+ const c = byPath.get(req.url);
+ const count = (hits.get(req.url) || 0) + 1;
+ hits.set(req.url, count);
+ const size = c ? (count === 1 ? c.a : c.b) : 0;
+ const buf = body(size);
+ const headers = { 'Content-Type': 'application/xml' };
+ if (c && c.mode === 'length') headers['Content-Length'] = String(size);
+ res.writeHead(404, headers);
+ const half = Math.floor(size / 2);
+ // Two writes; the short delay keeps them as separate writes on the wire.
+ res.write(buf.subarray(0, half));
+ setTimeout(() => res.end(buf.subarray(half)), 5);
+});
+
+await new Promise((ok, fail) => { server.once('error', fail); server.listen(0, '127.0.0.1', ok); });
+const port = server.address().port;
+
+const lines = [];
+let allMatch = true;
+for (const c of cases) {
+ const budget = new Budget();
+ const get = requester({ pause: 0, retry: 0 }, budget);
+ const url = 'http://127.0.0.1:' + port + c.path;
+ let result;
+ try {
+  const r = await get(c.kind, url);
+  result = 'status:' + r.status + (r.body === null ? '' : ' body:' + r.body.length);
+ } catch (e) {
+  if (e instanceof Abort) result = 'abort:' + e.reason;
+  else result = 'error:' + (e && e.message);
+ }
+ const expected = c.a + c.b;
+ const match = budget.total === expected;
+ if (!match) allMatch = false;
+ lines.push([c.kind, c.a, c.b, c.mode, hits.get(c.path) || 0, budget.total, expected, match, result].join('|'));
+}
+for (const l of lines) process.stdout.write(l + '\n');
+process.stdout.write('all match ' + allMatch + '\n');
+
+server.closeAllConnections();
+await new Promise(ok => server.close(ok));
+clearTimeout(hardStop);
+=== END FILE ===
+## B code trace
+Labels: [tested: how] = checked by a command or run in this session; [reasoning] = read from code or derived, not run; [not verified] = not checked.
+Paths: m9-scan.mjs = experiments/m9-gate/m9-scan.mjs (sha256 0805a48b...2818b, step 1), probe-r1.mjs = experiments/m9-gate/probe-r1.mjs, both at base 46be60a (step 1 diff exit 0). Line numbers [tested: printed with cat -n / awk NR from the committed files]. What each line does is [reasoning] unless the mock (section C) exercised it.
+
+B1 How m9-scan counts bytes for a non-200 response
+- m9-scan.mjs:20 LIMITS.errorBody = 65536, LIMITS.total = 1073741824.
+- m9-scan.mjs:37 class Abort carries .reason. m9-scan.mjs:43 bound(kind,n) throws Abort('error_body') when kind is errorBody and n > 65536 (Abort(kind) for other kinds).
+- m9-scan.mjs:44-48 class Budget. :45 total starts at 0. :46 receive(kind,n,attemptBytes): total += n; bound('total',total); bound(kind,attemptBytes). total is cumulative over every receive on one Budget; the per-kind bound checks the per-attempt running count the caller passes.
+- m9-scan.mjs:82-114 requester(options,budget) returns async (kind,url) (:84).
+  :86 attempt loop for attempt = 0 and 1: at most two fetches per call.
+  :87 pause before every request after the first one of this requester: options.pause for attempt 0, max(pause,retry) for attempt 1.
+  :88 n = 0 at the start of each attempt (per-attempt byte count).
+  :92 fetch(url, {redirect:'manual', signal:AbortSignal.timeout(30000), headers:{'accept-encoding':'identity'}}). fetch is the global binding at call time; the file has no other fetch binding [tested: grep -n fetch shows only :92 as code].
+  :93 lastStatus = res.status. :96 ok = (status === 200).
+  :99-106 Content-Encoding branch: if a content-encoding header exists and its trimmed lower-case value is not identity, the body is cancelled unread (:101), a decimal Content-Length counts as declared, else 0 (:102), budget.receive(ok?'total':'errorBody', declared, declared) (:103), next attempt (:105).
+  :107 otherwise: for await (const ch of res.body) { n += ch.length; budget.receive(ok?kind:'errorBody', ch.length, n); chunks kept only if ok }. For a non-200 response every chunk of fetch's body stream adds exactly ch.length to Budget.total once; the errorBody bound checks n (this attempt only) against 65536. The kind argument plays no role for non-200 (always 'errorBody').
+  :108 HTTP 200 returns at once. A non-200 attempt does not return, so a 404 always leads to attempt 2.
+  :109 catch: an Abort is rethrown; any other error (network, timeout) sets lastStatus = null and the loop goes on. Bytes received before such an error stay in total.
+  :110 finally end = Date.now(). :112 after the loop: return {status:lastStatus, body:null}.
+- Result for a 404 without Content-Encoding: Budget.total = body bytes of attempt 1 + body bytes of attempt 2, where body bytes = the sum of chunk lengths that fetch's body stream yields (HTTP framing already removed by fetch) [reasoning from :86-112; tested in the mock for chunked and Content-Length 404s, section C].
+
+B2 How probe-r1 fills raw_body_bytes and m9_budget_total
+- probe-r1.mjs:219-220 globalThis.fetch = guard for the whole run, so the raw layer and m9-scan.mjs:92 both go through guard.
+- probe-r1.mjs:107-124 guard(url,init): one requests.csv row per request (:113-114); m9 rows get attempt = ++ctx.attempt (:112); :116 deps.fetch(url,init) is the real global fetch saved at :357; :119-122 status, content-encoding, content-length, content-type and x-cache are logged for every row of both layers; :123 returns {status, headers, body: counted(res.body)}.
+- probe-r1.mjs:87-105 counted(body): wraps every body of both layers; on each chunk read: state.bytes += value.length (:94), cap check (:95-100), the same chunk is enqueued unchanged (:101), highWaterMark 0 (:104). state.bytes is written as summary.txt bytes_received_total (:316). This is a second counter on the same chunk objects that m9's :107 loop and the raw loop iterate.
+- probe-r1.mjs:40 fetchOptions() = the same options as m9-scan.mjs:92. probe-r1.mjs:37-38 zipUrl(key) = DOWNLOAD + enc(key without ROOT, true); sidecarUrl = zipUrl + '.CHECKSUM'.
+- probe-r1.mjs:131-159 rawGet(kind,url,retry). The N probes call it with retry = false (:262), so one attempt (:133). :138 guard(url, fetchOptions()). :143 Content-Encoding branch cancels the body. :145-148 otherwise for await chunks: n += ch.length; result.bytes = n; row.bytes = String(n). raw_body_bytes = sum of chunk lengths of the one raw response.
+- probe-r1.mjs:161-171 m9Get(kind,url): :162 pace(pauseMs); :163 a fresh Budget and requester({pause:opts.pauseMs, retry:opts.retryMs}) per call (250 and 2000 ms from :356); :164 ctx = {layer:'m9', kind, attempt:0}; :166 r = await get(kind,url); :167 an Abort becomes abort = e.reason; :170 returns total: budget.total.
+- probe-r1.mjs:254-256 probes: N1 = shortest symbol zip, N2 = shortest symbol sidecar, N3 = longest symbol sidecar.
+- probe-r1.mjs:258-268: :259 key, :261 url, :262 raw = rawGet(kind,url,false), :263 m = m9Get(kind,url) on the same url string, :267 notfound row: raw_body_bytes = raw.bytes, m9_status = m.status, m9_budget_total = m.total, m9_equals_2x = (raw.bytes !== null && m.total === 2*raw.bytes), m9_abort = m.abort.
+- probe-r1.mjs:320-321 requests.csv: body_bytes only for raw rows (m9 rows never set row.bytes and are written as ''); content_encoding and content_length are written for both layers.
+## D hypotheses
+D0 Facts used below
+D0.1 [tested: awk on the notfound.csv url column; decoded key bytes = length of the path after the host minus 2 x number of '%'] decoded key bytes N1 69, N2 78, N3 108; raw_body_bytes minus key bytes = 271 for all three. The three raw bodies differ only by the key length.
+D0.2 [reasoning, not verified: body text was never logged] the standard S3 NoSuchKey XML (XML declaration and newline, Code NoSuchKey, Message "The specified key does not exist.", Key, 16-character RequestId, 76-character HostId) is exactly 340 B with the 69-B N1 key [tested: printf of that template | wc -c = 340]. So the raw bodies fit a template that echoes the decoded key; that they are this template is not verified.
+D0.3 [tested: grep/cut/uniq -c on requests.csv field 5] each probe's raw row and both m9 rows carry the identical URL: 3 distinct URLs, 3 consecutive rows each, n 1009-1017 contiguous; m9 attempts 1 and 2 only.
+D0.4 [tested: cut of requests.csv fields 7 and 8] content_encoding and content_length are empty on all 9 rows, raw and m9; x_cache is "Error from cloudfront" on all 9. summary.txt enc:error:absent 3 (raw layer only).
+D0.5 [tested: awk sums over committed files] summary.txt bytes_received_total 15635199 = sum of raw body_bytes in requests.csv 15527968 + sum of m9_bytes in encoding.csv 105015 + sum of m9_budget_total in notfound.csv 2216; difference 0. requests.csv has 17 m9 rows with status 200 (= 17 encoding.csv rows, all m9 status 200) and 6 m9 rows with 404 (the N attempts); no network_error rows. Raw body_bytes and m9 200 body lengths are computed from the same chunks counted() counts (B2), so the identity says: the six m9 N attempts delivered exactly 2216 B through counted(), equal to the sum of the three Budget totals. Sum level only: it does not split by probe or by attempt. Both counters see the same chunk objects, so this is a same-input cross-check (findings F17).
+D0.6 [tested: mock, section C] 20 of 20 cases Budget.total === a+b, chunked and Content-Length 404s, two writes per body, equal and unequal attempt sizes (349/389, 379/419), kinds zip and sidecar give identical totals; 2 server hits per case; no abort.
+
+H1 Counter artifact: m9's Budget counts bytes that are not received body bytes (chunk framing, headers, trailers, a chunk twice), or the kind changes the count.
+ For: none.
+ Against: m9-scan.mjs:107 adds ch.length once per chunk of the body stream and uses 'errorBody' for every non-200 regardless of kind [reasoning]; mock chunked and length cases exact, zip = sidecar [tested D0.6]; sum identity [tested D0.5]; N1 used the same code path with the same kind of response (404, application/xml, no CE, no CL, same x-cache) and matched 2 x 340 exactly [tested, section A].
+ Verdict: ruled out (mock, plus committed data at sum level).
+ Smallest logging change to decide it per probe: in counted() also add value.length to the current row (row.bytes) and write body_bytes for m9 rows too (drop the raw-only condition at probe-r1.mjs:321); then per probe sum of m9 row bytes vs m9_budget_total.
+
+H2 Content-Encoding branch (m9-scan.mjs:99-106) taken on an m9 attempt, adding a declared Content-Length.
+ For: none.
+ Against: content_encoding and content_length are empty on all m9 rows [tested D0.4]. Even if the branch ran, with no Content-Length it adds 0 and cancels the body, so it can only lower a total, never add 40 B [reasoning, :102-103].
+ Verdict: ruled out (committed data).
+ Logging change: none needed.
+
+H3 Bytes of another request in the m9 total (Budget not fresh, a third attempt, a request between the attempts).
+ For: none.
+ Against: fresh Budget per m9Get (probe-r1.mjs:163) and at most 2 attempts (m9-scan.mjs:86) [reasoning]; requests.csv holds exactly m9 attempts 1 and 2 per probe, contiguous n 1009-1017 [tested D0.3].
+ Verdict: ruled out (code and committed data).
+ Logging change: none needed.
+
+H4 Misattributed row: the totals written for N2 and N3 belong to another probe or call.
+ For: none.
+ Against: probe-r1.mjs:262-267 writes raw and m9 values of one loop iteration [reasoning]; 738 and 798 are not 2 x any of 340, 349, 379 (680, 698, 758) and not cumulative sums [tested: arithmetic].
+ Verdict: ruled out (code and arithmetic).
+ Logging change: none needed.
+
+H5 Different request: the m9 attempts used another URL or other request headers, so the server echoed a longer key or chose another body.
+ For: none.
+ Against: identical URL string on the raw and both m9 rows of every probe [tested D0.3]; identical fetch options (probe-r1.mjs:40 vs m9-scan.mjs:92), both through guard to the same deps.fetch [reasoning]; a URL difference would scale with the key, but +40 is the same for keys of 78 B and 108 B [tested: arithmetic].
+ Verdict: URL ruled out (committed data); request headers ruled out by code reading only [reasoning; wire headers not logged, not verified].
+ Logging change: none decides wire headers inside probe-r1; it would need a capture outside the probe (out of scope here).
+
+H6 Raw undercount: the one raw response was cut short, the m9 attempts received the full body.
+ For: none directly.
+ Against: all three raw bodies fit key bytes + 271 exactly [tested D0.1], and N1's two m9 attempts equal its raw body; a cut would have to land on the same template offset for N2 and N3 [reasoning]; the raw loop is the same chunk loop and passes counted() (B2); with chunked transfer fetch rejects a premature close (the row would show no bytes) [reasoning, not verified for this run: Transfer-Encoding was not logged].
+ Verdict: not decidable from committed data; the evidence is against it.
+ Smallest logging change: add one column transfer_encoding (header('transfer-encoding') in guard next to probe-r1.mjs:119-122), together with the per-row byte count of H1.
+
+H7 The server sent longer 404 bodies to the m9 sidecar attempts than to the raw request (the error body varies between requests by an amount that does not depend on the key).
+ For: the 2216 B were delivered by fetch's body stream to two counters [tested D0.5]; with H1-H5 ruled out, the extra 40 B per probe were received body bytes [reasoning from D0.5 and D0.6]; +40 is identical for two different keys, so the extra content does not depend on the key [tested: arithmetic].
+ Against: none in committed data.
+ Verdict: consistent; the only hypothesis left standing at the counter level.
+ Open parts, all not decidable from committed data:
+ H7a Split: +20 on each attempt (369+369, 399+399) or +40 on one attempt (349+389 or 389+349; 379+419 or 419+379). The mock shows the counter gives the same total for every split [tested D0.6], so totals cannot decide it. Smallest change: the per-row byte count of H1.
+ H7b Which part of the body: e.g. a longer RequestId/HostId, or another Code/Message with the same 404 [reasoning]. Smallest change: log the lengths of the x-amz-request-id and x-amz-id-2 response headers per row in guard; if CloudFront passes them through (not verified), their length difference should equal the body difference. A sha256 per non-200 body (the 200 path already hashes) shows which attempts got identical bodies but not which element differs. Seeing the element needs the body text, which probe-r1's rule (non-200 bodies are counted only) forbids; that is a policy change for the owner to approve, not a logging change.
+ H7c Time or retry: m9 attempt 2 runs max(250, 2000) ms after attempt 1 (m9-scan.mjs:87 with probe-r1.mjs:356); raw and m9 attempt 1 are about 250 ms apart [reasoning]. Smallest change: per-row byte count plus a per-row timestamp (deps.now() in guard).
+ H7d Edge or connection: another CloudFront edge or origin connection served the longer body. x_cache is the same on all rows [tested D0.4], so the cache status does not separate them. Smallest change: log the x-amz-cf-pop and via headers per row.
+ H7e Zip vs sidecar: there is one zip probe and two sidecar probes, so the 0 vs +40 split by kind may be chance [reasoning]. Raw N3 (379, short) came after m9 N2's longer attempts (rows 1012-1017), so it is not a single switch at one moment [reasoning from row order]. Deciding it needs more probes per kind, not a logging change.
+
+Single most useful change: the per-row body byte count for m9 rows (H1). It decides H1 per probe, H7a and, with a timestamp, H7c, and narrows H6.
+## E answer
+No. In the paths exercised (HTTP 404 without Content-Encoding, chunked and with Content-Length, bodies sent in two writes, two attempts with equal or different sizes, kind zip and sidecar), m9-scan's counter counts exactly the received body bytes: nothing else, and nothing is missed. [tested: mock, 20 of 20 cases budget.total === a+b, section C, Node v24.22.0, the same version probe-r1 ran on per summary.txt.] For the real probe-r1 run, the three m9 totals sum exactly to what probe-r1's independent per-chunk counter recorded for those six requests [tested: arithmetic on summary.txt, requests.csv, encoding.csv, notfound.csv; sum level only]. So the +40 B on N2 and N3 are bytes the server actually sent to the m9 attempts, not a counter error [reasoning from those two tests]. Not exercised: the Content-Encoding branch, a network error mid-body, the error_body abort above 65536, HTTP 200 bodies, real CloudFront.
+## F notes
+F1 Steps and fixes [tested: outputs in this session]
+- Step 0: branch claude/brave-bohr-9uc2hu, status lines 0, mkdir exit 0.
+- Step 1: base commit present locally (no fetch needed), ancestor exit 0, diff exit 0, sha256 as expected.
+- Step 2: npm pack printed an npm update notice (not an error); node -v v24.22.0; node step exit 0. No fix used.
+- Step 3: 4 notfound lines and 9 request lines as expected.
+- Step 4: mock exit 0, 21 lines, last line "all match true", last byte of the script \n. No fix used.
+- Step 5: skeleton 4816 B before these sections were filled. The step 5 grep and step 6 commit and push run after this text was written; their results are in the chat reply, not in this file.
+- No step failed; no fix was used.
+
+F2 Node used: v24.22.0 from the npm package node-linux-x64@24.22.0, binary /tmp/nb/node/package/bin/node [tested: node -v].
+
+F3 Commands outside the step blocks [tested: my own command log]
+- For B and D I ran extra read-only commands on repo files: cat -n, awk, sed, grep, cut, wc, sha256sum, printf, head, tail, and git log on file history. These are on the allowed list.
+- Not on the allowed list, used anyway (read-only, local, no network, no writes): ls twice (listing experiments/m9-gate, docs/f1/probe-r1-2026-11-02, experiments/m9-gate/test and review) and uniq -c twice (counting URL groups for D0.3). This breaks the allowed-command rule.
+- I used my file tools also to read the task document and to read this report before editing it (the edit tool needs that).
+
+F4 Conflicts (the document won each time)
+- C1 Commit attribution: session instructions ask commit messages to end with Co-Authored-By and Claude-Session lines; the document says no trailers and no Co-Authored-By. I followed the document (the session instruction itself defers to the user's own instructions).
+- C2 Temporary files: session instructions say to use the session scratchpad and /tmp only when asked; the document names /tmp/nb. I followed the document.
+- C3 Push command: session instructions say git push -u origin <branch-name>; the document says git push -q -u origin HEAD (resolves to the same branch). I followed the document.
+- C4 Repo AGENTS.md: "When the phase or the next step changes, update docs/MAP.md in the same change"; the document forbids editing tracked files. This report does not change the phase or the next step [reasoning], so no MAP change was due from this work.
+- C5 docs/MAP.md says "If the phase below is no longer current, this file is stale: say so before you act." MAP was last changed in ae5b30b on 2026-10-28 and says F1a-4 "plan not started", while the repo holds the m9 gate (spec v6.2, approved 2026-10-31 per experiments/m9-gate/AGENTS.md) and probe-r1 outputs from 2026-11-02 (993c893) [tested: git log dates]. MAP looks stale on that line; whether the m9 gate counts as the F1a-4 plan is [reasoning]. Not fixed: the document forbids tracked edits.
+- C6 Repo AGENTS.md read order (docs/MAP.md, then docs/findings.md) is not in the document. I read both with cat after steps 0-4 had run and before writing B-F.
+- C7 docs/findings.md F20 asks for the time from the GitHub Date header and a git fetch before stating the repo state. The document does neither; the date here is the sandbox clock (date -u) and head/branch are the local clone at session start. Not verified against GitHub.
+- C8 Session guidance for downloaded archives (own new directory, scripts elsewhere): the node package was extracted to its own new directory /tmp/nb/node and its binary run by design; mock40.mjs sits in /tmp/nb, outside the extracted directory.
+
+F5 Not verified
+- The text of any real 404 body (never logged; the D0.2 template is reasoning).
+- The per-attempt split of the m9 totals (H7a) and which part of the body differs (H7b).
+- Request headers on the wire (H5), Transfer-Encoding of the real responses (H6), whether CloudFront passes x-amz-* headers through (H7b).
+- What the mock does not cover: Content-Encoding branch, compressed bodies, network error mid-body, error_body abort above 65536, HTTP 200, HTTP/2, real CloudFront. The mock server is node:http (HTTP/1.1) on 127.0.0.1.
+- Whether each mock body reached the client as two separate chunks (chunk count not recorded); the totals are exact either way for these cases.
+- The repo's own tests (experiments/m9-gate/test) were not run; the document does not ask for it.
