@@ -1,0 +1,443 @@
+== S2 clock
+Tue Nov  3 09:17:57 PM UTC 2026
+               Local time: Tue 2026-11-03 21:17:58 UTC
+           Universal time: Tue 2026-11-03 21:17:58 UTC
+                 RTC time: Tue 2026-11-03 21:17:57
+                Time zone: Etc/UTC (UTC, +0000)
+System clock synchronized: yes
+              NTP service: active
+          RTC in local TZ: no
+timedatectl exit 0
+-- timesync-status (informational)
+       Server: <ip> (ntp.hetzner.com)
+Poll interval: 34min 8s (min: 32s; max 34min 8s)
+         Leap: normal
+      Version: 4
+      Stratum: 2
+    Reference: <masked>
+    Precision: 1us (-24)
+Root distance: 13.884ms (max: 5s)
+       Offset: +1.605ms
+        Delay: 9.693ms
+       Jitter: 3.576ms
+ Packet count: 536
+    Frequency: -3.730ppm
+chronyc not installed
+== S3 python
+Python 3.12.3
+Python 3.12.3
+venv python exit 0
+== S4 units and R2 (repo main 46be60a)
+-- ralph-collector.service: argv[]=~/venv-collector/bin/python ~/ralph_collector/binance_live.py --all --out ~/data/binance --features ~/data/features --live-port 8051 
+-- ralph-collector-ethusdt.service: argv[]=~/venv-collector/bin/python ~/ralph_collector/binance_live.py --symbol ethusdt --all --out ~/data/binance-ethusdt --features ~/data/features-ethusdt --live-port 0 
+-- ralph-collector-solusdt.service: argv[]=~/venv-collector/bin/python ~/ralph_collector/binance_live.py --symbol solusdt --all --out ~/data/binance-solusdt --features ~/data/features-solusdt --live-port 0 
+-- ralph-collector-hypeusdt.service: argv[]=~/venv-collector/bin/python ~/ralph_collector/binance_live.py --symbol hypeusdt --all --out ~/data/binance-hypeusdt --features ~/data/features-hypeusdt --live-port 0 
+-- ralph-data-checks.service: argv[]=~/venv-collector/bin/python ~/ralph_collector/data_checks.py --repo ~/ralph-data-checks-repo --commit-push 
+-- ralph-archive-upload.service: argv[]=~/venv-collector/bin/python ~/ralph_collector/archive_upload.py 
+py paths found: 3
+R2 MATCH ~/ralph_collector/archive_upload.py 1a01ff6b951e131bbd3cae408c4e51dac8e2fd8884d46b025b67ab947940bdad
+R2 MATCH ~/ralph_collector/binance_live.py 130c9a650043357535320e120c31655d13d79ba99d1d447052f7bd8197f76199
+R2 MATCH ~/ralph_collector/data_checks.py c11cd01c5cb93a2965ca6ea11358956c6a4fe7772d83e86c67ac590148ce7369
+== S5 timers
+NEXT                           LEFT LAST                              PASSED UNIT                            ACTIVATES
+Tue 2026-11-03 21:40:00 UTC   21min Tue 2026-11-03 20:44:17 UTC    33min ago ralph-archive-upload.timer      ralph-archive-upload.service
+Wed 2026-11-04 00:20:00 UTC 3h 1min Tue 2026-11-03 00:20:17 UTC      20h ago ralph-data-checks.timer         ralph-data-checks.service
+== S6 local inventory (symbol kind count first_hour last_hour)
+BTCUSDT raw.jsonl.xz 167 2026-10-27T21Z 2026-11-03T19Z
+BTCUSDT raw.jsonl.gz 2 2026-11-03T20Z 2026-11-03T21Z
+BTCUSDT book.jsonl.gz 625 2026-10-08T21Z 2026-11-03T21Z
+BTCUSDT tape.csv.gz 623 2026-10-08T21Z 2026-11-03T19Z
+BTCUSDT tape.csv 2 2026-11-03T20Z 2026-11-03T21Z
+ETHUSDT raw.jsonl.xz 167 2026-10-27T21Z 2026-11-03T19Z
+ETHUSDT raw.jsonl.gz 2 2026-11-03T20Z 2026-11-03T21Z
+ETHUSDT book.jsonl.gz 617 2026-10-09T05Z 2026-11-03T21Z
+ETHUSDT tape.csv.gz 615 2026-10-09T05Z 2026-11-03T19Z
+ETHUSDT tape.csv 2 2026-11-03T20Z 2026-11-03T21Z
+SOLUSDT raw.jsonl.xz 167 2026-10-27T21Z 2026-11-03T19Z
+SOLUSDT raw.jsonl.gz 2 2026-11-03T20Z 2026-11-03T21Z
+SOLUSDT book.jsonl.gz 617 2026-10-09T05Z 2026-11-03T21Z
+SOLUSDT tape.csv.gz 615 2026-10-09T05Z 2026-11-03T19Z
+SOLUSDT tape.csv 2 2026-11-03T20Z 2026-11-03T21Z
+HYPEUSDT raw.jsonl.xz 167 2026-10-27T21Z 2026-11-03T19Z
+HYPEUSDT raw.jsonl.gz 2 2026-11-03T20Z 2026-11-03T21Z
+HYPEUSDT book.jsonl.gz 616 2026-10-09T06Z 2026-11-03T21Z
+HYPEUSDT tape.csv.gz 614 2026-10-09T06Z 2026-11-03T19Z
+HYPEUSDT tape.csv 2 2026-11-03T20Z 2026-11-03T21Z
+home avail bytes: 31949815808
+MemAvailable:     796164 kB
+== S7 archive state ~/ralph-state/archive-files.csv (symbol kind status rows distinct_paths first_hour last_hour)
+BTCUSDT book PASS 623 623 2026-10-08T21Z 2026-11-03T19Z
+BTCUSDT raw PASS 622 622 2026-10-08T21Z 2026-11-03T18Z
+BTCUSDT tape PASS 622 622 2026-10-08T21Z 2026-11-03T18Z
+ETHUSDT book PASS 615 615 2026-10-09T05Z 2026-11-03T19Z
+ETHUSDT raw PASS 614 614 2026-10-09T05Z 2026-11-03T18Z
+ETHUSDT tape PASS 614 614 2026-10-09T05Z 2026-11-03T18Z
+HYPEUSDT book PASS 614 614 2026-10-09T06Z 2026-11-03T19Z
+HYPEUSDT raw PASS 613 613 2026-10-09T06Z 2026-11-03T18Z
+HYPEUSDT tape PASS 613 613 2026-10-09T06Z 2026-11-03T18Z
+SOLUSDT book PASS 615 615 2026-10-09T05Z 2026-11-03T19Z
+SOLUSDT raw PASS 614 614 2026-10-09T05Z 2026-11-03T18Z
+SOLUSDT tape PASS 614 614 2026-10-09T05Z 2026-11-03T18Z
+== S8 Storage Box listing (rsync --list-only, alias storagebox)
+-- top: _test derived raw 
+raw BTCUSDT rsync_exit=0 days=27 first=2026-10-08 last=2026-11-03
+derived BTCUSDT rsync_exit=0 days=27 first=2026-10-08 last=2026-11-03
+2026-10-20 BTCUSDT raw=24 book=24 tape=24
+raw ETHUSDT rsync_exit=0 days=26 first=2026-10-09 last=2026-11-03
+derived ETHUSDT rsync_exit=0 days=26 first=2026-10-09 last=2026-11-03
+2026-10-20 ETHUSDT raw=24 book=24 tape=24
+raw SOLUSDT rsync_exit=0 days=26 first=2026-10-09 last=2026-11-03
+derived SOLUSDT rsync_exit=0 days=26 first=2026-10-09 last=2026-11-03
+2026-10-20 SOLUSDT raw=24 book=24 tape=24
+raw HYPEUSDT rsync_exit=0 days=26 first=2026-10-09 last=2026-11-03
+derived HYPEUSDT rsync_exit=0 days=26 first=2026-10-09 last=2026-11-03
+2026-10-20 HYPEUSDT raw=24 book=24 tape=24
+== S9 Storage Box read test (HYPEUSDT 2026-10-20T12Z raw + book)
+rsync exit 0
+BOX READ MATCH ralph/raw/HYPEUSDT/2026-10-20/raw_HYPEUSDT_2026-10-20T12Z.jsonl.xz bytes=10034368 sha256=33d30a67daf1f80da87937bbe2f4ea145ad1a29e25acfa6713109e8193001473
+xz -t exit 0
+rsync exit 0
+BOX READ MATCH ralph/derived/HYPEUSDT/2026-10-20/book_HYPEUSDT_2026-10-20T12Z.jsonl.gz bytes=2342137 sha256=4d5c987065684be32e976253fb1ae9628885868262f9ea8134cf84f7285307b1
+gzip -t exit 0
+== S10 HYPEUSDT collector journal
+NRestarts=0
+ActiveState=active
+ActiveEnterTimestamp=Fri 2026-10-09 14:09:01 UTC
+-- window 2026-11-02 13:01:30-13:02:40 UTC
+2026-11-02T13:01:37.293084+00:00 python[3693400]: 13:01:37  cena 85.442  obchody 13237622  posledni minuta: 0.43 M$  delta -0.12 M$  velocity 0.6x  zpozdeni ~137 ms  mezery 29 (doplneno 2813)  likvidace 6018  book 8470/8525 urovni, spread 0.001, resync 25  OI 4 416 135 BTC
+2026-11-02T13:01:47.296429+00:00 python[3693400]: 13:01:47  cena 85.446  obchody 13237710  posledni minuta: 0.37 M$  delta +0.02 M$  velocity 0.2x  zpozdeni ~137 ms  mezery 29 (doplneno 2813)  likvidace 6018  book 8481/8519 urovni, spread 0.001, resync 25  OI 4 416 112 BTC
+2026-11-02T13:01:57.299268+00:00 python[3693400]: 13:01:57  cena 85.437  obchody 13237750  posledni minuta: 0.36 M$  delta +0.03 M$  velocity 0.1x  zpozdeni ~137 ms  mezery 29 (doplneno 2813)  likvidace 6018  book 8466/8522 urovni, spread 0.001, resync 25  OI 4 416 082 BTC
+2026-11-02T13:02:07.304099+00:00 python[3693400]: 13:02:07  cena 85.426  obchody 13237772  posledni minuta: 0.24 M$  delta +0.01 M$  velocity 0.0x  zpozdeni ~137 ms  mezery 29 (doplneno 2813)  likvidace 6018  book 8441/8552 urovni, spread 0.001, resync 25  OI 4 416 110 BTC
+2026-11-02T13:02:10.780709+00:00 python[3693400]: pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+2026-11-02T13:02:17.306931+00:00 python[3693400]: 13:02:17  cena 85.404  obchody 13237832  posledni minuta: 0.29 M$  delta -0.00 M$  velocity 1.6x  zpozdeni ~137 ms  mezery 30 (doplneno 2842)  likvidace 6018  book 8433/8553 urovni, spread 0.001, resync 25  OI 4 416 202 BTC
+2026-11-02T13:02:27.311477+00:00 python[3693400]: 13:02:27  cena 85.377  obchody 13237871  posledni minuta: 0.25 M$  delta -0.06 M$  velocity 0.3x  zpozdeni ~137 ms  mezery 30 (doplneno 2842)  likvidace 6018  book 8405/8567 urovni, spread 0.001, resync 25  OI 4 416 084 BTC
+2026-11-02T13:02:37.314620+00:00 python[3693400]: 13:02:37  cena 85.377  obchody 13237882  posledni minuta: 0.23 M$  delta -0.05 M$  velocity 0.4x  zpozdeni ~137 ms  mezery 30 (doplneno 2842)  likvidace 6018  book 8403/8565 urovni, spread 0.001, resync 25  OI 4 416 039 BTC
+-- connection events 2026-11-02 12:00-14:00 UTC
+2026-11-02T13:02:10.780709+00:00 python[3693400]: pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+-- oldest journal entry of this unit: 2026-10-09T06:28:49+00:00
+== Appended by dg-1b2-2026-11-03.txt (IPv4 addresses above masked as <ip>)
+== X1 websockets in ~/venv-collector
+websockets 17.2 websockets.asyncio.client close_timeout: close_timeout: 'float | None' = 10 timeout: None
+exit 0
+== X2 collector connection events (journal, all retained), intervals between connects in hours
+-- ralph-collector.service journalctl_exit=0 events=105
+  2026-10-08T21:09:20.038602+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-08T21:09:20.069585+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-08T21:35:06.128689+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-08T21:35:07.968380+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-09T07:36:00.225503+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-09T07:36:02.069057+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-09T08:30:00.159000+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-09T08:30:01.922513+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-09T11:33:24.794271+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-09T11:33:24.847911+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-09T13:46:16.482007+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-09T13:46:16.521267+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-09T14:09:11.789301+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-09T14:09:11.832565+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-09T19:13:43.543493+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-09T19:13:45.335669+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-10T13:59:21.241311+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-10T19:03:56.205468+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-11T12:07:11.894013+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-11T12:07:14.655361+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-11T13:49:32.072225+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-12T11:57:25.457525+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-12T13:39:42.246058+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-13T11:14:45.393488+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-13T11:14:47.277892+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-13T13:29:48.700341+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-14T11:04:58.130953+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-14T13:19:57.656580+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-15T10:55:09.009392+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-15T13:10:08.805971+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-16T10:45:19.802273+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-16T13:00:16.481520+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-16T17:34:04.425450+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-16T17:34:06.296038+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-17T00:34:00.142029+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-17T00:34:01.942018+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-17T05:03:00.153471+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-17T05:03:01.987918+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-17T05:16:00.155338+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-17T05:16:01.912224+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-17T07:59:00.138408+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-17T07:59:01.968684+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-18T04:53:11.621271+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-18T07:49:12.839325+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-18T17:02:45.871345+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-18T17:02:49.683709+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-18T17:03:30.218189+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-18T17:03:33.418540+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-18T17:03:47.227948+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-18T17:03:48.987547+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-19T04:43:18.861558+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-19T16:53:59.826770+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-20T04:33:26.606681+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-20T16:44:10.642207+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-21T04:23:33.468371+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-21T16:34:21.522790+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-22T04:13:41.622965+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-22T16:24:32.360645+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-22T17:17:38.625172+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-22T17:17:49.626647+00:00 spojeni market spadlo (TimeoutError), zkousim znovu za 2 s
+  2026-10-22T17:18:01.628832+00:00 spojeni market spadlo (TimeoutError), zkousim znovu za 4 s
+  2026-10-22T17:18:15.629707+00:00 spojeni market spadlo (TimeoutError), zkousim znovu za 8 s
+  2026-10-22T17:18:33.631128+00:00 spojeni market spadlo (TimeoutError), zkousim znovu za 16 s
+  2026-10-22T17:18:50.431929+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-22T22:34:04.143283+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-22T22:34:09.293752+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-23T17:09:01.492903+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-23T22:24:16.888230+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-24T16:59:08.187989+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-24T22:14:27.759785+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-25T16:49:16.009786+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-25T22:04:38.574904+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-26T15:52:57.348857+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-26T15:52:59.192050+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-26T16:39:26.406326+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  2026-10-27T10:19:36.425302+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-27T10:19:38.279728+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-27T13:56:09.423456+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-27T13:56:11.205887+00:00 pripojeno: public btcusdt@depth@100ms, btcusdt@bookTicker
+  2026-10-27T16:29:34.687052+00:00 pripojeno: market btcusdt@aggTrade, btcusdt@forceOrder, btcusdt@markPrice@1s
+  market connects=32 interval_h min/median/max=0.382/23.835/23.836 all=[10.445, 3.956, 2.214, 0.382, 23.836, 23.836, 23.836, 23.835, 23.836, 23.836, 23.835, 4.564, 11.482, 23.836, 23.835, 23.835, 23.835, 23.836, 13.086, 23.836, 23.835, 23.836, 23.836, 23.836, 23.835, 23.836, 23.835, 23.836, 23.836, 23.836, 23.835]
+  public connects=44 interval_h min/median/max=0.004/17.806/23.836 all=[0.43, 10.915, 3.056, 2.214, 0.382, 5.076, 23.836, 17.055, 23.836, 23.289, 23.836, 23.836, 23.836, 13.812, 4.7, 2.717, 23.836, 9.227, 0.012, 0.004, 23.836, 23.836, 23.836, 23.836, 6.16, 23.835, 23.836, 23.836, 17.806, 18.444, 3.609, 23.836, 23.836, 7.493, 0.036, 3.277, 0.021, 23.836, 23.835, 23.836, 15.072, 0.006, 23.836]
+-- ralph-collector-ethusdt.service journalctl_exit=0 events=109
+  2026-10-09T05:48:35.151253+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-09T05:48:35.175105+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-09T11:33:22.892807+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-09T11:33:22.894768+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-09T13:46:12.799179+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-09T13:46:12.832277+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-09T14:09:08.837841+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-09T14:09:08.882562+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-09T19:17:59.940653+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-09T19:18:03.006858+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-10T13:59:19.646715+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-10T19:08:10.008835+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-11T12:07:59.450370+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-11T12:08:07.308729+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-11T13:12:15.474357+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-11T13:12:17.284071+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-11T18:58:19.874999+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-12T13:02:28.138187+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-12T18:48:28.461284+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-13T12:52:39.001334+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-13T18:38:38.080312+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-14T12:42:49.849540+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-14T18:28:45.435141+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-15T12:33:00.600910+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-15T18:18:53.011249+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-16T11:13:49.219276+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-16T11:13:50.982700+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-16T14:15:31.164236+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-16T14:15:32.999905+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-16T18:09:03.857298+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-16T22:45:25.372922+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-16T22:45:27.323527+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-16T22:54:37.356838+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-16T22:54:39.229846+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-17T03:21:00.145460+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-17T03:21:01.945682+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-17T04:55:00.152600+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-17T04:55:01.904197+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-17T07:23:00.148250+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-17T07:23:01.974841+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-18T04:45:12.752742+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-18T07:13:09.201405+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-18T17:02:25.601247+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-18T17:02:29.211814+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-18T17:03:05.426635+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-18T17:03:08.928303+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-18T17:03:20.716070+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-18T17:03:22.526720+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-18T17:03:43.617234+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-18T17:03:45.394767+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-19T16:53:31.919434+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-19T16:53:56.221756+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-20T11:02:46.370435+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-20T11:02:48.171700+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-20T16:44:02.742895+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-21T10:52:55.235511+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-21T16:34:13.624978+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-22T10:43:04.723723+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-22T16:24:24.446138+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-22T17:17:54.696265+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-22T17:17:56.493943+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-22T17:29:06.527932+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-22T17:29:08.372916+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-23T10:33:13.394817+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-23T17:19:19.225695+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-24T10:23:20.738721+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-24T17:09:30.144605+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-25T10:13:28.622836+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-25T16:59:40.979929+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-26T10:03:35.711987+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-26T15:52:57.567673+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-26T15:52:59.462181+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-27T06:00:31.291272+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-27T06:00:33.412053+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-27T06:02:43.418420+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-27T06:02:45.209377+00:00 pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+  2026-10-27T10:19:34.227658+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-27T10:19:36.210482+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  2026-10-27T10:20:18.932455+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-27T10:20:20.769650+00:00 pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+  market connects=32 interval_h min/median/max=0.037/23.835/23.836 all=[5.747, 2.214, 0.382, 5.148, 23.835, 23.836, 23.836, 23.836, 23.835, 23.835, 23.836, 13.233, 23.835, 9.837, 23.836, 18.155, 23.835, 23.836, 23.836, 23.835, 23.836, 23.835, 19.949, 0.037, 23.836, 23.835, 23.836, 23.836, 23.836, 23.836, 23.835]
+  public connects=47 interval_h min/median/max=0.004/16.7605/23.836 all=[5.747, 2.214, 0.382, 23.836, 22.147, 1.069, 23.836, 23.836, 23.836, 23.836, 22.681, 3.028, 8.498, 0.153, 4.44, 1.567, 23.836, 12.288, 0.011, 0.01, 23.836, 23.835, 23.836, 23.836, 0.892, 0.187, 23.836, 23.836, 23.836, 22.888, 18.444, 0.012, 23.836, 23.836, 11.089, 0.007, 0.029, 0.035, 3.241, 0.022, 23.836, 23.836, 23.836, 15.077, 0.004, 23.836]
+-- ralph-collector-solusdt.service journalctl_exit=0 events=81
+  2026-10-09T05:48:35.147900+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-09T05:48:35.174522+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-09T11:33:22.460986+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-09T11:33:22.506330+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-09T13:46:09.339355+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-09T13:46:09.395595+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-09T14:09:06.078091+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-09T14:09:06.129201+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-09T19:21:57.043132+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-09T19:21:58.830641+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-10T13:59:15.966097+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-10T19:12:07.543682+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-11T13:49:26.885667+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-11T19:02:13.818701+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-12T13:39:37.800908+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-12T18:52:22.038573+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-13T13:29:47.639022+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-13T18:42:28.753845+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-14T13:19:58.487505+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-14T18:32:36.294186+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-15T13:10:09.266882+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-15T18:22:43.408198+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-16T13:00:20.080020+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-16T18:12:53.148019+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-17T02:31:00.144017+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-17T02:31:01.975169+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-17T03:37:00.144789+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-17T03:37:01.927198+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-17T06:37:00.150018+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-17T06:37:01.983591+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-17T07:38:00.147498+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-17T07:38:01.933613+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-18T03:27:12.058846+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-18T07:28:08.264437+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-18T17:02:40.183650+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-18T17:02:43.666621+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-18T17:03:33.673525+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-18T17:03:35.439077+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-19T03:17:21.241954+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-19T16:53:46.257193+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-20T03:07:29.440827+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-20T16:43:57.105083+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-21T02:57:38.353670+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-21T16:34:07.004185+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-22T02:47:46.905239+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-22T16:24:14.689302+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-22T17:17:44.843264+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-22T17:17:46.635234+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-23T02:37:57.573070+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-23T17:07:53.273893+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-24T02:28:07.674412+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-24T16:58:04.077156+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-25T02:18:17.450420+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-25T16:48:14.341374+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-26T02:08:24.939890+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-26T16:38:25.230258+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-27T01:58:31.821806+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-27T14:01:04.067472+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-27T14:01:11.119735+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-27T16:28:36.078367+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-28T13:51:21.069843+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-28T16:18:46.943169+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-29T13:41:30.140313+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-29T16:08:57.806175+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-29T21:06:09.429893+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-29T21:06:15.434345+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-29T21:08:09.667665+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-29T21:08:11.882730+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-30T00:25:43.785071+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-30T00:26:06.774759+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-30T13:31:39.471041+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-10-31T00:16:14.704063+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-10-31T13:21:49.005018+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-11-01T00:06:25.385644+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-11-01T13:11:57.304804+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-11-01T23:56:36.253951+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-11-02T13:02:06.963915+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  2026-11-02T15:01:47.402814+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-11-02T15:01:49.244306+00:00 pripojeno: public solusdt@depth@100ms, solusdt@bookTicker
+  2026-11-03T12:52:16.471990+00:00 pripojeno: market solusdt@aggTrade, solusdt@forceOrder, solusdt@markPrice@1s
+  market connects=31 interval_h min/median/max=0.382/23.836/23.836 all=[5.746, 2.213, 0.382, 5.215, 23.836, 23.835, 23.836, 23.835, 23.835, 23.835, 23.836, 9.402, 23.836, 23.836, 23.836, 23.836, 23.836, 23.836, 23.836, 23.836, 23.835, 23.835, 12.044, 23.836, 23.836, 23.836, 23.836, 23.836, 23.836, 23.836]
+  public connects=37 interval_h min/median/max=0.014/23.836/23.836 all=[5.746, 2.213, 0.382, 23.836, 23.836, 23.836, 23.836, 23.836, 23.836, 23.836, 13.512, 4.1, 1.017, 23.835, 9.577, 0.014, 23.836, 23.836, 23.836, 23.835, 0.892, 23.835, 23.836, 23.836, 23.836, 23.836, 23.836, 23.836, 4.955, 0.032, 3.299, 23.836, 23.836, 23.836, 15.087, 23.836]
+-- ralph-collector-hypeusdt.service journalctl_exit=0 events=69
+  2026-10-09T06:28:50.560337+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-09T06:28:50.587404+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-09T11:33:22.024622+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-09T11:33:22.024732+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-09T13:46:09.804221+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-09T13:46:09.835395+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-09T14:09:04.522367+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-09T14:09:04.568613+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-09T19:21:35.516000+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-09T19:21:37.304005+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-10T13:59:15.160433+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-10T19:11:44.067739+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-11T13:49:24.520247+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-11T19:01:51.546837+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-12T13:39:35.346079+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-12T18:51:58.435087+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-13T13:29:42.180959+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-13T18:42:09.382335+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-14T13:19:53.005048+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-14T18:32:16.716795+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-15T13:10:00.773197+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-15T18:22:25.871327+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-16T13:00:11.565708+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-16T18:12:32.928907+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-17T06:44:00.140677+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-17T06:44:01.922263+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-17T08:04:00.141912+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-17T08:04:01.932201+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-18T06:34:12.808692+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-18T07:54:09.573326+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-19T06:24:19.565545+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-19T07:44:20.180906+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-20T06:14:30.425407+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-20T07:34:29.174483+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-21T06:04:38.699660+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-21T07:24:37.550562+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-22T05:54:44.973462+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-22T07:14:48.690653+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-22T22:34:15.230837+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-22T22:34:16.988091+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-23T07:04:58.365105+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-23T22:24:25.767682+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-24T06:55:07.378308+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-24T22:14:36.497330+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-25T06:45:18.758474+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-25T22:04:46.026269+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-26T06:35:29.952506+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-26T21:54:56.323672+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-27T06:25:38.456137+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-27T14:01:09.999805+00:00 spojeni market spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-27T14:01:17.415307+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-27T21:45:07.193946+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-28T13:51:25.386262+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-28T21:35:18.063696+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-29T13:41:33.669625+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-29T21:08:11.791678+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-29T21:08:13.815605+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-30T00:26:13.945078+00:00 spojeni public spadlo (ConnectionClosedError), zkousim znovu za 1 s
+  2026-10-30T00:26:15.774771+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-30T13:31:40.735950+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-10-31T00:16:25.961679+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-10-31T13:21:51.788805+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-11-01T00:06:34.372520+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-11-01T13:12:01.136215+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-11-01T23:56:45.304387+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-11-02T13:02:10.780709+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-11-02T23:46:56.228023+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  2026-11-03T12:52:20.820608+00:00 pripojeno: market hypeusdt@aggTrade, hypeusdt@forceOrder, hypeusdt@markPrice@1s
+  2026-11-03T23:37:03.494997+00:00 pripojeno: public hypeusdt@depth@100ms, hypeusdt@bookTicker
+  market connects=31 interval_h min/median/max=0.382/23.836/23.836 all=[5.075, 2.213, 0.382, 5.209, 23.835, 23.835, 23.835, 23.836, 23.835, 23.836, 23.835, 13.858, 23.835, 23.836, 23.836, 23.836, 23.836, 23.836, 23.836, 23.836, 23.836, 23.836, 7.594, 23.836, 23.836, 23.835, 23.836, 23.836, 23.836, 23.836]
+  public connects=31 interval_h min/median/max=0.382/23.836/23.836 all=[5.075, 2.213, 0.382, 23.836, 23.836, 23.836, 23.835, 23.836, 23.835, 23.836, 17.731, 23.836, 23.835, 23.836, 23.836, 23.835, 16.659, 23.836, 23.836, 23.836, 23.836, 23.836, 23.836, 23.549, 3.301, 23.836, 23.836, 23.836, 23.836, 23.835]
