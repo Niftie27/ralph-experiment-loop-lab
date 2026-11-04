@@ -24,7 +24,7 @@ With --all expect hundreds of MB per day (compressed).
 Missing trades are detected from Binance trade IDs and filled from REST. A broken order book sequence
 triggers a fresh snapshot automatically. Binance closes every connection after 24 h; before that the collector
 hands over to a new connection opened while the old one is still read (make-before-break), dropping duplicates.
-The new connection is taken over only once it has delivered a message. A connection on which
+The new connection is taken over only once it has delivered every stream except forceOrder. A connection on which
 a stream other than aggTrade and forceOrder stays silent for SILENCE_MAX_S is dropped and opened again.
 
 --features DIR  also run orderflow_engine.py live and write everything it computes to DIR, including
@@ -78,12 +78,12 @@ BOOK_LEVELS_SAVED = 100
 RECONNECT_AFTER_S = 23 * 3600 + 50 * 60     # Binance closes every connection after 24 h
 # The scheduled reconnect is a make-before-break handover (Collector.run_endpoint): NEW connects and buffers
 # while OLD is still processed, then OLD is closed in the background and NEW passes a duplicate filter.
-HANDOVER_MAX_S = 3                  # switch at the latest this long after NEW's first message (it is ready then)
+HANDOVER_MAX_S = 3                  # once NEW is ready, switch at the latest this long after that
 HANDOVER_FILTER_S = 10              # after the switch, drop duplicates this long
 HANDOVER_RETRY_S = 30               # a failed handover is tried again no sooner than this
 HANDOVER_BUFFER_MAX = 20000         # NEW's buffer; reaching it switches at once (or aborts a NEW that is not ready)
 HANDOVER_CONNECT_TIMEOUT_S = 10     # opening NEW
-HANDOVER_READY_MAX_S = 30           # NEW must deliver a message this long after opening, or it is aborted
+HANDOVER_READY_MAX_S = 30           # NEW must deliver every cadence stream this long after opening, or it is aborted
 SILENCE_MAX_S = 60                  # a watched stream silent this long on the live connection: abort and reconnect
 WATCHDOG_TICK_S = 1.0               # the silence watchdog looks this often (at least 10 times per SILENCE_MAX_S)
 STOP_GRACE_S = 0.5                  # at stop, a connection still waiting in recv() after this long is closed
@@ -97,8 +97,8 @@ def ws_connect(url):
 
 
 def cadence_streams(streams):
-    """The streams with a steady cadence: all but @forceOrder (liquidations can be silent for hours). A NEW that is
-    given up is logged with the ones it did not deliver."""
+    """The streams with a steady cadence: all but @forceOrder (liquidations can be silent for hours). A handover's
+    NEW is ready once it has delivered each of them at least once."""
     return [s for s in streams if not s.endswith("@forceOrder")]
 
 
@@ -570,7 +570,7 @@ class Handover:
         self.task = None                # the reader
         self.t_start = time.monotonic()
         self.t_open = self.t_first = None
-        self.t_ready = None             # time.monotonic() of NEW's first message: it is ready
+        self.t_ready = None             # time.monotonic() when NEW had delivered every cadence stream: it is ready
         self.open_wall = None           # time.time() when NEW opened: its RECONNECT_AFTER_S counts from here
 
     def notify(self):
@@ -944,8 +944,8 @@ class Collector:
 
     async def _handover_reader(self, url, h):
         """Opens NEW and buffers its messages with their true receive time until the switch cancels it
-        (recv() is cancel-safe: a message is either in the buffer or still unread on NEW). NEW is ready once it has
-        delivered a message."""
+        (recv() is cancel-safe: a message is either in the buffer or still unread on NEW). NEW is ready once every
+        stream in h.need has delivered a message."""
         try:
             h.ws = await asyncio.wait_for(ws_connect(url), HANDOVER_CONNECT_TIMEOUT_S)
         except Exception as err:
@@ -970,8 +970,8 @@ class Collector:
                         no_condition = stream.endswith("@forceOrder")
                         h.first[stream] = None if no_condition else stream_key(stream, loads(msg)["data"])
                         h.need.discard(stream)
-                if h.t_ready is None:
-                    h.t_ready = now                   # ready: NEW has delivered a message
+                if h.t_ready is None and not h.need:
+                    h.t_ready = now
                 h.notify()
             h.full = True
         except Exception as err:                      # NEW closed or broke before the switch

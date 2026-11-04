@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests of the fixes for the PR #9 review findings in binance_live.py (docs/reviews/pr9-fixes-2026-11-04.md):
-the silence watchdog, a NEW that is never ready (F1), OLD's end without a ready NEW, and the stop of a connection
-that is silent and waiting in recv().
+the silence watchdog, NEW readiness (F1, F2/F3), OLD's end without a ready NEW, and the stop of a connection that
+is silent and waiting in recv().
 
 Run:  python3 -m unittest discover -s tools/collector -p "test_handover_fixes.py" -v      (websockets==17.2)
 
@@ -134,6 +134,29 @@ class WatchdogTest(FixBase):
         self.assertEqual(self.watchdog_lines(), [])
         self.assertEqual(len(self.server.attempts["market"]), 1)
         self.assert_exactly_once(raw, ["markPrice@1s"])
+
+    async def test_f05_no_trigger_during_20_handovers(self):
+        """20 normal handovers per endpoint with overlaps longer than SILENCE_MAX_S: every other NEW runs 0.6 s
+        behind OLD (A2-like) and the next OLD therefore 0.6 s behind its NEW (A1-like), while both connections keep
+        delivering. The watchdog never fires, no handover fails, nothing is lost or doubled."""
+        bl.SILENCE_MAX_S = 0.5
+        bl.RECONNECT_AFTER_S, bl.HANDOVER_FILTER_S, bl.HANDOVER_MAX_S = 0.25, 1.0, 2.0
+        await self.start(one_handover=False, liq_every=7)
+        for kind in ("market", "public"):
+            self.server.plans[kind].extend([{"delay": 0.6}, {}] * 10)
+        await self.until(lambda: all(len(self.reports(k)) >= 20 for k in ("market", "public")), 60, "20 handovers")
+        bl.RECONNECT_AFTER_S = 10_000
+        overlaps = {k: max(r["t_switch"] - r["t_first"] for r in self.reports(k)) for k in ("market", "public")}
+        await asyncio.sleep(bl.HANDOVER_FILTER_S + 0.2)
+        raw = await self.finish()
+        self.assertEqual(self.watchdog_lines(), [])
+        self.assertEqual(self.failures(), [])
+        for kind in ("market", "public"):
+            self.assertGreater(overlaps[kind], bl.SILENCE_MAX_S, f"{kind}: an overlap longer than SILENCE_MAX_S")
+            self.assertEqual(len(self.server.attempts[kind]), 1 + len(self.reports(kind)), kind)
+        self.assert_exactly_once(raw, ALL)
+        self.assertEqual(adv.depth_breaks(raw), [])
+        self.assert_no_resync(raw)
 
 
 # ---------------------------------------------------------------------------------------------- F1: NEW never ready
@@ -293,6 +316,67 @@ class StopTest(FixBase):
             sent = [k for s, k in self.server.feeds[kind][0].sent if s == SUFFIXES[kind][0]]
             self.assertEqual(ws_keys(raw, SUFFIXES[kind][0]), sent, f"{kind}: flushed up to the silence")
         self.assertEqual(self.loop_errors, [])
+
+
+# ---------------------------------------------------------------------------------------------- F2/F3: readiness per stream
+
+class ReadinessTest(FixBase):
+
+    async def test_f11_new_missing_a_stream_is_not_switched_to(self):
+        """market's NEW never sends markPrice, public's NEW never sends bookTicker (A13's attack): neither is switched
+        to; each is aborted HANDOVER_READY_MAX_S after opening with a line naming the missing stream, OLD keeps the
+        feed, and the retry (a normal NEW) switches. Every event exactly once, no resync, no backfill."""
+        bl.HANDOVER_READY_MAX_S = 0.8
+        await self.start()
+        for kind, missing in (("market", "markPrice@1s"), ("public", "bookTicker")):
+            self.server.plans[kind].append({"on_open": adv.drop_on_new(lambda s, k, start, m=missing: s == m)})
+        reps = {k: await self.handover_done(k, timeout=10) for k in ("market", "public")}
+        raw = await self.finish()
+        fails = {f["kind"]: f for f in self.failures()}
+        self.assertEqual(len(self.failures()), 2)
+        self.assertEqual((fails["market"]["stage"], fails["market"]["missing"]), ("not_ready", [f"{SYM}@markPrice@1s"]))
+        self.assertEqual((fails["public"]["stage"], fails["public"]["missing"]), ("not_ready", [f"{SYM}@bookTicker"]))
+        self.assertIn(f"chybi: {SYM}@markPrice@1s,", self.lines("predavani market: nove spojeni neni pripravene")[0])
+        self.assertIn(f"chybi: {SYM}@bookTicker,", self.lines("predavani public: nove spojeni neni pripravene")[0])
+        for kind, rep in reps.items():
+            self.assertEqual(len(self.server.attempts[kind]), 3, kind)
+            self.assertEqual(rep["reason"], "caught_up", kind)
+            self.assertGreaterEqual(rep["t_ready"], rep["t_first"])
+        self.assert_exactly_once(raw, ALL)
+        self.assert_no_resync(raw)
+        self.assertEqual(self.backfills, [])
+
+    async def test_f12_buffer_full_before_ready_aborts_at_once(self):
+        """market's NEW never sends markPrice and its buffer (HANDOVER_BUFFER_MAX 40) fills long before
+        HANDOVER_READY_MAX_S (30 s): aborted at once (stage buffer_full), never switched to, then retried."""
+        bl.HANDOVER_BUFFER_MAX = 40
+        await self.start(kinds=("market",))
+        self.server.plans["market"].append({"on_open": adv.drop_on_new(lambda s, k, start: s == "markPrice@1s")})
+        rep = await self.handover_done("market", timeout=10)
+        raw = await self.finish()
+        fails = self.failures()
+        self.assertEqual([(f["stage"], f["buffered"], f["missing"]) for f in fails],
+                         [("buffer_full", 40, [f"{SYM}@markPrice@1s"])])
+        self.assertLess(fails[0]["t"] - rep["t_start"], 0, "the abort came before the successful handover")
+        t = self.attempt_times("market")
+        self.assertLess(fails[0]["t"] - t[1], 2.0, "aborted at once, not after HANDOVER_READY_MAX_S")
+        self.assertEqual(len(self.lines("predavani market: nove spojeni zaplnilo buffer (40 zprav)")), 1, self.log())
+        self.assertEqual(rep["reason"], "caught_up")
+        self.assert_exactly_once(raw, SUFFIXES["market"])
+
+    async def test_f13_handover_max_counts_from_ready(self):
+        """F3 with a longer offset: NEW's markPrice starts 2.5 s after its other streams (more than HANDOVER_MAX_S,
+        2 s, after NEW's first message) and OLD lags 0.3 s. HANDOVER_MAX_S counts from readiness, so the switch waits
+        for OLD to catch up (caught_up) and no markPrice is lost."""
+        await self.start(kinds=("market",))
+        self.server.plans["market"].append({"on_open": adv.drop_on_new(
+            lambda s, k, start: s == "markPrice@1s" and k < start + 250, also=adv.lag_old(0.3))})
+        rep = await self.handover_done("market", timeout=10)
+        raw = await self.finish()
+        self.assertGreater(rep["t_ready"] - rep["t_first"], bl.HANDOVER_MAX_S)
+        self.assertEqual(rep["reason"], "caught_up")
+        self.assertEqual(self.failures(), [])
+        self.assert_exactly_once(raw, SUFFIXES["market"])
 
 
 if __name__ == "__main__":
