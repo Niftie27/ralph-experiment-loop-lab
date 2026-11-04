@@ -892,7 +892,10 @@ class Collector:
                 continue
             try:
                 msg = await ep.ws.recv()
-            except websockets.exceptions.ConnectionClosedOK:
+            except websockets.exceptions.ConnectionClosedOK as err:
+                if not self.stop.is_set():
+                    print(f"spojeni {ep.kind} skoncilo ({err.__class__.__name__}: {err}), {self._old_age(ep)}, "
+                          f"pripojuji znovu", flush=True)
                 return
             if isinstance(msg, bytes):
                 msg = msg.decode()
@@ -909,6 +912,10 @@ class Collector:
         h.need = set(ep.cadence)
         h.task = asyncio.get_running_loop().create_task(
             self._handover_reader(ep.url, h), name=f"handover-new-{ep.kind}")
+
+    def _old_age(self, ep):
+        """OLD's age for the log lines, counted like RECONNECT_AFTER_S (Binance closes a connection after 24 h)."""
+        return f"stare spojeni bezi uz {(time.time() - ep.started) / 3600:.1f} h"
 
     async def _guard(self, ep):
         """Silence watchdog of the endpoint's live connection, and the stop of a connection waiting in recv().
@@ -1146,28 +1153,28 @@ class Collector:
         if h.ws is not None:
             self._close_in_background(ep.kind, h.ws)
         missing = ", ".join(sorted(h.need)) or "-"
-        n, retry = len(h.buf), f"dalsi pokus nejdriv za {HANDOVER_RETRY_S} s"
+        n, age, retry = len(h.buf), self._old_age(ep), f"dalsi pokus nejdriv za {HANDOVER_RETRY_S} s"
         if stage in ("connect", "read"):
             err = h.error[1]
             error = f"{err.__class__.__name__}: {err}"
             what = "se neotevrelo" if stage == "connect" else f"spadlo pred prepnutim, zahazuji {n} zprav"
-            line = f"nove spojeni {what} ({error}), stare bezi dal, {retry}"
+            line = f"nove spojeni {what} ({error}), stare bezi dal, {age}, {retry}"
         elif stage == "not_ready":
             error = f"not ready {HANDOVER_READY_MAX_S:g} s after opening, missing: {missing}"
             line = (f"nove spojeni neni pripravene ani {HANDOVER_READY_MAX_S:g} s po otevreni, chybi: {missing}, "
-                    f"zahazuji ho ({n} zprav v bufferu), stare bezi dal, {retry}")
+                    f"zahazuji ho ({n} zprav v bufferu), stare bezi dal, {age}, {retry}")
         elif stage == "buffer_full":
             error = f"buffer full ({n}) before ready, missing: {missing}"
             line = (f"nove spojeni zaplnilo buffer ({n} zprav) a neni pripravene, chybi: {missing}, zahazuji ho, "
-                    f"stare bezi dal, {retry}")
+                    f"stare bezi dal, {age}, {retry}")
         else:
             state = ("se jeste otevira" if h.ws is None and h.error is None else
                      f"selhalo ({h.error[1].__class__.__name__})" if h.error is not None else f"chybi: {missing}")
             error = f"old ended ({old_err.__class__.__name__}), NEW not ready: {state}"
             line = (f"nove spojeni neni pripravene ({state}) a stare skoncilo ({old_err.__class__.__name__}: "
-                    f"{old_err}), zahazuji nove a pripojuji znovu")
+                    f"{old_err}), {age}, zahazuji nove a pripojuji znovu")
         self.handover_failures.append({"kind": ep.kind, "stage": stage, "error": error, "missing": sorted(h.need),
-                                       "buffered": n, "t": time.monotonic()})
+                                       "buffered": n, "old_age_s": time.time() - ep.started, "t": time.monotonic()})
         print(f"predavani {ep.kind}: {line}", flush=True)
         await asyncio.wait((h.task,))
 

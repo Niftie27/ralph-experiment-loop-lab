@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests of the fixes for the PR #9 review findings in binance_live.py (docs/reviews/pr9-fixes-2026-11-04.md):
-the silence watchdog, NEW readiness (F1, F2/F3), OLD's end without a ready NEW, and the stop of a connection that
-is silent and waiting in recv().
+the silence watchdog, NEW readiness (F1, F2/F3), OLD's end without a ready NEW and OLD's age in the failure lines
+(F5), and the stop of a connection that is silent and waiting in recv().
 
 Run:  python3 -m unittest discover -s tools/collector -p "test_handover_fixes.py" -v      (websockets==17.2)
 
@@ -27,6 +27,7 @@ import binance_live as bl                       # noqa: E402
 SYM, STREAMS, SUFFIXES, ALL = adv.SYM, adv.STREAMS, adv.SUFFIXES, adv.ALL
 ws_keys, read_raw = adv.ws_keys, adv.read_raw
 WATCHDOG = re.compile(r"^hlidac ticha (market|public): (\S+) bez zpravy ([\d.]+) s", re.M)
+DAY_S = 24 * 3600
 
 
 def drop_streams(feed, suffixes):
@@ -377,6 +378,56 @@ class ReadinessTest(FixBase):
         self.assertEqual(rep["reason"], "caught_up")
         self.assertEqual(self.failures(), [])
         self.assert_exactly_once(raw, SUFFIXES["market"])
+
+
+# ---------------------------------------------------------------------------------------------- F5: OLD's age, OLD's end
+
+class OldEndTest(FixBase):
+
+    async def test_f14_failure_lines_name_old_age(self):
+        """Failed handovers keep being retried while OLD is alive, and every failure line names OLD's age, counted
+        like RECONNECT_AFTER_S (production value; the clock is moved, as in A20)."""
+        bl.RECONNECT_AFTER_S = 23 * 3600 + 50 * 60
+        bl.HANDOVER_RETRY_S = 0.4
+        clock = adv.ShiftedTime()
+        self.enterContext(mock.patch.object(bl, "time", clock))
+        await self.start(kinds=("market",), one_handover=False)
+        msgs = self.col.stats.msgs
+        await self.until(lambda: self.col.stats.msgs > msgs, 2, "first message")   # OLD's open time is taken
+        self.server.plans["market"].extend([{"refuse": True}] * 100)
+        clock.offset = bl.RECONNECT_AFTER_S + 1
+        await self.until(lambda: len(self.failures()) >= 2, 5, "handovers failing")
+        n = len(self.log())
+        clock.offset = DAY_S + 1
+        await self.until(lambda: len(self.failures()) >= 5, 5, "more failures")
+        late = self.log()[n:]
+        bl.RECONNECT_AFTER_S = 10 ** 9
+        await self.finish(settle=0, error_path=True)
+        lines = self.lines("predavani market: nove spojeni")
+        self.assertGreaterEqual(len(lines), 5)
+        for x in lines:
+            self.assertRegex(x, r"stare bezi dal, stare spojeni bezi uz (23\.8|24\.0) h, dalsi pokus nejdriv za 0\.4 s")
+        self.assertIn("stare spojeni bezi uz 24.0 h", late)
+
+    async def test_f15_old_closed_between_failed_handovers_reconnects_at_once(self):
+        """A handover failed and the next try is not due yet, so no NEW exists, when the server closes OLD with a
+        close frame: one line with OLD's age, and the endpoint connects again at once (not after HANDOVER_RETRY_S)."""
+        bl.HANDOVER_RETRY_S = 10.0
+        await self.start(kinds=("market",), one_handover=False)
+        self.server.plans["market"].append({"refuse": True})
+        await self.until(lambda: self.failures(), 5, "handover failed")
+        bl.RECONNECT_AFTER_S = 10_000
+        old = self.server.feeds["market"][0]
+        await old.ws.close()
+        t_close = time.monotonic()
+        await self.until(lambda: len(self.server.feeds["market"]) == 2, 2, "reconnected")
+        await asyncio.sleep(0.5)
+        raw = await self.finish()
+        self.assertLess(self.attempt_times("market")[2] - t_close, 0.3)
+        lines = self.lines("spojeni market skoncilo (ConnectionClosedOK")
+        self.assertEqual(len(lines), 1, self.log())
+        self.assertRegex(lines[0], r"stare spojeni bezi uz \d+\.\d h, pripojuji znovu$")
+        self.assert_trades_complete(raw)
 
 
 if __name__ == "__main__":
