@@ -1,0 +1,10 @@
+csv_only tape_BTCUSDT_2026-11-04T21Z.csv
+csv_only tape_BTCUSDT_2026-11-04T22Z.csv
+csv_only tape_ETHUSDT_2026-11-04T20Z.csv
+csv_only tape_ETHUSDT_2026-11-04T21Z.csv
+csv_only tape_ETHUSDT_2026-11-04T22Z.csv
+csv_only tape_SOLUSDT_2026-11-04T20Z.csv
+csv_only tape_SOLUSDT_2026-11-04T21Z.csv
+csv_only tape_SOLUSDT_2026-11-04T22Z.csv
+csv_only tape_HYPEUSDT_2026-11-04T21Z.csv
+csv_only tape_HYPEUSDT_2026-11-04T22Z.csv
