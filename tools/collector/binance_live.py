@@ -853,13 +853,15 @@ class Collector:
             await self._drain_closing(kind)           # stop or cancel: background closes end, bounded by CLOSE_WAIT_S
 
     async def _connect(self, url):
-        """(connection, time.time(), time.monotonic() when it opened), or None when stop is set first (the attempt
-        is then cancelled, which aborts it). The open times are taken in the connecting task itself."""
+        """(connection, time.time() just before the attempt, time.monotonic() when it opened), or None when stop is set
+        first (the attempt is then cancelled, which aborts it). RECONNECT_AFTER_S counts from the attempt: earlier by
+        the handshake's duration (conservative for Binance's 24 h), and never after the server already serves it."""
         loop = asyncio.get_running_loop()
+        attempt_wall = time.time()
 
         async def opening():
             ws = await ws_connect(url)
-            return ws, time.time(), time.monotonic()
+            return ws, attempt_wall, time.monotonic()
         conn = loop.create_task(opening(), name="connect")
         stop = loop.create_task(self.stop.wait(), name="connect-stop")
         try:
