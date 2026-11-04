@@ -24,6 +24,8 @@ With --all expect hundreds of MB per day (compressed).
 Missing trades are detected from Binance trade IDs and filled from REST. A broken order book sequence
 triggers a fresh snapshot automatically. Binance closes every connection after 24 h; before that the collector
 hands over to a new connection opened while the old one is still read (make-before-break), dropping duplicates.
+The new connection is taken over only once it has delivered a message. A connection on which
+a stream other than aggTrade and forceOrder stays silent for SILENCE_MAX_S is dropped and opened again.
 
 --features DIR  also run orderflow_engine.py live and write everything it computes to DIR, including
                 live.json for dashboard.py (needs orderflow_engine.py in the same folder)
@@ -76,17 +78,41 @@ BOOK_LEVELS_SAVED = 100
 RECONNECT_AFTER_S = 23 * 3600 + 50 * 60     # Binance closes every connection after 24 h
 # The scheduled reconnect is a make-before-break handover (Collector.run_endpoint): NEW connects and buffers
 # while OLD is still processed, then OLD is closed in the background and NEW passes a duplicate filter.
-HANDOVER_MAX_S = 3                  # switch at the latest this long after NEW's first message
+HANDOVER_MAX_S = 3                  # switch at the latest this long after NEW's first message (it is ready then)
 HANDOVER_FILTER_S = 10              # after the switch, drop duplicates this long
 HANDOVER_RETRY_S = 30               # a failed handover is tried again no sooner than this
-HANDOVER_BUFFER_MAX = 20000         # NEW's buffer; reaching it switches at once
+HANDOVER_BUFFER_MAX = 20000         # NEW's buffer; reaching it switches at once (or aborts a NEW that is not ready)
 HANDOVER_CONNECT_TIMEOUT_S = 10     # opening NEW
+HANDOVER_READY_MAX_S = 30           # NEW must deliver a message this long after opening, or it is aborted
+SILENCE_MAX_S = 60                  # a watched stream silent this long on the live connection: abort and reconnect
+WATCHDOG_TICK_S = 1.0               # the silence watchdog looks this often (at least 10 times per SILENCE_MAX_S)
+STOP_GRACE_S = 0.5                  # at stop, a connection still waiting in recv() after this long is closed
+CLOSE_WAIT_S = 1.0                  # at stop, a close handshake gets this long, then the connection is aborted
 LIQ_MEMORY_MS = 60_000              # forceOrder identities kept for the duplicate filter
 
 
 def ws_connect(url):
     """Opens a Binance stream connection; the one place for the options, so a handover's NEW uses the same ones."""
     return websockets.connect(url, ping_interval=20, ping_timeout=20, max_size=2 ** 22)
+
+
+def cadence_streams(streams):
+    """The streams with a steady cadence: all but @forceOrder (liquidations can be silent for hours). A NEW that is
+    given up is logged with the ones it did not deliver."""
+    return [s for s in streams if not s.endswith("@forceOrder")]
+
+
+def watched_streams(streams):
+    """The streams the silence watchdog watches: the cadence streams except @aggTrade (trades can pause and REST
+    refills them; the other streams of the same connection still reveal a dead connection)."""
+    return [s for s in cadence_streams(streams) if not s.endswith("@aggTrade")]
+
+
+def note_stream(seen, msg, now):
+    """seen[stream] = now for a ws message (text); the stream name is read without parsing (stream_of)."""
+    stream = stream_of(msg)
+    if stream is not None:
+        seen[stream] = now
 
 
 def stream_key(stream, data):
@@ -536,32 +562,38 @@ class Handover:
         self.ws = None                  # NEW, once open
         self.buf = []                   # (recv_ms, msg) from NEW in arrival order; recv_ms = true receive time
         self.first = {}                 # stream -> key of NEW's first message of it (None: no switch condition)
+        self.need = set()               # cadence streams NEW has not delivered yet (the caller fills it)
+        self.seen = {}                  # stream -> time.monotonic() of NEW's last message of it (silence watchdog)
         self.full = False               # the buffer reached HANDOVER_BUFFER_MAX and the reader stopped
         self.error = None               # (stage, exception) when NEW failed before the switch
-        self.news = asyncio.Event()     # the reader sets it whenever something changed
+        self.waiter = None              # future _during_handover waits on; notify() resolves it
         self.task = None                # the reader
         self.t_start = time.monotonic()
         self.t_open = self.t_first = None
+        self.t_ready = None             # time.monotonic() of NEW's first message: it is ready
         self.open_wall = None           # time.time() when NEW opened: its RECONNECT_AFTER_S counts from here
+
+    def notify(self):
+        """Something changed (NEW opened, a message, an error, or stop): wake _during_handover."""
+        w = self.waiter
+        if w is not None and not w.done():
+            w.set_result(None)
 
 
 class Endpoint:
-    """One endpoint's current connection and handover state. `async with Endpoint(...)` ends the way
-    `async with websockets.connect(...)` did, but closes whichever connection is current by then."""
+    """One endpoint's current connection, its handover state, and what the silence watchdog reads."""
 
     def __init__(self, kind, url, streams, ws):
         self.kind, self.url, self.streams, self.ws = kind, url, streams, ws
+        self.cadence = cadence_streams(streams)
+        self.watched = watched_streams(streams)
         self.started = time.time()
+        self.t_conn = time.monotonic()  # the current connection opened; a stream it never sent is silent since then
+        self.seen = {}                  # stream -> time.monotonic() of the current connection's last message of it
         self.handover = None            # Handover in progress
         self.retry_at = 0.0             # time.time() before which no handover starts (after a failed one)
         self.filter_until = None        # time.monotonic() until which NEW's duplicates are dropped
         self.report = None              # the last switch; printed when its filter ends
-
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, exc_type, exc, tb):
-        return await self.ws.__aexit__(exc_type, exc, tb)
 
 
 HANDOVER_REASONS = {"caught_up": "stare spojeni dohnalo nove", "max_time": "vyprsel HANDOVER_MAX_S",
@@ -785,27 +817,70 @@ class Collector:
     async def run_endpoint(self, kind, streams):
         url = f"{self.args.ws_base}/{kind}/stream?streams=" + "/".join(streams)
         backoff = 1
-        while not self.stop.is_set():
-            try:
-                async with Endpoint(kind, url, streams, await ws_connect(url)) as ep:
+        try:
+            while not self.stop.is_set():
+                try:
+                    opened = await self._connect(url)
+                    if opened is None:
+                        break                                 # stop while connecting
+                    ep = Endpoint(kind, url, streams, opened[0])
                     print(f"pripojeno: {kind} {', '.join(streams)}", flush=True)
                     if kind == "public" and self.book is not None and self.book.state != "empty":
                         self.book.restart()       # new connection: start the book over from a snapshot
                     backoff = 1
-                    ep.started = time.time()
+                    ep.started, ep.t_conn = opened[1], opened[2]
+                    guard = asyncio.get_running_loop().create_task(self._guard(ep), name=f"watchdog-{kind}")
                     try:
                         await self._read(ep)
                     finally:
-                        await self._end_endpoint(ep)
-            except (OSError, asyncio.TimeoutError, websockets.exceptions.WebSocketException) as err:
-                if "451" in str(err):
-                    print("Binance odmita tuhle IP (HTTP 451, typicky server v USA). Spust to z Evropy.", flush=True)
-                print(f"spojeni {kind} spadlo ({err.__class__.__name__}), zkousim znovu za {backoff} s", flush=True)
-                await asyncio.sleep(backoff)
-                backoff = min(60, backoff * 2)
-        closing = self._closing.get(kind)
-        if closing:                                   # stop: connections closing in the background finish first
-            await asyncio.wait(set(closing))
+                        # Everything that closes is started before the first await: a second cancel (asyncio.run's
+                        # teardown after main() cancelled us) interrupts only the waiting.
+                        guard.cancel()
+                        reader = self._end_endpoint(ep)
+                        self._close_in_background(kind, ep.ws)    # usually closed already; never waited for here
+                        await asyncio.wait([t for t in (guard, reader) if t is not None])
+                        if not guard.cancelled() and guard.exception() is not None:
+                            print(f"hlidac {kind} skoncil chybou: {guard.exception()!r}", flush=True)
+                except (OSError, asyncio.TimeoutError, websockets.exceptions.WebSocketException) as err:
+                    if self.stop.is_set():
+                        break                                 # the stop closed or aborted the connection
+                    if "451" in str(err):
+                        print("Binance odmita tuhle IP (HTTP 451, typicky server v USA). Spust to z Evropy.", flush=True)
+                    print(f"spojeni {kind} spadlo ({err.__class__.__name__}), zkousim znovu za {backoff} s", flush=True)
+                    await self._sleep_unless_stop(backoff)
+                    backoff = min(60, backoff * 2)
+        finally:
+            await self._drain_closing(kind)           # stop or cancel: background closes end, bounded by CLOSE_WAIT_S
+
+    async def _connect(self, url):
+        """(connection, time.time(), time.monotonic() when it opened), or None when stop is set first (the attempt
+        is then cancelled, which aborts it). The open times are taken in the connecting task itself."""
+        loop = asyncio.get_running_loop()
+
+        async def opening():
+            ws = await ws_connect(url)
+            return ws, time.time(), time.monotonic()
+        conn = loop.create_task(opening(), name="connect")
+        stop = loop.create_task(self.stop.wait(), name="connect-stop")
+        try:
+            await asyncio.wait((conn, stop), return_when=asyncio.FIRST_COMPLETED)
+        except BaseException:                         # run_endpoint cancelled while connecting
+            conn.cancel()
+            stop.cancel()
+            await asyncio.wait((conn, stop))
+            if not conn.cancelled() and conn.exception() is None:
+                conn.result()[0].transport.abort()    # it opened anyway
+            raise
+        conn.cancel()                                 # no effect when it is done
+        stop.cancel()
+        await asyncio.wait((conn, stop))
+        return None if conn.cancelled() else conn.result()   # result() raises the connect error
+
+    async def _sleep_unless_stop(self, seconds):
+        try:
+            await asyncio.wait_for(self.stop.wait(), seconds)
+        except asyncio.TimeoutError:
+            pass
 
     async def _read(self, ep):
         """Reads the endpoint's current connection until it ends or stop is set, as `async for msg in ws` did.
@@ -819,47 +894,102 @@ class Collector:
                 msg = await ep.ws.recv()
             except websockets.exceptions.ConnectionClosedOK:
                 return
+            if isinstance(msg, bytes):
+                msg = msg.decode()
+            note_stream(ep.seen, msg, time.monotonic())
             self._deliver(ep, msg, int(time.time() * 1000))
             if self.stop.is_set():
                 return
             if time.time() - ep.started > RECONNECT_AFTER_S and time.time() >= ep.retry_at:
-                ep.handover = Handover()
-                ep.handover.task = asyncio.get_running_loop().create_task(
-                    self._handover_reader(ep.url, ep.handover), name=f"handover-new-{ep.kind}")
+                self._start_handover(ep)
+
+    def _start_handover(self, ep):
+        """Its own method, so no frame of the reading loop keeps the Handover alive after the switch."""
+        h = ep.handover = Handover()
+        h.need = set(ep.cadence)
+        h.task = asyncio.get_running_loop().create_task(
+            self._handover_reader(ep.url, h), name=f"handover-new-{ep.kind}")
+
+    async def _guard(self, ep):
+        """Silence watchdog of the endpoint's live connection, and the stop of a connection waiting in recv().
+        A watched stream (watched_streams) that delivered nothing for SILENCE_MAX_S on the current connection (the
+        only one, OLD during a handover, NEW once switched to): one log line, the connection is aborted, and
+        run_endpoint reconnects through its error path (aggTrade gap -> REST backfill, public -> book restart), or
+        a handover whose NEW is ready switches ('old_ended'). NEW is not current before the switch; its readiness
+        covers it. run_endpoint cancels this task when reading ends."""
+        fired = None
+        while True:
+            try:
+                await asyncio.wait_for(self.stop.wait(), min(WATCHDOG_TICK_S, SILENCE_MAX_S / 10))
+                break
+            except asyncio.TimeoutError:
+                pass
+            if ep.seen is fired or not ep.watched:
+                continue                              # already aborted, waiting for _read to notice
+            now = time.monotonic()
+            stream, silent = max(((s, now - ep.seen.get(s, ep.t_conn)) for s in ep.watched), key=lambda x: x[1])
+            if silent >= SILENCE_MAX_S:
+                fired = ep.seen
+                print(f"hlidac ticha {ep.kind}: {stream} bez zpravy {silent:.1f} s (limit {SILENCE_MAX_S:g} s) na "
+                      f"spojeni otevrenem pred {(now - ep.t_conn) / 3600:.2f} h, rusim ho a pripojuji znovu", flush=True)
+                ep.ws.transport.abort()
+        # stop: _read returns by itself on the next message (and this task is cancelled); a silent one is closed
+        if ep.handover is not None:
+            ep.handover.notify()                      # _during_handover sees stop at once
+        await asyncio.sleep(STOP_GRACE_S)
+        ws = ep.ws
+        self._close_in_background(ep.kind, ws)
+        await asyncio.sleep(CLOSE_WAIT_S)
+        ws.transport.abort()                          # the close handshake did not finish in time
 
     async def _handover_reader(self, url, h):
         """Opens NEW and buffers its messages with their true receive time until the switch cancels it
-        (recv() is cancel-safe: a message is either in the buffer or still unread on NEW)."""
+        (recv() is cancel-safe: a message is either in the buffer or still unread on NEW). NEW is ready once it has
+        delivered a message."""
         try:
             h.ws = await asyncio.wait_for(ws_connect(url), HANDOVER_CONNECT_TIMEOUT_S)
         except Exception as err:
             h.error = ("connect", err)
-            h.news.set()
+            h.notify()
             return
         h.t_open, h.open_wall = time.monotonic(), time.time()
-        h.news.set()
+        h.notify()
         try:
             while len(h.buf) < HANDOVER_BUFFER_MAX:
                 msg = await h.ws.recv()
-                recv_ms = int(time.time() * 1000)
+                recv_ms, now = int(time.time() * 1000), time.monotonic()
                 if isinstance(msg, bytes):
                     msg = msg.decode()
                 h.buf.append((recv_ms, msg))
                 if h.t_first is None:
-                    h.t_first = time.monotonic()
+                    h.t_first = now
                 stream = stream_of(msg)
-                if stream is not None and stream not in h.first:      # parsed once per stream
-                    no_condition = stream.endswith("@forceOrder")
-                    h.first[stream] = None if no_condition else stream_key(stream, loads(msg)["data"])
-                h.news.set()
+                if stream is not None:
+                    h.seen[stream] = now
+                    if stream not in h.first:                 # parsed once per stream
+                        no_condition = stream.endswith("@forceOrder")
+                        h.first[stream] = None if no_condition else stream_key(stream, loads(msg)["data"])
+                        h.need.discard(stream)
+                if h.t_ready is None:
+                    h.t_ready = now                   # ready: NEW has delivered a message
+                h.notify()
             h.full = True
         except Exception as err:                      # NEW closed or broke before the switch
             h.error = ("read", err)
-        h.news.set()
+        h.notify()
 
-    def _switch_reason(self, h):
-        if not h.buf:
-            return None
+    def _handover_state(self, h):
+        """What the handover does now: ("switch", reason), ("abort", stage), or (None, seconds to the next deadline;
+        None: wait for h.notify()). A NEW that is not ready is never switched to, by any path."""
+        now = time.monotonic()
+        full = h.full or len(h.buf) >= HANDOVER_BUFFER_MAX
+        if h.t_ready is None:
+            if h.t_open is None:
+                return None, None                     # still opening; HANDOVER_CONNECT_TIMEOUT_S ends that
+            if full:
+                return "abort", "buffer_full"
+            left = h.t_open + HANDOVER_READY_MAX_S - now
+            return ("abort", "not_ready") if left <= 0 else (None, left)
         for stream, key in h.first.items():
             if key is None:
                 continue                              # forceOrder: no condition
@@ -867,62 +997,67 @@ class Collector:
             if last is None or last < key:
                 break
         else:
-            return "caught_up"                        # OLD reached NEW's first key on every stream NEW has
-        if time.monotonic() - h.t_first >= HANDOVER_MAX_S:
-            return "max_time"
-        if h.full or len(h.buf) >= HANDOVER_BUFFER_MAX:
-            return "buffer_full"
-        return None
+            return "switch", "caught_up"              # OLD reached NEW's first key on every stream
+        left = h.t_ready + HANDOVER_MAX_S - now
+        if left <= 0:
+            return "switch", "max_time"
+        if full:
+            return "switch", "buffer_full"
+        return None, left
 
     async def _during_handover(self, ep):
         """OLD is processed as usual while NEW connects and buffers. Returns True after a switch or an abort,
-        False when reading must stop: stop is set, or OLD ended normally before NEW was open."""
+        False when reading must stop: stop is set, or OLD ended normally without a ready NEW. OLD ending with an
+        error and no ready NEW raises that error (today's reconnect path)."""
         h = ep.handover
         loop = asyncio.get_running_loop()
-        stop = loop.create_task(self.stop.wait(), name=f"handover-stop-{ep.kind}")
-        recv = news = None
+        recv = None
         try:
             while True:
                 if self.stop.is_set():
-                    return False
+                    return False                      # the watchdog task notifies h when stop is set
                 if h.error is not None:
-                    self._abort_handover(ep)
-                    return True
-                reason = self._switch_reason(h)
-                if reason is not None:
+                    action, detail = "abort", h.error[0]
+                    break
+                action, detail = self._handover_state(h)
+                if action is not None:
                     break
                 if recv is None:
                     recv = loop.create_task(ep.ws.recv(), name=f"handover-old-{ep.kind}")
-                if news is None:
-                    h.news.clear()
-                    news = loop.create_task(h.news.wait(), name=f"handover-news-{ep.kind}")
-                wait = None if h.t_first is None else max(0.0, h.t_first + HANDOVER_MAX_S - time.monotonic())
-                await asyncio.wait((recv, news, stop), timeout=wait, return_when=asyncio.FIRST_COMPLETED)
-                if news.done():
-                    news = None
+                if h.waiter is None or h.waiter.done():
+                    h.waiter = loop.create_future()   # state is read above, so no notify() is missed
+                await asyncio.wait((recv, h.waiter), timeout=detail, return_when=asyncio.FIRST_COMPLETED)
                 if recv.done():
                     done, recv = recv, None
                     try:
                         msg = done.result()
                     except websockets.exceptions.ConnectionClosed as err:
-                        if h.ws is None or h.error is not None:   # no usable NEW: OLD's end takes today's path
-                            if isinstance(err, websockets.exceptions.ConnectionClosedOK):
-                                return False
-                            raise
-                        reason = "old_ended"
+                        if h.t_ready is not None and h.error is None:
+                            action, detail = "switch", "old_ended"
+                        else:
+                            action, detail = "old_ended", err     # no ready NEW: drop it, reconnect at once
                         break
+                    if isinstance(msg, bytes):
+                        msg = msg.decode()
+                    note_stream(ep.seen, msg, time.monotonic())
                     self._deliver(ep, msg, int(time.time() * 1000))
         finally:
-            left = [t for t in (recv, news, stop) if t is not None and not t.done()]
-            for t in left:
-                t.cancel()                            # OLD's recv() is cancel-safe: an unread message stays queued
-            if left:
-                await asyncio.wait(left)              # OLD's recv() must be free before OLD is read again
-            for t in (recv, news, stop):
-                if t is not None and not t.cancelled():
-                    t.exception()                     # retrieved, so asyncio never warns about it
-        await self._switch(ep, reason)
-        return True
+            h.waiter = None
+            if recv is not None and not recv.done():
+                recv.cancel()                         # OLD's recv() is cancel-safe: an unread message stays queued
+                await asyncio.wait((recv,))           # OLD's recv() must be free before OLD is read again
+            if recv is not None and not recv.cancelled():
+                recv.exception()                      # retrieved, so asyncio never warns about it
+        if action == "switch":
+            await self._switch(ep, detail)
+            return True
+        if action == "abort":
+            await self._abort_handover(ep, detail)
+            return True
+        await self._abort_handover(ep, "old_ended", old_err=detail)
+        if isinstance(detail, websockets.exceptions.ConnectionClosedOK):
+            return False                              # run_endpoint connects again at once
+        raise detail                                  # run_endpoint's error path
 
     async def _switch(self, ep, reason):
         """OLD -> NEW. OLD is closed in a background task the reading loop never waits for; NEW's buffer and then
@@ -936,14 +1071,15 @@ class Collector:
             self._filter_done(ep)
         old, ep.ws, ep.handover = ep.ws, h.ws, None
         ep.started = h.open_wall
+        ep.seen, ep.t_conn = h.seen, h.t_open         # the watchdog now watches NEW, with NEW's own arrival times
         self._close_in_background(ep.kind, old)
         now = time.monotonic()
         ep.filter_until = now + HANDOVER_FILTER_S
         ep.report = {"kind": ep.kind, "reason": reason, "seconds": now - h.t_open, "buffered": len(h.buf),
                      "dropped": {s.split("@", 1)[-1]: 0 for s in ep.streams}, "depth_continued": None,
                      "agg_gap": None, "old_last": {s: self._last_key(s) for s in ep.streams},
-                     "t_start": h.t_start, "t_open": h.t_open, "t_first": h.t_first, "t_switch": now,
-                     "switch_ms": int(time.time() * 1000), "t_filter_end": None}
+                     "t_start": h.t_start, "t_open": h.t_open, "t_first": h.t_first, "t_ready": h.t_ready,
+                     "t_switch": now, "switch_ms": int(time.time() * 1000), "t_filter_end": None}
         self.handovers.append(ep.report)
         for recv_ms, msg in h.buf:
             self._deliver(ep, msg, recv_ms)
@@ -998,43 +1134,95 @@ class Collector:
               f"kniha navazala (pu == posledni u): {yes_no[rep['depth_continued']]}, "
               f"mezera v obchodech: {yes_no[rep['agg_gap']]}", flush=True)
 
-    def _abort_handover(self, ep):
+    async def _abort_handover(self, ep, stage, old_err=None):
+        """Drops NEW and logs one line. stage: connect / read (NEW failed), not_ready (not ready within
+        HANDOVER_READY_MAX_S of opening), buffer_full (the buffer filled before NEW was ready): OLD keeps the feed
+        and the next try comes no sooner than HANDOVER_RETRY_S. old_ended: OLD ended without a ready NEW, and the
+        caller reconnects. NEW's reader is cancelled (cancel-safe, no handshake) and NEW is closed in the background,
+        so the data path never waits for a close handshake."""
         h, ep.handover = ep.handover, None
-        stage, err = h.error
+        h.task.cancel()                               # no effect when it is done; awaited at the end
         ep.retry_at = time.time() + HANDOVER_RETRY_S
         if h.ws is not None:
             self._close_in_background(ep.kind, h.ws)
-        self.handover_failures.append({"kind": ep.kind, "stage": stage, "error": f"{err.__class__.__name__}: {err}",
-                                       "buffered": len(h.buf), "t": time.monotonic()})
-        what = "se neotevrelo" if stage == "connect" else f"spadlo pred prepnutim, zahazuji {len(h.buf)} zprav"
-        print(f"predavani {ep.kind}: nove spojeni {what} ({err.__class__.__name__}: {err}), stare bezi dal, "
-              f"dalsi pokus nejdriv za {HANDOVER_RETRY_S} s", flush=True)
+        missing = ", ".join(sorted(h.need)) or "-"
+        n, retry = len(h.buf), f"dalsi pokus nejdriv za {HANDOVER_RETRY_S} s"
+        if stage in ("connect", "read"):
+            err = h.error[1]
+            error = f"{err.__class__.__name__}: {err}"
+            what = "se neotevrelo" if stage == "connect" else f"spadlo pred prepnutim, zahazuji {n} zprav"
+            line = f"nove spojeni {what} ({error}), stare bezi dal, {retry}"
+        elif stage == "not_ready":
+            error = f"not ready {HANDOVER_READY_MAX_S:g} s after opening, missing: {missing}"
+            line = (f"nove spojeni neni pripravene ani {HANDOVER_READY_MAX_S:g} s po otevreni, chybi: {missing}, "
+                    f"zahazuji ho ({n} zprav v bufferu), stare bezi dal, {retry}")
+        elif stage == "buffer_full":
+            error = f"buffer full ({n}) before ready, missing: {missing}"
+            line = (f"nove spojeni zaplnilo buffer ({n} zprav) a neni pripravene, chybi: {missing}, zahazuji ho, "
+                    f"stare bezi dal, {retry}")
+        else:
+            state = ("se jeste otevira" if h.ws is None and h.error is None else
+                     f"selhalo ({h.error[1].__class__.__name__})" if h.error is not None else f"chybi: {missing}")
+            error = f"old ended ({old_err.__class__.__name__}), NEW not ready: {state}"
+            line = (f"nove spojeni neni pripravene ({state}) a stare skoncilo ({old_err.__class__.__name__}: "
+                    f"{old_err}), zahazuji nove a pripojuji znovu")
+        self.handover_failures.append({"kind": ep.kind, "stage": stage, "error": error, "missing": sorted(h.need),
+                                       "buffered": n, "t": time.monotonic()})
+        print(f"predavani {ep.kind}: {line}", flush=True)
+        await asyncio.wait((h.task,))
 
-    async def _end_endpoint(self, ep):
-        """The endpoint's connection is ending (error, end, stop or cancel): an unfinished handover is dropped and
-        its NEW closed in the background; a report still in its filter window is printed."""
+    def _end_endpoint(self, ep):
+        """The endpoint's connection is ending (error, end, stop or cancel): an unfinished handover is dropped, its
+        reader cancelled (a connect in progress is then aborted by websockets) and its NEW, if open, closed in the
+        background; a report still in its filter window is printed. Returns the reader task for the caller to await,
+        or None. Never awaits, so a cancel cannot skip the closing."""
         h, ep.handover = ep.handover, None
+        reader = None
         if h is not None:
             if not h.task.done():
                 h.task.cancel()
-                await asyncio.wait((h.task,))
+                reader = h.task
             if h.ws is not None:
                 self._close_in_background(ep.kind, h.ws)
         if ep.report is not None:
             self._filter_done(ep)
+        return reader
 
     def _close_in_background(self, kind, ws):
         """Closes a connection in its own task (the close handshake can take close_timeout); a reference is kept
-        and its exception is printed, never raised."""
+        and its exception is printed, never raised. Cancelled (even before it ran), it aborts the connection."""
         async def close():
             try:
                 await ws.close()
             except Exception as err:
                 print(f"zavirani spojeni {kind} v pozadi: {err.__class__.__name__}: {err}", flush=True)
+
+        def done(t):
+            tasks.pop(t, None)
+            if t.cancelled():
+                ws.transport.abort()
         task = asyncio.get_running_loop().create_task(close(), name=f"handover-close-{kind}")
-        tasks = self._closing.setdefault(kind, set())
-        tasks.add(task)
-        task.add_done_callback(tasks.discard)
+        tasks = self._closing.setdefault(kind, {})                # task -> its connection
+        tasks[task] = ws
+        task.add_done_callback(done)
+
+    async def _drain_closing(self, kind):
+        """At the end of run_endpoint: background closes get CLOSE_WAIT_S, then their connections are aborted."""
+        tasks = self._closing.get(kind)
+        if not tasks:
+            return
+        try:
+            _, pending = await asyncio.wait(set(tasks), timeout=CLOSE_WAIT_S)
+        except asyncio.CancelledError:                # asyncio.run's teardown: no more waiting
+            for ws in list(tasks.values()):
+                ws.transport.abort()
+            raise
+        for t in pending:
+            ws = tasks.get(t)
+            if ws is not None:
+                ws.transport.abort()
+        if pending:
+            await asyncio.wait(pending, timeout=CLOSE_WAIT_S)
 
     def _heat_column(self, t):
         bk = self.book
