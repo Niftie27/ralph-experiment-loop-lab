@@ -1,0 +1,43 @@
+START post 2026-11-06T18:09:18Z restart_from 2026-11-06T18:06:42Z to 2026-11-06T18:06:43Z restart_s 0.9
+AFTER streams {"aggTrade": 1981, "aggTrade/rest": 223, "bookTicker": 90780, "depth@100ms": 1347, "depthSnapshot/rest": 1, "markPrice@1s": 137, "openInterest/rest": 14} truncated_hours 2026-11-06T18Z
+WS_GAP max_s 18.54 from 2026-11-06T18:06:42Z to 2026-11-06T18:07:01Z restart_gap_s 0.008
+BOOK rows_after 134 first 2026-11-06T18:07:02Z
+UNIT ETHUSDT state active age_s 156 NRestarts 0
+JOURNAL since restart-120s rc 0 lines 34 stderr -
+J3 2026-11-06T18:04:49+00:00 python[3693403]: 18:04:49  cena 2 221.84  obchody 30107755  posledni minuta: 1.75 M$  delta -0.69 M$  velocity 0.1x  zpozdeni ~124 ms  mezery 37 (doplneno 9864)  likvidace 27268  book 12412/9675 urovni, spread 0.01, resync 52  OI 2 324 138 BTC
+J3 2026-11-06T18:04:59+00:00 python[3693403]: 18:04:59  cena 2 221.84  obchody 30107872  posledni minuta: 2.25 M$  delta -0.98 M$  velocity 0.3x  zpozdeni ~124 ms  mezery 37 (doplneno 9864)  likvidace 27268  book 12424/9661 urovni, spread 0.01, resync 52  OI 2 324 138 BTC
+J3 2026-11-06T18:05:09+00:00 python[3693403]: 18:05:09  cena 2 223.35  obchody 30108101  posledni minuta: 2.52 M$  delta -0.27 M$  velocity 0.4x  zpozdeni ~124 ms  mezery 37 (doplneno 9864)  likvidace 27268  book 12557/9556 urovni, spread 0.01, resync 52  OI 2 324 138 BTC
+J3 2026-11-06T18:05:19+00:00 python[3693403]: 18:05:19  cena 2 223.91  obchody 30108246  posledni minuta: 2.58 M$  delta -0.38 M$  velocity 0.2x  zpozdeni ~124 ms  mezery 37 (doplneno 9864)  likvidace 27268  book 12583/9538 urovni, spread 0.01, resync 52  OI 2 324 138 BTC
+J3 2026-11-06T18:05:29+00:00 python[3693403]: 18:05:29  cena 2 224.20  obchody 30108344  posledni minuta: 2.78 M$  delta -0.24 M$  velocity 0.4x  zpozdeni ~124 ms  mezery 37 (doplneno 9864)  likvidace 27268  book 12597/9494 urovni, spread 0.01, resync 52  OI 2 324 138 BTC
+J3 2026-11-06T18:05:39+00:00 python[3693403]: 18:05:39  cena 2 224.07  obchody 30108470  posledni minuta: 2.21 M$  delta +0.31 M$  velocity 0.1x  zpozdeni ~124 ms  mezery 37 (doplneno 9864)  likvidace 27268  book 12593/9538 urovni, spread 0.01, resync 52  OI 2 324 138 BTC
+J3 2026-11-06T18:05:49+00:00 python[3693403]: 18:05:49  cena 2 223.78  obchody 30108544  posledni minuta: 2.30 M$  delta +0.29 M$  velocity 0.2x  zpozdeni ~124 ms  mezery 37 (doplneno 9864)  likvidace 27268  book 12576/9559 urovni, spread 0.01, resync 52  OI 2 324 138 BTC
+J3 2026-11-06T18:05:59+00:00 python[3693403]: 18:05:59  cena 2 223.71  obchody 30108604  posledni minuta: 1.56 M$  delta +0.44 M$  velocity 0.4x  zpozdeni ~124 ms  mezery 37 (doplneno 9864)  likvidace 27268  book 12569/9570 urovni, spread 0.01, resync 52  OI 2 324 138 BTC
+J3 2026-11-06T18:06:09+00:00 python[3693403]: 18:06:09  cena 2 222.66  obchody 30108780  posledni minuta: 1.40 M$  delta +0.00 M$  velocity 0.6x  zpozdeni ~124 ms  mezery 37 (doplneno 9864)  likvidace 27268  book 12482/9639 urovni, spread 0.01, resync 52  OI 2 324 138 BTC
+J3 2026-11-06T18:06:19+00:00 python[3693403]: 18:06:19  cena 2 223.99  obchody 30108906  posledni minuta: 1.46 M$  delta +0.28 M$  velocity 0.4x  zpozdeni ~124 ms  mezery 37 (doplneno 9864)  likvidace 27268  book 12592/9533 urovni, spread 0.01, resync 52  OI 2 324 138 BTC
+J3 2026-11-06T18:06:29+00:00 python[3693403]: 18:06:29  cena 2 224.29  obchody 30109033  posledni minuta: 1.45 M$  delta +0.13 M$  velocity 0.4x  zpozdeni ~124 ms  mezery 37 (doplneno 9864)  likvidace 27268  book 12621/9500 urovni, spread 0.01, resync 52  OI 2 324 138 BTC
+J3 2026-11-06T18:06:39+00:00 python[3693403]: 18:06:39  cena 2 225.40  obchody 30109387  posledni minuta: 6.13 M$  delta +4.71 M$  velocity 0.4x  zpozdeni ~124 ms  mezery 37 (doplneno 9864)  likvidace 27268  book 12690/9442 urovni, spread 0.01, resync 52  OI 2 324 138 BTC
+J3 2026-11-06T18:06:42+00:00 systemd[868]: Stopping ralph-collector-ethusdt.service - Binance ETHUSDT orderflow collector for RALPH (read-only market data)...
+J3 2026-11-06T18:06:43+00:00 python[3693403]: ulozeno, konec
+J3 2026-11-06T18:06:43+00:00 systemd[868]: Stopped ralph-collector-ethusdt.service - Binance ETHUSDT orderflow collector for RALPH (read-only market data).
+J3 2026-11-06T18:06:43+00:00 systemd[868]: ralph-collector-ethusdt.service: Consumed 2d 11h 6min 33.424s CPU time, 731.2M memory peak, 451.3M memory swap peak.
+J3 2026-11-06T18:06:43+00:00 systemd[868]: Started ralph-collector-ethusdt.service - Binance ETHUSDT orderflow collector for RALPH (read-only market data).
+J3 2026-11-06T18:06:45+00:00 python[1100935]: symbol settings: ETHUSDT tick_size=0.01 price_decimals=2
+J3 2026-11-06T18:07:00+00:00 python[1100935]: pocitani zapnuto, dohnal jsem 1148945 dnesnich obchodu z disku
+J3 2026-11-06T18:07:01+00:00 python[1100935]: pripojeno: public ethusdt@depth@100ms, ethusdt@bookTicker
+J3 2026-11-06T18:07:01+00:00 python[1100935]: pripojeno: market ethusdt@aggTrade, ethusdt@forceOrder, ethusdt@markPrice@1s
+J3 2026-11-06T18:07:10+00:00 python[1100935]: 18:07:10  cena 2 226.79  obchody 351  posledni minuta: 0.82 M$  delta +0.40 M$  velocity za 291 s  zpozdeni ~125 ms  mezery 1 (doplneno 223)  likvidace 0  book 1591/1499 urovni, spread 0.01, resync 0  OI 2 371 631 BTC
+J3 2026-11-06T18:07:20+00:00 python[1100935]: 18:07:20  cena 2 225.85  obchody 503  posledni minuta: 1.18 M$  delta +0.21 M$  velocity za 281 s  zpozdeni ~125 ms  mezery 1 (doplneno 223)  likvidace 0  book 1852/1844 urovni, spread 0.01, resync 0  OI 2 371 578 BTC
+J3 2026-11-06T18:07:30+00:00 python[1100935]: 18:07:30  cena 2 226.53  obchody 646  posledni minuta: 1.47 M$  delta +0.20 M$  velocity za 271 s  zpozdeni ~125 ms  mezery 1 (doplneno 223)  likvidace 0  book 2090/1893 urovni, spread 0.01, resync 0  OI 2 371 569 BTC
+J3 2026-11-06T18:07:40+00:00 python[1100935]: 18:07:40  cena 2 225.51  obchody 790  posledni minuta: 1.70 M$  delta +0.20 M$  velocity za 261 s  zpozdeni ~125 ms  mezery 1 (doplneno 223)  likvidace 0  book 2164/2093 urovni, spread 0.01, resync 0  OI 2 371 548 BTC
+J3 2026-11-06T18:07:50+00:00 python[1100935]: 18:07:50  cena 2 224.80  obchody 951  posledni minuta: 1.76 M$  delta -0.04 M$  velocity za 251 s  zpozdeni ~125 ms  mezery 1 (doplneno 223)  likvidace 0  book 2351/2252 urovni, spread 0.01, resync 0  OI 2 371 499 BTC
+J3 2026-11-06T18:08:00+00:00 python[1100935]: 18:08:00  cena 2 225.15  obchody 1089  posledni minuta: 1.75 M$  delta +0.01 M$  velocity za 241 s  zpozdeni ~125 ms  mezery 1 (doplneno 223)  likvidace 0  book 2545/2350 urovni, spread 0.01, resync 0  OI 2 371 486 BTC
+J3 2026-11-06T18:08:10+00:00 python[1100935]: 18:08:10  cena 2 224.62  obchody 1214  posledni minuta: 1.58 M$  delta -0.19 M$  velocity za 231 s  zpozdeni ~125 ms  mezery 1 (doplneno 223)  likvidace 0  book 2652/2500 urovni, spread 0.01, resync 0  OI 2 371 468 BTC
+J3 2026-11-06T18:08:20+00:00 python[1100935]: 18:08:20  cena 2 225.53  obchody 1459  posledni minuta: 2.09 M$  delta +0.43 M$  velocity za 221 s  zpozdeni ~125 ms  mezery 1 (doplneno 223)  likvidace 0  book 2913/2554 urovni, spread 0.01, resync 0  OI 2 371 502 BTC
+J3 2026-11-06T18:08:30+00:00 python[1100935]: 18:08:30  cena 2 225.97  obchody 1544  posledni minuta: 1.98 M$  delta +0.58 M$  velocity za 211 s  zpozdeni ~125 ms  mezery 1 (doplneno 223)  likvidace 0  book 3027/2593 urovni, spread 0.01, resync 0  OI 2 371 455 BTC
+J3 2026-11-06T18:08:40+00:00 python[1100935]: 18:08:40  cena 2 226.02  obchody 1755  posledni minuta: 3.26 M$  delta +1.56 M$  velocity za 201 s  zpozdeni ~125 ms  mezery 1 (doplneno 223)  likvidace 0  book 3134/2673 urovni, spread 0.01, resync 0  OI 2 371 447 BTC
+J3 2026-11-06T18:08:50+00:00 python[1100935]: 18:08:50  cena 2 226.04  obchody 1814  posledni minuta: 2.96 M$  delta +1.56 M$  velocity za 191 s  zpozdeni ~125 ms  mezery 1 (doplneno 223)  likvidace 0  book 3213/2759 urovni, spread 0.01, resync 0  OI 2 371 809 BTC
+J3 2026-11-06T18:09:00+00:00 python[1100935]: 18:09:00  cena 2 225.24  obchody 1963  posledni minuta: 2.93 M$  delta +1.50 M$  velocity za 181 s  zpozdeni ~125 ms  mezery 1 (doplneno 223)  likvidace 0  book 3262/2881 urovni, spread 0.01, resync 0  OI 2 371 799 BTC
+J3 2026-11-06T18:09:10+00:00 python[1100935]: 18:09:10  cena 2 226.28  obchody 2120  posledni minuta: 2.77 M$  delta +1.47 M$  velocity za 171 s  zpozdeni ~125 ms  mezery 1 (doplneno 223)  likvidace 0  book 3422/2863 urovni, spread 0.01, resync 0  OI 2 371 784 BTC
+POST OI_OK WS_OK BOOK_OK UNIT_OK oi_after 14
+PART_END post ok
+END 2026-11-06T18:09:20Z
