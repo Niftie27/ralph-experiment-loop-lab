@@ -22,7 +22,8 @@ Files, one set per hour (UTC) in --out:
 With --all expect hundreds of MB per day (compressed).
 
 Missing trades are detected from Binance trade IDs and filled from REST. A broken order book sequence
-triggers a fresh snapshot automatically.
+triggers a fresh snapshot automatically. Binance closes every connection after 24 h; before that the collector
+hands over to a new connection opened while the old one is still read (make-before-break), dropping duplicates.
 
 --features DIR  also run orderflow_engine.py live and write everything it computes to DIR, including
                 live.json for dashboard.py (needs orderflow_engine.py in the same folder)
@@ -73,6 +74,44 @@ REST_DEPTH = "https://fapi.binance.com/fapi/v1/depth"
 REST_OI = "https://fapi.binance.com/fapi/v1/openInterest"
 BOOK_LEVELS_SAVED = 100
 RECONNECT_AFTER_S = 23 * 3600 + 50 * 60     # Binance closes every connection after 24 h
+# The scheduled reconnect is a make-before-break handover (Collector.run_endpoint): NEW connects and buffers
+# while OLD is still processed, then OLD is closed in the background and NEW passes a duplicate filter.
+HANDOVER_MAX_S = 3                  # switch at the latest this long after NEW's first message
+HANDOVER_FILTER_S = 10              # after the switch, drop duplicates this long
+HANDOVER_RETRY_S = 30               # a failed handover is tried again no sooner than this
+HANDOVER_BUFFER_MAX = 20000         # NEW's buffer; reaching it switches at once
+HANDOVER_CONNECT_TIMEOUT_S = 10     # opening NEW
+LIQ_MEMORY_MS = 60_000              # forceOrder identities kept for the duplicate filter
+
+
+def ws_connect(url):
+    """Opens a Binance stream connection; the one place for the options, so a handover's NEW uses the same ones."""
+    return websockets.connect(url, ping_interval=20, ping_timeout=20, max_size=2 ** 22)
+
+
+def stream_key(stream, data):
+    """Duplicate key of a ws message: aggTrade a, depth u, bookTicker u, markPrice E; None for other streams."""
+    if stream.endswith("@aggTrade"):
+        return data.get("a")
+    if "@depth" in stream or stream.endswith("@bookTicker"):
+        return data.get("u")
+    if "@markPrice" in stream:
+        return data.get("E")
+    return None
+
+
+def liq_identity(data):
+    """forceOrder identity (E, o.s, o.S, o.T, o.q, o.p): two different liquidations may share E."""
+    o = data.get("o") or {}
+    return data.get("E"), o.get("s"), o.get("S"), o.get("T"), o.get("q"), o.get("p")
+
+
+def stream_of(msg):
+    """Stream name read from the text without parsing it: Binance sends {"stream":"<name>","data":...}."""
+    if not msg.startswith('{"stream":"'):
+        return None
+    end = msg.find('"', 11)
+    return msg[11:end] if end > 11 else None
 
 
 def utc_hour_key(ms):
@@ -490,6 +529,45 @@ class LiveHub:
             q.put_nowait(msg)
 
 
+class Handover:
+    """NEW connection of one make-before-break handover, while OLD is still being processed."""
+
+    def __init__(self):
+        self.ws = None                  # NEW, once open
+        self.buf = []                   # (recv_ms, msg) from NEW in arrival order; recv_ms = true receive time
+        self.first = {}                 # stream -> key of NEW's first message of it (None: no switch condition)
+        self.full = False               # the buffer reached HANDOVER_BUFFER_MAX and the reader stopped
+        self.error = None               # (stage, exception) when NEW failed before the switch
+        self.news = asyncio.Event()     # the reader sets it whenever something changed
+        self.task = None                # the reader
+        self.t_start = time.monotonic()
+        self.t_open = self.t_first = None
+        self.open_wall = None           # time.time() when NEW opened: its RECONNECT_AFTER_S counts from here
+
+
+class Endpoint:
+    """One endpoint's current connection and handover state. `async with Endpoint(...)` ends the way
+    `async with websockets.connect(...)` did, but closes whichever connection is current by then."""
+
+    def __init__(self, kind, url, streams, ws):
+        self.kind, self.url, self.streams, self.ws = kind, url, streams, ws
+        self.started = time.time()
+        self.handover = None            # Handover in progress
+        self.retry_at = 0.0             # time.time() before which no handover starts (after a failed one)
+        self.filter_until = None        # time.monotonic() until which NEW's duplicates are dropped
+        self.report = None              # the last switch; printed when its filter ends
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        return await self.ws.__aexit__(exc_type, exc, tb)
+
+
+HANDOVER_REASONS = {"caught_up": "stare spojeni dohnalo nove", "max_time": "vyprsel HANDOVER_MAX_S",
+                    "old_ended": "stare spojeni skoncilo", "buffer_full": "plny buffer"}
+
+
 class Collector:
     def __init__(self, args):
         self.args = args
@@ -514,6 +592,13 @@ class Collector:
         self.hub = None
         self.tick_trades = []
         self.heat_cols = collections.deque(maxlen=900)      # last 15 minutes of heatmap columns
+        self.ws_last = {}                   # stream -> key of the last processed ws message (stream_key)
+        self.last_bbo_text = None           # last processed bookTicker as text; its u is parsed only when needed
+        self._bbo_u = (None, None)          # (text, u) cache for _last_bbo_u
+        self.liq_seen = collections.deque()  # (recv_ms, liq_identity) of the last LIQ_MEMORY_MS
+        self.handovers = collections.deque(maxlen=100)          # one report per switch (also printed)
+        self.handover_failures = collections.deque(maxlen=100)  # aborted handovers
+        self._closing = {}                  # kind -> tasks closing a connection in the background
         if getattr(args, "features", None):
             self._start_engine(args.features)
             if self.engine is not None and getattr(args, "live_port", 0):
@@ -576,19 +661,53 @@ class Collector:
         except Exception as e:
             self._engine_failed(e)
 
-    def on_message(self, msg, recv_ms):
-        """One WebSocket message. The best bid/ask stream is the busiest one and is only recorded, never parsed."""
+    def on_message(self, msg, recv_ms, parsed=None):
+        """One WebSocket message. The best bid/ask stream is the busiest one and is only recorded, never parsed
+        (only a handover parses its u, see _last_bbo_u). `parsed`: the message as the handover filter parsed it."""
         if isinstance(msg, bytes):
             msg = msg.decode()
         if not msg.startswith('{"stream"'):
             return
         self.rec.add_raw_text(recv_ms, msg)
         if "@bookTicker" in msg[:48]:
+            self.last_bbo_text = msg
             self.stats.msgs += 1
             self.rec.flush()
             return
-        m = loads(msg)
-        self.handle(m["stream"], m["data"], recv_ms, raw_done=True)
+        m = loads(msg) if parsed is None else parsed
+        stream, data = m["stream"], m["data"]
+        if stream.endswith("@forceOrder"):
+            self._note_liq(data, recv_ms)
+        else:
+            key = stream_key(stream, data)
+            if key is not None:
+                self.ws_last[stream] = key
+        self.handle(stream, data, recv_ms, raw_done=True)
+
+    def _note_liq(self, data, recv_ms):
+        seen = self.liq_seen
+        seen.append((recv_ms, liq_identity(data)))
+        while seen and seen[0][0] < recv_ms - LIQ_MEMORY_MS:
+            seen.popleft()
+
+    def _last_bbo_u(self):
+        """u of the last processed bookTicker, parsed from its text only when a handover needs it."""
+        text = self.last_bbo_text
+        if text is None:
+            return None
+        if self._bbo_u[0] is not text:
+            try:
+                self._bbo_u = (text, loads(text)["data"]["u"])
+            except (ValueError, KeyError, TypeError):
+                self._bbo_u = (text, None)
+        return self._bbo_u[1]
+
+    def _last_key(self, stream):
+        if stream.endswith("@bookTicker"):
+            return self._last_bbo_u()
+        if stream.endswith("@forceOrder"):
+            return self.liq_seen[-1][1] if self.liq_seen else None
+        return self.ws_last.get(stream)
 
     def handle(self, stream, data, recv_ms, src="ws", raw_done=False):
         self.stats.msgs += 1
@@ -668,22 +787,254 @@ class Collector:
         backoff = 1
         while not self.stop.is_set():
             try:
-                async with websockets.connect(url, ping_interval=20, ping_timeout=20, max_size=2 ** 22) as ws:
+                async with Endpoint(kind, url, streams, await ws_connect(url)) as ep:
                     print(f"pripojeno: {kind} {', '.join(streams)}", flush=True)
                     if kind == "public" and self.book is not None and self.book.state != "empty":
                         self.book.restart()       # new connection: start the book over from a snapshot
                     backoff = 1
-                    started = time.time()
-                    async for msg in ws:
-                        self.on_message(msg, int(time.time() * 1000))
-                        if time.time() - started > RECONNECT_AFTER_S or self.stop.is_set():
-                            break
+                    ep.started = time.time()
+                    try:
+                        await self._read(ep)
+                    finally:
+                        await self._end_endpoint(ep)
             except (OSError, asyncio.TimeoutError, websockets.exceptions.WebSocketException) as err:
                 if "451" in str(err):
                     print("Binance odmita tuhle IP (HTTP 451, typicky server v USA). Spust to z Evropy.", flush=True)
                 print(f"spojeni {kind} spadlo ({err.__class__.__name__}), zkousim znovu za {backoff} s", flush=True)
                 await asyncio.sleep(backoff)
                 backoff = min(60, backoff * 2)
+        closing = self._closing.get(kind)
+        if closing:                                   # stop: connections closing in the background finish first
+            await asyncio.wait(set(closing))
+
+    async def _read(self, ep):
+        """Reads the endpoint's current connection until it ends or stop is set, as `async for msg in ws` did.
+        When the existing deadline check fires, a handover starts instead of leaving the connection."""
+        while True:
+            if ep.handover is not None:
+                if not await self._during_handover(ep):
+                    return
+                continue
+            try:
+                msg = await ep.ws.recv()
+            except websockets.exceptions.ConnectionClosedOK:
+                return
+            self._deliver(ep, msg, int(time.time() * 1000))
+            if self.stop.is_set():
+                return
+            if time.time() - ep.started > RECONNECT_AFTER_S and time.time() >= ep.retry_at:
+                ep.handover = Handover()
+                ep.handover.task = asyncio.get_running_loop().create_task(
+                    self._handover_reader(ep.url, ep.handover), name=f"handover-new-{ep.kind}")
+
+    async def _handover_reader(self, url, h):
+        """Opens NEW and buffers its messages with their true receive time until the switch cancels it
+        (recv() is cancel-safe: a message is either in the buffer or still unread on NEW)."""
+        try:
+            h.ws = await asyncio.wait_for(ws_connect(url), HANDOVER_CONNECT_TIMEOUT_S)
+        except Exception as err:
+            h.error = ("connect", err)
+            h.news.set()
+            return
+        h.t_open, h.open_wall = time.monotonic(), time.time()
+        h.news.set()
+        try:
+            while len(h.buf) < HANDOVER_BUFFER_MAX:
+                msg = await h.ws.recv()
+                recv_ms = int(time.time() * 1000)
+                if isinstance(msg, bytes):
+                    msg = msg.decode()
+                h.buf.append((recv_ms, msg))
+                if h.t_first is None:
+                    h.t_first = time.monotonic()
+                stream = stream_of(msg)
+                if stream is not None and stream not in h.first:      # parsed once per stream
+                    no_condition = stream.endswith("@forceOrder")
+                    h.first[stream] = None if no_condition else stream_key(stream, loads(msg)["data"])
+                h.news.set()
+            h.full = True
+        except Exception as err:                      # NEW closed or broke before the switch
+            h.error = ("read", err)
+        h.news.set()
+
+    def _switch_reason(self, h):
+        if not h.buf:
+            return None
+        for stream, key in h.first.items():
+            if key is None:
+                continue                              # forceOrder: no condition
+            last = self._last_key(stream)
+            if last is None or last < key:
+                break
+        else:
+            return "caught_up"                        # OLD reached NEW's first key on every stream NEW has
+        if time.monotonic() - h.t_first >= HANDOVER_MAX_S:
+            return "max_time"
+        if h.full or len(h.buf) >= HANDOVER_BUFFER_MAX:
+            return "buffer_full"
+        return None
+
+    async def _during_handover(self, ep):
+        """OLD is processed as usual while NEW connects and buffers. Returns True after a switch or an abort,
+        False when reading must stop: stop is set, or OLD ended normally before NEW was open."""
+        h = ep.handover
+        loop = asyncio.get_running_loop()
+        stop = loop.create_task(self.stop.wait(), name=f"handover-stop-{ep.kind}")
+        recv = news = None
+        try:
+            while True:
+                if self.stop.is_set():
+                    return False
+                if h.error is not None:
+                    self._abort_handover(ep)
+                    return True
+                reason = self._switch_reason(h)
+                if reason is not None:
+                    break
+                if recv is None:
+                    recv = loop.create_task(ep.ws.recv(), name=f"handover-old-{ep.kind}")
+                if news is None:
+                    h.news.clear()
+                    news = loop.create_task(h.news.wait(), name=f"handover-news-{ep.kind}")
+                wait = None if h.t_first is None else max(0.0, h.t_first + HANDOVER_MAX_S - time.monotonic())
+                await asyncio.wait((recv, news, stop), timeout=wait, return_when=asyncio.FIRST_COMPLETED)
+                if news.done():
+                    news = None
+                if recv.done():
+                    done, recv = recv, None
+                    try:
+                        msg = done.result()
+                    except websockets.exceptions.ConnectionClosed as err:
+                        if h.ws is None or h.error is not None:   # no usable NEW: OLD's end takes today's path
+                            if isinstance(err, websockets.exceptions.ConnectionClosedOK):
+                                return False
+                            raise
+                        reason = "old_ended"
+                        break
+                    self._deliver(ep, msg, int(time.time() * 1000))
+        finally:
+            left = [t for t in (recv, news, stop) if t is not None and not t.done()]
+            for t in left:
+                t.cancel()                            # OLD's recv() is cancel-safe: an unread message stays queued
+            if left:
+                await asyncio.wait(left)              # OLD's recv() must be free before OLD is read again
+            for t in (recv, news, stop):
+                if t is not None and not t.cancelled():
+                    t.exception()                     # retrieved, so asyncio never warns about it
+        await self._switch(ep, reason)
+        return True
+
+    async def _switch(self, ep, reason):
+        """OLD -> NEW. OLD is closed in a background task the reading loop never waits for; NEW's buffer and then
+        its live messages pass the duplicate filter for HANDOVER_FILTER_S. The book is not restarted: a depth
+        event whose pu does not continue resyncs it through on_event, an aggTrade gap is backfilled in handle."""
+        h = ep.handover
+        if not h.task.done():
+            h.task.cancel()                           # the reader stops at recv(), nothing is lost
+        await asyncio.wait((h.task,))
+        if ep.report is not None:
+            self._filter_done(ep)
+        old, ep.ws, ep.handover = ep.ws, h.ws, None
+        ep.started = h.open_wall
+        self._close_in_background(ep.kind, old)
+        now = time.monotonic()
+        ep.filter_until = now + HANDOVER_FILTER_S
+        ep.report = {"kind": ep.kind, "reason": reason, "seconds": now - h.t_open, "buffered": len(h.buf),
+                     "dropped": {s.split("@", 1)[-1]: 0 for s in ep.streams}, "depth_continued": None,
+                     "agg_gap": None, "old_last": {s: self._last_key(s) for s in ep.streams},
+                     "t_start": h.t_start, "t_open": h.t_open, "t_first": h.t_first, "t_switch": now,
+                     "switch_ms": int(time.time() * 1000), "t_filter_end": None}
+        self.handovers.append(ep.report)
+        for recv_ms, msg in h.buf:
+            self._deliver(ep, msg, recv_ms)
+
+    def _deliver(self, ep, msg, recv_ms):
+        """A message from the endpoint's current connection; within HANDOVER_FILTER_S after a switch it first
+        passes the duplicate filter."""
+        if ep.filter_until is not None:
+            if time.monotonic() < ep.filter_until:
+                self._filter(ep, msg, recv_ms)
+                return
+            self._filter_done(ep)
+        self.on_message(msg, recv_ms)
+
+    def _filter(self, ep, msg, recv_ms):
+        """Drops a message already processed (key <= the stream's last key, or a forceOrder seen in the last
+        LIQ_MEMORY_MS): neither recorded nor handled."""
+        if isinstance(msg, bytes):
+            msg = msg.decode()
+        if not msg.startswith('{"stream"'):
+            return
+        m = loads(msg)
+        stream, data = m["stream"], m["data"]
+        rep = ep.report
+        if stream.endswith("@forceOrder"):
+            key = liq_identity(data)
+            cutoff = int(time.time() * 1000) - LIQ_MEMORY_MS
+            dup = any(ident == key for t, ident in self.liq_seen if t >= cutoff)
+        else:
+            key = stream_key(stream, data)
+            last = self._last_key(stream)
+            dup = key is not None and last is not None and key <= last
+        if dup:
+            name = stream.split("@", 1)[-1]
+            rep["dropped"][name] = rep["dropped"].get(name, 0) + 1
+            return
+        if "@depth" in stream and rep["depth_continued"] is None:
+            rep["depth_continued"] = data.get("pu") == self.ws_last.get(stream)
+        elif stream.endswith("@aggTrade") and rep["agg_gap"] is None:
+            rep["agg_gap"] = self.last_a is not None and key is not None and key > self.last_a + 1
+        self.on_message(msg, recv_ms, parsed=m)
+        if stream.endswith("@bookTicker"):
+            self._bbo_u = (self.last_bbo_text, key)
+
+    def _filter_done(self, ep):
+        rep, ep.report, ep.filter_until = ep.report, None, None
+        rep["t_filter_end"] = time.monotonic()
+        yes_no = {None: "-", True: "ano", False: "ne"}
+        dropped = ", ".join(f"{k} {v}" for k, v in rep["dropped"].items())
+        print(f"predavani {rep['kind']}: prepnuto {rep['seconds']:.3f} s po otevreni noveho spojeni "
+              f"({HANDOVER_REASONS[rep['reason']]}), v bufferu {rep['buffered']}, zahozene duplicity: {dropped}, "
+              f"kniha navazala (pu == posledni u): {yes_no[rep['depth_continued']]}, "
+              f"mezera v obchodech: {yes_no[rep['agg_gap']]}", flush=True)
+
+    def _abort_handover(self, ep):
+        h, ep.handover = ep.handover, None
+        stage, err = h.error
+        ep.retry_at = time.time() + HANDOVER_RETRY_S
+        if h.ws is not None:
+            self._close_in_background(ep.kind, h.ws)
+        self.handover_failures.append({"kind": ep.kind, "stage": stage, "error": f"{err.__class__.__name__}: {err}",
+                                       "buffered": len(h.buf), "t": time.monotonic()})
+        what = "se neotevrelo" if stage == "connect" else f"spadlo pred prepnutim, zahazuji {len(h.buf)} zprav"
+        print(f"predavani {ep.kind}: nove spojeni {what} ({err.__class__.__name__}: {err}), stare bezi dal, "
+              f"dalsi pokus nejdriv za {HANDOVER_RETRY_S} s", flush=True)
+
+    async def _end_endpoint(self, ep):
+        """The endpoint's connection is ending (error, end, stop or cancel): an unfinished handover is dropped and
+        its NEW closed in the background; a report still in its filter window is printed."""
+        h, ep.handover = ep.handover, None
+        if h is not None:
+            if not h.task.done():
+                h.task.cancel()
+                await asyncio.wait((h.task,))
+            if h.ws is not None:
+                self._close_in_background(ep.kind, h.ws)
+        if ep.report is not None:
+            self._filter_done(ep)
+
+    def _close_in_background(self, kind, ws):
+        """Closes a connection in its own task (the close handshake can take close_timeout); a reference is kept
+        and its exception is printed, never raised."""
+        async def close():
+            try:
+                await ws.close()
+            except Exception as err:
+                print(f"zavirani spojeni {kind} v pozadi: {err.__class__.__name__}: {err}", flush=True)
+        task = asyncio.get_running_loop().create_task(close(), name=f"handover-close-{kind}")
+        tasks = self._closing.setdefault(kind, set())
+        tasks.add(task)
+        task.add_done_callback(tasks.discard)
 
     def _heat_column(self, t):
         bk = self.book
