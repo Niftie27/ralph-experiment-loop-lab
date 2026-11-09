@@ -1,9 +1,9 @@
-// F1a-4 funding-rate history (docs/f1/f1a-4-contract.md with amendment 1): Binance Vision monthly fundingRate files,
+// F1a-4 funding-rate history (docs/f1/f1a-4-contract.md with amendments 1 and 2): Binance Vision monthly fundingRate files,
 // parsed on read (storage S1). Node built-ins only. Every check fails closed: a file that fails gives no rows at all.
 // Seal (contract sections 1 to 3, amendment 1 A1): a research parse reads only calc_time of a row at or after
 // 2025-10-17T00:00Z (routing and order) and never counts, returns or names such a row; its errors name only the file
 // and "sealed part". The holdout integrity path parses every field with sealMs = Infinity and reports pass or fail only.
-//   node src/f1-funding.mjs download|verify [--symbols BTC,ETH,SOL,XRP,DOGE,HYPE] [--data-dir DIR] [--manifest FILE] [--max-rss-mib N (1..512)]
+//   node src/f1-funding.mjs download|verify|integrity [--symbols BTC,ETH,SOL,XRP,DOGE,HYPE] [--data-dir DIR] [--manifest FILE] [--max-rss-mib N (1..512)]
 // download is the only network step (src/vision-transport.mjs fetchSource, unchanged). JSON summary on stdout: counts,
 // times and relative Vision paths only, never rates or sizes. Exit: 0 ok, 1 failure or stop, 2 usage, 3 a file missing.
 import fs from 'node:fs';
@@ -27,6 +27,9 @@ export const INTERVALS = Object.freeze([1, 2, 4, 8]);
 const INTERVAL_TOKENS = new Map(INTERVALS.map(h => [String(h), h]));
 const MAX_PLACES = 8;
 const fail = message => { throw new Error(`Vision funding: ${message}`); };
+const SEALED_PART_FAILURE = 'sealed part fails';
+const sealedFailure = source => `Vision funding: ${source.file}: ${SEALED_PART_FAILURE}`;
+const HOLDOUT_GUARD_FAILURE = 'holdout integrity: memory guard tripped';
 
 // The exact decimal of a rate token, plain or exponent form: { decimal, places } with decimal the canonical plain
 // spelling (no exponent, no trailing zeros, no leading zeros, "0" for every zero, "-" only for a negative value) and
@@ -58,13 +61,14 @@ export function canonicalRate(token) {
 export function parseFunding(csv, source, { sealMs = SEAL_MS } = {}) {
   const buf = Buffer.from(csv.buffer, csv.byteOffset, csv.byteLength);
   const file = source.file, sealable = source.endMs > sealMs, wholly = source.startMs >= sealMs;
-  if (!buf.length || buf[buf.length - 1] !== 0x0a) fail(`${file}: file does not end with a newline`);
+  const sealedPart = reason => { throw new Error(sealable ? sealedFailure(source) : `Vision funding: ${file}: ${reason}`); };
+  const structuralFail = reason => sealable ? sealedPart(reason) : fail(`${file}: ${reason}`);
+  if (!buf.length || buf[buf.length - 1] !== 0x0a) structuralFail('file does not end with a newline');
   const lines = buf.toString('latin1').split('\n');
   lines.pop();
   let first = 0;
   if (lines[0] === FUNDING_HEADER) first = 1;
-  else if (!/^\d/.test(lines[0] ?? '')) fail(`${file}: unknown header (expected the exact Vision header or a numeric first row)`);
-  const sealedPart = reason => fail(`${file}: ${reason}`);
+  else if (!/^\d/.test(lines[0] ?? '')) structuralFail('unknown header (expected the exact Vision header or a numeric first row)');
   const settlementTime = [], calcTime = [], rate = [], rateDecimal = [], intervalHours = [];
   let previous = -Infinity;
   for (let n = first; n < lines.length; n++) {
@@ -77,10 +81,12 @@ export function parseFunding(csv, source, { sealMs = SEAL_MS } = {}) {
       rowFail('calc_time is not 13 digits');
     }
     if (t < source.startMs || t >= source.endMs) {
+      if (sealable) sealedPart('calc_time outside the file month');
       if (t >= sealMs || previous >= sealMs) sealedPart('calc_time outside the file month in the sealed part');
       rowFail('calc_time outside the file month');
     }
     if (t <= previous) {
+      if (sealable) sealedPart('calc_time not after the previous row');
       if (previous >= sealMs) sealedPart('calc_time order broken in the sealed part');
       rowFail('calc_time not after the previous row');
     }
@@ -105,10 +111,16 @@ export function parseFunding(csv, source, { sealMs = SEAL_MS } = {}) {
   });
 }
 
+// Archive structure is not attributable to a research row of the mixed month (B4).
+function fundingMember(zipBytes, source, { sealMs = SEAL_MS } = {}) {
+  try { return readZipMember(zipBytes, source.csvName); }
+  catch (error) { if (source.endMs > sealMs) throw new Error(sealedFailure(source)); throw error; }
+}
+
 // One verified source: the zip against its CHECKSUM, its one member by name (CRC and sizes checked), then the rows.
 export function parseFundingZip(zipBytes, checksumText, source, options) {
   verifyZip(zipBytes, checksumText, source.zipName);
-  return parseFunding(readZipMember(zipBytes, source.csvName), source, options);
+  return parseFunding(fundingMember(zipBytes, source, options), source, options);
 }
 
 // The distinct sources of planned units, in time order (the split 2025-10 month gives one source).
@@ -136,7 +148,7 @@ export async function downloadFunding({ symbols, zipRoot }, guard, deps) {
         counts.verified++;
       } catch (error) {
         counts.failed++;
-        failures.push({ file: source.file, error: error.message });
+        failures.push({ file: source.file, error: source.endMs > SEAL_MS ? `Vision download: ${source.file}: sealable source fails` : error.message });
       }
     }
     const listing = notListedSources(units, { zipRoot, fetched });
@@ -175,7 +187,7 @@ function loadSource(zipRoot, source) {
   if (!versions.length) return { status: 'missing' };
   if (versions.length > 1) return { status: 'conflict', error: 'more than one local version' };
   try { return { status: 'verified', sha256: versions[0], zip: readVerifiedSource(zipRoot, source, versions[0]) }; }
-  catch (error) { return { status: 'failed', error: error.message }; }
+  catch (error) { return { status: error.code ? 'unreadable' : 'failed', error: error.message }; }
 }
 
 const RESEARCH_START_MS = Date.parse(PERIODS.research[0]);
@@ -192,7 +204,7 @@ const byTime = (a, b) => timeOf(a) < timeOf(b) ? -1 : timeOf(a) > timeOf(b) ? 1 
 export function researchHistory(symbol, { zipRoot, firstCandle = () => null, check = () => {} }) {
   const units = planFundingUnits(symbol), instrument = units[0].instrument;
   const research = units.filter(u => u.period === 'research');
-  const listing = notListedSources(units, { zipRoot });
+  const listing = notListedSources(research, { zipRoot });
   const sources = [], spans = [], notListed = [], gaps = [], failures = [], coverage = [], anomalies = [], changes = [];
   const columns = { settlementTime: [], calcTime: [], rate: [], rateDecimal: [], intervalHours: [], elapsedHours: [], sourceIndex: [] };
   let previous = null, broken = false, prior = false, firstListed = null, missingFirst = false;
@@ -212,7 +224,7 @@ export function researchHistory(symbol, { zipRoot, firstCandle = () => null, che
     let parsed;
     try {
       if (loaded.status !== 'verified') throw new Error(loaded.error);
-      parsed = parseFunding(readZipMember(loaded.zip, source.csvName), source);
+      parsed = parseFunding(fundingMember(loaded.zip, source), source);
     } catch (error) { failures.push({ file: source.file, error: error.message }); broken = true; continue; }
     const index = sources.push({ file: source.file, sha256: loaded.sha256 }) - 1;
     spans.push([unit.startMs, unit.endMs]);
@@ -248,23 +260,44 @@ export function researchHistory(symbol, { zipRoot, firstCandle = () => null, che
   return { instrument, planned: research.length, sources, spans, notListed, gaps, failures, coverage: coverage.sort(byTime), anomalies: anomalies.sort(byTime), changes, columns };
 }
 
-// Code identity (m5), recorded beside the digest: the sha256 of every module in the local import closure of this module
+// Code identity (m5), recorded beside the digest: the sha256 of every module in the local module closure of this module
 // (static relative imports), sorted by path, and the git revision.
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
-const IMPORT = /^(?:import|export)\s[^;'"]*?\bfrom\s+'(\.{1,2}\/[^']+)'|^import\s+'(\.{1,2}\/[^']+)'/gm;
+// Deliberately narrow syntax: column-zero, single-quoted static declarations ending in a semicolon.
+// Named bindings may span lines. Everything else fails closed instead of silently losing a dependency.
+const IMPORT = /^(?:impor[t]\s+(?:(?:[\w$]+(?:\s*,\s*(?:\*\s+as\s+[\w$]+|\{[\w$\s,]*\}))?|\*\s+as\s+[\w$]+|\{[\w$\s,]*\})\s+from\s+)?'([^'\\\r\n]+)'|expor[t]\s+(?:\*(?:\s+as\s+[\w$]+)?|\{[\w$\s,]*\})\s+from\s+'([^'\\\r\n]+)')[ \t]*;[ \t]*$/gm;
+function dependencies(text) {
+  const paths = [];
+  const unsupported = () => { throw new Error('code identity: unsupported module dependency form'); };
+  const rest = text.replace(IMPORT, (_, a, b) => {
+    const specifier = a ?? b;
+    if (/^\.{1,2}\//.test(specifier)) paths.push(specifier);
+    else if (!/^node:[a-z_\/]+$/.test(specifier)) unsupported();
+    return '';
+  }).replace(/\bimpor[t]\.meta\b/g, '');
+  // Cross-check all three quote forms against the parsed dependency set. Escapes fail closed as well.
+  const parsed = new Set(paths);
+  for (const [, , specifier] of text.matchAll(/(['"`])(\.{1,2}\/(?:\\[\s\S]|(?!\1)[^\\])*?)\1/g)) {
+    if (specifier.includes('\\') || (specifier.endsWith('.mjs') && !parsed.has(specifier))) unsupported();
+  }
+  // Inspect raw remaining text, including comments, strings and templates: conservative rejection is intentional.
+  // No unsupported keyword spelling can be hidden by a comment/string stripping heuristic.
+  if (/\bimpor[t]\b|\bexpor[t]\b(?!\s+(?:const|let|var|function|class|async\s+function|default)\b)|\brequire\s*\(/.test(rest)) unsupported();
+  return paths;
+}
 function gitRevision() {
   const git = args => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
   try { return { gitRevision: git(['rev-parse', 'HEAD']), gitDirty: git(['status', '--porcelain', '--untracked-files=no']) !== '' }; }
   catch { return { gitRevision: null, gitDirty: null }; }
 }
-export function codeIdentity() {
-  const hashes = new Map(), queue = [fileURLToPath(import.meta.url)];
+export function codeIdentity(entryPath = fileURLToPath(import.meta.url)) {
+  const hashes = new Map(), queue = [path.resolve(entryPath)];
   while (queue.length) {
     const file = queue.pop();
     if (hashes.has(file)) continue;
     const bytes = fs.readFileSync(file);
     hashes.set(file, sha256(bytes));
-    for (const m of bytes.toString('utf8').matchAll(IMPORT)) queue.push(path.resolve(path.dirname(file), m[1] ?? m[2]));
+    for (const dependency of dependencies(bytes.toString('utf8'))) queue.push(path.resolve(path.dirname(file), dependency));
   }
   const modules = [...hashes].map(([file, hash]) => ({ path: path.relative(ROOT, file).split(path.sep).join('/'), sha256: hash }))
     .sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
@@ -306,13 +339,15 @@ const deepFreeze = value => { if (value && typeof value === 'object' && !ArrayBu
 function checkRequest(request) {
   if (!hasExactKeys(request, ['instrument', 'dataStart', 'dataEnd'])) readerFail('request must have exactly instrument, dataStart and dataEnd');
   const { instrument, dataStart, dataEnd } = request;
-  if (!hasExactKeys(instrument, ['exchange', 'market', 'contract']) || instrument.exchange !== 'binance' || instrument.market !== 'linear_perpetual'
-    || !Object.hasOwn(SYMBOL_OF, instrument.contract)) readerFail('unsupported instrument (Binance USD-M Vision contracts only)');
+  if (!hasExactKeys(instrument, ['exchange', 'market', 'contract'])) readerFail('unsupported instrument (Binance USD-M Vision contracts only)');
+  const { exchange, market, contract } = instrument;
+  if (exchange !== 'binance' || market !== 'linear_perpetual' || typeof contract !== 'string'
+    || !Object.hasOwn(SYMBOL_OF, contract)) readerFail('unsupported instrument (Binance USD-M Vision contracts only)');
   if (!isoTime(dataStart) || !isoTime(dataEnd)) readerFail('dataStart and dataEnd must be ISO strings with .000Z');
   const start = Date.parse(dataStart), end = Date.parse(dataEnd);
   if (!(start < end)) readerFail('empty window: dataStart must be before dataEnd');
   if (start < RESEARCH_START_MS || end > RESEARCH_END_MS) readerFail(`window outside the research window ${PERIODS.research.join('..')}: the holdout is sealed`);
-  return { instrument: { exchange: instrument.exchange, market: instrument.market, contract: instrument.contract }, start, end };
+  return { instrument: { exchange, market, contract }, start, end };
 }
 // The research reader (plan section f, m5): read({instrument, dataStart, dataEnd}) inside the research window only.
 // Every research source of the instrument is verified and parsed on each read (storage S1, compute on read) and a
@@ -329,7 +364,11 @@ export function openResearchFunding(options) {
     read(request) {
       const { instrument, start, end } = checkRequest(request);
       const h = researchHistory(SYMBOL_OF[instrument.contract], { zipRoot, firstCandle });
-      if (h.failures.length) readerFail(`research source ${h.failures[0].file} fails: ${h.failures[0].error}`);
+      if (h.failures.length) {
+        const failure = h.failures[0];
+        if (failure.error === `Vision funding: ${failure.file}: ${SEALED_PART_FAILURE}`) throw new Error(failure.error);
+        readerFail(`research source ${failure.file} fails: ${failure.error}`);
+      }
       const { columns, ...rest } = researchWindow(h, instrument, start, end);
       return Object.freeze({ ...deepFreeze(rest), columns: Object.freeze(columns), codeIdentity: code });
     },
@@ -345,7 +384,8 @@ export function checkHoldout(symbol, { zipRoot, lastResearch = null, check = () 
   let previous = lastResearch;
   return planFundingUnits(symbol).filter(u => u.period === 'holdout').map(unit => {
     const source = unit.sources[0], name = source.startMs < SEAL_MS ? '2025-10 sealed part' : monthOf(source);
-    check(`holdout ${unit.instrument.contract} ${name}`);
+    try { check(`holdout ${unit.instrument.contract} ${name}`); }
+    catch { throw new Error(HOLDOUT_GUARD_FAILURE); }
     const loaded = loadSource(zipRoot, source);
     const checksum = loaded.status === 'verified' ? 'verified' : loaded.status === 'failed' ? 'failed' : 'not checked';
     let pass = false, last = null;
@@ -366,27 +406,41 @@ export function checkHoldout(symbol, { zipRoot, lastResearch = null, check = () 
   });
 }
 
-// verify (plan section i): offline, per symbol the research history and the holdout integrity. status: failed (a research
-// file or a holdout unit fails), stopped (a research anomaly: amendment needed), incomplete (a gap month), else ok.
+const researchStatus = h => h.failures.length ? 'failed' : h.anomalies.length ? 'stopped' : h.gaps.length ? 'incomplete' : 'ok';
+
+// Verify is research-only (B1), including its listing evidence. No holdout month archive or CHECKSUM is opened.
 export function verifyFunding({ symbols, zipRoot, firstCandle = () => null, guard = { check() {} } }) {
   const check = label => guard.check(label);
   const out = symbols.map(symbol => {
     const h = researchHistory(symbol, { zipRoot, firstCandle, check }), t = h.columns.settlementTime, n = t.length;
-    const holdout = checkHoldout(symbol, { zipRoot, lastResearch: n ? { t: t[n - 1], h: h.columns.intervalHours[n - 1] } : null, check });
     let offsetMaxMs = 0;
     for (let i = 0; i < n; i++) offsetMaxMs = Math.max(offsetMaxMs, h.columns.calcTime[i] - t[i]);
     return { contract: h.instrument.contract, sources: { planned: h.planned, verified: h.sources.length, notListed: h.notListed.length, gaps: h.gaps.length, failed: h.failures.length },
       researchSettlements: n, firstSettlement: n ? iso(t[0]) : null, lastSettlement: n ? iso(t[n - 1]) : null, offsetMaxMs: n ? offsetMaxMs : null,
       changes: h.changes, notListed: h.notListed, gaps: h.gaps, failures: h.failures, coverage: h.coverage, anomalies: h.anomalies,
-      digest: h.failures.length ? null : researchWindow(h, h.instrument, RESEARCH_START_MS, RESEARCH_END_MS).digest, holdout };
+      digest: h.failures.length ? null : researchWindow(h, h.instrument, RESEARCH_START_MS, RESEARCH_END_MS).digest };
   });
-  const status = out.some(s => s.failures.length || s.holdout.some(u => u.result === 'fail')) ? 'failed'
+  const status = out.some(s => s.failures.length) ? 'failed'
     : out.some(s => s.anomalies.length) ? 'stopped' : out.some(s => s.gaps.length) ? 'incomplete' : 'ok';
   return { command: 'verify', status, symbols: out, code: codeIdentity() };
 }
 
+// The separately approved integrity step (B1): finish research for ALL requested instruments before any A1 unit.
+// Blocked output carries only each instrument's research status; successful gating keeps A1's four-field records.
+export function integrityFunding({ symbols, zipRoot, firstCandle = () => null, guard = { check() {} } }) {
+  const check = label => guard.check(label);
+  const histories = symbols.map(symbol => researchHistory(symbol, { zipRoot, firstCandle, check }));
+  const out = histories.map(h => ({ contract: h.instrument.contract, research: researchStatus(h) }));
+  if (out.some(s => s.research !== 'ok')) return { command: 'integrity', status: 'blocked', symbols: out, code: codeIdentity() };
+  for (let i = 0; i < histories.length; i++) {
+    const c = histories[i].columns, n = c.settlementTime.length;
+    out[i].holdout = checkHoldout(symbols[i], { zipRoot, lastResearch: n ? { t: c.settlementTime[n - 1], h: c.intervalHours[n - 1] } : null, check });
+  }
+  return { command: 'integrity', status: out.some(s => s.holdout.some(u => u.result === 'fail')) ? 'failed' : 'ok', symbols: out, code: codeIdentity() };
+}
+
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
-const COMMANDS = ['download', 'verify'];
+const COMMANDS = ['download', 'verify', 'integrity'];
 const FLAGS = ['--symbols', '--data-dir', '--manifest', '--max-rss-mib'];
 const usage = message => Object.assign(new Error(message), { usage: true });
 function parseArgs(argv) {
@@ -409,7 +463,7 @@ function parseArgs(argv) {
     manifestPath: path.resolve(flags['--manifest'] ?? path.join(ROOT, 'results', 'manifest-f1-1m.json')) };
 }
 
-const EXIT = { ok: 0, failed: 1, stopped: 1, usage: 2, incomplete: 3 };
+const EXIT = { ok: 0, failed: 1, stopped: 1, blocked: 1, usage: 2, incomplete: 3 };
 export async function main(argv, deps = {}) {
   const io = { fetch: deps.fetch ?? globalThis.fetch, stdout: deps.stdout ?? process.stdout, sleep: deps.sleep ?? (ms => new Promise(resolve => setTimeout(resolve, ms))) };
   let summary, guard;
@@ -418,12 +472,12 @@ export async function main(argv, deps = {}) {
     guard = memoryGuard(options.maxRssMiB, deps.check);
     try {
       summary = options.command === 'download' ? await downloadFunding(options, guard, io)
-        : verifyFunding({ ...options, firstCandle: contract => firstCandleOf(options.manifestPath, contract), guard });
+        : (options.command === 'integrity' ? integrityFunding : verifyFunding)({ ...options, firstCandle: contract => firstCandleOf(options.manifestPath, contract), guard });
     } catch (error) {
       summary = { command: options.command, status: 'failed', error: error.message };
     }
     const memory = guard.report();
-    if (memory.maxRssMiB > options.maxRssMiB) summary = { ...summary, status: 'failed', error: `memory ceiling exceeded: maxRSS ${memory.maxRssMiB} MiB > ${options.maxRssMiB} MiB` };
+    if (memory.maxRssMiB > options.maxRssMiB && summary.error !== HOLDOUT_GUARD_FAILURE) summary = { ...summary, status: 'failed', error: `memory ceiling exceeded: maxRSS ${memory.maxRssMiB} MiB > ${options.maxRssMiB} MiB` };
     summary = { ...summary, memory, runtime: { node: process.version, platform: process.platform } };
   } catch (error) {
     if (!error.usage) throw error;

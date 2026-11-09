@@ -289,3 +289,24 @@ test('F6 unsupported imports and re-exports fail closed; supported trees hash ev
     assert.deepEqual(actual, expected);
   }
 });
+
+for (const [name, declaration] of [
+  ['block comment', "export /* c */ * from './extra.mjs';\n"],
+  ['line comment', "export // c\n* from './extra.mjs';\n"],
+]) test(`F6 comment-separated re-export fails closed: ${name}`, t => {
+  const w = workspace(t), entry = path.join(w.dir, 'entry.mjs');
+  fs.writeFileSync(path.join(w.dir, 'extra.mjs'), 'export const x = 1;\n');
+  fs.writeFileSync(entry, declaration);
+  assert.throws(() => funding.codeIdentity(entry), /unsupported module dependency form/);
+});
+
+for (const quote of ["'", '"', '`']) test(`F6 relative module literals must have parsed dependencies: ${quote}`, t => {
+  const w = workspace(t), entry = path.join(w.dir, 'entry.mjs');
+  fs.writeFileSync(path.join(w.dir, 'extra.mjs'), 'export const x = 1;\n');
+  for (const specifier of ['./extra.mjs', '../extra.mjs']) {
+    fs.writeFileSync(entry, `const modulePath = ${quote}${specifier}${quote};\n`);
+    assert.throws(() => funding.codeIdentity(entry), /unsupported module dependency form/);
+  }
+  fs.writeFileSync(entry, `import './extra.mjs';\nconst modulePath = ${quote}./extra.mjs${quote};\n`);
+  assert.equal(funding.codeIdentity(entry).modules.length, 2);
+});
