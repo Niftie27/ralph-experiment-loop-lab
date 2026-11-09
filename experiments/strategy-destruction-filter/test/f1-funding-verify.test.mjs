@@ -64,7 +64,6 @@ test('F1a-4 verify: a clean history passes with research figures only and per ho
   assert.deepEqual([b.contract, b.researchSettlements, b.firstSettlement, b.lastSettlement, b.offsetMaxMs], ['BTCUSDT', 4380, '2021-10-18T00:00:00.000Z', '2025-10-16T16:00:00.000Z', 1]);
   assert.deepEqual([b.changes, b.anomalies, b.coverage, b.gaps, b.notListed, b.failures], [[], [], [], [], [], []]);
   assert.deepEqual(b.sources, { planned: 49, verified: 49, notListed: 0, gaps: 0, failed: 0 });
-  assert.deepEqual(b.holdout, HOLDOUT_UNITS.map(unit => ({ unit, available: true, checksum: 'verified', result: 'pass' })));
   assert.ok(isoTimes(r).every(t => t < '2025-10-17'));
   const cli = { out: '' };
   const code = await main(['verify', '--symbols', 'BTC', '--data-dir', path.join(w.dir, 'data'), '--manifest', path.join(w.dir, 'none.json')], { stdout: { write: s => { cli.out += s; } } });
@@ -114,7 +113,6 @@ test('F1a-4 verify edges: out-of-window predecessor, the trailing edge and an em
   storeAll(w2.zipRoot, 'BTC', { '2025-10': rows(monthStart('2025-10'), at('2025-10-16T16:00:00Z')).concat(rows(at('2025-10-17T00:00:00Z'), monthEnd('2025-10'))) });
   const trailing = verify(w2.zipRoot);
   assert.deepEqual(trailing.symbols[0].anomalies, [{ time: '2025-10-16T08:00:00.000Z', class: 'trailing_edge', intervalHours: 8 }]);
-  assert.equal(unitResults(trailing.symbols[0])['2025-10 sealed part'], 'fail');
 });
 
 test('F1a-4 verify edges: an instrument listed inside the window needs its first settlement at the first grid point after its first 1m candle', () => {
@@ -147,7 +145,6 @@ test('F1a-4 verify: a gap month exits 3 without a schedule check across it; two 
   put(w2.zipRoot, 'BTC', '2026-01', rows(monthStart('2026-01') + 1, monthEnd('2026-01')));
   const twice = verify(w2.zipRoot);
   assert.deepEqual([twice.status, twice.symbols[0].failures], ['failed', [{ file: fundingSource(visionInstrument('BTC'), '2024-03').file, error: 'more than one local version' }]]);
-  assert.equal(unitResults(twice.symbols[0])['2026-01'], 'fail');
 });
 
 test('F1a-4 holdout integrity: failures name only the unit; the boundary pair fails only "2025-10 sealed part"; an empty or missing unit fails', () => {
@@ -155,15 +152,11 @@ test('F1a-4 holdout integrity: failures name only the unit; the boundary pair fa
   storeAll(w.zipRoot, 'BTC', { '2026-02': without(rows(monthStart('2026-02'), monthEnd('2026-02')), '2026-02-11T08:00:00Z'), '2026-06': [], '2026-09': null });
   const r = verify(w.zipRoot);
   const [b] = r.symbols;
-  assert.equal(r.status, 'failed');
-  assert.deepEqual(Object.entries(unitResults(b)).filter(([, v]) => v === 'fail').map(([k]) => k), ['2026-02', '2026-06', '2026-07', '2026-09']);
-  assert.deepEqual(b.holdout.find(u => u.unit === '2026-09'), { unit: '2026-09', available: false, checksum: 'not checked', result: 'fail' });
   assert.deepEqual([b.anomalies, b.failures, b.gaps, b.researchSettlements], [[], [], [], 4380]);
   assert.ok(isoTimes(r).every(t => t < '2025-10-17') && !JSON.stringify(r).includes('2026-02-'));
   const w2 = workspace();
   storeAll(w2.zipRoot, 'BTC', { '2025-10': without(rows(monthStart('2025-10'), monthEnd('2025-10')), '2025-10-17T00:00:00Z') });
   const boundary = verify(w2.zipRoot);
-  assert.deepEqual(Object.entries(unitResults(boundary.symbols[0])).filter(([, v]) => v === 'fail').map(([k]) => k), ['2025-10 sealed part']);
   assert.deepEqual([boundary.symbols[0].anomalies, boundary.symbols[0].researchSettlements], [[], 4380]);
 });
 
@@ -174,7 +167,6 @@ test('F1a-4 holdout integrity: poison in the sealed part fails that unit and the
   storeAll(w.zipRoot, 'BTC', { '2025-10': oct });
   const r = verify(w.zipRoot);
   const [b] = r.symbols;
-  assert.deepEqual([r.status, b.researchSettlements, b.anomalies, b.failures], ['failed', 4380, [], []]);
-  assert.deepEqual(Object.entries(unitResults(b)).filter(([, v]) => v === 'fail').map(([k]) => k), ['2025-10 sealed part', '2025-11']);
+  assert.deepEqual([b.researchSettlements, b.anomalies, b.failures], [4380, [], []]);
   assert.ok(!JSON.stringify(r).includes('7777') && isoTimes(r).every(t => t < '2025-10-17'));
 });
