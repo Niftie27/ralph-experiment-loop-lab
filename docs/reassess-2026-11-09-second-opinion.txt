@@ -1,0 +1,158 @@
+Mon Nov  9 08:46:06 UTC 2026
+54b46b924f1a3d14518ae2bf1ad0ed7e05e29de119758f410d010bace9bf69e2  ~/reassess-so-2026-11-09.txt
+origin/main: ae7d2c4 2026-11-09 00:28:34 +0000
+
+Evidence convention: TESTED means a command actually run here, with its scope/case count; TAKEN OVER means an attributed document assertion, not independently verified; REASONING means interpretation or recommendation, not an executed behavioral test. NOT VERIFIED marks remaining uncertainty. Hash output paths use ~ as required by R3; hash values are unchanged.
+
+STEP 1 — REPOSITORY STATE
+TESTED: three supplied commands, all MATCH. No changed file outside data-checks was listed. The fetched main equals ae7d2c4; no ancestry inference is needed.
+Command: cd ~/ralph-experiment-loop-lab && git fetch -q origin && echo "fetch ok"
+Output:
+fetch ok
+
+Command: cd ~/ralph-experiment-loop-lab && git log -1 --format='%h %ci' origin/main
+Output:
+ae7d2c4 2026-11-09 00:28:34 +0000
+
+Command: cd ~/ralph-experiment-loop-lab && git diff --name-only ae7d2c4 origin/main | grep -v '^data-checks/' ; echo "non-data-checks exit $?"
+Output:
+non-data-checks exit 1
+
+STEP 2 — F1–F7
+F1: MATCH (TESTED: supplied command, one invocation).
+Command: cd ~/ralph-experiment-loop-lab && for f in 2026-11-07 2026-11-08; do git show origin/main:data-checks/$f.csv | tr -d '\r' | awk -F, -v d=$f 'NR>1{n++; if($8=="PASS")p++; if($6!=0)m++} END{print d, "rows="n, "pass="p, "missing_nonzero="m+0}'; done
+Output:
+2026-11-07 rows=96 pass=96 missing_nonzero=0
+2026-11-08 rows=92 pass=92 missing_nonzero=0
+
+F2: MATCH (TESTED: supplied command, one invocation).
+Command: cd ~/ralph-experiment-loop-lab && git show origin/main:docs/data-gate/c4-run-2026-11-04/c4_days.tsv | awk -F'\t' 'NR>1 && $3=="aggTrades" && $4!="ok"{print $1,$2,$4,"mism_q="$21}'
+Output:
+BTCUSDT 2026-10-28 vision_missing mism_q=
+BTCUSDT 2026-11-03 mismatch mism_q=1
+ETHUSDT 2026-10-28 vision_missing mism_q=
+SOLUSDT 2026-10-27 mismatch mism_q=1
+SOLUSDT 2026-10-28 vision_missing mism_q=
+HYPEUSDT 2026-10-15 mismatch mism_q=1
+HYPEUSDT 2026-10-28 vision_missing mism_q=
+
+F3: MATCH (TESTED: supplied command, one invocation).
+Command: cd ~/ralph-experiment-loop-lab && git show origin/main:docs/data-gate/c4-run-2026-11-04/c4_days.tsv | awk -F'\t' 'NR>1 && $3=="klines1m"{c+=$29; m+=$30; s[$4]++} END{print "kmin="c, "kmis="m, "mismatch_days="s["mismatch"], "vision_missing="s["vision_missing"]}'
+Output:
+kmin=142979 kmis=3264 mismatch_days=101 vision_missing=4
+
+F4: MATCH (TESTED: supplied command, one invocation).
+Command: cd ~/ralph-experiment-loop-lab && git show origin/main:docs/data-gate/c4-run-2026-11-04/c4_details.tsv | awk -F'\t' '$3=="klines1m"{print $4}' | sort | uniq -c
+Output:
+     80 k_kline_only
+      4 k_mism_close
+    170 k_mism_high
+    173 k_mism_low
+   1695 k_mism_open
+   1895 k_mism_taker_buy
+   2000 k_mism_volume
+
+F5: MATCH (TESTED: supplied command, one invocation).
+Command: cd ~/ralph-experiment-loop-lab && git rev-parse --short origin/f1/a4-funding && mb=$(git merge-base origin/main origin/f1/a4-funding) && echo "overlap=$( { git diff --name-only "$mb" origin/main; git diff --name-only "$mb" origin/f1/a4-funding; } | sort | uniq -d | wc -l)"
+Output:
+c33f9c7
+overlap=0
+
+F6: MATCH (TESTED: supplied command, one invocation).
+Command: cd ~/ralph-experiment-loop-lab && git show origin/main:docs/ledger.md | grep -E '^- \*\*I(75|85|89|90) ' | cut -c1-200
+Output:
+- **I75 F1 risks from the 2026-10-20 architecture review** — OPEN; each gates a phase (docs/f1/architecture-review-2026-10-20*.md, code claims checked by Claude). (a) Before F1b: an accounting contr
+- **I85 XRP eligibility gate (F1a-3 contract C4)** — OPEN, gate before F1b uses XRP as a cross-check: decide XRP's full-window eligibility. XRP is not in research-queue SYMBOLS (src/research-queue.m
+- **I89 E1 and E2 bars before F1b (decision 48)** — OPEN, gate before F1b uses any column of an E1 or E2 bar, prices included: decide how those bars are treated (keep, flag or omit), with a reported
+- **I90 F1b memory headroom** — OPEN, F1b design input: six timeframes over each whole research window for six symbols in one process reached maxRSS 508 MiB against the 512 MiB ceiling; one symbol 2
+
+F7: MATCH (TESTED: supplied command, one invocation).
+Command: cd ~/ralph-experiment-loop-lab && for b in claude/new-session-vixh15 claude/pr9-fixes-4roi4h claude/focused-fermi-vwx8zh; do echo "$b $(git rev-parse --short origin/$b)"; done
+Output:
+claude/new-session-vixh15 7b5fe01
+claude/pr9-fixes-4roi4h e65a513
+claude/focused-fermi-vwx8zh f2a7c9a
+
+Interpretation checks (TESTED unless otherwise labeled):
+- F1 checks 188 existing CSV rows across two dates, not 192 expected symbol-hours. All existing rows pass; this does not establish that absent rows, OI freshness, or every stream were checked. REASONING: reconcile the 92-row day against the expected 4 x 24 grid before calling it a complete day; the cause of four absent rows is NOT VERIFIED.
+- F2 returns seven exception rows; current external availability and the physical cause of each mismatch were not tested. TAKEN OVER: the supplied explanations about missing fills and the absent interval.
+- F3's output matches literally but its label is misleading: header column 30 is k_mism_open. Thus 3264 counts OPEN mismatches, not all mismatched minutes. 101 counts symbol-days with status mismatch, not 101 distinct dates.
+- F4 counts stored examples, not all discrepancies. A git show of tools/data-gate/c4_vision_check.py, lines 10–14 and 163–183, establishes capped examples per symbol/day/type (20 ordinary examples). The day-table header has no unique-any-field mismatched-minute count.
+- TESTED: Python csv.DictReader over git show of both committed TSVs, 105 klines1m symbol-day records and 6024 detail records. Named-column sums: k_minutes_compared=142979; k_mism_open=3264; k_mism_high=170; k_mism_low=173; k_mism_close=4; k_mism_volume=10485; k_mism_taker_buy=5323; k_minutes_tape_only=0; k_minutes_kline_only=108. F4's 2000 volume examples, 1895 taker-buy examples and 80 kline-only examples are therefore incomplete enumerations.
+- TESTED: for each field separately, grouped detail rows by symbol/day; required example count equal to that day's corresponding mismatch count, tape_hours=24, k_minutes_compared=1440, no tape-only/kline-only minutes and non-missing Vision status; summed Decimal(tape)-Decimal(vision). Three eligible volume cases and 15 eligible taker-buy cases all sum to zero. The three volume cases are HYPEUSDT 2026-10-11, 2026-10-18 and 2026-10-25, with 14, 20 and 14 mismatches respectively. REASONING: these are limited consistency checks, not proof of the revised criterion on all days or independent tests of the source parser.
+- F5 establishes path-disjoint changes against a merge base, not semantic compatibility or a tested merge. F7 establishes fetched branch tips, not deployed runtime parity.
+
+STEP 3 — VERDICTS
+
+A — PARTLY.
+TAKEN OVER: the proposed sequence and today's decisions come from the supplied document. TESTED, document read: git show origin/main:docs/factory-spec-f1.md, funnel item 5 and implementation phases, places live-collector demo-sim separately from F1b/F1c; the latter do not intrinsically require passing this live-data gate. REASONING: resume F1 and resolve the seal review questions before the fix batch. Do not turn this into unconditional dataset approval: F1's own funding, bar policy and accounting gates remain. Include synthetic regression tests and a final review of the frozen batch before the one verify run. Update MAP in the phase-changing commit, not as a later independent housekeeping task. See Q-d on spending the integrity look before resolving m9. No seal fixes or verify were run here.
+
+B — AGREE.
+REASONING: F1 first with a bounded side line is coherent. Treat one third as an operational budget with an owner and review date, not a measured estimate. A currently silent OI failure deserves a small observability intervention without taking over the main line. Forward-only collector fixes should not prevent separately labeled historical backfills; never rewrite the original tape to make it pass. TAKEN OVER: the capacity allocation, not measured here.
+
+C1 — PARTLY.
+REASONING: accept a field- and date-scoped quality matrix, not a universal PASS usable by any strategy. F2 corroborates the listed exception rows, but no raw archive, book, markPrice, forceOrder, OI or lag dataset was read in this task. Those verdicts and intervals are TAKEN OVER, NOT VERIFIED here. Unpublished reference days remain unverified, not automatically passing because tape exists. forceOrder partial and missing OI constrain downstream inputs. Duplicate-u filtering needs the exact stream/key, reconnect/reset policy and preservation of raw evidence; a global deduplication rule is underspecified. Reconcile missing expected CSV rows and distinguish the summary counters from capped examples before promotion.
+
+C2 — AGREE.
+REASONING: keeping the 10-27 interval explicitly unavailable is safer than presenting reconstructed trades as original aggregate-ID evidence. A separately labeled trade-level reconstruction could answer another question, but cannot close this identity/completeness gate without its own validation contract. TAKEN OVER, NOT VERIFIED: both claimed absences and the exact interval. Distinguish a source/reference gap from proof that no market trading occurred.
+
+C3 — PARTLY.
+REASONING: base volume and taker-buy base volume are sensible additive conservation checks. They do not validate OHLC timing, per-minute execution inputs or orderflow. Minute-boundary allocation can explain offsetting volume differences, but does not establish that every discrepancy has that cause. The midnight exception must be bounded and reconciled, not an unlimited waiver. Capped examples cannot demonstrate daily equality across all 105 symbol-days. The limited complete-example cases above are compatible with the proposal, not a full pass. See Q-c for the input contract and falsification limits.
+
+D1 — PARTLY.
+TESTED, document read: F6 and the full I75/I85/I89/I90 ledger entries support the named gates. I85 is specifically before using XRP as a cross-check; I89 covers any column of affected bars, including prices; I90 is a design input, not a claim that every job must wait. git show c33f9c7:docs/f1/f1a-4-contract.md, m9/L1, explicitly places m9 before F1c accepts funding integrity, outside F1a-4.
+REASONING: documenting a gate is not satisfying it; each needs a decision, acceptance evidence and enforcement before the affected consumer runs. The F1b protocol also needs I60/trial identity, I75's kill-layer contract, selection/accounting assumptions and the spec's statistical validation. I84(b) is a protocol-stage review, not a demo-sim-only chore. TAKEN OVER, NOT VERIFIED: the separate RAM-plan -> E2 -> outcome P sequence and the LIMITS/errorbody report contents; their artifacts were not identified or inspected here. Do not confuse that E2 milestone with the E2 bar-disagreement class. M4 deferral needs an immutable-store condition for the earlier verify.
+
+D2 — PARTLY.
+REASONING: compose 0b on the reviewed PR #9 branch and soak the combined candidate, then deploy both with one planned restart. The written order says deploy in (2), then add (3), which would contradict the single-restart objective if followed literally. No initial standalone PR #9 deployment should occur under the combined plan. A daily report containing hourly buckets is not an hourly alarm. Add an independent freshness/notification proposal now, with explicit approval before implementation, and a deadline for 0b; otherwise the batching rationale can preserve the silent-failure window indefinitely.
+TAKEN OVER, NOT VERIFIED: roughly 18 seconds lost per restart, current deployed code, saved backfill snapshot and soak results. F7 proves only branch identities. I84 reviews have different phase deadlines; do not move all of them to before demo-sim.
+
+Q-a — COMBINED DEPLOY AND INTERIM MITIGATION
+REASONING: yes, conditionally on a short bounded review/soak deadline and independent detection now. A dead task can remain dead while its parent process looks healthy. TESTED, static inspection only, one module: git show origin/main:tools/collector/binance_live.py, lines 344–363, 645–656 and 803–823. rest_get catches selected network failures, not every decoding/programming exception; poll_oi has no outer recovery; created tasks wait behind self.stop rather than a task-failure supervisor. This supports a possible silent-task-death path, not a reproduction of the historical outage or verification of current runtime.
+REASONING: interim no-restart mitigation is an external reader checking the age of the latest valid OI observation per symbol and the health of its own checks, then notifying a named human. A nonzero hourly count alone misses a task that died after its first sample. Do not create a second writer or restart the collector automatically. Detection does not restore the missing task; remediation remains a controlled decision. The eventual supervisor should report failure, preserve cancellation/shutdown semantics, bound retry/backoff, and avoid duplicate tasks. Catching everything and silently returning None would hide defects.
+
+Q-b — CADENCE AND SMALLEST NOTIFICATION PATH
+TAKEN OVER: the prompt says daily 00:20 UTC and CSV-only output. TESTED, document read: origin/main:docs/state.md corroborates that historical schedule; live scheduler state is NOT VERIFIED and was not inspected.
+REASONING: no, hourly columns in a daily job do not detect within an hour. A task dying just after the daily check can go unnoticed for nearly 24 hours plus processing/delivery delay; committing a CSV does not assign a reader or prove notification.
+REASONING, proposal only: one independent lightweight scheduled check per hour, outside the collector, reads only the latest relevant local OI records for all four symbols. Report last-valid-observation age, recent count and checker failure. Start with a stale threshold explicitly chosen around the documented polling cadence, write/flush delay and acceptable loss budget; for example 15 minutes is a proposal, not a tested threshold. Hourly polling plus that threshold can take roughly 75 minutes to detect; use a shorter check cadence if the loss budget demands it. Do not require exactly 360 samples/hour, because network latency and retries affect the interval.
+REASONING: on healthy->stale or checker-error transitions, send one concise notification through the existing authenticated messaging route to the responsible operator; deduplicate while bad, send recovery, and require acknowledgment/escalation after a fixed interval. Persist minimal alert state; verify a delivered test alert and recovery before calling it active. A dead checker needs a missed-run signal monitored independently. Avoid whole-day decompression and unnecessary external polling. Existing messaging was usable for progress in this session; unattended-job credentials, service permissions and delivery wiring are NOT VERIFIED. No schedule, service, notification workflow or threshold was installed.
+
+Q-c — CRITERION 5 INPUT CONTRACT AND FALSIFICATION
+REASONING, proposed exact contract: per symbol and UTC day require immutable tape aggregate IDs, trade timestamps, exact decimal base quantity and buyer-is-maker flag; reference 1m open times, exact base volume and taker-buy base volume; complete interval coverage, invalid/duplicate counters, source hashes and explicit exception quantities. For every eligible day compare sum(q) and sum(q where buyer-is-maker=false) to the corresponding Vision sums. Arithmetic must be exact or explicitly detect rounding. Price fields remain separate requirements for any strategy using OHLC; daily conservation cannot replace them.
+TESTED, static inspection: tools/data-gate/c4_vision_check.py documents m=false for taker buys, groups by T//60000, reads Vision columns 5 and 9 for these volumes, and caps detail rows. Its committed day table provides counts but no complete daily volume totals. Its detail table provides some decimal value pairs, not uncapped minute data, exact per-fill boundary allocation or a complete boundary correction ledger. Thus required daily totals are MISSING from these artifacts; some differences are LOCALLY DERIVABLE only where all necessary examples are present. Underlying full inputs and midnight splits are NOT VERIFIED. No current external data was fetched.
+REASONING: midnight is a real boundary condition if an aggregate includes fills on both sides of UTC midnight. An exception is sound only when its identity, affected adjacent days, quantity and buy classification are evidenced. Prefer explicit signed adjustments on both days, or a separately labeled adjacent-day conservation check with its own outer boundaries handled. Do not discard an entire day or exempt every residual merely because midnight exists. Without fill-level timing, exact allocation may be unknown; mark the day unresolved rather than claim exact adjusted equality.
+REASONING: the tables can falsify an unqualified assertion in a completely enumerated eligible case with nonzero residual; incomplete examples cannot do so by summing their selected residuals. The 3 volume and 15 taker-buy cases tested here yielded zero, so they supply no counterexample. They cannot prove the general revised gate, and mismatch counts alone cannot reconstruct daily residuals. A rerun that records daily sums, completeness and bounded corrections is still needed. Do not wait for one missing publication to define the revised rule; decide it before viewing the new result.
+
+Q-d — m9 BEFORE THE SINGLE VERIFY?
+TESTED, static reads: the contract explicitly defers m9 to before F1c and says unknown boundary labels can intentionally stop the schedule check. The recorded pre-seal scan's absence of hourly episodes is TAKEN OVER from contract section 4, not rerun. At c33f9c7, verifyFunding calls checkHoldout even when researchHistory has failures/anomalies; checkHoldout applies scheduleClass to every sealed settlement. One static path inspected; no behavioral test or real funding parse was run.
+REASONING: there is no contractual requirement to make F1a-4 wait for m9. There is a real information-budget and rework reason to consider resolving it earlier: a false stop can occur after holdout integrity has already been inspected, and a later schedule-rule change invalidates the earlier code-identity result. Fail-closed is safe against false acceptance, but not free of information cost. A failed verify must not become an invitation to iterate rules against sealed outcomes.
+REASONING: recommendation is to resolve the small pre-registered research-only m9 uncertainty before the unique integrity look if feasible, without inspecting holdout or running m9 in this task. If preserving the agreed phase order, explicitly accept a terminal inconclusive/fail result, freeze the failure policy and prohibit diagnostic peeking or automatic reruns. The contract already names a later m4 integrity step before F1c; distinguish one F1a-4 look from a promise of one integrity look forever. “One bit” is shorthand: multiple per-unit availability/checksum/pass-fail outputs are not literally one bit total. Whether the unknown boundary actually occurs in the sealed period is NOT VERIFIED and must not be investigated to optimize this decision.
+
+Q-e — EIGHT MISSED OR UNDER-SPECIFIED TRIAGE ITEMS
+REASONING, eight items counted as missed:
+1. Observation coverage: 92 passing rows do not prove a full 96-row symbol-hour grid; a count alarm needs absent-row checks and last-valid-record age.
+2. Monitoring ownership: define cadence, recipient, acknowledgment, checker liveness and delivery verification; CSV publication alone has no response guarantee.
+3. Measurement semantics: F3 mislabels an OPEN counter; F4 samples are capped. Revised criterion 5 needs explicit totals and boundary accounting, not sample sums presented as full evidence.
+4. Holdout failure policy: predeclare treatment of a false schedule stop, non-adaptive rerun rules, and code/data identity binding; distinguish per-unit leakage from the “one bit” slogan.
+5. Deployment sequencing: review and soak the combined PR #9+0b candidate before one deploy, with evidence of all four tasks surviving forced failure, backoff and shutdown. Forward-only repair is not permission to leave the system silently dead while review expands.
+6. Phase-scoped reviews: I84(b) belongs in the F1b protocol; I84(c) precedes F1e; I84(a) also covers F1 inputs and Vision daily/monthly disagreement. I60, kill layers, null-campaign validation and statistical selection must not disappear from the F1b checklist. TESTED source text: ledger I59/I75/I84 and factory spec.
+7. Reproducibility while M4 waits: freeze the source store across research/integrity passes and record accepted code/source identities; non-overlap of branch paths is not merge/runtime proof. TAKEN OVER: M4's two-read finding from the cloud review, also consistent with the inspected verify path.
+8. Dataset fitness and backfill: require each downstream strategy's input contract; OI 5m snapshots are not replacement 10-second observations or proof of intra-window freshness; duplicate-u scope, lag timestamps, partial liquidations and gap masks must travel with outputs. TAKEN OVER: snapshot granularity and reported stream limitations; exact backfill content NOT VERIFIED.
+
+Q-f — CONFLICTS WITH WORKSPACE / MEMORY
+TESTED: memory_search was attempted once and returned unavailable: index built for fts-only, configured embedding model text-embedding-3-small. No semantic results were returned; historical-memory conflict coverage is unavailable, not exhaustive. Tool guidance names `openclaw memory status --index --agent main`; this was NOT run because index rebuilding can call a provider and is outside this read-only task. No index/configuration repair was attempted.
+TAKEN OVER from the startup workspace instructions versus this document:
+- Normal autonomous work, fixes and recurring-loop guidance is narrowed to this read-only review; only own-command repairs and the requested report outputs are authorized here.
+- Normal proactive memory/vault updates conflict with the task's narrow write scope. No research-vault or repository memory was changed; this report is the durable record.
+- General vault-first routing differs from the repository's current MAP/findings-first policy. The attachment and current repository documents govern this review; archived project vaults were not treated as current evidence.
+TESTED, document comparisons:
+- origin/main:AGENTS.md and docs/MAP.md say repository files are the source of truth; the attachment gives its fresh decisions priority. New ordering/capacity/verdict claims were therefore attributed to the attachment, not silently promoted to committed decisions.
+- MAP still says F1a-4 plan not started, contradicted by the fetched funding branch and existing contract/reviews. It is stale for that statement. It was not edited.
+- docs/findings.md F02 says a failed point stops only that point; this attachment requires stop after a failed correction/rerun, and takes precedence. F20 asks for a remote clock source; this attachment explicitly requires date -u, which was used. No independent clock comparison was made.
+- Repo F21 requires MAP in the same phase-changing commit. A's arrow is acceptable only if it does not mean a later separate phase-status update; this is a sequencing ambiguity, not a runtime change made here.
+- I84's documented early phase reviews differ from a blanket “later before demo-sim” reading of D2. This is a substantive triage conflict identified above, not silently resolved by deleting the gates.
+REASONING: the attachment does not override platform instruction priority; no conflict required violating it. No subagents, trading, keys, installs, scheduler/service changes, checkout, pull, commit or push were used. Repository access was git fetch and permitted Git reads only. Shell text processing operated on Git output; no archive scan or heavy job was run.
+
+Execution notes (TESTED): the initial helper invocation used unavailable `python` (exit 127); changed only that command to `python3` and reran successfully once, completing all ten exact supplied repo commands without stderr. An optional tree lookup guessed tools/data-checks/ and failed; corrected once to git show origin/main:tools/, which succeeded. No repository file was repaired. Supplemental commands were small static reads and TSV arithmetic, not new data-gate or funding runs. The first long review display was truncated; conclusions from those reviews are attributed or supported by the later bounded reads, not a claim of a complete independent seal audit. Runtime parity, live timer state and current external reference availability remain NOT VERIFIED.
+
+Counts: agree 2; partly 5; disagree 0; missed 8
