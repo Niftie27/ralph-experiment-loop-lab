@@ -1,0 +1,14 @@
+[Unit]
+Description=RALPH openInterest freshness check (read-only)
+OnFailure=ralph-oi-freshness-failure.service
+
+[Service]
+Type=oneshot
+Nice=19
+IOSchedulingClass=idle
+CPUQuota=50%
+MemoryMax=256M
+MemorySwapMax=0
+TimeoutStartSec=15min
+EnvironmentFile=%h/.config/ralph/oi-freshness.env
+ExecStart=%h/venv-collector/bin/python %h/ralph_collector/oi_freshness.py --send --state %h/data/oi-freshness-state.json --marker %h/data/oi-freshness-failed --openclaw-bin %h/.npm-global/bin/openclaw --symbol BTCUSDT=%h/data/binance --symbol ETHUSDT=%h/data/binance-ethusdt --symbol SOLUSDT=%h/data/binance-solusdt --symbol HYPEUSDT=%h/data/binance-hypeusdt

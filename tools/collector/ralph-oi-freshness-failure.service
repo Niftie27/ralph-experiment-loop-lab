@@ -1,0 +1,7 @@
+[Unit]
+Description=RALPH openInterest freshness check failure notice
+
+[Service]
+Type=oneshot
+EnvironmentFile=%h/.config/ralph/oi-freshness.env
+ExecStart=%h/venv-collector/bin/python %h/ralph_collector/oi_freshness.py --notify-failure --marker %h/data/oi-freshness-failed --openclaw-bin %h/.npm-global/bin/openclaw

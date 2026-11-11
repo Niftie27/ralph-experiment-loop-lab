@@ -1,0 +1,10 @@
+[Unit]
+Description=Run RALPH openInterest freshness check hourly at :30 UTC
+
+[Timer]
+OnCalendar=*-*-* *:30:00 UTC
+AccuracySec=1min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
