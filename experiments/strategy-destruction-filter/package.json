@@ -32,6 +32,7 @@
     "test": "node --test",
     "registry:counts": "node src/variant-counts.mjs",
     "study:h2": "node src/run-h2-sol4h.mjs",
-    "data:vision-1m": "node src/vision-1m.mjs"
+    "data:vision-1m": "node src/vision-1m.mjs",
+    "data:funding": "node src/f1-funding.mjs"
   }
 }

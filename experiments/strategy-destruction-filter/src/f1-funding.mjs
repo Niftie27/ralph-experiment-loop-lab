@@ -1,0 +1,490 @@
+// F1a-4 funding-rate history (docs/f1/f1a-4-contract.md with amendments 1 and 2): Binance Vision monthly fundingRate files,
+// parsed on read (storage S1). Node built-ins only. Every check fails closed: a file that fails gives no rows at all.
+// Seal (contract sections 1 to 3, amendment 1 A1): a research parse reads only calc_time of a row at or after
+// 2025-10-17T00:00Z (routing and order) and never counts, returns or names such a row; its errors name only the file
+// and "sealed part". The holdout integrity path parses every field with sealMs = Infinity and reports pass or fail only.
+//   node src/f1-funding.mjs download|verify|integrity [--symbols BTC,ETH,SOL,XRP,DOGE,HYPE] [--data-dir DIR] [--manifest FILE] [--max-rss-mib N (1..512)]
+// download is the only network step (src/vision-transport.mjs fetchSource, unchanged). JSON summary on stdout: counts,
+// times and relative Vision paths only, never rates or sizes. Exit: 0 ok, 1 failure or stop, 2 usage, 3 a file missing.
+import fs from 'node:fs';
+import path from 'node:path';
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { PERIODS } from './h2-contract.mjs';
+import { canonicalJson, hasExactKeys } from './f1-1m-format.mjs';
+import { verifyZip, readZipMember, planFundingUnits, visionInstrument, VISION_SYMBOLS } from './vision-source.mjs';
+import { notListedSources, localVersions, readVerifiedSource, readManifest } from './f1-1m-store.mjs';
+import { fetchSource } from './vision-transport.mjs';
+import { memoryGuard, CEILING_MIB } from './vision-1m.mjs';
+
+export const FUNDING_HEADER = 'calc_time,funding_interval_hours,last_funding_rate';
+export const SEAL_MS = Date.parse(PERIODS.holdout[0]);
+export const HOUR_MS = 3600000;
+// Parser bounds (m7): a chosen validation policy, not an exchange guarantee; changing either needs a new decision.
+export const MAX_OFFSET_MS = 15000;
+export const INTERVALS = Object.freeze([1, 2, 4, 8]);
+const INTERVAL_TOKENS = new Map(INTERVALS.map(h => [String(h), h]));
+const MAX_PLACES = 8;
+const fail = message => { throw new Error(`Vision funding: ${message}`); };
+const SEALED_PART_FAILURE = 'sealed part fails';
+const sealedFailure = source => `Vision funding: ${source.file}: ${SEALED_PART_FAILURE}`;
+const HOLDOUT_GUARD_FAILURE = 'holdout integrity: memory guard tripped';
+
+// The exact decimal of a rate token, plain or exponent form: { decimal, places } with decimal the canonical plain
+// spelling (no exponent, no trailing zeros, no leading zeros, "0" for every zero, "-" only for a negative value) and
+// places its exact decimal places. More than 8 exact places, a malformed token and a value that is no finite Number fail.
+const RATE_TOKEN = /^(-?)(\d+)(?:\.(\d+))?(?:[Ee]([+-]?\d+))?$/;
+export function canonicalRate(token) {
+  const m = typeof token === 'string' ? RATE_TOKEN.exec(token) : null;
+  if (!m) fail('malformed rate token');
+  let digits = (m[2] + (m[3] ?? '')).replace(/^0+/, ''), scale = (m[3]?.length ?? 0) - Number(m[4] ?? 0);
+  if (!digits) return { decimal: '0', places: 0 };
+  const significant = digits.replace(/0+$/, '');
+  scale -= digits.length - significant.length;
+  digits = significant;
+  if (scale > MAX_PLACES) fail('rate has more than 8 exact decimal places');
+  if (digits.length - scale > 310) fail('rate is not a finite Number');
+  const body = scale <= 0 ? digits + '0'.repeat(-scale)
+    : digits.length > scale ? `${digits.slice(0, digits.length - scale)}.${digits.slice(digits.length - scale)}`
+      : `0.${'0'.repeat(scale - digits.length)}${digits}`;
+  const decimal = (m[1] ? '-' : '') + body;
+  if (!Number.isFinite(Number(decimal))) fail('rate is not a finite Number');
+  return { decimal, places: Math.max(0, scale) };
+}
+
+// Funding CSV rows of one source file. The first line is the exact header or a numeric first row; every line ends with
+// a newline. Every row's calc_time (exactly 13 digits, inside the file's month) must be strictly after the previous
+// row's in source order, checked before anything else. Rows with calc_time < sealMs are research rows: exactly 3
+// fields, calc_time mod 1 h below 15,000 ms (settlement time = calc_time floored to the hour), no second row in one
+// settlement hour, interval 1, 2, 4 or 8, and a canonical rate. Returns frozen columns in source order.
+export function parseFunding(csv, source, { sealMs = SEAL_MS } = {}) {
+  const buf = Buffer.from(csv.buffer, csv.byteOffset, csv.byteLength);
+  const file = source.file, sealable = source.endMs > sealMs, wholly = source.startMs >= sealMs;
+  const sealedPart = reason => { throw new Error(sealable ? sealedFailure(source) : `Vision funding: ${file}: ${reason}`); };
+  const structuralFail = reason => sealable ? sealedPart(reason) : fail(`${file}: ${reason}`);
+  if (!buf.length || buf[buf.length - 1] !== 0x0a) structuralFail('file does not end with a newline');
+  const lines = buf.toString('latin1').split('\n');
+  lines.pop();
+  let first = 0;
+  if (lines[0] === FUNDING_HEADER) first = 1;
+  else if (!/^\d/.test(lines[0] ?? '')) structuralFail('unknown header (expected the exact Vision header or a numeric first row)');
+  const settlementTime = [], calcTime = [], rate = [], rateDecimal = [], intervalHours = [];
+  let previous = -Infinity;
+  for (let n = first; n < lines.length; n++) {
+    const line = lines[n], comma = line.indexOf(','), field = comma < 0 ? line : line.slice(0, comma);
+    const rowFail = reason => wholly ? sealedPart(`${reason} in the sealed part`) : fail(`${file}: row ${n + 1}: ${reason}`);
+    const t = /^\d{13}$/.test(field) ? Number(field) : NaN;
+    if (Number.isNaN(t)) {
+      if (previous >= sealMs || wholly) sealedPart('calc_time unreadable in the sealed part');
+      if (sealable) sealedPart('calc_time unreadable in the research or sealed part');
+      rowFail('calc_time is not 13 digits');
+    }
+    if (t < source.startMs || t >= source.endMs) {
+      if (sealable) sealedPart('calc_time outside the file month');
+      if (t >= sealMs || previous >= sealMs) sealedPart('calc_time outside the file month in the sealed part');
+      rowFail('calc_time outside the file month');
+    }
+    if (t <= previous) {
+      if (sealable) sealedPart('calc_time not after the previous row');
+      if (previous >= sealMs) sealedPart('calc_time order broken in the sealed part');
+      rowFail('calc_time not after the previous row');
+    }
+    previous = t;
+    if (t >= sealMs) continue; // sealed: nothing but calc_time is read
+    const fields = line.split(',');
+    if (fields.length !== 3) rowFail(`expected 3 fields, found ${fields.length}`);
+    const offset = t % HOUR_MS;
+    if (offset >= MAX_OFFSET_MS) rowFail('calc_time is not within 15,000 ms after the full hour');
+    if (settlementTime.length && settlementTime.at(-1) === t - offset) rowFail('two rows in one settlement hour');
+    const h = INTERVAL_TOKENS.get(fields[1]);
+    if (h === undefined) rowFail('interval not one of 1, 2, 4, 8');
+    let exact;
+    try { exact = canonicalRate(fields[2]); } catch (error) { rowFail(error.message.replace('Vision funding: ', '')); }
+    settlementTime.push(t - offset); calcTime.push(t); intervalHours.push(h); rateDecimal.push(exact.decimal); rate.push(Number(exact.decimal));
+  }
+  return Object.freeze({
+    file, rowCount: calcTime.length,
+    columns: Object.freeze({ settlementTime: Float64Array.from(settlementTime), calcTime: Float64Array.from(calcTime), rate: Float64Array.from(rate),
+      intervalHours: Uint8Array.from(intervalHours) }),
+    rateDecimal: Object.freeze(rateDecimal),
+  });
+}
+
+// Archive structure is not attributable to a research row of the mixed month (B4).
+function fundingMember(zipBytes, source, { sealMs = SEAL_MS } = {}) {
+  try { return readZipMember(zipBytes, source.csvName); }
+  catch (error) { if (source.endMs > sealMs) throw new Error(sealedFailure(source)); throw error; }
+}
+
+// One verified source: the zip against its CHECKSUM, its one member by name (CRC and sizes checked), then the rows.
+export function parseFundingZip(zipBytes, checksumText, source, options) {
+  verifyZip(zipBytes, checksumText, source.zipName);
+  return parseFunding(fundingMember(zipBytes, source, options), source, options);
+}
+
+// The distinct sources of planned units, in time order (the split 2025-10 month gives one source).
+const sourcesOf = units => [...new Map(units.flatMap(u => u.sources).map(s => [s.file, s])).values()];
+const monthOf = source => new Date(source.startMs).toISOString().slice(0, 7);
+
+// Fetches every planned funding source (plan section h): CHECKSUM first, verified zips stored as versions, 404 on both
+// recorded. A month with more than one local version fails closed until a version-selection rule exists. Misses are
+// not_listed by the F1a-2 listing rule over the whole plan, else gaps (exit 3). No file is parsed here.
+export async function downloadFunding({ symbols, zipRoot }, guard, deps) {
+  const counts = { expected: 0, downloaded: 0, skipped: 0, verified: 0, gaps: 0, notListed: 0, failed: 0 };
+  const gaps = [], notListed = {}, versionConflicts = [], repaired = [], failures = [];
+  for (const symbol of symbols) {
+    const units = planFundingUnits(symbol), contract = units[0].instrument.contract;
+    const fetched = new Set(), misses = [];
+    for (const source of sourcesOf(units)) {
+      counts.expected++;
+      guard.check(`download ${source.file}`);
+      try {
+        const result = await fetchSource(source, zipRoot, deps, () => fetched.add(source.file));
+        if (result.status === 'missing') { misses.push(source); continue; }
+        counts[result.status]++;
+        if (result.repaired) repaired.push(source.checksumFile);
+        if (localVersions(zipRoot, source).length > 1) { counts.failed++; versionConflicts.push(source.file); continue; }
+        counts.verified++;
+      } catch (error) {
+        counts.failed++;
+        failures.push({ file: source.file, error: source.endMs > SEAL_MS ? `Vision download: ${source.file}: sealable source fails` : error.message });
+      }
+    }
+    const listing = notListedSources(units, { zipRoot, fetched });
+    for (const source of misses) {
+      if (listing.has(source.file)) { (notListed[contract] ??= []).push(monthOf(source)); counts.notListed++; }
+      else { gaps.push(source.file); counts.gaps++; }
+    }
+  }
+  return { command: 'download', status: counts.failed ? 'failed' : counts.gaps ? 'incomplete' : 'ok', counts, gaps, notListed, versionConflicts, repaired, failures };
+}
+
+// Schedule check (contract section 2) of a settlement r = {t, h} against its predecessor p (null: none known). Returns
+// null (no predecessor, on its grid), 'regular', 'interval_change' or 'bridge' (pass), or one of STOP_CLASSES. Grids
+// are anchored at 00:00 UTC; 24 is a multiple of every interval, so epoch hours give the hour of the day modulo h.
+export const STOP_CLASSES = Object.freeze(['off_grid', 'unexplained_gap', 'unexplained_change']);
+export function scheduleClass(p, r) {
+  if ((r.t / HOUR_MS) % r.h !== 0) return 'off_grid';
+  if (!p) return null;
+  const d = (r.t - p.t) / HOUR_MS;
+  if (p.h === r.h) return d === r.h ? 'regular' : 'unexplained_gap';
+  if (d === p.h || d === r.h) return 'interval_change';
+  if (p.h === 1 && r.h === 4 && d > 1 && d < 4) return 'bridge'; // bridge to the new grid: r is on the 4 h grid (checked above)
+  return 'unexplained_change';
+}
+
+// The first research 1m candle of a contract in the F1a-2 manifest (contract section 3), or null without one.
+export function firstCandleOf(manifestPath, contract) {
+  const times = readManifest(manifestPath).entries.filter(e => e.contract === contract && e.period === 'research' && e.rowCount > 0).map(e => Date.parse(e.firstOpenTime));
+  return times.length ? Math.min(...times) : null;
+}
+
+// The one verified local version of a source, or why there is none: missing, conflict (more than one version until a
+// version-selection rule exists) or failed (its CHECKSUM).
+function loadSource(zipRoot, source) {
+  const versions = localVersions(zipRoot, source);
+  if (!versions.length) return { status: 'missing' };
+  if (versions.length > 1) return { status: 'conflict', error: 'more than one local version' };
+  try { return { status: 'verified', sha256: versions[0], zip: readVerifiedSource(zipRoot, source, versions[0]) }; }
+  catch (error) { return { status: error.code ? 'unreadable' : 'failed', error: error.message }; }
+}
+
+const RESEARCH_START_MS = Date.parse(PERIODS.research[0]);
+const iso = t => new Date(t).toISOString();
+const timeOf = x => x.time ?? x.start;
+const byTime = (a, b) => timeOf(a) < timeOf(b) ? -1 : timeOf(a) > timeOf(b) ? 1 : 0;
+
+// The research history of an instrument (contract sections 2 and 3): its research sources 2021-10..2025-10 in month
+// order, research-parsed (sealed rows give calc_time only); the 2021-10 rows before the window are predecessor evidence
+// only. Every research settlement is checked against its predecessor unless a gap or failed month lies between them
+// (then elapsedHours is NaN, meaning null). Edges: an instrument without rows before the window needs its first
+// settlement at the first grid point of its interval after its first 1m candle; the last settlement must lie within
+// its interval of 2025-10-17T00:00Z; a listed file without research settlements stops. Reads no holdout field.
+export function researchHistory(symbol, { zipRoot, firstCandle = () => null, check = () => {} }) {
+  const units = planFundingUnits(symbol), instrument = units[0].instrument;
+  const research = units.filter(u => u.period === 'research');
+  const listing = notListedSources(research, { zipRoot });
+  const sources = [], spans = [], notListed = [], gaps = [], failures = [], coverage = [], anomalies = [], changes = [];
+  const columns = { settlementTime: [], calcTime: [], rate: [], rateDecimal: [], intervalHours: [], elapsedHours: [], sourceIndex: [] };
+  let previous = null, broken = false, prior = false, firstListed = null, missingFirst = false;
+  for (const unit of research) {
+    const source = unit.sources[0];
+    check(`research ${source.file}`);
+    const loaded = loadSource(zipRoot, source);
+    if (loaded.status === 'missing') {
+      if (listing.has(source.file)) { notListed.push(monthOf(source)); continue; }
+      gaps.push(source.file);
+      coverage.push({ kind: 'gap_month', start: unit.dataStart, end: unit.dataEnd, file: source.file });
+      if (!firstListed) missingFirst = true;
+      broken = true;
+      continue;
+    }
+    firstListed ??= source;
+    let parsed;
+    try {
+      if (loaded.status !== 'verified') throw new Error(loaded.error);
+      parsed = parseFunding(fundingMember(loaded.zip, source), source);
+    } catch (error) { failures.push({ file: source.file, error: error.message }); broken = true; continue; }
+    const index = sources.push({ file: source.file, sha256: loaded.sha256 }) - 1;
+    spans.push([unit.startMs, unit.endMs]);
+    const c = parsed.columns;
+    let inWindow = 0;
+    for (let i = 0; i < parsed.rowCount; i++) {
+      const r = { t: c.settlementTime[i], h: c.intervalHours[i] };
+      if (r.t < unit.startMs) { previous = r; broken = false; prior = true; continue; }
+      const p = broken ? null : previous, cls = scheduleClass(p, r), elapsed = p ? (r.t - p.t) / HOUR_MS : NaN;
+      if (STOP_CLASSES.includes(cls)) anomalies.push({ time: iso(r.t), class: cls, intervalHours: r.h, ...(p && { previous: iso(p.t), previousIntervalHours: p.h, elapsedHours: elapsed }) });
+      else if (cls === 'interval_change' || cls === 'bridge') changes.push({ time: iso(r.t), class: cls, old: p.h, new: r.h, elapsedHours: elapsed });
+      columns.settlementTime.push(r.t); columns.calcTime.push(c.calcTime[i]); columns.rate.push(c.rate[i]); columns.rateDecimal.push(parsed.rateDecimal[i]);
+      columns.intervalHours.push(r.h); columns.elapsedHours.push(elapsed); columns.sourceIndex.push(index);
+      previous = r; broken = false; inWindow++;
+    }
+    if (!inWindow) anomalies.push({ time: unit.dataStart, class: 'empty_file', file: source.file });
+  }
+  const n = columns.settlementTime.length;
+  if (n && !prior && !missingFirst) {
+    const first = { t: columns.settlementTime[0], h: columns.intervalHours[0] }, candle = firstCandle(instrument.contract);
+    if (notListed.length) coverage.push({ kind: 'before_listing', start: iso(RESEARCH_START_MS), end: iso(firstListed.startMs) });
+    if (candle === null || candle === undefined) anomalies.push({ time: iso(first.t), class: 'first_settlement_unproven', reason: 'no first 1m candle' });
+    else {
+      const step = first.h * HOUR_MS, expected = (Math.floor(candle / step) + 1) * step;
+      coverage.push({ kind: 'before_first_charge', start: iso(candle), end: iso(first.t) });
+      if (first.t !== expected) anomalies.push({ time: iso(first.t), class: 'first_settlement_unproven', expected: iso(expected) });
+    }
+  }
+  if (n && sources.at(-1).file === research.at(-1).sources[0].file) {
+    const t = columns.settlementTime[n - 1], h = columns.intervalHours[n - 1];
+    if (SEAL_MS - t > h * HOUR_MS) anomalies.push({ time: iso(t), class: 'trailing_edge', intervalHours: h });
+  }
+  return { instrument, planned: research.length, sources, spans, notListed, gaps, failures, coverage: coverage.sort(byTime), anomalies: anomalies.sort(byTime), changes, columns };
+}
+
+// Code identity (m5), recorded beside the digest: the sha256 of every module in the local module closure of this module
+// (static relative imports), sorted by path, and the git revision.
+const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
+// Deliberately narrow syntax: column-zero, single-quoted static declarations ending in a semicolon.
+// Named bindings may span lines. Everything else fails closed instead of silently losing a dependency.
+const IMPORT = /^(?:impor[t]\s+(?:(?:[\w$]+(?:\s*,\s*(?:\*\s+as\s+[\w$]+|\{[\w$\s,]*\}))?|\*\s+as\s+[\w$]+|\{[\w$\s,]*\})\s+from\s+)?'([^'\\\r\n]+)'|expor[t]\s+(?:\*(?:\s+as\s+[\w$]+)?|\{[\w$\s,]*\})\s+from\s+'([^'\\\r\n]+)')[ \t]*;[ \t]*$/gm;
+function dependencies(text) {
+  const paths = [];
+  const unsupported = () => { throw new Error('code identity: unsupported module dependency form'); };
+  const rest = text.replace(IMPORT, (_, a, b) => {
+    const specifier = a ?? b;
+    if (/^\.{1,2}\//.test(specifier)) paths.push(specifier);
+    else if (!/^node:[a-z_\/]+$/.test(specifier)) unsupported();
+    return '';
+  }).replace(/\bimpor[t]\.meta\b/g, '');
+  // Cross-check all three quote forms against the parsed dependency set. Escapes fail closed as well.
+  const parsed = new Set(paths);
+  for (const [, , specifier] of text.matchAll(/(['"`])(\.{1,2}\/(?:\\[\s\S]|(?!\1)[^\\])*?)\1/g)) {
+    if (specifier.includes('\\') || (specifier.endsWith('.mjs') && !parsed.has(specifier))) unsupported();
+  }
+  // Inspect raw remaining text, including comments, strings and templates: conservative rejection is intentional.
+  // No unsupported keyword spelling can be hidden by a comment/string stripping heuristic.
+  if (/\bimpor[t]\b|\bexpor[t]\b(?!\s+(?:const|let|var|function|class|async\s+function|default)\b)|\brequire\s*\(/.test(rest)) unsupported();
+  return paths;
+}
+function gitRevision() {
+  const git = args => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+  try { return { gitRevision: git(['rev-parse', 'HEAD']), gitDirty: git(['status', '--porcelain', '--untracked-files=no']) !== '' }; }
+  catch { return { gitRevision: null, gitDirty: null }; }
+}
+export function codeIdentity(entryPath = fileURLToPath(import.meta.url)) {
+  const hashes = new Map(), queue = [path.resolve(entryPath)];
+  while (queue.length) {
+    const file = queue.pop();
+    if (hashes.has(file)) continue;
+    const bytes = fs.readFileSync(file);
+    hashes.set(file, sha256(bytes));
+    for (const dependency of dependencies(bytes.toString('utf8'))) queue.push(path.resolve(path.dirname(file), dependency));
+  }
+  const modules = [...hashes].map(([file, hash]) => ({ path: path.relative(ROOT, file).split(path.sep).join('/'), sha256: hash }))
+    .sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
+  return { modules, ...gitRevision() };
+}
+
+// The research window [start, end) of a history: fresh columns (elapsedHours NaN = null; sourceIndex into sources),
+// sources {file, sha256} in file order (the files whose research unit overlaps the window, plus the file of the first
+// settlement's predecessor), the coverage and anomalies of the window, and the digest of m5: sha256 of the canonical
+// JSON of {schema, instrument, dataStart, dataEnd, sources, coverage, anomalies, columns} with rates as canonical decimals.
+function researchWindow(h, instrument, start, end) {
+  const c = h.columns, t = c.settlementTime;
+  let i0 = 0;
+  while (i0 < t.length && t[i0] < start) i0++;
+  let i1 = i0;
+  while (i1 < t.length && t[i1] < end) i1++;
+  const used = new Set(h.spans.flatMap(([a, b], k) => a < end && b > start ? [k] : []));
+  if (i0 < i1 && i0 > 0 && !Number.isNaN(c.elapsedHours[i0])) used.add(c.sourceIndex[i0 - 1]);
+  const keep = [...used].sort((a, b) => a - b), remap = new Map(keep.map((k, j) => [k, j]));
+  const sources = keep.map(k => ({ file: h.sources[k].file, sha256: h.sources[k].sha256 }));
+  const coverage = h.coverage.filter(e => Date.parse(e.start) < end && Date.parse(e.end) > start);
+  const anomalies = h.anomalies.filter(a => a.class === 'empty_file' ? sources.some(s => s.file === a.file) : Date.parse(a.time) >= start && Date.parse(a.time) < end);
+  const columns = { settlementTime: Float64Array.from(t.slice(i0, i1)), calcTime: Float64Array.from(c.calcTime.slice(i0, i1)), rate: Float64Array.from(c.rate.slice(i0, i1)),
+    intervalHours: Uint8Array.from(c.intervalHours.slice(i0, i1)), elapsedHours: Float64Array.from(c.elapsedHours.slice(i0, i1)),
+    sourceIndex: Uint32Array.from(c.sourceIndex.slice(i0, i1).map(k => remap.get(k))) };
+  const dataStart = iso(start), dataEnd = iso(end);
+  const digest = sha256(canonicalJson({ schema: 'f1-funding-v1', instrument, dataStart, dataEnd, sources, coverage, anomalies,
+    columns: { settlementTime: [...columns.settlementTime], calcTime: [...columns.calcTime], rate: c.rateDecimal.slice(i0, i1), intervalHours: [...columns.intervalHours],
+      elapsedHours: [...columns.elapsedHours].map(x => Number.isNaN(x) ? null : x), sourceIndex: [...columns.sourceIndex] } }));
+  return { instrument, dataStart, dataEnd, sources, coverage, anomalies, columns, digest };
+}
+
+const SYMBOL_OF = Object.fromEntries(Object.entries(VISION_SYMBOLS).map(([symbol, contract]) => [contract, symbol]));
+const ISO_MS = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.000Z$/;
+const RESEARCH_END_MS = Date.parse(PERIODS.research[1]);
+const readerFail = message => { throw new Error(`funding reader: ${message}`); };
+const isoTime = s => typeof s === 'string' && ISO_MS.test(s) && new Date(Date.parse(s)).toISOString() === s;
+const deepFreeze = value => { if (value && typeof value === 'object' && !ArrayBuffer.isView(value)) { Object.values(value).forEach(deepFreeze); Object.freeze(value); } return value; };
+function checkRequest(request) {
+  if (!hasExactKeys(request, ['instrument', 'dataStart', 'dataEnd'])) readerFail('request must have exactly instrument, dataStart and dataEnd');
+  const { instrument, dataStart, dataEnd } = request;
+  if (!hasExactKeys(instrument, ['exchange', 'market', 'contract'])) readerFail('unsupported instrument (Binance USD-M Vision contracts only)');
+  const { exchange, market, contract } = instrument;
+  if (exchange !== 'binance' || market !== 'linear_perpetual' || typeof contract !== 'string'
+    || !Object.hasOwn(SYMBOL_OF, contract)) readerFail('unsupported instrument (Binance USD-M Vision contracts only)');
+  if (!isoTime(dataStart) || !isoTime(dataEnd)) readerFail('dataStart and dataEnd must be ISO strings with .000Z');
+  const start = Date.parse(dataStart), end = Date.parse(dataEnd);
+  if (!(start < end)) readerFail('empty window: dataStart must be before dataEnd');
+  if (start < RESEARCH_START_MS || end > RESEARCH_END_MS) readerFail(`window outside the research window ${PERIODS.research.join('..')}: the holdout is sealed`);
+  return { instrument: { exchange, market, contract }, start, end };
+}
+// The research reader (plan section f, m5): read({instrument, dataStart, dataEnd}) inside the research window only.
+// Every research source of the instrument is verified and parsed on each read (storage S1, compute on read) and a
+// failed research source fails the read; gaps and stops are returned as coverage and anomalies. The result is frozen and
+// holds fresh typed arrays. Sealed rows give calc_time only; no holdout field is read. manifestPath (the F1a-2 1m
+// manifest) gives the first 1m candle of an instrument listed inside the window.
+export function openResearchFunding(options) {
+  if (!options || typeof options !== 'object' || Object.keys(options).some(k => !['zipRoot', 'manifestPath'].includes(k)) || typeof options.zipRoot !== 'string'
+    || (options.manifestPath !== undefined && typeof options.manifestPath !== 'string')) readerFail('options must be zipRoot and an optional manifestPath');
+  const { zipRoot, manifestPath } = options;
+  const firstCandle = contract => manifestPath === undefined ? null : firstCandleOf(manifestPath, contract);
+  const code = deepFreeze(codeIdentity());
+  return Object.freeze({
+    read(request) {
+      const { instrument, start, end } = checkRequest(request);
+      const h = researchHistory(SYMBOL_OF[instrument.contract], { zipRoot, firstCandle });
+      if (h.failures.length) {
+        const failure = h.failures[0];
+        if (failure.error === `Vision funding: ${failure.file}: ${SEALED_PART_FAILURE}`) throw new Error(failure.error);
+        readerFail(`research source ${failure.file} fails: ${failure.error}`);
+      }
+      const { columns, ...rest } = researchWindow(h, instrument, start, end);
+      return Object.freeze({ ...deepFreeze(rest), columns: Object.freeze(columns), codeIdentity: code });
+    },
+  });
+}
+
+// Holdout integrity (amendment 1 A1): per holdout unit ("2025-10 sealed part", then 2025-11..2026-09) only availability,
+// CHECKSUM and pass or fail. Every field of every row is parsed (sealMs = Infinity) and every holdout settlement is
+// checked against its predecessor; the boundary pair (last research settlement, first holdout settlement) belongs to
+// "2025-10 sealed part". A unit fails when it is missing, unreadable or empty, when a check fails, or when its first
+// predecessor is unknown (the previous file missing or unreadable). Errors are dropped: nothing else leaves this path.
+export function checkHoldout(symbol, { zipRoot, lastResearch = null, check = () => {} }) {
+  let previous = lastResearch;
+  return planFundingUnits(symbol).filter(u => u.period === 'holdout').map(unit => {
+    const source = unit.sources[0], name = source.startMs < SEAL_MS ? '2025-10 sealed part' : monthOf(source);
+    try { check(`holdout ${unit.instrument.contract} ${name}`); }
+    catch { throw new Error(HOLDOUT_GUARD_FAILURE); }
+    const loaded = loadSource(zipRoot, source);
+    const checksum = loaded.status === 'verified' ? 'verified' : loaded.status === 'failed' ? 'failed' : 'not checked';
+    let pass = false, last = null;
+    try {
+      if (loaded.status !== 'verified') throw new Error('unavailable');
+      const c = parseFunding(readZipMember(loaded.zip, source.csvName), source, { sealMs: Infinity }).columns;
+      let p = previous, ok = true, count = 0;
+      for (let i = 0; i < c.settlementTime.length; i++) {
+        const r = { t: c.settlementTime[i], h: c.intervalHours[i] };
+        if (r.t >= SEAL_MS) { count++; if (!p || STOP_CLASSES.includes(scheduleClass(p, r))) ok = false; }
+        p = r;
+      }
+      last = p;
+      pass = ok && count > 0;
+    } catch { pass = false; }
+    previous = last;
+    return { unit: name, available: loaded.status !== 'missing', checksum, result: pass ? 'pass' : 'fail' };
+  });
+}
+
+const researchStatus = h => h.failures.length ? 'failed' : h.anomalies.length ? 'stopped' : h.gaps.length ? 'incomplete' : 'ok';
+
+// Verify is research-only (B1), including its listing evidence. No holdout month archive or CHECKSUM is opened.
+export function verifyFunding({ symbols, zipRoot, firstCandle = () => null, guard = { check() {} } }) {
+  const check = label => guard.check(label);
+  const out = symbols.map(symbol => {
+    const h = researchHistory(symbol, { zipRoot, firstCandle, check }), t = h.columns.settlementTime, n = t.length;
+    let offsetMaxMs = 0;
+    for (let i = 0; i < n; i++) offsetMaxMs = Math.max(offsetMaxMs, h.columns.calcTime[i] - t[i]);
+    return { contract: h.instrument.contract, sources: { planned: h.planned, verified: h.sources.length, notListed: h.notListed.length, gaps: h.gaps.length, failed: h.failures.length },
+      researchSettlements: n, firstSettlement: n ? iso(t[0]) : null, lastSettlement: n ? iso(t[n - 1]) : null, offsetMaxMs: n ? offsetMaxMs : null,
+      changes: h.changes, notListed: h.notListed, gaps: h.gaps, failures: h.failures, coverage: h.coverage, anomalies: h.anomalies,
+      digest: h.failures.length ? null : researchWindow(h, h.instrument, RESEARCH_START_MS, RESEARCH_END_MS).digest };
+  });
+  const status = out.some(s => s.failures.length) ? 'failed'
+    : out.some(s => s.anomalies.length) ? 'stopped' : out.some(s => s.gaps.length) ? 'incomplete' : 'ok';
+  return { command: 'verify', status, symbols: out, code: codeIdentity() };
+}
+
+// The separately approved integrity step (B1): finish research for ALL requested instruments before any A1 unit.
+// Blocked output carries only each instrument's research status; successful gating keeps A1's four-field records.
+export function integrityFunding({ symbols, zipRoot, firstCandle = () => null, guard = { check() {} } }) {
+  const check = label => guard.check(label);
+  const histories = symbols.map(symbol => researchHistory(symbol, { zipRoot, firstCandle, check }));
+  const out = histories.map(h => ({ contract: h.instrument.contract, research: researchStatus(h) }));
+  if (out.some(s => s.research !== 'ok')) return { command: 'integrity', status: 'blocked', symbols: out, code: codeIdentity() };
+  for (let i = 0; i < histories.length; i++) {
+    const c = histories[i].columns, n = c.settlementTime.length;
+    out[i].holdout = checkHoldout(symbols[i], { zipRoot, lastResearch: n ? { t: c.settlementTime[n - 1], h: c.intervalHours[n - 1] } : null, check });
+  }
+  return { command: 'integrity', status: out.some(s => s.holdout.some(u => u.result === 'fail')) ? 'failed' : 'ok', symbols: out, code: codeIdentity() };
+}
+
+const ROOT = fileURLToPath(new URL('../', import.meta.url));
+const COMMANDS = ['download', 'verify', 'integrity'];
+const FLAGS = ['--symbols', '--data-dir', '--manifest', '--max-rss-mib'];
+const usage = message => Object.assign(new Error(message), { usage: true });
+function parseArgs(argv) {
+  const [command, ...rest] = argv;
+  if (!COMMANDS.includes(command)) throw usage(`command must be one of ${COMMANDS.join('|')}`);
+  const flags = {};
+  for (let i = 0; i < rest.length; i += 2) {
+    if (!FLAGS.includes(rest[i])) throw usage(`unknown flag ${rest[i]}`);
+    if (rest[i] in flags) throw usage(`duplicate flag ${rest[i]}`);
+    if (i + 1 >= rest.length || rest[i + 1].startsWith('--')) throw usage(`flag ${rest[i]} needs a value`);
+    flags[rest[i]] = rest[i + 1];
+  }
+  const symbols = (flags['--symbols'] ?? Object.keys(VISION_SYMBOLS).join(',')).split(',');
+  if (new Set(symbols).size !== symbols.length) throw usage('duplicate symbol');
+  for (const symbol of symbols) visionInstrument(symbol);
+  const maxRssMiB = flags['--max-rss-mib'] === undefined ? CEILING_MIB : Number(flags['--max-rss-mib']);
+  if (!Number.isSafeInteger(maxRssMiB) || maxRssMiB < 1 || maxRssMiB > CEILING_MIB) throw usage(`--max-rss-mib must be an integer 1..${CEILING_MIB} (the ceiling can only be lowered)`);
+  const dataDir = path.resolve(flags['--data-dir'] ?? path.join(ROOT, 'data'));
+  return { command, symbols, maxRssMiB, zipRoot: path.join(dataDir, 'vision'),
+    manifestPath: path.resolve(flags['--manifest'] ?? path.join(ROOT, 'results', 'manifest-f1-1m.json')) };
+}
+
+const EXIT = { ok: 0, failed: 1, stopped: 1, blocked: 1, usage: 2, incomplete: 3 };
+export async function main(argv, deps = {}) {
+  const io = { fetch: deps.fetch ?? globalThis.fetch, stdout: deps.stdout ?? process.stdout, sleep: deps.sleep ?? (ms => new Promise(resolve => setTimeout(resolve, ms))) };
+  let summary, guard;
+  try {
+    const options = parseArgs(argv);
+    guard = memoryGuard(options.maxRssMiB, deps.check);
+    try {
+      summary = options.command === 'download' ? await downloadFunding(options, guard, io)
+        : (options.command === 'integrity' ? integrityFunding : verifyFunding)({ ...options, firstCandle: contract => firstCandleOf(options.manifestPath, contract), guard });
+    } catch (error) {
+      summary = { command: options.command, status: 'failed', error: error.message };
+    }
+    const memory = guard.report();
+    if (memory.maxRssMiB > options.maxRssMiB && summary.error !== HOLDOUT_GUARD_FAILURE) summary = { ...summary, status: 'failed', error: `memory ceiling exceeded: maxRSS ${memory.maxRssMiB} MiB > ${options.maxRssMiB} MiB` };
+    summary = { ...summary, memory, runtime: { node: process.version, platform: process.platform } };
+  } catch (error) {
+    if (!error.usage) throw error;
+    summary = { command: argv[0] ?? null, status: 'usage', error: error.message };
+  } finally { guard?.stop(); }
+  io.stdout.write(JSON.stringify(summary, null, 2) + '\n');
+  return EXIT[summary.status];
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) process.exitCode = await main(process.argv.slice(2));

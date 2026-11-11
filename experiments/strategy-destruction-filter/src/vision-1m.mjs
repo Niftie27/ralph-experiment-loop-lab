@@ -126,7 +126,7 @@ async function download({ symbols, from, to, zipRoot, manifestPath }, guard, dep
       }
     }
     // Listing rule (D6 as amended 2026-10-21): evidence over the whole F1a range, not only the requested months.
-    const listing = notListedSources(symbol, { zipRoot, entries, fetched });
+    const listing = notListedSources(planUnits(symbol), { zipRoot, entries, fetched });
     for (const source of misses) {
       if (listing.has(source.file)) { (notListed[contract] ??= []).push(new Date(source.startMs).toISOString().slice(0, 7)); counts.notListed++; }
       else { gaps.push(source.file); counts.gaps++; }
