@@ -1,6 +1,6 @@
 # RALPH map (read this first)
 
-Updated: 2026-11-09 (deep reassess held, decisions 52-59). Size cap 3,500 bytes, checked by `tools/docs-budget/docs-budget.test.mjs`. If the phase below is no longer current, this file is stale: say so before you act.
+Updated: 2026-11-11 (F1a-4 step 8 report). Size cap 3,500 bytes, checked by `tools/docs-budget/docs-budget.test.mjs`. If the phase below is no longer current, this file is stale: say so before you act.
 
 ## What RALPH is now
 
@@ -11,7 +11,7 @@ Research and paper only; nothing trades. Main line = the backtesting factory F1 
 - F1a-1 data identity: DONE (merge 7d73008).
 - F1a-2 Binance Vision 1m klines + manifest: DONE (merge 6ebaa26; reproduced on the VPS, `docs/f1/vps-compare-2026-10-22/`).
 - F1a-3 aggregation 1m to 5m, 15m, 1h, 4h, 1d and 1w: DONE (merge a474890; report `docs/f1/f1a-3-aggregation.md`, contract with amendments 1-2 `docs/f1/f1a-3-contract.md`). Binance Vision's own files disagree in a few bars, listed in `docs/f1/f1a-3-e1.csv` and `docs/f1/f1a-3-e2.csv`.
-- F1a-4 funding: plan steps 1-7 done on branch f1/a4-funding (c33f9c7, not merged), step 8 not run. Next: Claude's seal review, fix batch, step 8, report plus this file in one commit (decision 52); then the F1b protocol. Gates before F1b and F1c: decision 57. Before F1b uses any column of an E1 or E2 bar, decide how those bars are treated (decision 48, ledger I89).
+- F1a-4 funding: step 8 done 2026-11-10, acceptance met (report `docs/f1/f1a-4-funding.md`, contract `docs/f1/f1a-4-contract.md`); branch f1/a4-funding, PR to main next. Holdout: availability and CHECKSUM only; its one integrity run is the m4 step before F1c (decision 60). Next: the F1b protocol. Gates before F1b and F1c: decision 57. Before F1b uses any column of an E1 or E2 bar, decide how those bars are treated (decision 48, ledger I89).
 - Deep reassess held 2026-11-09 (decisions 52-59, `docs/reassess-2026-11-09-second-opinion.txt`); next due 2026-11-23. Side line, at most 1/3 of Claude (decision 53): data gate (ledger I98, I99), PR #9 with 0b by 2026-11-22 (decision 58).
 - No hypothesis has been tested in F1 yet.
 
