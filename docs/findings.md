@@ -28,9 +28,10 @@ Read before every prompt, plan or run. One entry per error class: what happened 
 
 ## Review and scope
 
-- **F11 Review rounds on edge cases** (class B, F1a-2, 8 Codex rounds). Most rounds were about hand-edited or corrupted manifests and an information-only symbol. Rule: at most 3 rounds per PR, then only P0/P1; the rest goes to the ledger (decisions 36, 42).
+- **F11 Review rounds on edge cases** (class B, F1a-2, 8 Codex rounds). Most rounds were about hand-edited or corrupted manifests and an information-only symbol. Rule: at most 3 rounds per PR, then only P0/P1; the rest goes to the ledger (decisions 36, 42). Repeat 2026-10-29 to 31: the m9 gate spec took 6 second-opinion rounds; specs get the same cap (decision 65).
 - **F12 Join-based key comparison** (2026-10-21, Codex P1). `keys.join(',')` accepted a merged key "exchange,market". Rule: compare object keys element-wise with one exact helper (F1a-2 round 8).
 - **F21 Phase change without MAP in the same change** (2026-10-28, PR #3). Claude planned the MAP update for after the merge; Codex raised a P1 citing AGENTS.md:19. Rule: the commit that changes the phase or the next step also updates `docs/MAP.md`.
+- **F23 Commitment without a check point** (3x, 2026-10-29 to 11-11). The deep reassess deadline 2026-11-05 passed unnoticed (I97); the F1a-4 extra lookback at 1.5x of its estimate (due 2026-10-29 14:40 UTC) was never held while the phase sat parked for 266 h; the F1a-4 contract's ledger proposals L1-L6 were filed 14 days late. Rule: every deadline and trigger goes into the Due line of `docs/MAP.md`, compared with the current time at every session start; parking the open phase needs a decision row (decision 64).
 
 ## Code and environment
 

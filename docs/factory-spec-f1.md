@@ -111,7 +111,7 @@ Costs depend on the strategy class (I52), and a class whose round-trip cost exce
 
 | Class | Holding time | Cost model in the backtest |
 | --- | --- | --- |
-| Intraday and swing (F1) | Minutes to days | Binance USD-M regular taker 5 bps + 3 bps slippage per side (16 bps round trip); every report also at 2× costs. Funding from the funding-rate history with each contract's actual interval (some settle every 4 h, others every 8 h). Stops trigger on trade price; mark price matters only if liquidation is modelled, which F1 does not |
+| Intraday and swing (F1) | Minutes to days | Binance USD-M regular taker 5 bps + 3 bps slippage per side (16 bps round trip); every report also at 2× costs. Funding from the Binance Vision funding-rate history with each contract's actual interval (some settle every 4 h, others every 8 h, some for a while every 2 h or 1 h): a position open at a settlement pays or receives size × mark price × the settled rate (longs pay when the rate is positive). F1 uses a mark-price proxy, the trade close of the 1m candle before the settlement; in its sample (1,708 settlements, 2024-08 to 2025-09) the proxy differed from Binance's mark price by at most 15 bp of price and the payment by at most 0.002 bp of notional; no bound is claimed outside that sample. Stops trigger on trade price; mark-price data are otherwise needed only if liquidation is modelled, which F1 does not. |
 | Fast scalps (later) | Seconds | Maker fees and limit fills only; the example of $2 on $3,000 is 0.067 %, so round-trip costs must stay below that |
 | HFT (out of F1) | Sub-second | Needs a latency model and book data (H4, hftbacktest) |
 

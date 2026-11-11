@@ -1,6 +1,6 @@
 # RALPH map (read this first)
 
-Updated: 2026-11-11 (F1a-4 step 8 report). Size cap 3,500 bytes, checked by `tools/docs-budget/docs-budget.test.mjs`. If the phase below is no longer current, this file is stale: say so before you act.
+Updated: 2026-11-11 (F1a-4 merged; lookback 3). Size cap 3,500 bytes, checked by `tools/docs-budget/docs-budget.test.mjs`. If the phase below is no longer current, this file is stale: say so before you act.
 
 ## What RALPH is now
 
@@ -9,10 +9,11 @@ Research and paper only; nothing trades. Main line = the backtesting factory F1 
 ## Where F1 is
 
 - F1a-1 data identity: DONE (merge 7d73008).
-- F1a-2 Binance Vision 1m klines + manifest: DONE (merge 6ebaa26; reproduced on the VPS, `docs/f1/vps-compare-2026-10-22/`).
-- F1a-3 aggregation 1m to 5m, 15m, 1h, 4h, 1d and 1w: DONE (merge a474890; report `docs/f1/f1a-3-aggregation.md`, contract with amendments 1-2 `docs/f1/f1a-3-contract.md`). Binance Vision's own files disagree in a few bars, listed in `docs/f1/f1a-3-e1.csv` and `docs/f1/f1a-3-e2.csv`.
-- F1a-4 funding: step 8 done 2026-11-10, acceptance met (report `docs/f1/f1a-4-funding.md`, contract `docs/f1/f1a-4-contract.md`); branch f1/a4-funding, PR to main next. Holdout: availability and CHECKSUM only; its one integrity run is the m4 step before F1c (decision 60). Next: the F1b protocol. Gates before F1b and F1c: decision 57. Before F1b uses any column of an E1 or E2 bar, decide how those bars are treated (decision 48, ledger I89).
-- Deep reassess held 2026-11-09 (decisions 52-59, `docs/reassess-2026-11-09-second-opinion.txt`); next due 2026-11-23. Side line, at most 1/3 of Claude (decision 53): data gate (ledger I98, I99), PR #9 with 0b by 2026-11-22 (decision 58).
+- F1a-2 Vision 1m klines + manifest: DONE (merge 6ebaa26; VPS reproduction `docs/f1/vps-compare-2026-10-22/`).
+- F1a-3 aggregation 1m to 5m-1w: DONE (merge a474890; report `docs/f1/f1a-3-aggregation.md`). Vision's own files disagree in a few bars: `docs/f1/f1a-3-e1.csv`, `docs/f1/f1a-3-e2.csv`.
+- F1a-4 funding: DONE (merge 772e937; report `docs/f1/f1a-4-funding.md`). Holdout: availability and CHECKSUM only; its one integrity run is the m4 step before F1c (decision 60). Next: the F1b protocol plan; gates before F1b and F1c: decision 57.
+- Side line, at most 1/3 of Claude (decision 53): data gate (ledger I98, I99) and PR #9 (decision 58). Last deep reassess 2026-11-09 (decisions 52-59).
+- Due (UTC; decision 64; check at every session start): V6 evaluation after 2026-11-15; PR #9 with 0b by 2026-11-22; deep reassess by 2026-11-23; F1b at 1.5x of its estimate (set with its plan). Parking the open phase or starting a later gate needs a decision row.
 - No hypothesis has been tested in F1 yet.
 
 ## For job X read Y
@@ -28,11 +29,11 @@ Research and paper only; nothing trades. Main line = the backtesting factory F1 
 | Outside sources | `docs/research/sources.md` |
 | Pre-F1 research | archive (see below); only when a job names it |
 
-Archive from before the F1 decision: `wiki/`, `raw/`, `core/`, `loops/`, `index.yaml`, `index.md`, `rules.md`, `automation/retrieval-router.yaml`, `automation/current-operating-map.md`. Kept, not deleted; they do not describe the current state.
+Archive from before the F1 decision (kept, not current): `wiki/`, `raw/`, `core/`, `loops/`, `index.yaml`, `index.md`, `rules.md`, `automation/retrieval-router.yaml`, `automation/current-operating-map.md`.
 
 ## Standing process
 
-- Every F1 phase plan from F1a-3 on: prior-art step (decision 37), hours estimate in wall clock from git (decisions 44, 46), at most 3 Codex review rounds per PR (decision 42).
-- Light lookback after every F1 phase. Checklist: does the work move the main line (an edge found or hypotheses killed); repeated finding classes (`docs/findings.md`); wall-clock hours vs estimate; prior-art step done; this file current. Output = decisions and ledger items only. Deep reassess at the end of F1a and F1b, at the latest every 14 days; extra lookback on a surprise (decision 39).
+- Every F1 phase plan from F1a-3 on: prior-art step (decision 37), hours estimate in wall clock from git that lists the review steps (decisions 44, 46, 63), at most 3 Codex review rounds per PR and 3 second-opinion rounds per spec (decisions 42, 65).
+- Light lookback after every F1 phase. Checklist: does the work move the main line (an edge found or hypotheses killed); repeated finding classes (`docs/findings.md`); wall-clock hours vs estimate, split at git commits (decision 63); prior-art step done; this file current. Output = decisions and ledger items only. Deep reassess at the end of F1a and F1b, at the latest every 14 days; extra lookback on a surprise (decision 39).
 - Nothing counts as confirmed without a test. Label claims: tested (how, how many), taken over (from where), reasoning.
 - Repo files are the one source of truth; Obsidian is only a viewer (decision 45). Public repo: no hosts, user names, IPs, chat ids or home paths.
