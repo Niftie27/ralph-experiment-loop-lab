@@ -1,6 +1,6 @@
 # RALPH map (read this first)
 
-Updated: 2026-11-11 (F1a-4 merged; lookback 3). Size cap 3,500 bytes, checked by `tools/docs-budget/docs-budget.test.mjs`. If the phase below is no longer current, this file is stale: say so before you act.
+Updated: 2026-11-11 (lookback 3; OI checker live). Size cap 3,500 bytes, checked by `tools/docs-budget/docs-budget.test.mjs`. If the phase below is no longer current, this file is stale: say so before you act.
 
 ## What RALPH is now
 
@@ -12,7 +12,7 @@ Research and paper only; nothing trades. Main line = the backtesting factory F1 
 - F1a-2 Vision 1m klines + manifest: DONE (merge 6ebaa26; VPS reproduction `docs/f1/vps-compare-2026-10-22/`).
 - F1a-3 aggregation 1m to 5m-1w: DONE (merge a474890; report `docs/f1/f1a-3-aggregation.md`). Vision's own files disagree in a few bars: `docs/f1/f1a-3-e1.csv`, `docs/f1/f1a-3-e2.csv`.
 - F1a-4 funding: DONE (merge 772e937; report `docs/f1/f1a-4-funding.md`). Holdout: availability and CHECKSUM only; its one integrity run is the m4 step before F1c (decision 60). Next: the F1b protocol plan; gates before F1b and F1c: decision 57.
-- Side line, at most 1/3 of Claude (decision 53): data gate (ledger I98, I99) and PR #9 (decision 58). Last deep reassess 2026-11-09 (decisions 52-59).
+- Side line, at most 1/3 of Claude (decision 53): data gate (ledger I98, I99); OI checker live 2026-11-11 (58 (1)); next PR #9 with 0b (58 (2)). Last deep reassess 2026-11-09 (decisions 52-59).
 - Due (UTC; decision 64; check at every session start): V6 evaluation after 2026-11-15; PR #9 with 0b by 2026-11-22; deep reassess by 2026-11-23; F1b at 1.5x of its estimate (set with its plan). Parking the open phase or starting a later gate needs a decision row.
 - No hypothesis has been tested in F1 yet.
 

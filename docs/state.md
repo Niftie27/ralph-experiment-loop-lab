@@ -1,12 +1,16 @@
 # Live operational state
 
-Updated: 2026-10-27 (section "Changes since the 2026-10-18 snapshot", entries of 2026-10-27 and 2026-10-20); sections (a)-(h) are the 2026-10-18T15:07:41Z snapshot. Update after every change.
+Updated: 2026-11-11 (section "Changes since the 2026-10-18 snapshot", entries of 2026-11-11, 2026-10-27 and 2026-10-20); sections (a)-(h) are the 2026-10-18T15:07:41Z snapshot. Update after every change.
 
 Snapshot checked read-only on 2026-10-18 UTC. Services, data, cron and timers were not changed. No V6 interim outcomes were inspected. Hashes below compare files at the configured runtime paths with tracked repo copies, not in-memory code loaded at process start.
 
 ## Changes since the 2026-10-18 snapshot
 
 Written 2026-10-20 from verified reports. Sections (a)-(h) below were not re-checked.
+
+Entries of 2026-11-11 (Claude, from chat oi_91_freshness and the CODER outputs named in each line; other changes since 2026-10-27 are in docs/ledger.md, not here):
+
+- openInterest freshness checker (decisions 58 (1), 66-68; PR #12, merge 601e317; MemoryMax=768M from a4f7d31): user units ralph-oi-freshness.service, ralph-oi-freshness.timer and ralph-oi-freshness-failure.service; script ~/ralph_collector/oi_freshness.py; message target in ~/.config/ralph/oi-freshness.env (mode 600, outside the repo); state ~/data/oi-freshness-state.json; failure marker ~/data/oi-freshness-failed. sha256 first 8 hex: script 15b761c4, service 19751075, timer 5526aff7, failure service 87e70bb9 (CODER install outputs 1-5). Timer enabled 2026-11-11 14:28 UTC: hourly at :30 UTC, daily message at 07:30 UTC. First timer run 2026-11-11 14:30 UTC: Result=success, runtime 7.1 s, no marker (CODER read-only check). Ledger I99, I104.
 
 Entries of 2026-10-27 (Claude, from the repo and the reports named in each line):
 
