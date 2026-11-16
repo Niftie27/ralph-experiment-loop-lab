@@ -1,0 +1,19 @@
+xz stderr bytes 0
+2026-11-10T12Z BTCUSDT gap_rows 24 reconnect_rows 10 OK
+2026-11-10T12Z ETHUSDT gap_rows 28 reconnect_rows 8 OK
+2026-11-10T12Z SOLUSDT gap_rows 12 reconnect_rows 5 OK
+2026-11-10T12Z HYPEUSDT gap_rows 10 reconnect_rows 6 OK
+2026-11-11T02Z BTCUSDT gap_rows 0 reconnect_rows 0 OK
+2026-11-11T02Z ETHUSDT gap_rows 1 reconnect_rows 1 OK
+2026-11-11T02Z SOLUSDT gap_rows 3 reconnect_rows 1 OK
+2026-11-11T02Z HYPEUSDT gap_rows 0 reconnect_rows 0 OK
+2026-11-11T13Z BTCUSDT gap_rows 3 reconnect_rows 1 OK
+2026-11-11T13Z ETHUSDT gap_rows 3 reconnect_rows 2 OK
+2026-11-11T13Z SOLUSDT gap_rows 2 reconnect_rows 1 OK
+2026-11-11T13Z HYPEUSDT gap_rows 2 reconnect_rows 1 OK
+hours equal 36/36
+gap rows matched 88/88 (aggTrade 10, markPrice@1s 23, depth@100ms 33, bookTicker 22)
+reconnect rows matched 36/36 (open at window end 0)
+nonstd 0 nonws 52470 other 0 backward 0
+VERDICT PASS
+compare exit 0
