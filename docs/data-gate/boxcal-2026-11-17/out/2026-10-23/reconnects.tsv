@@ -1,0 +1,9 @@
+symbol	conn	start_utc	len_ms	stream_a	delay_a_ms	stream_b	delay_b_ms
+BTCUSDT	market	2026-10-23T17:08:50.661Z	11508	aggTrade	761	markPrice@1s	0
+BTCUSDT	public	2026-10-23T22:24:09.307Z	7654	depth@100ms	0	bookTicker	39
+ETHUSDT	market	2026-10-23T10:33:04.817Z	8732	aggTrade	0	markPrice@1s	622
+ETHUSDT	public	2026-10-23T17:19:08.405Z	10859	depth@100ms	34	bookTicker	0
+SOLUSDT	market	2026-10-23T02:37:47.132Z	10510	aggTrade	0	markPrice@1s	532
+SOLUSDT	public	2026-10-23T17:07:46.648Z	6667	depth@100ms	39	bookTicker	0
+HYPEUSDT	market	2026-10-23T07:04:49.184Z	9795	aggTrade	0	markPrice@1s	205
+HYPEUSDT	public	2026-10-23T22:24:17.061Z	8857	depth@100ms	0	bookTicker	12

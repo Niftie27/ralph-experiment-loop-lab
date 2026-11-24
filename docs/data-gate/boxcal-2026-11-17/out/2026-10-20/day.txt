@@ -1,0 +1,1 @@
+day=2026-10-20 files=100 kib=1870136 copy_s=120 gapcal_s=683 memavail_mb=1069

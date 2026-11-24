@@ -1,0 +1,58 @@
+Running as unit: run-u1220.scope; invocation ID: 1719367ad4cc4dde847ec6316f77d371
+2026-11-16T23:13:39Z START boxrun days=26 pid=1595956 MemAvailable=659
+2026-11-16T23:13:39Z DISK ok free_gib=21.2 total_gib=74.8 free_pct=28.3
+2026-11-16T23:18:05Z DAY 2026-10-10 done files=100 kib=740264 copy_s=48 gapcal_s=218 deleted=tmp/2026-10-10
+2026-11-16T23:18:05Z DISK ok free_gib=21.2 total_gib=74.8 free_pct=28.3
+2026-11-16T23:24:07Z DAY 2026-10-11 done files=100 kib=899028 copy_s=59 gapcal_s=303 deleted=tmp/2026-10-11
+2026-11-16T23:24:07Z DISK ok free_gib=21.2 total_gib=74.8 free_pct=28.3
+2026-11-16T23:36:10Z DAY 2026-10-12 done files=100 kib=1614284 copy_s=103 gapcal_s=620 deleted=tmp/2026-10-12
+2026-11-16T23:36:10Z DISK ok free_gib=21.1 total_gib=74.8 free_pct=28.3
+2026-11-16T23:50:11Z DAY 2026-10-13 done files=100 kib=1879932 copy_s=121 gapcal_s=719 deleted=tmp/2026-10-13
+2026-11-16T23:50:11Z DISK ok free_gib=21.1 total_gib=74.8 free_pct=28.2
+2026-11-17T00:03:44Z DAY 2026-10-14 done files=100 kib=1850436 copy_s=119 gapcal_s=694 deleted=tmp/2026-10-14
+2026-11-17T00:03:44Z WAIT MemAvailable 428 MiB
+2026-11-17T00:04:44Z WAIT MemAvailable 539 MiB
+2026-11-17T00:05:44Z DISK ok free_gib=21.1 total_gib=74.8 free_pct=28.2
+2026-11-17T00:21:53Z DAY 2026-10-15 done files=100 kib=2230528 copy_s=149 gapcal_s=820 deleted=tmp/2026-10-15
+2026-11-17T00:21:53Z DISK ok free_gib=21.1 total_gib=74.8 free_pct=28.2
+2026-11-17T00:34:24Z DAY 2026-10-16 done files=100 kib=1777964 copy_s=134 gapcal_s=617 deleted=tmp/2026-10-16
+2026-11-17T00:34:24Z DISK ok free_gib=21.0 total_gib=74.8 free_pct=28.1
+2026-11-17T00:40:42Z DAY 2026-10-17 done files=100 kib=976812 copy_s=70 gapcal_s=308 deleted=tmp/2026-10-17
+2026-11-17T00:40:42Z DISK ok free_gib=21.0 total_gib=74.8 free_pct=28.1
+2026-11-17T00:50:45Z DAY 2026-10-18 done files=100 kib=1396732 copy_s=94 gapcal_s=508 deleted=tmp/2026-10-18
+2026-11-17T00:50:45Z DISK ok free_gib=21.0 total_gib=74.8 free_pct=28.1
+2026-11-17T01:03:11Z DAY 2026-10-19 done files=100 kib=1690600 copy_s=110 gapcal_s=635 deleted=tmp/2026-10-19
+2026-11-17T01:03:11Z DISK ok free_gib=20.9 total_gib=74.8 free_pct=28.0
+2026-11-17T01:16:35Z DAY 2026-10-20 done files=100 kib=1870136 copy_s=120 gapcal_s=683 deleted=tmp/2026-10-20
+2026-11-17T01:16:35Z DISK ok free_gib=21.0 total_gib=74.8 free_pct=28.1
+2026-11-17T01:29:45Z DAY 2026-10-21 done files=100 kib=1766688 copy_s=113 gapcal_s=677 deleted=tmp/2026-10-21
+2026-11-17T01:29:45Z DISK ok free_gib=21.0 total_gib=74.8 free_pct=28.1
+2026-11-17T01:43:13Z DAY 2026-10-22 done files=100 kib=1801340 copy_s=116 gapcal_s=691 deleted=tmp/2026-10-22
+2026-11-17T01:43:13Z DISK ok free_gib=21.0 total_gib=74.8 free_pct=28.0
+2026-11-17T01:55:12Z DAY 2026-10-23 done files=100 kib=1644060 copy_s=105 gapcal_s=614 deleted=tmp/2026-10-23
+2026-11-17T01:55:12Z DISK ok free_gib=20.9 total_gib=74.8 free_pct=28.0
+2026-11-17T02:04:25Z DAY 2026-10-24 done files=100 kib=1333204 copy_s=86 gapcal_s=467 deleted=tmp/2026-10-24
+2026-11-17T02:04:25Z DISK ok free_gib=20.9 total_gib=74.8 free_pct=27.9
+2026-11-17T02:11:46Z DAY 2026-10-25 done files=100 kib=1113972 copy_s=73 gapcal_s=367 deleted=tmp/2026-10-25
+2026-11-17T02:11:46Z DISK ok free_gib=21.0 total_gib=74.8 free_pct=28.0
+2026-11-17T02:26:04Z DAY 2026-10-26 done files=100 kib=1992032 copy_s=128 gapcal_s=730 deleted=tmp/2026-10-26
+2026-11-17T02:26:04Z DISK ok free_gib=21.0 total_gib=74.8 free_pct=28.0
+2026-11-17T02:37:44Z DAY 2026-10-27 done files=100 kib=1559580 copy_s=133 gapcal_s=567 deleted=tmp/2026-10-27
+2026-11-17T02:37:44Z DISK ok free_gib=20.9 total_gib=74.8 free_pct=28.0
+2026-11-17T02:49:03Z DAY 2026-10-28 done files=100 kib=1582176 copy_s=102 gapcal_s=577 deleted=tmp/2026-10-28
+2026-11-17T02:49:04Z DISK ok free_gib=20.9 total_gib=74.8 free_pct=27.9
+2026-11-17T03:05:43Z DAY 2026-10-29 done files=100 kib=2338004 copy_s=151 gapcal_s=848 deleted=tmp/2026-10-29
+2026-11-17T03:05:43Z DISK ok free_gib=20.9 total_gib=74.8 free_pct=27.9
+2026-11-17T03:22:38Z DAY 2026-10-30 done files=100 kib=2396540 copy_s=153 gapcal_s=861 deleted=tmp/2026-10-30
+2026-11-17T03:22:38Z DISK ok free_gib=21.0 total_gib=74.8 free_pct=28.0
+2026-11-17T03:29:00Z DAY 2026-10-31 done files=100 kib=966104 copy_s=62 gapcal_s=320 deleted=tmp/2026-10-31
+2026-11-17T03:29:00Z DISK ok free_gib=20.9 total_gib=74.8 free_pct=28.0
+2026-11-17T03:35:10Z DAY 2026-11-01 done files=100 kib=935928 copy_s=61 gapcal_s=309 deleted=tmp/2026-11-01
+2026-11-17T03:35:10Z DISK ok free_gib=20.9 total_gib=74.8 free_pct=28.0
+2026-11-17T03:48:14Z DAY 2026-11-02 done files=100 kib=1782584 copy_s=117 gapcal_s=667 deleted=tmp/2026-11-02
+2026-11-17T03:48:14Z DISK ok free_gib=20.9 total_gib=74.8 free_pct=27.9
+2026-11-17T03:59:38Z DAY 2026-11-03 done files=100 kib=1573828 copy_s=105 gapcal_s=578 deleted=tmp/2026-11-03
+2026-11-17T03:59:38Z DISK ok free_gib=20.9 total_gib=74.8 free_pct=27.9
+2026-11-17T04:15:06Z DAY 2026-11-04 done files=96 kib=2187468 copy_s=139 gapcal_s=789 deleted=tmp/2026-11-04
+2026-11-17T04:15:06Z ALL DONE days=26
+exit 0
